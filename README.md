@@ -21,15 +21,15 @@ Hoe krijg ik het repository nu op mijn computer?
 
 Je opent een terminal of cmd prompt.
 
-> cd /pad/naar/directory/waar/je/de/code/wil/hebben/staan
+> cd /pad/naar/directory/waar/je/de/code/wil/hebben/staan  
 > git clone [URL]
 
   Nu heb je normaal de code op je computer maar de actieve branch is
   waarschijnlijk nog master waar we zoveel mogelijk proberen afblijven.
   Dus maken we een nieuwe branch aan.
 
-> cd ./SilverSurfer
-> git branch toonn-GUI (<- bvb.)
+> cd ./SilverSurfer  
+> git branch toonn-GUI (<- bvb.)  
 > git checkout toonn-GUI
 
   Nu kan je zoveel aanpassen, committen, pushen... als je wil.
