@@ -25,7 +25,7 @@ import simulator.*;
 //- Afstand afgelegd / hoek gedraait bij de pijltjestoetsen zetten?
 //- Snelheid aanpassen
 //- Simulator aan robot linken.
-//- yeeaaah
+
 public class SilverSurferGUI {
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
