@@ -21,10 +21,11 @@ import simulator.*;
 //- Beter allign aan linkerkant nodig
 //- Manual control icon?
 //- Simulatieborder beter maken (niet volledig correct atm)
-//- Polygon onmiddelijk tekenen!! En sysouts ook!!
 //- Dikkere simulatielijn + pijl voor richting (ev. vak met orientatie?)
 //- Afstand afgelegd / hoek gedraait bij de pijltjestoetsen zetten?
-//- Soms geen reactie van mouselistener als niet 'stevig' genoeg klikken op knoppen
+//- Snelheid aanpassen
+//- Simulator aan robot linken.
+//- yeeaaah
 public class SilverSurferGUI {
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
@@ -170,7 +171,6 @@ public class SilverSurferGUI {
 				PDT.setAngles((int)polygonangles.getValue());
 				PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
 				PDT.start();
-				//unitCommunicator.runPolygon((int)polygonangles.getValue(), Integer.parseInt(polygonEdgeLength.getValue().toString()));
 			}
 		});
         uparrow.addMouseListener(new MouseListener() {
@@ -529,6 +529,11 @@ public class SilverSurferGUI {
     
 	private static KeyListener listen() {
 		return new KeyListener() {
+			
+			int xForward = 0;
+			int xBackward = 0;
+			int xRight = 0;
+			int xLeft = 0;
 			@Override
 			public void keyTyped(KeyEvent e) {}
 			
@@ -537,18 +542,30 @@ public class SilverSurferGUI {
 				try {
 					if(e.getKeyCode()==KeyEvent.VK_UP) {
 						unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
+						if(unitCommunicator instanceof SimulatorCommunicator)
+							System.out.println(unitCommunicator.getConsoleTag()+ " Travelled " + xForward + " cm forward.");
+						xForward = 0;
 						uparrow.setIcon(uparrowicon);
 					}
 					else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
 						unitCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
+						if(unitCommunicator instanceof SimulatorCommunicator)
+							System.out.println(unitCommunicator.getConsoleTag()+ " Travelled " + xBackward + " cm backward.");
+						xBackward = 0;
 						downarrow.setIcon(downarrowicon);
 					}
 					else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
 						unitCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
+						if(unitCommunicator instanceof SimulatorCommunicator)
+							System.out.println(unitCommunicator.getConsoleTag()+ " Turned " + 5*xLeft + " degrees to the left.");
+						xLeft = 0;
 						leftarrow.setIcon(leftarrowicon);
 					}
 					else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
 						unitCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
+						if(unitCommunicator instanceof SimulatorCommunicator)
+							System.out.println(unitCommunicator.getConsoleTag()+ " Turned " + 5*xRight + " degrees to the right.");
+						xRight = 0;
 						rightarrow.setIcon(rightarrowicon);
 					}
 				} catch(IOException ex) {
@@ -560,18 +577,22 @@ public class SilverSurferGUI {
 			public void keyPressed(KeyEvent e) {
 				try {
 					if(e.getKeyCode()==KeyEvent.VK_UP) {
+						xForward++;
 						unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
 						uparrow.setIcon(uparrowpressedicon);
 					}
 					else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+						xBackward++;
 						unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
 						downarrow.setIcon(downarrowpressedicon);
 					}
 					else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
+						xLeft++;
 						unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
 						leftarrow.setIcon(leftarrowpressedicon);
 					}
 					else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+						xRight++;
 						unitCommunicator.sendCommandToUnit(Command.RIGHT_PRESSED);
 						rightarrow.setIcon(rightarrowpressedicon);
 					}
