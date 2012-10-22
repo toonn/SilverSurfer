@@ -45,8 +45,4 @@ public class PolygonDrawThread extends Thread {
 		this.length = length;
 	}
 
-	public static void main (String args[]) {
-        new PolygonDrawThread("Jamaica").start();
-        new PolygonDrawThread("Fiji").start();
-    }
 }
