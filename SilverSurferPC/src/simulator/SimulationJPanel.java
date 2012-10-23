@@ -13,7 +13,7 @@ public class SimulationJPanel extends JPanel {
 	private Vector<Shape> shapes = new Vector<Shape>();
 	
 	public void addCircle(float x, float y){
-		Shape circle = new Ellipse2D.Float(x-1, y+1, 5, 5);
+		Shape circle = new Ellipse2D.Float(x-1, y+1, 4, 4);
 		shapes.add(circle);
 	}
 	
