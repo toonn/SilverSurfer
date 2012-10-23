@@ -15,6 +15,9 @@ import communication.*;
 
 import simulator.*;
 
+// Nele probeert haar code door te sturen ;)
+
+
 //TODO:
 //- Meerdere keys bij manuele simulator tegelijk indrukken werkt niet
 //- Pijltjestoetsen blijven indrukken om vooruit te gaan werkt niet
