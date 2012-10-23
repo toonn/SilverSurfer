@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -358,10 +360,10 @@ public class SilverSurferGUI {
 
     private static JPanel bluetoothPanel() {
         bluetoothConnect = new JButton("Connect");
-        
         bluetoothStatus = new JLabel(bluetoothNotConnectedIcon);
         
         JPanel bluetoothPanel = new JPanel();
+        bluetoothPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Bluetooth"));
         GroupLayout bluetoothlayout = new GroupLayout(bluetoothPanel);
         bluetoothPanel.setLayout(bluetoothlayout);
         bluetoothlayout.setAutoCreateGaps(true);
@@ -394,6 +396,7 @@ public class SilverSurferGUI {
         polygondraw = new JButton("Execute polygon");
 
         JPanel polygonPanel = new JPanel();
+        polygonPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Polygon"));
         GroupLayout polygonlayout = new GroupLayout(polygonPanel);
         polygonPanel.setLayout(polygonlayout);
         polygonlayout.setAutoCreateGaps(true);
@@ -437,6 +440,7 @@ public class SilverSurferGUI {
         rightarrow.setContentAreaFilled(false);
 
         JPanel arrowPanel = new JPanel();
+        arrowPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI control"));
         GroupLayout arrowlayout = new GroupLayout(arrowPanel);
         arrowPanel.setLayout(arrowlayout);
         arrowlayout.setAutoCreateGaps(true);
@@ -461,6 +465,7 @@ public class SilverSurferGUI {
         focus = new JButton("Manual Control");
         
         JPanel focusPanel = new JPanel();
+        focusPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI/Manuel switch"));
         GroupLayout focuslayout = new GroupLayout(focusPanel);
         focusPanel.setLayout(focuslayout);
         focuslayout.setAutoCreateGaps(true);
@@ -476,9 +481,11 @@ public class SilverSurferGUI {
     private static JPanel mappingPanel() {
         simulationPanel = new SimulationJPanel();
         simulationPanel.setSize(20000, 20000);
-        
+        simulationPanel.setBackground(Color.white);
+        simulationPanel.setBorder(createBorder());
+        		
     	JPanel mappingPanel = new JPanel();
-    	mappingPanel.setBorder(BorderFactory.createEtchedBorder());
+    	mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
         GroupLayout mappingLayout = new GroupLayout(mappingPanel);
         mappingPanel.setLayout(mappingLayout);
         mappingLayout.setAutoCreateGaps(true);
@@ -495,8 +502,10 @@ public class SilverSurferGUI {
         textArea = new JTextArea(5,20);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBorder(createBorder());
 
         JPanel consolePanel = new JPanel();
+        consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output"));
         GroupLayout consolelayout = new GroupLayout(consolePanel);
         consolePanel.setLayout(consolelayout);
         consolelayout.setAutoCreateGaps(true);
@@ -612,5 +621,10 @@ public class SilverSurferGUI {
 	
     public static void main(String[] args) {
     	createAndShowGUI();
+    }
+    
+    private static javax.swing.border.Border createBorder()
+    {
+    	return BorderFactory.createEtchedBorder(1);
     }
 }
