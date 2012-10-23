@@ -1,4 +1,5 @@
 package simulator;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -13,7 +14,7 @@ public class SimulationJPanel extends JPanel {
 	private Vector<Shape> shapes = new Vector<Shape>();
 	
 	public void addCircle(float x, float y){
-		Shape circle = new Ellipse2D.Float(x-1, y+1, 4, 4);
+		Shape circle = new Ellipse2D.Float(x-1, y+1, 3, 3);
 		shapes.add(circle);
 	}
 	
@@ -23,6 +24,7 @@ public class SimulationJPanel extends JPanel {
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
 		for(Shape s : shapesx) {
+			((Graphics2D) graph).setColor(Color.red);
 			((Graphics2D) graph).fill(s);
 		}
 		repaint();
