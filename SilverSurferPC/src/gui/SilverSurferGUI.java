@@ -6,19 +6,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import commands.Command;
 import communication.*;
 
 import simulator.*;
-
-// Nele probeert haar code door te sturen ;)
-
 
 //TODO:
 //- Meerdere keys bij manuele simulator tegelijk indrukken werkt niet
@@ -33,6 +32,7 @@ import simulator.*;
 
 public class SilverSurferGUI {
 	private static JFrame frame;
+		
 	private static SimulationJPanel simulationPanel;
 	
 	private static UnitCommunicator unitCommunicator;
@@ -42,6 +42,7 @@ public class SilverSurferGUI {
 	private static JLabel bluetoothStatus;
 	private static ImageIcon bluetoothNotConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_no_connection.png");
 	private static ImageIcon bluetoothConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_connected.png");
+
 	
 	private static JSpinner polygonEdgeLength;
 	private static JSlider polygonangles;
@@ -69,7 +70,8 @@ public class SilverSurferGUI {
     private static void createAndShowGUI() {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        frame.getContentPane().setBackground(new Color(221,230,231));
+        
         JPanel bluetoothPanel = bluetoothPanel();
         JPanel polygonPanel = polygonPanel();
         JPanel arrowPanel = arrowPanel();
@@ -89,7 +91,7 @@ public class SilverSurferGUI {
                 .addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 		.addComponent(mappingPanel)
                 		.addComponent(consolePanel)));
-        frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+        frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(frameLayout.createSequentialGroup()
                 		.addComponent(bluetoothPanel)
                 		.addComponent(polygonPanel)
@@ -364,7 +366,9 @@ public class SilverSurferGUI {
         
         JPanel bluetoothPanel = new JPanel();
         bluetoothPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Bluetooth"));
+        bluetoothPanel.setOpaque(false);
         GroupLayout bluetoothlayout = new GroupLayout(bluetoothPanel);
+        
         bluetoothPanel.setLayout(bluetoothlayout);
         bluetoothlayout.setAutoCreateGaps(true);
         bluetoothlayout.setAutoCreateContainerGaps(true);
@@ -387,6 +391,7 @@ public class SilverSurferGUI {
         polygonangles.setMinorTickSpacing(1);
         polygonangles.setPaintTicks(true);
         polygonangles.setPaintLabels(true);
+        polygonangles.setOpaque(false);
 
         JLabel polygonEdgeLengthLabel = new JLabel("Edge Length (centimeters)", JLabel.CENTER);
         
@@ -397,6 +402,7 @@ public class SilverSurferGUI {
 
         JPanel polygonPanel = new JPanel();
         polygonPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Polygon"));
+        polygonPanel.setOpaque(false);
         GroupLayout polygonlayout = new GroupLayout(polygonPanel);
         polygonPanel.setLayout(polygonlayout);
         polygonlayout.setAutoCreateGaps(true);
@@ -441,6 +447,7 @@ public class SilverSurferGUI {
 
         JPanel arrowPanel = new JPanel();
         arrowPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI control"));
+        arrowPanel.setOpaque(false);
         GroupLayout arrowlayout = new GroupLayout(arrowPanel);
         arrowPanel.setLayout(arrowlayout);
         arrowlayout.setAutoCreateGaps(true);
@@ -466,6 +473,7 @@ public class SilverSurferGUI {
         
         JPanel focusPanel = new JPanel();
         focusPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI/Manuel switch"));
+        focusPanel.setOpaque(false);
         GroupLayout focuslayout = new GroupLayout(focusPanel);
         focusPanel.setLayout(focuslayout);
         focuslayout.setAutoCreateGaps(true);
@@ -486,6 +494,7 @@ public class SilverSurferGUI {
         		
     	JPanel mappingPanel = new JPanel();
     	mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
+    	mappingPanel.setOpaque(false);
         GroupLayout mappingLayout = new GroupLayout(mappingPanel);
         mappingPanel.setLayout(mappingLayout);
         mappingLayout.setAutoCreateGaps(true);
@@ -506,6 +515,7 @@ public class SilverSurferGUI {
 
         JPanel consolePanel = new JPanel();
         consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output"));
+        consolePanel.setOpaque(false);
         GroupLayout consolelayout = new GroupLayout(consolePanel);
         consolePanel.setLayout(consolelayout);
         consolelayout.setAutoCreateGaps(true);
