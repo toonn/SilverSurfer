@@ -14,12 +14,18 @@ public class CommandUnit {
 
 	public State currentState;
 	
-	private static NXTConnection pcConnection;
-	private static DataInputStream dis;
-	private static DataOutputStream dos;
+	private NXTConnection pcConnection;
+	private DataInputStream dis;
+	private DataOutputStream dos;
 	
 	public CommandUnit() {
 		currentState = new Waiting();
+		System.out.println("Waiting...");
+    	pcConnection = Bluetooth.waitForConnection();
+   		System.out.println("Connected.");
+    
+    	dis = pcConnection.openDataInputStream();
+    	dos = pcConnection.openDataOutputStream();
 	}
 	
 	public State getCurrentState() {
@@ -30,25 +36,28 @@ public class CommandUnit {
 		currentState = newState;
 	}
 	
+	public void sendStringToUnit(String info) {
+		byte[] byteArray = info.getBytes();
+		pcConnection.write(byteArray,byteArray.length);
+	}
 	
+	public void sendIntToUnit(int info) {
+		//TODO
+	}
 	public static void main(String[] args) throws IOException {
 		
 		CommandUnit CU = new CommandUnit();
-   		System.out.println("Waiting...");
-    	pcConnection = Bluetooth.waitForConnection();
-   		System.out.println("Connected.");
-    
-    	dis = pcConnection.openDataInputStream();
-    	dos = pcConnection.openDataOutputStream();
+   		
     	
     	while(true) {
     		try {
     			LCD.clear();
     			System.out.println("Waiting for input...");
-    			int input = dis.readInt();
+    			int input = CU.dis.readInt();
     			switch(input) {
     			case (Command.FORWARD_PRESSED):
     				CU.setCurrentState(CU.getCurrentState().ForwardPressed());
+    				CU.sendStringToUnit("ROBOT SAYS: Moving Forward");
     				break;
     			case (Command.FORWARD_RELEASED):
     				CU.setCurrentState(CU.getCurrentState().ForwardReleased());
@@ -93,8 +102,8 @@ public class CommandUnit {
     		}
     	}
     	
-		dis.close();
-    	dos.close();
-    	pcConnection.close();
+    	CU.dis.close();
+    	CU.dos.close();
+    	CU.pcConnection.close();
 	}
 }

@@ -12,6 +12,8 @@ public class RobotCommunicator extends UnitCommunicator{
 	private static String deviceURL = "00:16:53:0A:04:5A";
 	private static String deviceName = "Silver";
 	
+	private static InfoReceiverThread CRT;
+	
 	@Override
 	public void openUnitConnection() throws IOException {
 		connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH, NXTComm.PACKET);
@@ -19,10 +21,15 @@ public class RobotCommunicator extends UnitCommunicator{
     	dos = connection.getOutputStream();
     	if(dis == null || dos == null)
     		throw new IOException();
+    	CRT = new InfoReceiverThread();
+    	CRT.setDis(dis);
+    	CRT.setDos(dos);
+    	CRT.start();
 	}
 	
 	@Override
 	public void closeUnitConnection() throws Exception {
+		CRT.setQuit(true);
 		dis.close();
 		dos.close();
 		connection.close();
@@ -34,6 +41,10 @@ public class RobotCommunicator extends UnitCommunicator{
 		dos.flush();
 	}
 
+	private void turnCommandsListenerOn() {
+		// TODO Auto-generated method stub
+
+	}
 	@Override
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {
 		int angle = (int)Math.round(ANGLE_COEF/amtOfAngles);
