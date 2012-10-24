@@ -17,17 +17,6 @@ import communication.*;
 
 import simulator.*;
 
-//TODO:
-//- Meerdere keys bij manuele simulator tegelijk indrukken werkt niet
-//- Pijltjestoetsen blijven indrukken om vooruit te gaan werkt niet
-//- Beter allign aan linkerkant nodig
-//- Manual control icon?
-//- Simulatieborder beter maken (niet volledig correct atm)
-//- Dikkere simulatielijn + pijl voor richting (ev. vak met orientatie?)
-//- Afstand afgelegd / hoek gedraait bij de pijltjestoetsen zetten?
-//- Snelheid aanpassen
-//- Simulator aan robot linken.
-
 public class SilverSurferGUI {
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
@@ -338,9 +327,7 @@ public class SilverSurferGUI {
 					onManual = false;
 					System.out.println("[GUI] Switched to GUI control.");
 				}
-				System.out.println(unitCommunicator.getSpeed());
 				unitCommunicator.setSpeed(speedvalues.getValue());
-				System.out.println(unitCommunicator.getSpeed());
 			}
 		});
         focus.addMouseListener(new MouseListener() {
