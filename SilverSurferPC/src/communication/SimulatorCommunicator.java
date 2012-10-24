@@ -25,6 +25,16 @@ public class SimulatorCommunicator extends UnitCommunicator{
 	}
 	
 	@Override
+	public int getSpeed() {
+		return sim.getSpeed();
+	}
+	
+	@Override
+	public void setSpeed(int speed) {
+		sim.setSpeed(speed);
+	}
+	
+	@Override
 	public void sendCommandToUnit(int command) throws IOException {
 		setLastReceivedCommand(command);
 

@@ -1,11 +1,13 @@
 package statemachine;
+import communication.CommandUnit;
+
 import lejos.nxt.*;
 
 public class DrivingBackward extends State {
 
 	public DrivingBackward() {
-		Motor.A.setSpeed(NORMAL_SPEED);
-		Motor.B.setSpeed(NORMAL_SPEED);
+		Motor.A.setSpeed(CommandUnit.NORMAL_SPEED);
+		Motor.B.setSpeed(CommandUnit.NORMAL_SPEED);
 		Motor.A.backward();
 		Motor.B.backward();
 	}
