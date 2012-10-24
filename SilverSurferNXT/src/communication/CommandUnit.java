@@ -46,8 +46,6 @@ public class CommandUnit {
 		//TODO
 	}
 	
-
-	
 	public int getSpeed(int speed) {
 			if(NORMAL_SPEED == 360)
 				return 4;
@@ -60,26 +58,14 @@ public class CommandUnit {
 	}
 	
 	public void setSpeed(int speed) {
-		if(speed == 1) {
-			System.out.println(NORMAL_SPEED);
+		if(speed == 1)
 			NORMAL_SPEED = 90;
-			System.out.println(NORMAL_SPEED);
-		}
-		else if(speed == 2){
-			System.out.println(NORMAL_SPEED);
+		else if(speed == 2)
 			NORMAL_SPEED = 180;
-			System.out.println(NORMAL_SPEED);
-		}
-		else if(speed == 3) {
-			System.out.println(NORMAL_SPEED);
+		else if(speed == 3)
 			NORMAL_SPEED = 270;
-			System.out.println(NORMAL_SPEED);
-		}
-		else {
-			System.out.println(NORMAL_SPEED);
+		else
 			NORMAL_SPEED = 360;
-			System.out.println(NORMAL_SPEED);
-		}
 	}
 	
 	public static void main(String[] args) throws IOException {

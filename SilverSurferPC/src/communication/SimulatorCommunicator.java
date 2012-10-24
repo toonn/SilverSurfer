@@ -8,7 +8,9 @@ import simulator.SimulationPilot;
 public class SimulatorCommunicator extends UnitCommunicator{
 
 	private SimulationPilot sim;
-	private int lastReceivedCommand;
+	private int lastForwardBackwardCommand = 1;
+	private int lastRightLeftCommand = 5;
+	//private int lastReceivedCommand;
 	
 	@Override 
 	public void openUnitConnection(){
@@ -36,9 +38,81 @@ public class SimulatorCommunicator extends UnitCommunicator{
 	
 	@Override
 	public void sendCommandToUnit(int command) throws IOException {
-		setLastReceivedCommand(command);
-
-		switch(command){
+		if(command == 0||command == 1||command == 2||command == 3){
+			lastForwardBackwardCommand=command;
+		}
+		else if(command == 4||command == 5||command == 6||command == 7){
+			lastRightLeftCommand=command;
+		}
+		
+        switch(lastForwardBackwardCommand) { 			
+        	case 0: 			
+        		if(lastRightLeftCommand==4){ 			
+        			sim.travel(1); 			
+        			sim.rotate(359); 			
+        		} 			
+        		else if(lastRightLeftCommand==5){ 			
+        			sim.travel(1); 			
+        		} 			
+        		else if(lastRightLeftCommand==6){ 			
+        			sim.travel(1); 			
+        			sim.rotate(1); 			
+        		} 			
+        		else if(lastRightLeftCommand==7){ 			
+        			sim.travel(1); 			
+        		} 			
+        		break; 			
+        	case 1: 			
+        		if(lastRightLeftCommand==4){ 			
+        			sim.rotate(359);} 			
+        		else if(lastRightLeftCommand==5){ 			
+        			// do nothing 			
+        		} 			
+        		else if(lastRightLeftCommand==6){ 			
+        			sim.rotate(1); 			
+        		} 			
+        		else if(lastRightLeftCommand==7){ 			
+        			//do nothing 			
+        		} 			
+        		break; 			
+        	case 2: 			
+        		if(lastRightLeftCommand==4){ 			
+        			sim.rotate(180); 			
+        			sim.travel(1); 			
+        			sim.rotate(180); 			
+        			sim.rotate(1);} 			
+        		else if(lastRightLeftCommand==5){ 			
+        			sim.rotate(180); 			
+        			sim.travel(1); 			
+        			sim.rotate(180); 			
+        		} 			
+        		else if(lastRightLeftCommand==6){ 			
+        			sim.rotate(180); 			
+        			sim.travel(1); 			
+        			sim.rotate(180); 			
+        			sim.rotate(359); 			
+        		} 			
+        		else if(lastRightLeftCommand==7){ 			
+        			sim.rotate(180); 			
+        			sim.travel(1); 			
+        			sim.rotate(180); 			
+        		} 			
+        		break; 			
+        	case 3: 			
+        		if(lastRightLeftCommand==4){ 			
+        			sim.rotate(359);} 			
+        		else if(lastRightLeftCommand==5){ 			
+        			// do nothing 			
+        		} 			
+        		else if(lastRightLeftCommand==6){ 			
+        			sim.rotate(1); 			
+        		} 			
+        		else if(lastRightLeftCommand==7){ 			
+        			//do nothing 			
+        		} 			
+        		break;
+        }
+		/*switch(command){
 		
 		case 0:
 			sim.travel(1);
@@ -74,23 +148,23 @@ public class SimulatorCommunicator extends UnitCommunicator{
 				sim.rotate((float) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
 			}
 			return;
-		}
+		}*/
 	}
 
-	public boolean isLastReceivedCommandUneven() {
-		if(lastReceivedCommand%2==1) {
-			return true;
-		}
-		return false;
-	}
+	//public boolean isLastReceivedCommandUneven() {
+	//	if(lastReceivedCommand%2==1) {
+	//		return true;
+	//	}
+	//	return false;
+	//}
 	
 	public SimulationPilot getSim() {
 		return sim;
 	}
 
-	public void setLastReceivedCommand(int lastReceivedCommand) {
-		this.lastReceivedCommand = lastReceivedCommand;
-	}
+	//public void setLastReceivedCommand(int lastReceivedCommand) {
+	//	this.lastReceivedCommand = lastReceivedCommand;
+	//}
 	
 	@Override
 	public String getConsoleTag() {
