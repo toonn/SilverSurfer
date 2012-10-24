@@ -1,10 +1,12 @@
 package statemachine;
+import communication.CommandUnit;
+
 import lejos.nxt.*;
 
 public class DrivingForwardRight extends State {
 
 	public DrivingForwardRight() {
-		Motor.B.setSpeed(HIGH_SPEED);
+		Motor.B.setSpeed(CommandUnit.NORMAL_SPEED*2);
 		Motor.A.stop();
 		Motor.B.forward();
 	}

@@ -6,12 +6,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import commands.Command;
@@ -32,7 +30,6 @@ import simulator.*;
 
 public class SilverSurferGUI {
 	private static JFrame frame;
-		
 	private static SimulationJPanel simulationPanel;
 	
 	private static UnitCommunicator unitCommunicator;
@@ -42,7 +39,6 @@ public class SilverSurferGUI {
 	private static JLabel bluetoothStatus;
 	private static ImageIcon bluetoothNotConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_no_connection.png");
 	private static ImageIcon bluetoothConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_connected.png");
-
 	
 	private static JSpinner polygonEdgeLength;
 	private static JSlider polygonangles;
@@ -61,6 +57,9 @@ public class SilverSurferGUI {
 	private static ImageIcon rightarrowicon = new ImageIcon("resources/round_grey_arrows/arrow-right.png");
 	private static ImageIcon rightarrowpressedicon = new ImageIcon("resources/round_grey_arrows/arrow-right-pressed.png");
 	
+	private static JSlider speedvalues;
+	private static JButton speedbutton;
+	
 	private static JButton focus;
 	
 	private static JTextArea textArea;
@@ -71,10 +70,11 @@ public class SilverSurferGUI {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221,230,231));
-        
+
         JPanel bluetoothPanel = bluetoothPanel();
         JPanel polygonPanel = polygonPanel();
         JPanel arrowPanel = arrowPanel();
+        JPanel speedPanel = speedPanel();
         JPanel focusPanel = focusPanel();
         JPanel mappingPanel = mappingPanel();
         JPanel consolePanel = consolePanel();
@@ -87,20 +87,22 @@ public class SilverSurferGUI {
                 		.addComponent(bluetoothPanel)
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
+                		.addComponent(speedPanel)
                 		.addComponent(focusPanel))
                 .addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 		.addComponent(mappingPanel)
                 		.addComponent(consolePanel)));
-        frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addGroup(frameLayout.createSequentialGroup()
                 		.addComponent(bluetoothPanel)
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
+                		.addComponent(speedPanel)
                 		.addComponent(focusPanel))
                 .addGroup(frameLayout.createSequentialGroup()
                 		.addComponent(mappingPanel)
                 		.addComponent(consolePanel)));
-        frameLayout.linkSize(SwingConstants.HORIZONTAL, bluetoothPanel, polygonPanel, arrowPanel, focusPanel);
+        frameLayout.linkSize(SwingConstants.HORIZONTAL, bluetoothPanel, polygonPanel, arrowPanel, speedPanel, focusPanel);
         frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
 
         bluetoothConnect.addMouseListener(new MouseListener() {
@@ -317,6 +319,30 @@ public class SilverSurferGUI {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
+        speedbutton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(onManual) {
+					onManual = false;
+					System.out.println("[GUI] Switched to GUI control.");
+				}
+				System.out.println(unitCommunicator.getSpeed());
+				unitCommunicator.setSpeed(speedvalues.getValue());
+				System.out.println(unitCommunicator.getSpeed());
+			}
+		});
         focus.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {}
@@ -368,7 +394,6 @@ public class SilverSurferGUI {
         bluetoothPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Bluetooth"));
         bluetoothPanel.setOpaque(false);
         GroupLayout bluetoothlayout = new GroupLayout(bluetoothPanel);
-        
         bluetoothPanel.setLayout(bluetoothlayout);
         bluetoothlayout.setAutoCreateGaps(true);
         bluetoothlayout.setAutoCreateContainerGaps(true);
@@ -415,7 +440,6 @@ public class SilverSurferGUI {
                 		.addComponent(polygonEdgeLengthLabel)
                 		.addComponent(polygonEdgeLength))
                 .addComponent(polygondraw));
-
         polygonlayout.setVerticalGroup(polygonlayout.createSequentialGroup()
                 .addGroup(polygonlayout.createSequentialGroup()
                 		.addComponent(polygonAnglesLabel)
@@ -466,6 +490,38 @@ public class SilverSurferGUI {
                 .addComponent(rightarrow));
 
         return arrowPanel;
+    }
+    
+    private static JPanel speedPanel() {
+    	JLabel speedLabel = new JLabel("Speed Level", JLabel.CENTER);
+        
+        speedvalues = new JSlider(JSlider.HORIZONTAL, 1, 4, 2);
+        speedvalues.setSnapToTicks(true);
+        speedvalues.setMajorTickSpacing(1);
+        speedvalues.setMinorTickSpacing(1);
+        speedvalues.setPaintTicks(true);
+        speedvalues.setPaintLabels(true);
+        speedvalues.setOpaque(false);
+        
+        speedbutton = new JButton("Change speed");
+        
+        JPanel speedPanel = new JPanel();
+        speedPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Speed"));
+        speedPanel.setOpaque(false);
+        GroupLayout arrowlayout = new GroupLayout(speedPanel);
+        speedPanel.setLayout(arrowlayout);
+        arrowlayout.setAutoCreateGaps(true);
+        arrowlayout.setAutoCreateContainerGaps(true);
+        arrowlayout.setHorizontalGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+        		.addComponent(speedLabel)
+        		.addComponent(speedvalues)
+        		.addComponent(speedbutton));
+        arrowlayout.setVerticalGroup(arrowlayout.createSequentialGroup()
+        		.addComponent(speedLabel)
+        		.addComponent(speedvalues)
+        		.addComponent(speedbutton));
+        
+        return speedPanel;
     }
 
     private static JPanel focusPanel() {
@@ -633,8 +689,7 @@ public class SilverSurferGUI {
     	createAndShowGUI();
     }
     
-    private static javax.swing.border.Border createBorder()
-    {
+    private static javax.swing.border.Border createBorder() {
     	return BorderFactory.createEtchedBorder(1);
     }
 }

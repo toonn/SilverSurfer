@@ -13,6 +13,7 @@ import lejos.nxt.comm.*;
 public class CommandUnit {
 
 	public State currentState;
+	public static int NORMAL_SPEED = 180;
 	
 	private NXTConnection pcConnection;
 	private DataInputStream dis;
@@ -44,6 +45,43 @@ public class CommandUnit {
 	public void sendIntToUnit(int info) {
 		//TODO
 	}
+	
+
+	
+	public int getSpeed(int speed) {
+			if(NORMAL_SPEED == 360)
+				return 4;
+			else if(NORMAL_SPEED == 270)
+				return 3;
+			else if(NORMAL_SPEED == 180)
+				return 2;
+			else
+				return 1;
+	}
+	
+	public void setSpeed(int speed) {
+		if(speed == 1) {
+			System.out.println(NORMAL_SPEED);
+			NORMAL_SPEED = 90;
+			System.out.println(NORMAL_SPEED);
+		}
+		else if(speed == 2){
+			System.out.println(NORMAL_SPEED);
+			NORMAL_SPEED = 180;
+			System.out.println(NORMAL_SPEED);
+		}
+		else if(speed == 3) {
+			System.out.println(NORMAL_SPEED);
+			NORMAL_SPEED = 270;
+			System.out.println(NORMAL_SPEED);
+		}
+		else {
+			System.out.println(NORMAL_SPEED);
+			NORMAL_SPEED = 360;
+			System.out.println(NORMAL_SPEED);
+		}
+	}
+	
 	public static void main(String[] args) throws IOException {
 		
 		CommandUnit CU = new CommandUnit();
@@ -80,14 +118,26 @@ public class CommandUnit {
     			case (Command.RIGHT_RELEASED):
     				CU.setCurrentState(CU.getCurrentState().RightReleased());
     				break;
+    			case (Command.SLOW_SPEED):
+    				CU.setSpeed(1);
+    				break;
+    			case (Command.NORMAL_SPEED):
+    				CU.setSpeed(2);
+    				break;
+    			case (Command.FAST_SPEED):
+    				CU.setSpeed(3);
+    				break;
+    			case (Command.VERY_FAST_SPEED):
+    				CU.setSpeed(4);
+    				break;
     			default:
-    				if(input%100==8){
+    				if(input%10==8){
     					Automatic auto = new Automatic();
     	    			CU.setCurrentState(auto);
     	    			auto.moveForward((int) (input-Command.AUTOMATIC_MOVE_FORWARD)/100);
     	    			CU.setCurrentState(new Waiting());
     				}
-    				else if(input%100==9){
+    				else if(input%10==9){
     					Automatic auto = new Automatic();
     	    			CU.setCurrentState(auto);
     	    			auto.turnAngle((input-Command.AUTOMATIC_TURN_ANGLE)/100);

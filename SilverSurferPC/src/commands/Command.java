@@ -29,6 +29,6 @@ public class Command {
 			return "RIGHT_PRESSED";
 		else if (c == 7)
 			return "RIGHT_RELEASED";
-		return "BITCHASNIGGER";
+		return " ";
 	}
 }

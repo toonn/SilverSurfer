@@ -7,6 +7,7 @@ public class SimulationPilot {
 	private float x = 200;
 	private float y = 200;
 	private float alpha;
+	private int speed = 30;
 	private SilverSurferGUI gui = new SilverSurferGUI();
 	
 	public float getX() {
@@ -25,13 +26,35 @@ public class SimulationPilot {
 		this.alpha = alpha;
 	}
 	
+	public int getSpeed() {
+		if(speed == 10)
+			return 4;
+		else if(speed == 20)
+			return 3;
+		else if(speed == 30)
+			return 2;
+		else
+			return 1;
+	}
+	
+	public void setSpeed(int speed) {
+		if(speed == 1)
+			this.speed = 40;
+		else if(speed == 2)
+			this.speed = 30;
+		else if(speed == 3)
+			this.speed = 20;
+		else
+			this.speed = 10;
+	}
+	
 	public void travel(float distance) {
 		for (int i = 1; i <= distance; i++) {
 			float xOld = (float) (x + i* Math.cos(Math.toRadians(alpha)));
 			float yOld = (float) (y + i* Math.sin(Math.toRadians(alpha)));
 			gui.getSimulationPanel().setRobotLocation(xOld, yOld);
 			try {
-				Thread.sleep(10);
+				Thread.sleep(speed);
 			} catch (InterruptedException e) {
 
 			}
