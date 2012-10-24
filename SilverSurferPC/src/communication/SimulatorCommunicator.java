@@ -80,7 +80,8 @@ public class SimulatorCommunicator extends UnitCommunicator{
         			sim.rotate(180); 			
         			sim.travel(1); 			
         			sim.rotate(180); 			
-        			sim.rotate(1);} 			
+        			sim.rotate(1);
+        		} 			
         		else if(lastRightLeftCommand==5){ 			
         			sim.rotate(180); 			
         			sim.travel(1); 			

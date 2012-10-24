@@ -172,9 +172,13 @@ public class SilverSurferGUI {
 			}
 		});
         uparrow.addMouseListener(new MouseListener() {
+			MouseClickThread MCTU;
+        	
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
+					MCTU.setRide(false);
+					MCTU.interrupt();
 					unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
 					uparrow.setIcon(uparrowicon);
 					
@@ -185,15 +189,15 @@ public class SilverSurferGUI {
 			
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				try {
-					unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
-					uparrow.setIcon(uparrowpressedicon);
-					if(onManual) {
-						onManual = false;
-						System.out.println("[GUI] Switched to GUI control.");
-					}
-				} catch (IOException e) {
-					
+				MCTU = new MouseClickThread("MCTU");
+				MCTU.setUnitCommunicator(unitCommunicator);
+				MCTU.setCommand(Command.FORWARD_PRESSED);
+				MCTU.setSpeed(unitCommunicator.getSpeed());
+				MCTU.start();
+				uparrow.setIcon(uparrowpressedicon);
+				if(onManual) {
+					onManual = false;
+					System.out.println("[GUI] Switched to GUI control.");
 				}
 			}
 			
@@ -207,9 +211,12 @@ public class SilverSurferGUI {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
         downarrow.addMouseListener(new MouseListener() {
+			MouseClickThread MCTU;
+        	
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
+					MCTU.setRide(false);
 					unitCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
 					downarrow.setIcon(downarrowicon);
 				} catch (IOException e) {
@@ -219,16 +226,16 @@ public class SilverSurferGUI {
 			
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				try {
-					unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
+				MCTU = new MouseClickThread("MCTU");
+				MCTU.setUnitCommunicator(unitCommunicator);
+				MCTU.setCommand(Command.BACKWARD_PRESSED);
+				MCTU.setSpeed(unitCommunicator.getSpeed());
+				MCTU.start();
 					downarrow.setIcon(downarrowpressedicon);
 					if(onManual) {
 						onManual = false;
 						System.out.println("[GUI] Switched to GUI control.");
 					}
-				} catch (IOException e) {
-					
-				}
 			}
 			
 			@Override
@@ -241,9 +248,12 @@ public class SilverSurferGUI {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
         leftarrow.addMouseListener(new MouseListener() {
+			MouseClickThread MCTU;
+			
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
+					MCTU.setRide(false);
 					unitCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
 					leftarrow.setIcon(leftarrowicon);
 				} catch (IOException e) {
@@ -253,15 +263,15 @@ public class SilverSurferGUI {
 			
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				try {
-					unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
-					leftarrow.setIcon(leftarrowpressedicon);
-					if(onManual) {
-						onManual = false;
-						System.out.println("[GUI] Switched to GUI control.");
-					}
-				} catch (IOException e) {
-					
+				MCTU = new MouseClickThread("MCTU");
+				MCTU.setUnitCommunicator(unitCommunicator);
+				MCTU.setCommand(Command.LEFT_PRESSED);
+				MCTU.setSpeed(unitCommunicator.getSpeed());
+				MCTU.start();
+				leftarrow.setIcon(leftarrowpressedicon);
+				if(onManual) {
+					onManual = false;
+					System.out.println("[GUI] Switched to GUI control.");
 				}
 			}
 			
@@ -275,9 +285,12 @@ public class SilverSurferGUI {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
         rightarrow.addMouseListener(new MouseListener() {
+			MouseClickThread MCTU;
+			
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
+					MCTU.setRide(false);
 					unitCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
 					rightarrow.setIcon(rightarrowicon);
 				} catch (IOException e) {
@@ -287,15 +300,15 @@ public class SilverSurferGUI {
 			
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				try {
-					unitCommunicator.sendCommandToUnit(Command.RIGHT_PRESSED);
-					rightarrow.setIcon(rightarrowpressedicon);
-					if(onManual) {
-						onManual = false;
-						System.out.println("[GUI] Switched to GUI control.");
-					}
-				} catch (IOException e) {
-					
+				MCTU = new MouseClickThread("MCTU");
+				MCTU.setUnitCommunicator(unitCommunicator);
+				MCTU.setCommand(Command.RIGHT_PRESSED);
+				MCTU.setSpeed(unitCommunicator.getSpeed());
+				MCTU.start();
+				rightarrow.setIcon(rightarrowpressedicon);
+				if(onManual) {
+					onManual = false;
+					System.out.println("[GUI] Switched to GUI control.");
 				}
 			}
 			
@@ -606,6 +619,7 @@ public class SilverSurferGUI {
 			public void keyReleased(KeyEvent e) {
 				try {
 					if(e.getKeyCode()==KeyEvent.VK_UP) {
+						System.out.println(Command.FORWARD_RELEASED);
 						unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
 						if(unitCommunicator instanceof SimulatorCommunicator)
 							System.out.println(unitCommunicator.getConsoleTag()+ " Travelled " + xForward + " cm forward.");
@@ -643,6 +657,7 @@ public class SilverSurferGUI {
 				try {
 					if(e.getKeyCode()==KeyEvent.VK_UP) {
 						xForward++;
+						System.out.println(Command.FORWARD_PRESSED);
 						unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
 						uparrow.setIcon(uparrowpressedicon);
 					}
