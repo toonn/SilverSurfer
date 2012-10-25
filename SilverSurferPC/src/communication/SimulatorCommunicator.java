@@ -44,6 +44,15 @@ public class SimulatorCommunicator extends UnitCommunicator{
 		else if(command == 4||command == 5||command == 6||command == 7){
 			lastRightLeftCommand=command;
 		}
+		else{
+			if(command%10==8){
+				sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
+			}
+			if(command%10==9){
+				sim.rotate((float) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
+			}
+			return;
+		}
 		
         switch(lastForwardBackwardCommand) { 			
         	case 0: 			

@@ -525,10 +525,10 @@ public class SilverSurferGUI {
     }
 
     private static JPanel focusPanel() {
-        focus = new JButton("Manual Control");
+        focus = new JButton("Key Control");
         
         JPanel focusPanel = new JPanel();
-        focusPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI/Manuel switch"));
+        focusPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI/Key control switch"));
         focusPanel.setOpaque(false);
         GroupLayout focuslayout = new GroupLayout(focusPanel);
         focusPanel.setLayout(focuslayout);
