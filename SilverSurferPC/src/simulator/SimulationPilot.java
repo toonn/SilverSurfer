@@ -8,8 +8,8 @@ public class SimulationPilot {
 		gui.getSimulationPanel().setRobotLocation(x, y);
 	}
 	
-	private float x = 200;
-	private float y = 200;
+	private float x = 220;
+	private float y = 220;
 	private float alpha;
 	private int speed = 30;
 	private SilverSurferGUI gui = new SilverSurferGUI();
