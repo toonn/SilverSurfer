@@ -163,7 +163,7 @@ public class SilverSurferGUI {
 	private static JPanel polygonPanel() {
 		JLabel polygonAnglesLabel = new JLabel("Angles", JLabel.CENTER);
 
-		polygonangles = new JSlider(JSlider.HORIZONTAL, 3, 30, 5);
+		polygonangles = new JSlider(JSlider.HORIZONTAL, 1, 30, 5);
 		polygonangles.setSnapToTicks(true);
 		polygonangles.setMajorTickSpacing(3);
 		polygonangles.setMinorTickSpacing(1);
