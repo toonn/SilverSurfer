@@ -45,6 +45,8 @@ public class SilverSurferGUI {
 	
 	private static JTextArea textArea;
 	
+	private static JPanel mappingPanel;
+	
 	private static boolean onManual = false;
 	
 	private static JButton clearButton;
@@ -55,7 +57,7 @@ public class SilverSurferGUI {
 	
 	
 			
-    private static void createAndShowGUI() {
+    private  void createAndShowGUI() {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221,230,231));
@@ -330,13 +332,15 @@ public class SilverSurferGUI {
            return clearPanel;
     }
     
-    private static JPanel mappingPanel() {
-        simulationPanel = new SimulationJPanel();
+    private JPanel mappingPanel() {
+       
+    	simulationPanel = new SimulationJPanel();
+        simulationPanel.setSSG(this);
         simulationPanel.setSize(20000, 20000);
         simulationPanel.setBackground(Color.WHITE);
         simulationPanel.setBorder(createBorder());
         		
-    	JPanel mappingPanel = new JPanel();
+    	mappingPanel = new JPanel();
     	mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
     	mappingPanel.setOpaque(false);
     	
@@ -351,6 +355,11 @@ public class SilverSurferGUI {
         
         return mappingPanel;
     }
+    
+    public void updateCoordinates(String s) {
+    	mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
+
+	}
 
     private static JPanel consolePanel() {
         textArea = new JTextArea(5,20);
@@ -870,6 +879,7 @@ public class SilverSurferGUI {
     }
 	
     public static void main(String[] args) {
-    	createAndShowGUI();
+    	SilverSurferGUI SSG = new SilverSurferGUI();
+    	SSG.createAndShowGUI();
     }
 }

@@ -6,6 +6,7 @@ public class SimulationPilot {
 	
 	public SimulationPilot(){
 		gui.getSimulationPanel().setRobotLocation(x, y);
+		gui.getSimulationPanel().setSimulatorPilot(this);
 	}
 	
 	private float x = 220;
