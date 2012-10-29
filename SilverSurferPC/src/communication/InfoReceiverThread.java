@@ -7,6 +7,11 @@ public class InfoReceiverThread extends Thread{
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
 	private boolean quit = false;
+	private StatusInfoBuffer infoBuffer;
+	
+	public InfoReceiverThread(StatusInfoBuffer info){
+		this.infoBuffer = info;
+	}
 	
 	public DataInputStream getDis() {
 		return dis;
@@ -35,12 +40,14 @@ public class InfoReceiverThread extends Thread{
 			try {
 				dis.read(b);
 				String a = new String(b);
-				if(a.startsWith("LIG"))
-					System.out.println("dit is lichtinfo");
-				else if(a.startsWith("DRU"))
-					System.out.println("dit is drukinfo");
-				else if(a.startsWith("RES"))
-					System.out.println("dit is restinfo");
+				if(a.startsWith("[LS]"))
+					System.out.println();
+				else if(a.startsWith("[US]"))
+					System.out.println("ultrasonic");
+				else if(a.startsWith("[PS1]"))
+					System.out.println("push");
+				else if(a.startsWith("[PS2]"))
+					System.out.println("ps2");
 			} catch (IOException e) {
 
 			}

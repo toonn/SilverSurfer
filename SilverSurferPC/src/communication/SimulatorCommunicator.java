@@ -9,6 +9,10 @@ import simulator.SimulationPilot;
 public class SimulatorCommunicator extends UnitCommunicator {
 
 	
+	public SimulatorCommunicator(StatusInfoBuffer status) {
+		super(status);
+	}
+
 	private SimulationPilot sim;
 	private int previousCommandForwardOrBackWard=0;
 	
