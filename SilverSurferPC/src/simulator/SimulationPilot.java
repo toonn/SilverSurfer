@@ -3,6 +3,10 @@ package simulator;
 import gui.SilverSurferGUI;
 
 public class SimulationPilot {
+	
+	public SimulationPilot(){
+		gui.getSimulationPanel().setRobotLocation(x, y);
+	}
 
 	private float x = 200;
 	private float y = 200;
@@ -49,18 +53,34 @@ public class SimulationPilot {
 	}
 	
 	public void travel(float distance) {
-		for (int i = 1; i <= distance; i++) {
-			float xOld = (float) (x + i* Math.cos(Math.toRadians(alpha)));
-			float yOld = (float) (y + i* Math.sin(Math.toRadians(alpha)));
-			gui.getSimulationPanel().setRobotLocation(xOld, yOld);
-			try {
-				Thread.sleep(speed);
-			} catch (InterruptedException e) {
-
+		if(distance >= 0) {
+			for (int i = 1; i <= distance; i++) {
+				float xOld = (float) (x + i* Math.cos(Math.toRadians(alpha)));
+				float yOld = (float) (y + i* Math.sin(Math.toRadians(alpha)));
+				gui.getSimulationPanel().setRobotLocation(xOld, yOld);
+				try {
+					Thread.sleep(speed);
+				} catch (InterruptedException e) {
+	
+				}
 			}
+			this.x = (float) (this.x + distance*Math.cos(Math.toRadians(alpha)));
+			this.y = (float) (this.y + distance*Math.sin(Math.toRadians(alpha)));
 		}
-		this.x = (float) (this.x + distance*Math.cos(Math.toRadians(alpha)));
-		this.y = (float) (this.y + distance*Math.sin(Math.toRadians(alpha)));
+		else if(distance <= 0) {
+			for (int i = -1; i >= distance; i--) {
+				float xOld = (float) (x + i* Math.cos(Math.toRadians(alpha)));
+				float yOld = (float) (y + i* Math.sin(Math.toRadians(alpha)));
+				gui.getSimulationPanel().setRobotLocation(xOld, yOld);
+				try {
+					Thread.sleep(speed);
+				} catch (InterruptedException e) {
+	
+				}
+			}
+			this.x = (float) (this.x + distance*Math.cos(Math.toRadians(alpha)));
+			this.y = (float) (this.y + distance*Math.sin(Math.toRadians(alpha)));
+		}
 	}
 		
 		
