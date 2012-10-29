@@ -1,46 +1,49 @@
 package communication;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class InfoReceiverThread extends Thread{
 	
-	private static InputStream dis;
-	private static OutputStream dos;
+	private static DataInputStream dis;
+	private static DataOutputStream dos;
 	private boolean quit = false;
 	
-	public static void setDis(InputStream dis) {
-		InfoReceiverThread.dis = dis;
-	}
-	public static InputStream getDis() {
+	public DataInputStream getDis() {
 		return dis;
 	}
-	public static void setDos(OutputStream dos) {
-		InfoReceiverThread.dos = dos;
+	
+	public void setDis(DataInputStream dis) {
+		InfoReceiverThread.dis = dis;
 	}
-	public static OutputStream getDos() {
+	
+	public DataOutputStream getDos() {
 		return dos;
+	}
+	
+	public void setDos(DataOutputStream dos) {
+		InfoReceiverThread.dos = dos;
 	}
 	
 	public void setQuit(boolean quit) {
 		this.quit = quit;
 	}
-
 	
 	public void run() {
 		byte[] b = new byte[500];
 
-		while(!quit){
+		while(!quit) {
 			try {
 				dis.read(b);
-				System.out.println(new String(b));
-				System.out.println("testCommandReceiverThread");
+				String a = new String(b);
+				if(a.startsWith("LIG"))
+					System.out.println("dit is lichtinfo");
+				else if(a.startsWith("DRU"))
+					System.out.println("dit is drukinfo");
+				else if(a.startsWith("RES"))
+					System.out.println("dit is restinfo");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
 			}
 		}
-
 	}
 }
