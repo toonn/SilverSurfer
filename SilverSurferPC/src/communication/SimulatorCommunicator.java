@@ -72,4 +72,8 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		else
 		this.previousCommandForwardOrBackWard = previousCommand;
 	}
+	
+	public void clear(){
+		sim.clear();
+	}
 }

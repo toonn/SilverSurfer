@@ -47,6 +47,10 @@ public class SilverSurferGUI {
 	
 	private static boolean onManual = false;
 	
+	private static JButton clearButton;
+	
+	
+			
     private static void createAndShowGUI() {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,6 +63,7 @@ public class SilverSurferGUI {
         JPanel focusPanel = focusPanel();
         JPanel mappingPanel = mappingPanel();
         JPanel consolePanel = consolePanel();
+        JPanel clearPanel = clearPanel();
         redirectSystemStreams();
 
         GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
@@ -69,7 +74,8 @@ public class SilverSurferGUI {
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
                 		.addComponent(speedPanel)
-                		.addComponent(focusPanel))
+                		.addComponent(focusPanel)
+                		.addComponent(clearPanel))
                 .addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 		.addComponent(mappingPanel)
                 		.addComponent(consolePanel)));
@@ -79,7 +85,8 @@ public class SilverSurferGUI {
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
                 		.addComponent(speedPanel)
-                		.addComponent(focusPanel))
+                		.addComponent(focusPanel)
+                		.addComponent(clearPanel))
                 .addGroup(frameLayout.createSequentialGroup()
                 		.addComponent(mappingPanel)
                 		.addComponent(consolePanel)));
@@ -268,6 +275,25 @@ public class SilverSurferGUI {
         		.addComponent(focus));
         
         return focusPanel;
+    }
+    
+    private static JPanel clearPanel(){
+    	clearButton = new JButton("clear screen");
+    	
+    		JPanel clearPanel = new JPanel();
+    	   clearPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"clear screen"));
+           clearPanel.setOpaque(false);
+           
+           GroupLayout clearlayout = new GroupLayout(clearPanel);
+           clearPanel.setLayout(clearlayout);
+           clearlayout.setAutoCreateGaps(true);
+           clearlayout.setAutoCreateContainerGaps(true);
+           clearlayout.setHorizontalGroup(clearlayout.createSequentialGroup()
+           		.addComponent(clearButton));
+           clearlayout.setVerticalGroup(clearlayout.createSequentialGroup()
+           		.addComponent(clearButton));
+           
+           return clearPanel;
     }
     
     private static JPanel mappingPanel() {
@@ -597,6 +623,27 @@ public class SilverSurferGUI {
 				onManual = true;
 				System.out.println("[GUI] Switched to manual control.");
 				simulationPanel.requestFocusInWindow();
+			}
+		});
+        clearButton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				onManual = true;
+				System.out.println("[GUI] Screen cleared.");
+				simulationPanel.clear();
+				
 			}
 		});
         simulationPanel.addKeyListener(new KeyListener() {
