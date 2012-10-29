@@ -40,7 +40,7 @@ public class SimulationPilot {
 		else
 			return 1;
 	}
-	
+
 	public void setSpeed(int speed) {
 		if(speed == 1)
 			this.speed = 40;
