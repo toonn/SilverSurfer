@@ -2,6 +2,7 @@ package simulator;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RectangularShape;
@@ -29,10 +30,27 @@ public class SimulationJPanel extends JPanel {
 		super.paintComponent(graph);
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
-		for(Shape s : shapesx) {
-			((Graphics2D) graph).setColor(Color.red);
+		((Graphics2D) graph).setColor(Color.red);
+
+		for(Shape s : shapesx)
 			((Graphics2D) graph).fill(s);
-		}
+		
+		Graphics2D g2 = (Graphics2D) graph;
+		
+
+		
+		int count = 50;
+		int size = 40;
+		
+		((Graphics2D) graph).setColor(Color.GRAY);
+		for( int i = 0; i < count; i ++)
+			for( int j = 0; j < count; j++)
+				{
+					Rectangle grid = new Rectangle( i * size,j * size, size, size);	
+					g2.draw(grid);
+				}
+		((Graphics2D) graph).setColor(Color.red);
+
 		repaint();
 	}
 	
