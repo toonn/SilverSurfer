@@ -1,9 +1,6 @@
 package gui;
 
-import java.io.IOException;
-
-import commands.Command;
-import communication.UnitCommunicator;
+import communication.*;
 
 public class MouseClickThread extends Thread {
 	
@@ -15,6 +12,7 @@ public class MouseClickThread extends Thread {
 	public MouseClickThread(String str) {
 		super(str);
 	}
+	
 	public void run() {
 		while(ride) {
 			try {

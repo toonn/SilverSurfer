@@ -1,20 +1,20 @@
 package communication;
 
 import java.io.IOException;
+
 import commands.Command;
 import simulator.SimulationPilot;
 
 
-public class SimulatorCommunicator extends UnitCommunicator{
+public class SimulatorCommunicator extends UnitCommunicator {
 
 	private SimulationPilot sim;
-	private int lastForwardBackwardCommand = 1;
-	private int lastRightLeftCommand = 5;
-	//private int lastReceivedCommand;
+	private int previousCommandForwardOrBackWard=0;
 	
 	@Override 
 	public void openUnitConnection(){
 		sim = new SimulationPilot();
+		
 	}
 
 	@Override
@@ -38,146 +38,38 @@ public class SimulatorCommunicator extends UnitCommunicator{
 	
 	@Override
 	public void sendCommandToUnit(int command) throws IOException {
-		if(command == 0||command == 1||command == 2||command == 3){
-			lastForwardBackwardCommand=command;
-		}
-		else if(command == 4||command == 5||command == 6||command == 7){
-			lastRightLeftCommand=command;
-		}
-		else{
-			if(command%10==8){
-				sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
-			}
-			if(command%10==9){
-				sim.rotate((float) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
-			}
-			return;
-		}
-		
-        switch(lastForwardBackwardCommand) { 			
-        	case 0: 			
-        		if(lastRightLeftCommand==4){ 			
-        			sim.travel(1); 			
-        			sim.rotate(359); 			
-        		} 			
-        		else if(lastRightLeftCommand==5){ 			
-        			sim.travel(1); 			
-        		} 			
-        		else if(lastRightLeftCommand==6){ 			
-        			sim.travel(1); 			
-        			sim.rotate(1); 			
-        		} 			
-        		else if(lastRightLeftCommand==7){ 			
-        			sim.travel(1); 			
-        		} 			
-        		break; 			
-        	case 1: 			
-        		if(lastRightLeftCommand==4){ 			
-        			sim.rotate(359);} 			
-        		else if(lastRightLeftCommand==5){ 			
-        			// do nothing 			
-        		} 			
-        		else if(lastRightLeftCommand==6){ 			
-        			sim.rotate(1); 			
-        		} 			
-        		else if(lastRightLeftCommand==7){ 			
-        			//do nothing 			
-        		} 			
-        		break; 			
-        	case 2: 			
-        		if(lastRightLeftCommand==4){ 			
-        			sim.rotate(180); 			
-        			sim.travel(1); 			
-        			sim.rotate(180); 			
-        			sim.rotate(1);
-        		} 			
-        		else if(lastRightLeftCommand==5){ 			
-        			sim.rotate(180); 			
-        			sim.travel(1); 			
-        			sim.rotate(180); 			
-        		} 			
-        		else if(lastRightLeftCommand==6){ 			
-        			sim.rotate(180); 			
-        			sim.travel(1); 			
-        			sim.rotate(180); 			
-        			sim.rotate(359); 			
-        		} 			
-        		else if(lastRightLeftCommand==7){ 			
-        			sim.rotate(180); 			
-        			sim.travel(1); 			
-        			sim.rotate(180); 			
-        		} 			
-        		break; 			
-        	case 3: 			
-        		if(lastRightLeftCommand==4){ 			
-        			sim.rotate(359);} 			
-        		else if(lastRightLeftCommand==5){ 			
-        			// do nothing 			
-        		} 			
-        		else if(lastRightLeftCommand==6){ 			
-        			sim.rotate(1); 			
-        		} 			
-        		else if(lastRightLeftCommand==7){ 			
-        			//do nothing 			
-        		} 			
-        		break;
-        }
-		/*switch(command){
-		
-		case 0:
+		if(command == 0)
 			sim.travel(1);
-			break;
-		case 1: 
-			setLastReceivedCommand(command);
-			break;
-		case 2: 
-			sim.rotate(180);
-			sim.travel(1);
-			sim.rotate(180);
-			break;
-		case 3:
-			setLastReceivedCommand(command);
-			break;
-		case 4:
-			sim.rotate(355);
-			break;
-		case 5:
-			setLastReceivedCommand(command);
-			break;
-		case 6:
-			sim.rotate(5);
-			break;
-		case 7:
-			setLastReceivedCommand(command);
-			break;
-		default:
-			if(command%10==8){
-				sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
-			}
-			if(command%10==9){
-				sim.rotate((float) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
-			}
-			return;
-		}*/
+		else if(command == 2)	
+			sim.travel(-1);
+		else if((command == 4 && previousCommandForwardOrBackWard == 0) || (command == 6 && previousCommandForwardOrBackWard == 2))
+			sim.rotate(359);
+		else if((command == 6 && previousCommandForwardOrBackWard == 0) || (command == 4 && previousCommandForwardOrBackWard == 2))
+			sim.rotate(1);
+		
+		else if(command%10 == 8)
+			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
+		else if(command%10 == 9)
+			sim.rotate((float) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
+		
+		setPreviousCommand(command);
+		
 	}
-
-	//public boolean isLastReceivedCommandUneven() {
-	//	if(lastReceivedCommand%2==1) {
-	//		return true;
-	//	}
-	//	return false;
-	//}
 	
 	public SimulationPilot getSim() {
 		return sim;
 	}
-
-	//public void setLastReceivedCommand(int lastReceivedCommand) {
-	//	this.lastReceivedCommand = lastReceivedCommand;
-	//}
 	
 	@Override
 	public String getConsoleTag() {
 		return "[SIMULATOR]";
+	}
+	
+	public void setPreviousCommand(int previousCommand){
+		if((previousCommand != 0) && (previousCommand != 2)){
+			return;
+		}
+		else
+		this.previousCommandForwardOrBackWard = previousCommand;
 	}
 }
