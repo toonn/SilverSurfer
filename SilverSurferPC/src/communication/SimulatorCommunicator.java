@@ -8,6 +8,7 @@ import simulator.SimulationPilot;
 
 public class SimulatorCommunicator extends UnitCommunicator {
 
+	//
 	private SimulationPilot sim;
 	private int previousCommandForwardOrBackWard=0;
 	
