@@ -56,6 +56,7 @@ public class SilverSurferGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221,230,231));
 
+//        JPanel mergePanel = mergePanel();
         JPanel bluetoothPanel = bluetoothPanel();
         JPanel polygonPanel = polygonPanel();
         JPanel arrowPanel = arrowPanel();
@@ -74,8 +75,10 @@ public class SilverSurferGUI {
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
                 		.addComponent(speedPanel)
-                		.addComponent(focusPanel)
-                		.addComponent(clearPanel))
+                		.addGroup(frameLayout.createSequentialGroup()
+                				.addComponent(focusPanel)
+                				.addComponent(clearPanel)))
+//                		.addComponent(mergePanel))
                 .addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 		.addComponent(mappingPanel)
                 		.addComponent(consolePanel)));
@@ -85,8 +88,10 @@ public class SilverSurferGUI {
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
                 		.addComponent(speedPanel)
-                		.addComponent(focusPanel)
-                		.addComponent(clearPanel))
+                		.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                				.addComponent(focusPanel)
+                				.addComponent(clearPanel)))
+//                		.addComponent(mergePanel))
                 .addGroup(frameLayout.createSequentialGroup()
                 		.addComponent(mappingPanel)
                 		.addComponent(consolePanel)));
@@ -258,6 +263,28 @@ public class SilverSurferGUI {
         return speedPanel;
     }
 
+//    private static JPanel mergePanel() {
+//        focus = new JButton("Manual Control");
+//    	clearButton = new JButton("Clear Screen");
+//        
+//        JPanel mergePanel = new JPanel();
+//        mergePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI/Manuel switch and clear screen"));
+//        mergePanel.setOpaque(false);
+//        
+//        GroupLayout mergelayout = new GroupLayout(mergePanel);
+//        mergePanel.setLayout(mergelayout);
+//        mergelayout.setAutoCreateGaps(true);
+//        mergelayout.setAutoCreateContainerGaps(true);
+//        mergelayout.setHorizontalGroup(mergelayout.createSequentialGroup()
+//        		.addComponent(focus)
+//        		.addComponent(clearButton));
+//        mergelayout.setVerticalGroup(mergelayout.createSequentialGroup()
+//        		.addComponent(focus)
+//        		.addComponent(clearButton));
+// 
+//           
+//           return mergePanel;
+//    }
     private static JPanel focusPanel() {
         focus = new JButton("Manual Control");
         
@@ -277,6 +304,8 @@ public class SilverSurferGUI {
         return focusPanel;
     }
     
+ 
+
     private static JPanel clearPanel(){
     	clearButton = new JButton("clear screen");
     	
