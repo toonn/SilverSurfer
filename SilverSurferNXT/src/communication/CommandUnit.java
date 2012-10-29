@@ -42,10 +42,6 @@ public class CommandUnit {
 		pcConnection.write(byteArray,byteArray.length);
 	}
 	
-	public void sendIntToUnit(int info) {
-		//TODO
-	}
-	
 	public int getSpeed(int speed) {
 			if(NORMAL_SPEED == 360)
 				return 4;

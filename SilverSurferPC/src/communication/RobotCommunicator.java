@@ -12,8 +12,7 @@ public class RobotCommunicator extends UnitCommunicator{
 	private static NXTConnector connection = new NXTConnector();
 	private static String deviceURL = "00:16:53:0A:04:5A";
 	private static String deviceName = "Silver";
-	
-	//private static InfoReceiverThread CRT;
+	private static InfoReceiverThread CRT;
 	
 	@Override
 	public void openUnitConnection() throws IOException {
@@ -22,10 +21,10 @@ public class RobotCommunicator extends UnitCommunicator{
     	dos = connection.getDataOut();
     	if(dis == null || dos == null)
     		throw new IOException();
-    	//CRT = new InfoReceiverThread();
-    	//CRT.setDis(dis);
-    	//CRT.setDos(dos);
-    	//CRT.start();
+    	CRT = new InfoReceiverThread();
+    	CRT.setDis(dis);
+    	CRT.setDos(dos);
+    	CRT.start();
 	}
 	
 	@Override
