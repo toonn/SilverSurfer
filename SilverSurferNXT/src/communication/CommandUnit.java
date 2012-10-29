@@ -18,8 +18,18 @@ public class CommandUnit {
 	private NXTConnection pcConnection;
 	private DataInputStream dis;
 	private DataOutputStream dos;
+	private UltrasonicSensor ultrasonicSensor;
+	private LightSensor lightSensor;
+	private String lightStatus = "[LS] 0";
+	private String ultrasonicStatus = "[US] 0";
+	private String pressureStatus1 = "[PS1] 0";
+	private String pressureStatus2 = "[PS2] 0";
+	private String leftmotorStatus = "[MLM] 0 0";
+	private String rightmotorStatus = "[MRM] 0 0";
 	
-	public CommandUnit() {
+	public CommandUnit() {		
+		ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
+		lightSensor = new LightSensor(SensorPort.S2);
 		currentState = new Waiting();
 		System.out.println("Waiting...");
     	pcConnection = Bluetooth.waitForConnection();
@@ -64,20 +74,34 @@ public class CommandUnit {
 			NORMAL_SPEED = 360;
 	}
 	
+	public void updateStatus() {
+		ultrasonicStatus = "[US] " + ultrasonicSensor.getDistance();
+		lightStatus = "[LS] " + lightSensor.getLightValue();
+		//pressureStatus1 = "[PS1] ";
+		//pressureStatus2 = "[PS2] ";
+		leftmotorStatus = "[MLM] " + Motor.B.getSpeed();
+		rightmotorStatus = "[MRM] " + Motor.A.getSpeed();
+	}
+	
 	public static void main(String[] args) throws IOException {
 		
 		CommandUnit CU = new CommandUnit();
-   		
-    	
+		
     	while(true) {
     		try {
     			LCD.clear();
+    			CU.updateStatus();
+    			CU.sendStringToUnit(CU.ultrasonicStatus);
+    			CU.sendStringToUnit(CU.lightStatus);
+    			CU.sendStringToUnit(CU.pressureStatus1);
+    			CU.sendStringToUnit(CU.pressureStatus2);
+    			CU.sendStringToUnit(CU.leftmotorStatus);
+    			CU.sendStringToUnit(CU.rightmotorStatus);
     			System.out.println("Waiting for input...");
     			int input = CU.dis.readInt();
     			switch(input) {
     			case (Command.FORWARD_PRESSED):
     				CU.setCurrentState(CU.getCurrentState().ForwardPressed());
-    				CU.sendStringToUnit("ROBOT SAYS: Moving Forward");
     				break;
     			case (Command.FORWARD_RELEASED):
     				CU.setCurrentState(CU.getCurrentState().ForwardReleased());

@@ -24,3 +24,6 @@ public class LightSensor {
 	}
 }
 
+//wit: 55-56
+//bord: 49-50
+//zwart: <40
