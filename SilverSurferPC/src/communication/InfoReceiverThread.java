@@ -7,6 +7,11 @@ public class InfoReceiverThread extends Thread{
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
 	private boolean quit = false;
+	private StatusInfoBuffer infoBuffer;
+	
+	public InfoReceiverThread(StatusInfoBuffer info){
+		this.infoBuffer = info;
+	}
 	
 	public DataInputStream getDis() {
 		return dis;

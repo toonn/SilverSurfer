@@ -7,6 +7,10 @@ import lejos.pc.comm.*;
 
 public class RobotCommunicator extends UnitCommunicator{
 
+	public RobotCommunicator(StatusInfoBuffer status) {
+		super(status);
+	}
+
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
 	private static NXTConnector connection = new NXTConnector();
@@ -21,7 +25,7 @@ public class RobotCommunicator extends UnitCommunicator{
     	dos = connection.getDataOut();
     	if(dis == null || dos == null)
     		throw new IOException();
-    	CRT = new InfoReceiverThread();
+    	CRT = new InfoReceiverThread(getStatusInfo());
     	CRT.setDis(dis);
     	CRT.setDos(dos);
     	CRT.start();
