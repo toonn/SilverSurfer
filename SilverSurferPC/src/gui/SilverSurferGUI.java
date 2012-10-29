@@ -49,8 +49,8 @@ public class SilverSurferGUI {
 	
 	private static JButton clearButton;
 	
-	private static JButton compasButton;
-	private static ImageIcon compasicon= new ImageIcon("resources/round_grey_arrows/arrow-right.png");
+	private static JButton compassButton;
+	private static ImageIcon compassicon= new ImageIcon("resources/round_grey_arrows/arrow-right.png");
 
 	
 	
@@ -60,7 +60,7 @@ public class SilverSurferGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221,230,231));
 
-        JPanel compasPanel = compasPanel();
+        JPanel compassPanel = compassPanel();
         JPanel bluetoothPanel = bluetoothPanel();
         JPanel polygonPanel = polygonPanel();
         JPanel arrowPanel = arrowPanel();
@@ -77,7 +77,7 @@ public class SilverSurferGUI {
                 .addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 		.addGroup(frameLayout.createSequentialGroup()
                 				.addComponent(bluetoothPanel)
-                				.addComponent(compasPanel))
+                				.addComponent(compassPanel))
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
                 		.addComponent(speedPanel)
@@ -91,7 +91,7 @@ public class SilverSurferGUI {
                 .addGroup(frameLayout.createSequentialGroup()
                 		.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 				.addComponent(bluetoothPanel)
-                				.addComponent(compasPanel))
+                				.addComponent(compassPanel))
                 		.addComponent(polygonPanel)
                 		.addComponent(arrowPanel)
                 		.addComponent(speedPanel)
@@ -269,26 +269,26 @@ public class SilverSurferGUI {
         return speedPanel;
     }
 
-    private static JPanel compasPanel() {
-        compasButton = new JButton(compasicon);
-        compasButton.setBorder(BorderFactory.createEmptyBorder());
-        compasButton.setContentAreaFilled(false);
+    private static JPanel compassPanel() {
+        compassButton = new JButton(compassicon);
+        compassButton.setBorder(BorderFactory.createEmptyBorder());
+        compassButton.setContentAreaFilled(false);
     	        
-        JPanel compasPanel = new JPanel();
-        compasPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Compas"));
-        compasPanel.setOpaque(false);
+        JPanel compassPanel = new JPanel();
+        compassPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Compass"));
+        compassPanel.setOpaque(false);
         
-        GroupLayout compaslayout = new GroupLayout(compasPanel);
-        compasPanel.setLayout(compaslayout);
-        compaslayout.setAutoCreateGaps(true);
-        compaslayout.setAutoCreateContainerGaps(true);
-        compaslayout.setHorizontalGroup(compaslayout.createSequentialGroup()
-        		.addComponent(compasButton));
-        compaslayout.setVerticalGroup(compaslayout.createSequentialGroup()
-        		.addComponent(compasButton));
+        GroupLayout compasslayout = new GroupLayout(compassPanel);
+        compassPanel.setLayout(compasslayout);
+        compasslayout.setAutoCreateGaps(true);
+        compasslayout.setAutoCreateContainerGaps(true);
+        compasslayout.setHorizontalGroup(compasslayout.createSequentialGroup()
+        		.addComponent(compassButton));
+        compasslayout.setVerticalGroup(compasslayout.createSequentialGroup()
+        		.addComponent(compassButton));
  
            
-           return compasPanel;
+           return compassPanel;
     }
     private static JPanel focusPanel() {
         focus = new JButton("Manual Control");
@@ -315,7 +315,7 @@ public class SilverSurferGUI {
     	clearButton = new JButton("Clear Screen");
     	
     		JPanel clearPanel = new JPanel();
-    	   clearPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"clear screen"));
+    	   clearPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Clear Screen"));
            clearPanel.setOpaque(false);
            
            GroupLayout clearlayout = new GroupLayout(clearPanel);
@@ -677,6 +677,7 @@ public class SilverSurferGUI {
 					System.out.println("[GUI] Switched to GUI control.");
 				}
 				unitCommunicator.setSpeed(speedvalues.getValue());
+				simulationPanel.requestFocusInWindow();
 			}
 		});
         focus.addMouseListener(new MouseListener() {
@@ -717,6 +718,7 @@ public class SilverSurferGUI {
 				onManual = true;
 				System.out.println("[GUI] Screen cleared.");
 				simulationPanel.clear();
+				simulationPanel.requestFocusInWindow();
 				
 			}
 		});
