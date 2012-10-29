@@ -39,4 +39,11 @@ public class SimulationJPanel extends JPanel {
 	public void setRobotLocation(float x, float y){
 		this.addCircle( x*1, y*1);
 	}	
+	
+	public void clear(){
+		Shape circleOld = new Ellipse2D.Float((float) (((RectangularShape) shapes.get(shapes.size()-1)).getX()),(float) (((RectangularShape) shapes.get(shapes.size()-1)).getY()),10,10); 			
+		shapes.removeAllElements();
+		shapes.add(circleOld);
+		
+	}
 } 

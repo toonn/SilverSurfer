@@ -8,6 +8,7 @@ import simulator.SimulationPilot;
 
 public class SimulatorCommunicator extends UnitCommunicator {
 
+	
 	private SimulationPilot sim;
 	private int previousCommandForwardOrBackWard=0;
 	
@@ -71,5 +72,9 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		}
 		else
 		this.previousCommandForwardOrBackWard = previousCommand;
+	}
+	
+	public void clear(){
+		sim.clear();
 	}
 }

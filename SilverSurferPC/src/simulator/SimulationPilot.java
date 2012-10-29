@@ -7,7 +7,7 @@ public class SimulationPilot {
 	public SimulationPilot(){
 		gui.getSimulationPanel().setRobotLocation(x, y);
 	}
-
+	
 	private float x = 200;
 	private float y = 200;
 	private float alpha;
@@ -40,7 +40,7 @@ public class SimulationPilot {
 		else
 			return 1;
 	}
-
+	
 	public void setSpeed(int speed) {
 		if(speed == 1)
 			this.speed = 40;
@@ -86,5 +86,9 @@ public class SimulationPilot {
 		
 	public void rotate(float alpha) {
 		this.alpha = ExtMath.addDegree(this.alpha, alpha);
-	}	
+	}
+	
+	public void clear(){
+		gui.getSimulationPanel().clear();
+	}
 }
