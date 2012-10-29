@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 
 public class SimulationJPanel extends JPanel {
 	
-	//
 	private Vector<Shape> shapes = new Vector<Shape>();
 	
 	public void addCircle(float x, float y){

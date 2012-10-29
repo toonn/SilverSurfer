@@ -9,8 +9,6 @@ import commands.Command;
 import communication.*;
 import simulator.*;
 
-//
-
 public class SilverSurferGUI {
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
