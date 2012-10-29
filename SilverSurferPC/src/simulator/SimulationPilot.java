@@ -86,5 +86,9 @@ public class SimulationPilot {
 		
 	public void rotate(float alpha) {
 		this.alpha = ExtMath.addDegree(this.alpha, alpha);
-	}	
+	}
+	
+	public void clear(){
+		gui.getSimulationPanel().clear();
+	}
 }
