@@ -35,12 +35,16 @@ public class InfoReceiverThread extends Thread{
 			try {
 				dis.read(b);
 				String a = new String(b);
-				if(a.startsWith("LIG"))
-					System.out.println("dit is lichtinfo");
-				else if(a.startsWith("DRU"))
-					System.out.println("dit is drukinfo");
-				else if(a.startsWith("RES"))
-					System.out.println("dit is restinfo");
+				if(a.startsWith("[LS]"))
+					;
+				else if(a.startsWith("[US]"))
+					;
+				else if(a.startsWith("[PS]"))
+					;
+				else if(a.startsWith("[MLM]"))
+					;
+				else if(a.startsWith("[MRM]"))
+					;
 			} catch (IOException e) {
 
 			}
