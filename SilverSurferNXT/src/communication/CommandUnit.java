@@ -138,6 +138,30 @@ public class CommandUnit {
     		}
     	}
     	
+    	/**
+    	 * The robot will set itself perpendicular to a white line (not on a barcode!)
+    	 * This method assumes that the robot is near a white line (it can reach it just by turning around its axis).
+    	 */
+    	private void whiteLineCalibration()
+    	{
+    		// turn around your axis till you are on a line
+    		while(robot.getUnderground() != "WHITE")
+    		{
+    			robot.turn(1);
+    		}
+
+    		// turn further around your axis till you find the other side of the line
+    		robot.turn(-5);
+    		int degreesTurnedNeg = 5;
+    		while(robot.getUnderground() != "WHITE")
+    		{
+    			robot.turn(-1);
+    			degreesTurnedNeg++;
+    		}
+
+    		robot.turn(degreesTurnedNeg/2);
+    	}
+    	
     	CU.dis.close();
     	CU.dos.close();
     	CU.pcConnection.close();
