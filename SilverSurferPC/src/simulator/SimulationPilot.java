@@ -4,23 +4,30 @@ import gui.SilverSurferGUI;
 
 public class SimulationPilot {
 	
-	public SimulationPilot(){
-		gui.getSimulationPanel().setRobotLocation(x, y);
-		gui.getSimulationPanel().setSimulatorPilot(this);
-	}
-	
 	private float x = 220;
 	private float y = 220;
-	private float alpha;
+	private float alpha = 0;
 	private int speed = 30;
 	private SilverSurferGUI gui = new SilverSurferGUI();
 	
+	public SimulationPilot(){
+		gui.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), this.getAlpha());
+	}
+
 	public float getX() {
 		return x;
 	}
 	
+	public void setX(float x) {
+		this.x = x;
+	}
+	
 	public float getY() {
 		return y;
+	}
+
+	public void setY(float y) {
+		this.y = y;
 	}
 	
 	public float getAlpha() {
@@ -56,37 +63,38 @@ public class SimulationPilot {
 	public void travel(float distance) {
 		if(distance >= 0) {
 			for (int i = 1; i <= distance; i++) {
-				float xOld = (float) (x + i* Math.cos(Math.toRadians(alpha)));
-				float yOld = (float) (y + i* Math.sin(Math.toRadians(alpha)));
-				gui.getSimulationPanel().setRobotLocation(xOld, yOld);
+				float xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				float yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+				gui.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
 				try {
 					Thread.sleep(speed);
 				} catch (InterruptedException e) {
 	
 				}
 			}
-			this.x = (float) (this.x + distance*Math.cos(Math.toRadians(alpha)));
-			this.y = (float) (this.y + distance*Math.sin(Math.toRadians(alpha)));
+			this.setX((float) (this.getX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
+			this.setY((float) (this.getY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
 		}
 		else if(distance <= 0) {
 			for (int i = -1; i >= distance; i--) {
-				float xOld = (float) (x + i* Math.cos(Math.toRadians(alpha)));
-				float yOld = (float) (y + i* Math.sin(Math.toRadians(alpha)));
-				gui.getSimulationPanel().setRobotLocation(xOld, yOld);
+				float xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				float yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+				gui.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
 				try {
 					Thread.sleep(speed);
 				} catch (InterruptedException e) {
 	
 				}
 			}
-			this.x = (float) (this.x + distance*Math.cos(Math.toRadians(alpha)));
-			this.y = (float) (this.y + distance*Math.sin(Math.toRadians(alpha)));
+			this.setX((float) (this.getX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
+			this.setY((float) (this.getY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
 		}
 	}
 		
 		
 	public void rotate(float alpha) {
-		this.alpha = ExtMath.addDegree(this.alpha, alpha);
+		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
+		gui.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), this.getAlpha());
 	}
 	
 	public void clear(){
