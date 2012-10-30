@@ -1,4 +1,6 @@
 package simulator;
+import gui.SilverSurferGUI;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,6 +15,9 @@ import javax.swing.JPanel;
 
 
 public class SimulationJPanel extends JPanel {
+	
+	private SilverSurferGUI SSG;
+	private SimulationPilot simulatorPilot;
 	
 	private Vector<Shape> shapes = new Vector<Shape>();
 		
@@ -52,19 +57,24 @@ public class SimulationJPanel extends JPanel {
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
 		((Graphics2D) graph).setColor(Color.red);
-
-		for(Shape s : shapesx)
+		for(Shape s : shapesx){
 			((Graphics2D) graph).fill(s);
+			((RectangularShape) s).getX();
+			if(simulatorPilot!= null)
+				getSSG().updateCoordinates("Simulator ("+(((Double)(((RectangularShape) s).getX())).intValue()+5)+","+(((Double)((RectangularShape) s).getY()).intValue()+5)+") angle: " + simulatorPilot.getAlpha());
+			else
+				getSSG().updateCoordinates("Simulator ("+(((Double)(((RectangularShape) s).getX())).intValue()+5)+","+(((Double)((RectangularShape) s).getY()).intValue()+5)+")");
+			
+		}
 		
 		Graphics2D g2 = (Graphics2D) graph;
-		
 
-		
 		// paints the grid on the panel
 		int count = 50;
 		int size = 40;
 		
 		((Graphics2D) graph).setColor(Color.lightGray);
+
 		for( int i = 0; i < count; i ++)
 			for( int j = 0; j < count; j++)
 				{
@@ -91,5 +101,17 @@ public class SimulationJPanel extends JPanel {
 //		shapes.add(circleOld);
 		shapes.add(triagle);
 		
+	}
+	
+	public void setSSG(SilverSurferGUI sSG) {
+		SSG = sSG;
+	}
+	
+	public SilverSurferGUI getSSG() {
+		return SSG;
+	}
+	
+	public void setSimulatorPilot(SimulationPilot simulatorP) {
+		simulatorPilot = simulatorP;
 	}
 } 

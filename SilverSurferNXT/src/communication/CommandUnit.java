@@ -18,8 +18,22 @@ public class CommandUnit {
 	private NXTConnection pcConnection;
 	private DataInputStream dis;
 	private DataOutputStream dos;
+	private UltrasonicSensor ultrasonicSensor;
+	private LightSensor lightSensor;
+	private TouchSensor touchSensor1;
+	private TouchSensor touchSensor2;
+	private String lightStatus = "[LS] 0";
+	private String ultrasonicStatus = "[US] 0";
+	private String pressureStatus1 = "[PS1] false";
+	private String pressureStatus2 = "[PS2] false";
+	private String leftmotorStatus = "[MLM] false 0";
+	private String rightmotorStatus = "[MRM] false 0";
 	
-	public CommandUnit() {
+	public CommandUnit() {		
+		ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
+		lightSensor = new LightSensor(SensorPort.S2, false);
+		touchSensor1 = new TouchSensor(SensorPort.S3);
+		touchSensor2 = new TouchSensor(SensorPort.S4);
 		currentState = new Waiting();
 		System.out.println("Waiting...");
     	pcConnection = Bluetooth.waitForConnection();
@@ -27,6 +41,7 @@ public class CommandUnit {
     
     	dis = pcConnection.openDataInputStream();
     	dos = pcConnection.openDataOutputStream();
+    	lightSensor.setFloodlight(true);
 	}
 	
 	public State getCurrentState() {
@@ -40,10 +55,6 @@ public class CommandUnit {
 	public void sendStringToUnit(String info) {
 		byte[] byteArray = info.getBytes();
 		pcConnection.write(byteArray,byteArray.length);
-	}
-	
-	public void sendIntToUnit(int info) {
-		//TODO
 	}
 	
 	public int getSpeed(int speed) {
@@ -68,20 +79,34 @@ public class CommandUnit {
 			NORMAL_SPEED = 360;
 	}
 	
+	public void updateStatus() {
+		ultrasonicStatus = "[US] " + ultrasonicSensor.getDistance();
+		lightStatus = "[LS] " + lightSensor.getLightValue();
+		pressureStatus1 = "[PS1] " + touchSensor1.isPressed();
+		pressureStatus2 = "[PS2] " + touchSensor2.isPressed();
+		leftmotorStatus = "[MLM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed();
+		rightmotorStatus = "[MRM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed();
+	}
+	
 	public static void main(String[] args) throws IOException {
 		
 		CommandUnit CU = new CommandUnit();
-   		
-    	
+		
     	while(true) {
     		try {
     			LCD.clear();
+    			CU.updateStatus();
+    			CU.sendStringToUnit(CU.ultrasonicStatus);
+    			CU.sendStringToUnit(CU.lightStatus);
+    			CU.sendStringToUnit(CU.pressureStatus1);
+    			CU.sendStringToUnit(CU.pressureStatus2);
+    			CU.sendStringToUnit(CU.leftmotorStatus);
+    			CU.sendStringToUnit(CU.rightmotorStatus);
     			System.out.println("Waiting for input...");
     			int input = CU.dis.readInt();
     			switch(input) {
     			case (Command.FORWARD_PRESSED):
     				CU.setCurrentState(CU.getCurrentState().ForwardPressed());
-    				CU.sendStringToUnit("ROBOT SAYS: Moving Forward");
     				break;
     			case (Command.FORWARD_RELEASED):
     				CU.setCurrentState(CU.getCurrentState().ForwardReleased());

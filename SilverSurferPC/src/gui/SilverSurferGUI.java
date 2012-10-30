@@ -12,19 +12,19 @@ import simulator.*;
 public class SilverSurferGUI {
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
-	
+
 	private static UnitCommunicator unitCommunicator;
 	private static UnitCommunicator prevCommunicator;
-	
+
 	private static JButton bluetoothConnect;
 	private static JLabel bluetoothStatus;
 	private static ImageIcon bluetoothNotConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_no_connection.png");
 	private static ImageIcon bluetoothConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_connected.png");
-	
+
 	private static JSpinner polygonEdgeLength;
 	private static JSlider polygonangles;
 	private static JButton polygondraw;
-	
+
 	private static JButton uparrow;
 	private static JButton downarrow;
 	private static JButton leftarrow;
@@ -37,378 +37,399 @@ public class SilverSurferGUI {
 	private static ImageIcon downarrowpressedicon = new ImageIcon("resources/round_grey_arrows/arrow-down-pressed.png");
 	private static ImageIcon rightarrowicon = new ImageIcon("resources/round_grey_arrows/arrow-right.png");
 	private static ImageIcon rightarrowpressedicon = new ImageIcon("resources/round_grey_arrows/arrow-right-pressed.png");
-	
+
 	private static JSlider speedvalues;
 	private static JButton speedbutton;
-	
+
 	private static JButton focus;
-	
+
 	private static JTextArea textArea;
-	
+
+	private static StatusInfoBuffer informationBuffer;
+
+	private static JPanel mappingPanel;
+	private static JPanel consolePanel;
+
 	private static boolean onManual = false;
-	
+
 	private static JButton clearButton;
-	
-	private static JButton compasButton;
-	private static ImageIcon compasicon= new ImageIcon("resources/round_grey_arrows/arrow-right.png");
 
-	
-	
-			
-    private static void createAndShowGUI() {
-        frame = new JFrame("Silver Surfer Command Center");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setBackground(new Color(221,230,231));
+	private static JButton compassButton;
+	private static ImageIcon compassicon = new ImageIcon("resources/round_grey_arrows/arrow-right.png");
 
-        JPanel compasPanel = compasPanel();
-        JPanel bluetoothPanel = bluetoothPanel();
-        JPanel polygonPanel = polygonPanel();
-        JPanel arrowPanel = arrowPanel();
-        JPanel speedPanel = speedPanel();
-        JPanel focusPanel = focusPanel();
-        JPanel mappingPanel = mappingPanel();
-        JPanel consolePanel = consolePanel();
-        JPanel clearPanel = clearPanel();
-        redirectSystemStreams();
+	private  void createAndShowGUI() {
+		informationBuffer = new StatusInfoBuffer();
+		informationBuffer.setSSG(this);
+		frame = new JFrame("Silver Surfer Command Center");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setBackground(new Color(221,230,231));
 
-        GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
-        frame.getContentPane().setLayout(frameLayout);
-        frameLayout.setHorizontalGroup(frameLayout.createSequentialGroup()
-                .addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                		.addGroup(frameLayout.createSequentialGroup()
-                				.addComponent(bluetoothPanel)
-                				.addComponent(compasPanel))
-                		.addComponent(polygonPanel)
-                		.addComponent(arrowPanel)
-                		.addComponent(speedPanel)
-                		.addGroup(frameLayout.createSequentialGroup()
-                				.addComponent(focusPanel)
-                				.addComponent(clearPanel)))
-                .addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                		.addComponent(mappingPanel)
-                		.addComponent(consolePanel)));
-        frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addGroup(frameLayout.createSequentialGroup()
-                		.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                				.addComponent(bluetoothPanel)
-                				.addComponent(compasPanel))
-                		.addComponent(polygonPanel)
-                		.addComponent(arrowPanel)
-                		.addComponent(speedPanel)
-                		.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                				.addComponent(focusPanel)
-                				.addComponent(clearPanel)))
-                .addGroup(frameLayout.createSequentialGroup()
-                		.addComponent(mappingPanel)
-                		.addComponent(consolePanel)));
-        frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel, speedPanel);
-        frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
+		JPanel compassPanel = compassPanel();
+		JPanel bluetoothPanel = bluetoothPanel();
+		JPanel polygonPanel = polygonPanel();
+		JPanel arrowPanel = arrowPanel();
+		JPanel speedPanel = speedPanel();
+		JPanel focusPanel = focusPanel();
+		JPanel mappingPanel = mappingPanel();
+		JPanel consolePanel = consolePanel();
+		JPanel clearPanel = clearPanel();
+		
+		redirectSystemStreams();
 
-        frame.pack();
-        frame.setSize(1000, 800);
-        frame.setVisible(true);
-        
-        unitCommunicator = new SimulatorCommunicator();
-        try {
+		GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
+		frame.getContentPane().setLayout(frameLayout);
+		frameLayout.setHorizontalGroup(frameLayout.createSequentialGroup()
+				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addGroup(frameLayout.createSequentialGroup()
+								.addComponent(bluetoothPanel)
+								.addComponent(compassPanel))
+								.addComponent(polygonPanel)
+								.addComponent(arrowPanel)
+								.addComponent(speedPanel)
+								.addGroup(frameLayout.createSequentialGroup()
+										.addComponent(focusPanel)
+										.addComponent(clearPanel)))
+										.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+												.addComponent(mappingPanel)
+												.addComponent(consolePanel)));
+		frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(frameLayout.createSequentialGroup()
+						.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+								.addComponent(bluetoothPanel)
+								.addComponent(compassPanel))
+								.addComponent(polygonPanel)
+								.addComponent(arrowPanel)
+								.addComponent(speedPanel)
+								.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+										.addComponent(focusPanel)
+										.addComponent(clearPanel)))
+										.addGroup(frameLayout.createSequentialGroup()
+												.addComponent(mappingPanel)
+												.addComponent(consolePanel)));
+		frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel, speedPanel);
+		frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
+
+		frame.pack();
+		frame.setSize(1000, 800);
+		frame.setVisible(true);
+
+		unitCommunicator = new SimulatorCommunicator(informationBuffer);
+		try {
 			System.out.println("[CONNECTION] Entered simulator mode.");
 			unitCommunicator.openUnitConnection();
 		} catch (IOException e) {
 			System.out.println("[CONNECTION] Oops! Something went wrong initializing!");
 		}
-        addListeners();
-    }
-    
-    public JFrame getFrame() {
-    	return frame;
-    }
-    
-    public SimulationJPanel getSimulationPanel() {
-    	return simulationPanel;
-    }
+		addListeners();
+	}
 
-    private static JPanel bluetoothPanel() {
-        bluetoothConnect = new JButton("Connect");
-        
-        bluetoothStatus = new JLabel(bluetoothNotConnectedIcon);
-        
-        JPanel bluetoothPanel = new JPanel();
-        bluetoothPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Bluetooth"));
-        bluetoothPanel.setOpaque(false);
-        
-        GroupLayout bluetoothlayout = new GroupLayout(bluetoothPanel);
-        bluetoothPanel.setLayout(bluetoothlayout);
-        bluetoothlayout.setAutoCreateGaps(true);
-        bluetoothlayout.setAutoCreateContainerGaps(true);
-        bluetoothlayout.setHorizontalGroup(bluetoothlayout.createSequentialGroup()
-        		.addComponent(bluetoothConnect)
-        		.addComponent(bluetoothStatus));
-        bluetoothlayout.setVerticalGroup(bluetoothlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-        		.addComponent(bluetoothConnect)
-        		.addComponent(bluetoothStatus));
-        
-        return bluetoothPanel;
-    }
+	public JFrame getFrame() {
+		return frame;
+	}
 
-    private static JPanel polygonPanel() {
-        JLabel polygonAnglesLabel = new JLabel("Angles", JLabel.CENTER);
-        
-        polygonangles = new JSlider(JSlider.HORIZONTAL, 3, 30, 5);
-        polygonangles.setSnapToTicks(true);
-        polygonangles.setMajorTickSpacing(3);
-        polygonangles.setMinorTickSpacing(1);
-        polygonangles.setPaintTicks(true);
-        polygonangles.setPaintLabels(true);
-        polygonangles.setOpaque(false);
+	public SimulationJPanel getSimulationPanel() {
+		return simulationPanel;
+	}
 
-        JLabel polygonEdgeLengthLabel = new JLabel("Edge Length (centimeters)", JLabel.CENTER);
-        
-        SpinnerNumberModel polygonEdgeLengthModel = new SpinnerNumberModel(10, 0, 1000, 1);
-        polygonEdgeLength = new JSpinner(polygonEdgeLengthModel);
+	private static JPanel bluetoothPanel() {
+		bluetoothConnect = new JButton("Connect");
 
-        polygondraw = new JButton("Execute polygon");
+		bluetoothStatus = new JLabel(bluetoothNotConnectedIcon);
 
-        JPanel polygonPanel = new JPanel();
-        polygonPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Polygon"));
-        polygonPanel.setOpaque(false);
-        
-        GroupLayout polygonlayout = new GroupLayout(polygonPanel);
-        polygonPanel.setLayout(polygonlayout);
-        polygonlayout.setAutoCreateGaps(true);
-        polygonlayout.setAutoCreateContainerGaps(true);
-        polygonlayout.setHorizontalGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                		.addComponent(polygonAnglesLabel)
-                		.addComponent(polygonangles))
-                .addGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                		.addComponent(polygonEdgeLengthLabel)
-                		.addComponent(polygonEdgeLength))
-                .addComponent(polygondraw));
-        polygonlayout.setVerticalGroup(polygonlayout.createSequentialGroup()
-                .addGroup(polygonlayout.createSequentialGroup()
-                		.addComponent(polygonAnglesLabel)
-                		.addComponent(polygonangles))
-                .addGroup(polygonlayout.createSequentialGroup()
-                		.addComponent(polygonEdgeLengthLabel)
-                		.addComponent(polygonEdgeLength))
-                .addComponent(polygondraw));
+		JPanel bluetoothPanel = new JPanel();
+		bluetoothPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Bluetooth"));
+		bluetoothPanel.setOpaque(false);
 
-        return polygonPanel;
-    }
+		GroupLayout bluetoothlayout = new GroupLayout(bluetoothPanel);
+		bluetoothPanel.setLayout(bluetoothlayout);
+		bluetoothlayout.setAutoCreateGaps(true);
+		bluetoothlayout.setAutoCreateContainerGaps(true);
+		bluetoothlayout.setHorizontalGroup(bluetoothlayout.createSequentialGroup()
+				.addComponent(bluetoothConnect)
+				.addComponent(bluetoothStatus));
+		bluetoothlayout.setVerticalGroup(bluetoothlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(bluetoothConnect)
+				.addComponent(bluetoothStatus));
 
-    private static JPanel arrowPanel() {
-    	uparrow = new JButton(uparrowicon);
-        uparrow.setBorder(BorderFactory.createEmptyBorder());
-        uparrow.setContentAreaFilled(false);
+		return bluetoothPanel;
+	}
 
-        leftarrow = new JButton(leftarrowicon);
-        leftarrow.setBorder(BorderFactory.createEmptyBorder());
-        leftarrow.setContentAreaFilled(false);
+	private static JPanel polygonPanel() {
+		JLabel polygonAnglesLabel = new JLabel("Angles", JLabel.CENTER);
 
-        downarrow = new JButton(downarrowicon);
-        downarrow.setBorder(BorderFactory.createEmptyBorder());
-        downarrow.setContentAreaFilled(false);
+		polygonangles = new JSlider(JSlider.HORIZONTAL, 1, 30, 5);
+		polygonangles.setSnapToTicks(true);
+		polygonangles.setMajorTickSpacing(3);
+		polygonangles.setMinorTickSpacing(1);
+		polygonangles.setPaintTicks(true);
+		polygonangles.setPaintLabels(true);
+		polygonangles.setOpaque(false);
 
-        rightarrow = new JButton(rightarrowicon);
-        rightarrow.setBorder(BorderFactory.createEmptyBorder());
-        rightarrow.setContentAreaFilled(false);
+		JLabel polygonEdgeLengthLabel = new JLabel("Edge Length (centimeters)", JLabel.CENTER);
 
-        JPanel arrowPanel = new JPanel();
-        arrowPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI control"));
-        arrowPanel.setOpaque(false);
-        
-        GroupLayout arrowlayout = new GroupLayout(arrowPanel);
-        arrowPanel.setLayout(arrowlayout);
-        arrowlayout.setAutoCreateGaps(true);
-        arrowlayout.setAutoCreateContainerGaps(true);
-        arrowlayout.setHorizontalGroup(arrowlayout.createSequentialGroup()
-                .addComponent(leftarrow)
-                .addGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                		.addComponent(uparrow)
-                		.addComponent(downarrow))
-                .addComponent(rightarrow));
-        arrowlayout.setVerticalGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(leftarrow)
-                .addGroup(arrowlayout.createSequentialGroup()
-                		.addComponent(uparrow)
-                		.addComponent(downarrow))
-                .addComponent(rightarrow));
+		SpinnerNumberModel polygonEdgeLengthModel = new SpinnerNumberModel(10, 0, 1000, 1);
+		polygonEdgeLength = new JSpinner(polygonEdgeLengthModel);
 
-        return arrowPanel;
-    }
-    
-    private static JPanel speedPanel() {
-    	JLabel speedLabel = new JLabel("Speed Level", JLabel.CENTER);
-        
-        speedvalues = new JSlider(JSlider.HORIZONTAL, 1, 4, 2);
-        speedvalues.setSnapToTicks(true);
-        speedvalues.setMajorTickSpacing(1);
-        speedvalues.setMinorTickSpacing(1);
-        speedvalues.setPaintTicks(true);
-        speedvalues.setPaintLabels(true);
-        speedvalues.setOpaque(false);
-        
-        speedbutton = new JButton("Change speed");
-        
-        JPanel speedPanel = new JPanel();
-        speedPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Speed"));
-        speedPanel.setOpaque(false);
-        
-        GroupLayout arrowlayout = new GroupLayout(speedPanel);
-        speedPanel.setLayout(arrowlayout);
-        arrowlayout.setAutoCreateGaps(true);
-        arrowlayout.setAutoCreateContainerGaps(true);
-        arrowlayout.setHorizontalGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-        		.addComponent(speedLabel)
-        		.addComponent(speedvalues)
-        		.addComponent(speedbutton));
-        arrowlayout.setVerticalGroup(arrowlayout.createSequentialGroup()
-        		.addComponent(speedLabel)
-        		.addComponent(speedvalues)
-        		.addComponent(speedbutton));
-        
-        return speedPanel;
-    }
+		polygondraw = new JButton("Execute polygon");
 
-    private static JPanel compasPanel() {
-        compasButton = new JButton(compasicon);
-        compasButton.setBorder(BorderFactory.createEmptyBorder());
-        compasButton.setContentAreaFilled(false);
-    	        
-        JPanel compasPanel = new JPanel();
-        compasPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Compas"));
-        compasPanel.setOpaque(false);
-        
-        GroupLayout compaslayout = new GroupLayout(compasPanel);
-        compasPanel.setLayout(compaslayout);
-        compaslayout.setAutoCreateGaps(true);
-        compaslayout.setAutoCreateContainerGaps(true);
-        compaslayout.setHorizontalGroup(compaslayout.createSequentialGroup()
-        		.addComponent(compasButton));
-        compaslayout.setVerticalGroup(compaslayout.createSequentialGroup()
-        		.addComponent(compasButton));
- 
-           
-           return compasPanel;
-    }
-    private static JPanel focusPanel() {
-        focus = new JButton("Manual Control");
-        
-        JPanel focusPanel = new JPanel();
-        focusPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI/Manuel switch"));
-        focusPanel.setOpaque(false);
-        
-        GroupLayout focuslayout = new GroupLayout(focusPanel);
-        focusPanel.setLayout(focuslayout);
-        focuslayout.setAutoCreateGaps(true);
-        focuslayout.setAutoCreateContainerGaps(true);
-        focuslayout.setHorizontalGroup(focuslayout.createSequentialGroup()
-        		.addComponent(focus));
-        focuslayout.setVerticalGroup(focuslayout.createSequentialGroup()
-        		.addComponent(focus));
-        
-        return focusPanel;
-    }
-    
- 
+		JPanel polygonPanel = new JPanel();
+		polygonPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Polygon"));
+		polygonPanel.setOpaque(false);
 
-    private static JPanel clearPanel(){
-    	clearButton = new JButton("Clear Screen");
-    	
-    		JPanel clearPanel = new JPanel();
-    	   clearPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"clear screen"));
-           clearPanel.setOpaque(false);
-           
-           GroupLayout clearlayout = new GroupLayout(clearPanel);
-           clearPanel.setLayout(clearlayout);
-           clearlayout.setAutoCreateGaps(true);
-           clearlayout.setAutoCreateContainerGaps(true);
-           clearlayout.setHorizontalGroup(clearlayout.createSequentialGroup()
-           		.addComponent(clearButton));
-           clearlayout.setVerticalGroup(clearlayout.createSequentialGroup()
-           		.addComponent(clearButton));
-           
-           return clearPanel;
-    }
-    
-    private static JPanel mappingPanel() {
-        simulationPanel = new SimulationJPanel();
-        simulationPanel.setSize(20000, 20000);
-        simulationPanel.setBackground(Color.WHITE);
-        simulationPanel.setBorder(createBorder());
-        		
-    	JPanel mappingPanel = new JPanel();
-    	mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
-    	mappingPanel.setOpaque(false);
-    	
-        GroupLayout mappingLayout = new GroupLayout(mappingPanel);
-        mappingPanel.setLayout(mappingLayout);
-        mappingLayout.setAutoCreateGaps(true);
-        mappingLayout.setAutoCreateContainerGaps(true);
-        mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup()
-        		.addComponent(simulationPanel));
-        mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup()
-        		.addComponent(simulationPanel));
-        
-        return mappingPanel;
-    }
+		GroupLayout polygonlayout = new GroupLayout(polygonPanel);
+		polygonPanel.setLayout(polygonlayout);
+		polygonlayout.setAutoCreateGaps(true);
+		polygonlayout.setAutoCreateContainerGaps(true);
+		polygonlayout.setHorizontalGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(polygonAnglesLabel)
+						.addComponent(polygonangles))
+						.addGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+								.addComponent(polygonEdgeLengthLabel)
+								.addComponent(polygonEdgeLength))
+								.addComponent(polygondraw));
+		polygonlayout.setVerticalGroup(polygonlayout.createSequentialGroup()
+				.addGroup(polygonlayout.createSequentialGroup()
+						.addComponent(polygonAnglesLabel)
+						.addComponent(polygonangles))
+						.addGroup(polygonlayout.createSequentialGroup()
+								.addComponent(polygonEdgeLengthLabel)
+								.addComponent(polygonEdgeLength))
+								.addComponent(polygondraw));
 
-    private static JPanel consolePanel() {
-        textArea = new JTextArea(5,20);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBorder(createBorder());
+		return polygonPanel;
+	}
 
-        JPanel consolePanel = new JPanel();
-        consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output"));
-        consolePanel.setOpaque(false);
-        
-        GroupLayout consolelayout = new GroupLayout(consolePanel);
-        consolePanel.setLayout(consolelayout);
-        consolelayout.setAutoCreateGaps(true);
-        consolelayout.setAutoCreateContainerGaps(true);
-        consolelayout.setHorizontalGroup(consolelayout.createSequentialGroup()
-                .addComponent(scrollPane));
-        consolelayout.setVerticalGroup(consolelayout.createSequentialGroup()
-                .addComponent(scrollPane));
+	private static JPanel arrowPanel() {
+		uparrow = new JButton(uparrowicon);
+		uparrow.setBorder(BorderFactory.createEmptyBorder());
+		uparrow.setContentAreaFilled(false);
 
-        return consolePanel;
-    }
-    
-    private static void redirectSystemStreams() {
-  		OutputStream out = new OutputStream() {
-  			@Override
-	  	    public void write(int b) throws IOException {
-	  	    	textArea.append((String.valueOf((char) b)));
-	  	    }
-	  	 
-	  	    @Override
-	  	    public void write(byte[] b, int off, int len) throws IOException {
-	  	    	textArea.append((new String(b, off, len)));
-	  	    }
-	  	 
-	  	    @Override
-	  	    public void write(byte[] b) throws IOException {
-	  	    	write(b, 0, b.length);
-	  	    }
-  		};
-  		System.setOut(new PrintStream(out, true));
-  		System.setErr(new PrintStream(out, true));
-  	}
-    
-    private static void addListeners() {
-        bluetoothConnect.addMouseListener(new MouseListener() {
+		leftarrow = new JButton(leftarrowicon);
+		leftarrow.setBorder(BorderFactory.createEmptyBorder());
+		leftarrow.setContentAreaFilled(false);
+
+		downarrow = new JButton(downarrowicon);
+		downarrow.setBorder(BorderFactory.createEmptyBorder());
+		downarrow.setContentAreaFilled(false);
+
+		rightarrow = new JButton(rightarrowicon);
+		rightarrow.setBorder(BorderFactory.createEmptyBorder());
+		rightarrow.setContentAreaFilled(false);
+
+		JPanel arrowPanel = new JPanel();
+		arrowPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI control"));
+		arrowPanel.setOpaque(false);
+
+		GroupLayout arrowlayout = new GroupLayout(arrowPanel);
+		arrowPanel.setLayout(arrowlayout);
+		arrowlayout.setAutoCreateGaps(true);
+		arrowlayout.setAutoCreateContainerGaps(true);
+		arrowlayout.setHorizontalGroup(arrowlayout.createSequentialGroup()
+				.addComponent(leftarrow)
+				.addGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(uparrow)
+						.addComponent(downarrow))
+						.addComponent(rightarrow));
+		arrowlayout.setVerticalGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(leftarrow)
+				.addGroup(arrowlayout.createSequentialGroup()
+						.addComponent(uparrow)
+						.addComponent(downarrow))
+						.addComponent(rightarrow));
+
+		return arrowPanel;
+	}
+
+	private static JPanel speedPanel() {
+		JLabel speedLabel = new JLabel("Speed Level", JLabel.CENTER);
+
+		speedvalues = new JSlider(JSlider.HORIZONTAL, 1, 4, 2);
+		speedvalues.setSnapToTicks(true);
+		speedvalues.setMajorTickSpacing(1);
+		speedvalues.setMinorTickSpacing(1);
+		speedvalues.setPaintTicks(true);
+		speedvalues.setPaintLabels(true);
+		speedvalues.setOpaque(false);
+
+		speedbutton = new JButton("Change speed");
+
+		JPanel speedPanel = new JPanel();
+		speedPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Speed"));
+		speedPanel.setOpaque(false);
+
+		GroupLayout arrowlayout = new GroupLayout(speedPanel);
+		speedPanel.setLayout(arrowlayout);
+		arrowlayout.setAutoCreateGaps(true);
+		arrowlayout.setAutoCreateContainerGaps(true);
+		arrowlayout.setHorizontalGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(speedLabel)
+				.addComponent(speedvalues)
+				.addComponent(speedbutton));
+		arrowlayout.setVerticalGroup(arrowlayout.createSequentialGroup()
+				.addComponent(speedLabel)
+				.addComponent(speedvalues)
+				.addComponent(speedbutton));
+
+		return speedPanel;
+	}
+
+	private static JPanel compassPanel() {
+		compassButton = new JButton(compassicon);
+		compassButton.setBorder(BorderFactory.createEmptyBorder());
+		compassButton.setContentAreaFilled(false);
+
+		JPanel compassPanel = new JPanel();
+		compassPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Compass"));
+		compassPanel.setOpaque(false);
+
+		GroupLayout compasslayout = new GroupLayout(compassPanel);
+		compassPanel.setLayout(compasslayout);
+		compasslayout.setAutoCreateGaps(true);
+		compasslayout.setAutoCreateContainerGaps(true);
+		compasslayout.setHorizontalGroup(compasslayout.createSequentialGroup()
+				.addComponent(compassButton));
+		compasslayout.setVerticalGroup(compasslayout.createSequentialGroup()
+				.addComponent(compassButton));
+
+
+		return compassPanel;
+	}
+	private static JPanel focusPanel() {
+		focus = new JButton("Manual Control");
+
+		JPanel focusPanel = new JPanel();
+		focusPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"GUI/Manual switch"));
+		focusPanel.setOpaque(false);
+
+		GroupLayout focuslayout = new GroupLayout(focusPanel);
+		focusPanel.setLayout(focuslayout);
+		focuslayout.setAutoCreateGaps(true);
+		focuslayout.setAutoCreateContainerGaps(true);
+		focuslayout.setHorizontalGroup(focuslayout.createSequentialGroup()
+				.addComponent(focus));
+		focuslayout.setVerticalGroup(focuslayout.createSequentialGroup()
+				.addComponent(focus));
+
+		return focusPanel;
+	}
+
+
+
+	private static JPanel clearPanel(){
+		clearButton = new JButton("Clear Screen");
+
+		JPanel clearPanel = new JPanel();
+		clearPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Clear Screen"));
+		clearPanel.setOpaque(false);
+
+		GroupLayout clearlayout = new GroupLayout(clearPanel);
+		clearPanel.setLayout(clearlayout);
+		clearlayout.setAutoCreateGaps(true);
+		clearlayout.setAutoCreateContainerGaps(true);
+		clearlayout.setHorizontalGroup(clearlayout.createSequentialGroup()
+				.addComponent(clearButton));
+		clearlayout.setVerticalGroup(clearlayout.createSequentialGroup()
+				.addComponent(clearButton));
+
+		return clearPanel;
+	}
+
+	private JPanel mappingPanel() {
+
+		simulationPanel = new SimulationJPanel();
+		simulationPanel.setSSG(this);
+		simulationPanel.setSize(20000, 20000);
+		simulationPanel.setBackground(Color.WHITE);
+		simulationPanel.setBorder(createBorder());
+
+		mappingPanel = new JPanel();
+		mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
+		mappingPanel.setOpaque(false);
+
+		GroupLayout mappingLayout = new GroupLayout(mappingPanel);
+		mappingPanel.setLayout(mappingLayout);
+		mappingLayout.setAutoCreateGaps(true);
+		mappingLayout.setAutoCreateContainerGaps(true);
+		mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup()
+				.addComponent(simulationPanel));
+		mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup()
+				.addComponent(simulationPanel));
+
+		return mappingPanel;
+	}
+
+	public void updateCoordinates(String s) {
+		mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
+
+	}
+
+	private static JPanel consolePanel() {
+		textArea = new JTextArea(5,20);
+		textArea.setEditable(false);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+
+		scrollPane.setBorder(createBorder());
+
+		consolePanel = new JPanel();
+		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output"));
+		consolePanel.setOpaque(false);
+
+		GroupLayout consolelayout = new GroupLayout(consolePanel);
+		consolePanel.setLayout(consolelayout);
+		consolelayout.setAutoCreateGaps(true);
+		consolelayout.setAutoCreateContainerGaps(true);
+		consolelayout.setHorizontalGroup(consolelayout.createSequentialGroup()
+				.addComponent(scrollPane));
+		consolelayout.setVerticalGroup(consolelayout.createSequentialGroup()
+				.addComponent(scrollPane));
+
+		return consolePanel;
+	}
+	
+	public void updateStatus() {
+		String s = new String("(US: " + informationBuffer.getUltraSensorInfo() + ", LS: " + informationBuffer.getLightSensorInfo()
+				+ ", PS1: " + informationBuffer.getPushSensor1Info() + ", PS2: " + informationBuffer.getPushSensor2Info()
+				+ ", MLM: " + informationBuffer.getLeftMotorMoving() + " " + informationBuffer.getLeftMotorSpeed()
+				+ ", MRM: " + informationBuffer.getRightMotorMoving() + " " + informationBuffer.getRightMotorSpeed() + ")");
+		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output " + s));
+	}
+	
+	private static void redirectSystemStreams() {
+		OutputStream out = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				textArea.append((String.valueOf((char) b)));
+			}
+
+			@Override
+			public void write(byte[] b, int off, int len) throws IOException {
+				textArea.append((new String(b, off, len)));
+			}
+
+			@Override
+			public void write(byte[] b) throws IOException {
+				write(b, 0, b.length);
+			}
+		};
+		System.setOut(new PrintStream(out, true));
+		System.setErr(new PrintStream(out, true));
+	}
+
+	private static void addListeners() {
+		bluetoothConnect.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if(onManual) {
@@ -417,7 +438,7 @@ public class SilverSurferGUI {
 				}
 				if(bluetoothConnect.getText() == "Connect") {
 					prevCommunicator = unitCommunicator;
-					unitCommunicator = new RobotCommunicator();
+					unitCommunicator = new RobotCommunicator(informationBuffer);
 					try {
 						unitCommunicator.openUnitConnection();
 						bluetoothConnect.setText("Disconnect");
@@ -427,7 +448,7 @@ public class SilverSurferGUI {
 						unitCommunicator = prevCommunicator;
 						System.out.println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
 					}
-					
+
 				}
 				else if(bluetoothConnect.getText() == "Disconnect") {
 					try {
@@ -439,23 +460,23 @@ public class SilverSurferGUI {
 					} catch (Exception e) {
 						System.out.println("[CONNECTION] Oops! Something went wrong disconnecting!");
 					}
-					
+
 				}
 			}
 		});
-        polygondraw.addMouseListener(new MouseListener() {
+		polygondraw.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if(onManual) {
@@ -469,9 +490,9 @@ public class SilverSurferGUI {
 				PDT.start();
 			}
 		});
-        uparrow.addMouseListener(new MouseListener() {
+		uparrow.addMouseListener(new MouseListener() {
 			MouseClickThread MCT;
-        	
+
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
@@ -480,10 +501,10 @@ public class SilverSurferGUI {
 					unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
 					uparrow.setIcon(uparrowicon);
 				} catch (IOException e) {
-					
+
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				if(onManual) {
@@ -501,24 +522,24 @@ public class SilverSurferGUI {
 					try {
 						unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
 					} catch (IOException e) {
-						
+
 					}
 				}
 				uparrow.setIcon(uparrowpressedicon);
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-        downarrow.addMouseListener(new MouseListener() {
+		downarrow.addMouseListener(new MouseListener() {
 			MouseClickThread MCT;
-        	
+
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
@@ -527,10 +548,10 @@ public class SilverSurferGUI {
 					unitCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
 					downarrow.setIcon(downarrowicon);
 				} catch (IOException e) {
-					
+
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				if(onManual) {
@@ -548,24 +569,24 @@ public class SilverSurferGUI {
 					try {
 						unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
 					} catch (IOException e) {
-						
+
 					}
 				}
 				downarrow.setIcon(downarrowpressedicon);
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-        leftarrow.addMouseListener(new MouseListener() {
+		leftarrow.addMouseListener(new MouseListener() {
 			MouseClickThread MCT;
-			
+
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
@@ -574,10 +595,10 @@ public class SilverSurferGUI {
 					unitCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
 					leftarrow.setIcon(leftarrowicon);
 				} catch (IOException e) {
-					
+
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				if(onManual) {
@@ -595,24 +616,24 @@ public class SilverSurferGUI {
 					try {
 						unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
 					} catch (IOException e) {
-						
+
 					}
 				}
 				leftarrow.setIcon(leftarrowpressedicon);
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-        rightarrow.addMouseListener(new MouseListener() {
+		rightarrow.addMouseListener(new MouseListener() {
 			MouseClickThread MCT;
-			
+
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
@@ -621,10 +642,10 @@ public class SilverSurferGUI {
 					unitCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
 					rightarrow.setIcon(rightarrowicon);
 				} catch (IOException e) {
-					
+
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				if(onManual) {
@@ -642,34 +663,34 @@ public class SilverSurferGUI {
 					try {
 						unitCommunicator.sendCommandToUnit(Command.RIGHT_PRESSED);
 					} catch (IOException e) {
-						
+
 					}
 				}
 				rightarrow.setIcon(rightarrowpressedicon);
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-        speedbutton.addMouseListener(new MouseListener() {
+		speedbutton.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if(onManual) {
@@ -677,21 +698,22 @@ public class SilverSurferGUI {
 					System.out.println("[GUI] Switched to GUI control.");
 				}
 				unitCommunicator.setSpeed(speedvalues.getValue());
+				simulationPanel.requestFocusInWindow();
 			}
 		});
-        focus.addMouseListener(new MouseListener() {
+		focus.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {}
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				onManual = true;
@@ -699,28 +721,29 @@ public class SilverSurferGUI {
 				simulationPanel.requestFocusInWindow();
 			}
 		});
-        clearButton.addMouseListener(new MouseListener() {
+		clearButton.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {}
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				onManual = true;
 				System.out.println("[GUI] Screen cleared.");
 				simulationPanel.clear();
-				
+				simulationPanel.requestFocusInWindow();
+
 			}
 		});
-        simulationPanel.addKeyListener(new KeyListener() {
+		simulationPanel.addKeyListener(new KeyListener() {
 			MouseClickThread MCTU;
 			MouseClickThread MCTD;
 			MouseClickThread MCTL;
@@ -729,10 +752,10 @@ public class SilverSurferGUI {
 			boolean runningD = false;
 			boolean runningL = false;
 			boolean runningR = false;
-			
+
 			@Override
 			public void keyTyped(KeyEvent e) {}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				try {
@@ -773,10 +796,10 @@ public class SilverSurferGUI {
 						}
 					}
 				} catch(IOException ex) {
-						
+
 				}
 			}
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode()==KeyEvent.VK_UP) {
@@ -792,7 +815,7 @@ public class SilverSurferGUI {
 							try {
 								unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
 							} catch (IOException ex) {
-								
+
 							}
 						}
 						runningU = true;
@@ -812,7 +835,7 @@ public class SilverSurferGUI {
 							try {
 								unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
 							} catch (IOException ex) {
-								
+
 							}
 						}
 						runningD = true;
@@ -832,7 +855,7 @@ public class SilverSurferGUI {
 							try {
 								unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
 							} catch (IOException ex) {
-								
+
 							}
 						}
 						runningL = true;
@@ -852,7 +875,7 @@ public class SilverSurferGUI {
 							try {
 								unitCommunicator.sendCommandToUnit(Command.RIGHT_PRESSED);
 							} catch (IOException ex) {
-								
+
 							}
 						}
 						runningR = true;
@@ -861,13 +884,17 @@ public class SilverSurferGUI {
 				}
 			}
 		});
-    }
-   
-    private static javax.swing.border.Border createBorder() {
-    	return BorderFactory.createEtchedBorder(1);
-    }
+	}
+
+	private static javax.swing.border.Border createBorder() {
+		return BorderFactory.createEtchedBorder(1);
+	}
+
+
 	
-    public static void main(String[] args) {
-    	createAndShowGUI();
-    }
+	public static void main(String[] args) {
+		SilverSurferGUI SSG = new SilverSurferGUI();
+		SSG.createAndShowGUI();
+		
+	}
 }

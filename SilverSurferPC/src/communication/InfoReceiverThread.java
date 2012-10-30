@@ -1,46 +1,77 @@
 package communication;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class InfoReceiverThread extends Thread{
 	
-	private static InputStream dis;
-	private static OutputStream dos;
+	private static DataInputStream dis;
+	private static DataOutputStream dos;
 	private boolean quit = false;
+	private StatusInfoBuffer infoBuffer;
 	
-	public static void setDis(InputStream dis) {
-		InfoReceiverThread.dis = dis;
+	public InfoReceiverThread(StatusInfoBuffer info){
+		this.infoBuffer = info;
 	}
-	public static InputStream getDis() {
+	
+	public DataInputStream getDis() {
 		return dis;
 	}
-	public static void setDos(OutputStream dos) {
-		InfoReceiverThread.dos = dos;
+	
+	public void setDis(DataInputStream dis) {
+		InfoReceiverThread.dis = dis;
 	}
-	public static OutputStream getDos() {
+	
+	public DataOutputStream getDos() {
 		return dos;
+	}
+	
+	public void setDos(DataOutputStream dos) {
+		InfoReceiverThread.dos = dos;
 	}
 	
 	public void setQuit(boolean quit) {
 		this.quit = quit;
 	}
-
 	
 	public void run() {
 		byte[] b = new byte[500];
 
-		while(!quit){
+		while(!quit) {
 			try {
+				b = new byte[500];
 				dis.read(b);
-				System.out.println(new String(b));
-				System.out.println("testCommandReceiverThread");
+				String a = new String(b);
+				if(a.startsWith("[LS]"))
+					infoBuffer.setLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
+				else if(a.startsWith("[US]"))
+					infoBuffer.setUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
+				else if(a.startsWith("[PS1]"))
+					infoBuffer.setPushSensor1Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[PS2]"))
+					infoBuffer.setPushSensor2Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[MLM]")) {
+					if(a.substring(6).startsWith("true")) {
+						infoBuffer.setLeftMotorMoving(true);
+						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(11).trim()));
+					}
+					else if(a.substring(6).startsWith("false")) {
+						infoBuffer.setLeftMotorMoving(false);
+						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(12).trim()));
+					}
+				}
+				else if(a.startsWith("[MRM]")) {
+					if(a.substring(6).startsWith("true")) {
+						infoBuffer.setRightMotorMoving(true);
+						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
+					}
+					else if(a.substring(6).startsWith("false")) {
+						infoBuffer.setRightMotorMoving(false);
+						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(12).trim()));
+					}
+				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
 			}
 		}
-
 	}
 }
