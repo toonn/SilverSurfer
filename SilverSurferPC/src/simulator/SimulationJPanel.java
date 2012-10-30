@@ -40,10 +40,10 @@ public class SimulationJPanel extends JPanel {
 			((Graphics2D) graph).fill(s);
 			((RectangularShape) s).getX();
 			if(simulatorPilot!= null)
-			getSSG().updateCoordinates("Simulator ("+(((Double)(((RectangularShape) s).getX())).intValue()+5)+","+(((Double)((RectangularShape) s).getY()).intValue()+5)+") angle: " + simulatorPilot.getAlpha());
+				getSSG().updateCoordinates("Simulator ("+(((Double)(((RectangularShape) s).getX())).intValue()+5)+","+(((Double)((RectangularShape) s).getY()).intValue()+5)+") angle: " + simulatorPilot.getAlpha());
 			else
 				getSSG().updateCoordinates("Simulator ("+(((Double)(((RectangularShape) s).getX())).intValue()+5)+","+(((Double)((RectangularShape) s).getY()).intValue()+5)+")");
-
+			
 		}
 		
 		Graphics2D g2 = (Graphics2D) graph;

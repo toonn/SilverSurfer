@@ -38,18 +38,37 @@ public class InfoReceiverThread extends Thread{
 
 		while(!quit) {
 			try {
+				b = new byte[500];
 				dis.read(b);
 				String a = new String(b);
 				if(a.startsWith("[LS]"))
-					;
+					infoBuffer.setLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
 				else if(a.startsWith("[US]"))
-					;
-				else if(a.startsWith("[PS]"))
-					;
-				else if(a.startsWith("[MLM]"))
-					;
-				else if(a.startsWith("[MRM]"))
-					;
+					infoBuffer.setUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
+				else if(a.startsWith("[PS1]"))
+					infoBuffer.setPushSensor1Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[PS2]"))
+					infoBuffer.setPushSensor2Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[MLM]")) {
+					if(a.substring(6).startsWith("true")) {
+						infoBuffer.setLeftMotorMoving(true);
+						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(11).trim()));
+					}
+					else if(a.substring(6).startsWith("false")) {
+						infoBuffer.setLeftMotorMoving(false);
+						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(12).trim()));
+					}
+				}
+				else if(a.startsWith("[MRM]")) {
+					if(a.substring(6).startsWith("true")) {
+						infoBuffer.setRightMotorMoving(true);
+						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
+					}
+					else if(a.substring(6).startsWith("false")) {
+						infoBuffer.setRightMotorMoving(false);
+						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(12).trim()));
+					}
+				}
 			} catch (IOException e) {
 
 			}

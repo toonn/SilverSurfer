@@ -44,14 +44,11 @@ public class SilverSurferGUI {
 	private static JButton focus;
 
 	private static JTextArea textArea;
-	private static JTextArea txtLightSensorStatus;
-	private static JTextArea txtUltraSensorStatus;
-	private static JTextArea txtPushSensor1Status;
-	private static JTextArea txtPushSensor2Status;
 
 	private static StatusInfoBuffer informationBuffer;
 
 	private static JPanel mappingPanel;
+	private static JPanel consolePanel;
 
 	private static boolean onManual = false;
 
@@ -60,11 +57,9 @@ public class SilverSurferGUI {
 	private static JButton compassButton;
 	private static ImageIcon compassicon = new ImageIcon("resources/round_grey_arrows/arrow-right.png");
 
-
-
-
 	private  void createAndShowGUI() {
 		informationBuffer = new StatusInfoBuffer();
+		informationBuffer.setSSG(this);
 		frame = new JFrame("Silver Surfer Command Center");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setBackground(new Color(221,230,231));
@@ -78,7 +73,6 @@ public class SilverSurferGUI {
 		JPanel mappingPanel = mappingPanel();
 		JPanel consolePanel = consolePanel();
 		JPanel clearPanel = clearPanel();
-		//JPanel statusPanel = statusPanel();
 		
 		redirectSystemStreams();
 
@@ -377,7 +371,7 @@ public class SilverSurferGUI {
 
 		scrollPane.setBorder(createBorder());
 
-		JPanel consolePanel = new JPanel();
+		consolePanel = new JPanel();
 		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output"));
 		consolePanel.setOpaque(false);
 
@@ -391,6 +385,14 @@ public class SilverSurferGUI {
 				.addComponent(scrollPane));
 
 		return consolePanel;
+	}
+	
+	public void updateStatus() {
+		String s = new String("(US: " + informationBuffer.getUltraSensorInfo() + ", LS: " + informationBuffer.getLightSensorInfo()
+				+ ", PS1: " + informationBuffer.getPushSensor1Info() + ", PS2: " + informationBuffer.getPushSensor2Info()
+				+ ", MLM: " + informationBuffer.getLeftMotorMoving() + " " + informationBuffer.getLeftMotorSpeed()
+				+ ", MRM: " + informationBuffer.getRightMotorMoving() + " " + informationBuffer.getRightMotorSpeed() + ")");
+		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output " + s));
 	}
 	
 	private static void redirectSystemStreams() {
