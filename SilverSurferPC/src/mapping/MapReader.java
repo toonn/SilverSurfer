@@ -20,14 +20,22 @@ public class MapReader {
 	public static MapGraph createMapFromFile(File txtFile){
 		String [][] infoMatrix = createInfoMatrixFromFile(txtFile);
 		//This prints out the information row by row
-		for (int i = 0; i < infoMatrix.length; i++) {
+		for (int i = 0; i < infoMatrix.length; i++){
 			for (int j = 0; j < infoMatrix[i].length; j++) {
-				System.out.println(infoMatrix[i][j]);
-				
+
+				if(infoMatrix[i][j].contains(".")){
+					if((infoMatrix[i][j].split("\\.")).length >2)
+						System.out.println("Type: " + (infoMatrix[i][j].split("\\."))[0]+ " | Orientation: " + (infoMatrix[i][j].split("\\."))[1]+" | Barcode-Value: " + infoMatrix[i][j].split("\\.")[2]);		
+					else
+						System.out.println("Type: " + (infoMatrix[i][j].split("\\."))[0]+ " | Orientation: " + (infoMatrix[i][j].split("\\."))[1]);		
+				}
+				else System.out.println("Type: "+infoMatrix[i][j]);
+
 			}
+				
 			System.out.println("new row");
-			
 		}
+			
 		return null;
 	}
 	
