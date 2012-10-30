@@ -33,7 +33,7 @@ public class RobotCommunicator extends UnitCommunicator{
 	
 	@Override
 	public void closeUnitConnection() throws Exception {
-		//CRT.setQuit(true);
+		CRT.setQuit(true);
 		dis.close();
 		dos.close();
 		connection.close();
@@ -41,14 +41,10 @@ public class RobotCommunicator extends UnitCommunicator{
 	
 	@Override
 	public void sendCommandToUnit(int command) throws IOException {
-		dos.writeInt(command); //write(int command) is NIET goed!
+		dos.writeInt(command);
 		dos.flush();
 	}
-
-	private void turnCommandsListenerOn() {
-		// TODO Auto-generated method stub
-
-	}
+	
 	@Override
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {
 		int angle = (int)Math.round(ANGLE_COEF/amtOfAngles);

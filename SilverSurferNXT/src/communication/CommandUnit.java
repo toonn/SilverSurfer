@@ -20,16 +20,20 @@ public class CommandUnit {
 	private DataOutputStream dos;
 	private UltrasonicSensor ultrasonicSensor;
 	private LightSensor lightSensor;
+	private TouchSensor touchSensor1;
+	private TouchSensor touchSensor2;
 	private String lightStatus = "[LS] 0";
 	private String ultrasonicStatus = "[US] 0";
-	private String pressureStatus1 = "[PS1] 0";
-	private String pressureStatus2 = "[PS2] 0";
-	private String leftmotorStatus = "[MLM] 0 0";
-	private String rightmotorStatus = "[MRM] 0 0";
+	private String pressureStatus1 = "[PS1] false";
+	private String pressureStatus2 = "[PS2] false";
+	private String leftmotorStatus = "[MLM] false 0";
+	private String rightmotorStatus = "[MRM] false 0";
 	
 	public CommandUnit() {		
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
-		lightSensor = new LightSensor(SensorPort.S2);
+		lightSensor = new LightSensor(SensorPort.S2, false);
+		touchSensor1 = new TouchSensor(SensorPort.S3);
+		touchSensor2 = new TouchSensor(SensorPort.S4);
 		currentState = new Waiting();
 		System.out.println("Waiting...");
     	pcConnection = Bluetooth.waitForConnection();
@@ -37,6 +41,7 @@ public class CommandUnit {
     
     	dis = pcConnection.openDataInputStream();
     	dos = pcConnection.openDataOutputStream();
+    	lightSensor.setFloodlight(true);
 	}
 	
 	public State getCurrentState() {
@@ -77,10 +82,10 @@ public class CommandUnit {
 	public void updateStatus() {
 		ultrasonicStatus = "[US] " + ultrasonicSensor.getDistance();
 		lightStatus = "[LS] " + lightSensor.getLightValue();
-		//pressureStatus1 = "[PS1] ";
-		//pressureStatus2 = "[PS2] ";
-		leftmotorStatus = "[MLM] " + Motor.B.getSpeed();
-		rightmotorStatus = "[MRM] " + Motor.A.getSpeed();
+		pressureStatus1 = "[PS1] " + touchSensor1.isPressed();
+		pressureStatus2 = "[PS2] " + touchSensor2.isPressed();
+		leftmotorStatus = "[MLM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed();
+		rightmotorStatus = "[MRM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed();
 	}
 	
 	public static void main(String[] args) throws IOException {
