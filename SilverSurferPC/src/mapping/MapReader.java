@@ -18,12 +18,26 @@ import javax.swing.JFrame;
 public class MapReader {
 
 	public static MapGraph createMapFromFile(File txtFile){
+		String [][] infoMatrix = createInfoMatrixFromFile(txtFile);
+		//This prints out the information row by row
+		for (int i = 0; i < infoMatrix.length; i++) {
+			for (int j = 0; j < infoMatrix[i].length; j++) {
+				System.out.println(infoMatrix[i][j]);
+				
+			}
+			System.out.println("new row");
+			
+		}
+		return null;
+	}
+	
+	private static String[][] createInfoMatrixFromFile(File f){
 		int collums;
 		int rows;
 		try {
 			
 			//Setup I/O
-			BufferedReader readbuffer = new BufferedReader(new FileReader(txtFile));
+			BufferedReader readbuffer = new BufferedReader(new FileReader(f));
 			String strRead;
 			
 			//Read first line, extract Map-dimensions.
@@ -32,28 +46,47 @@ public class MapReader {
 			collums = Integer.valueOf(values[0]);
 			rows = Integer.valueOf(values[1]);
 
-
+			String[][] tileTypes = new String[rows][collums];
+			int lineNo = 0;
 			while ((strRead = readbuffer.readLine()) != null) {
-				String splitarray[] = strRead.split("\t");
+				int collumNo = 0;
 				
-				for (String string : splitarray) {
-					System.out.println(string + " split");
+				//Seperate comment from non-comment
+				String splitComment[] = strRead.split("#");
+				
+				//Filter whitespace
+				if (isValuableString(splitComment[0])){
+					
+					//Split information on tabs
+					String splitarray[] = splitComment[0].split("\t");
+					
+					for (String string : splitarray) 
+						if (isValuableString(string))
+							tileTypes[lineNo][collumNo++] = string;
+						
+					lineNo++;
 				}
-				System.out.println("endofline");
 			}
-			System.out.println(collums + " collums");
-			System.out.println(rows + " rows");
+			
+			return tileTypes;
 
-		} catch (FileNotFoundException e) {
-			System.err.println("[I/O] Sorry, didn't find that File.");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.err.println("[I/O] Sorry, something went wrong reading the File.");
 		}
-		String strRead;
+		
+		return new String[0][0];
 
-		return null;
 	}
-	
+	private static boolean isValuableString(String string) {
+		char[] chars = new char[string.length()];
+		string.getChars(0, string.length(), chars, 0);
+		for (char c : chars) 
+			if (!Character.isWhitespace(c))
+				return true;
+		
+		return false;
+	}
+
 	public static void main(String[] args) {
 		JFrame jfr = new JFrame();
 		JFileChooser prompt = new JFileChooser();
@@ -61,5 +94,11 @@ public class MapReader {
 		
 		File selected = prompt.getSelectedFile();
 		MapReader.createMapFromFile(selected);
+//		String string= " ";
+//		char[] chars = new char[string.length()];
+//		string.getChars(0, string.length(), chars, 0);
+//		for (char c : chars) {
+//			System.out.println(c + " char");
+//		}
 	}
 }
