@@ -24,23 +24,22 @@ public class SimulationJPanel extends JPanel {
 	public void addCircle(float x, float y, float degrees){
 		// remove the last triangle and draw little circles to indicate the path
 		if(shapes.size()>0)
-		{ 			
+		{ 	
+			float oldX = ((Triangle) shapes.get(shapes.size()-1)).getGravityCenterX();
+			float oldY = ((Triangle) shapes.get(shapes.size()-1)).getGravityCenterY();
 			shapes.remove(shapes.size()-1);
 			
 			// add a bigger circle where the robot starts
 			if(shapes.size()==0)
 			{
-				Shape bigCircle = new Ellipse2D.Float((float) (((RectangularShape) shapes.get(0)).getX()),
-						  							  (float) (((RectangularShape) shapes.get(0)).getY()),
-						  							   5,5); 
+				int diam = 7;
+				Shape bigCircle = new Ellipse2D.Float(oldX - (diam/2), oldY - (diam/2), diam, diam); 
 				shapes.add(bigCircle);
 			}
 			// add smaller red circles to indicate the path of the robot
 			else
 			{
-				Shape path = new Ellipse2D.Float((float) (((RectangularShape) shapes.get(shapes.size()-1)).getX()+4),
-											 (float) (((RectangularShape) shapes.get(shapes.size()-1)).getY()+4),
-											  2,2);
+				Shape path = new Ellipse2D.Float(oldX, oldY, 2, 2);
 				shapes.add(path); 
 			}						
 		}
@@ -59,11 +58,25 @@ public class SimulationJPanel extends JPanel {
 		((Graphics2D) graph).setColor(Color.red);
 		for(Shape s : shapesx){
 			((Graphics2D) graph).fill(s);
-			((RectangularShape) s).getX();
-			if(simulatorPilot!= null)
-				getSSG().updateCoordinates("Simulator ("+(((Double)(((RectangularShape) s).getX())).intValue()+5)+","+(((Double)((RectangularShape) s).getY()).intValue()+5)+") angle: " + simulatorPilot.getAlpha());
+			
+			int x;
+			int y;
+			
+			if(s instanceof Triangle)
+			{
+				x = (int) ((Triangle) s).getGravityCenterX();
+				y = (int) ((Triangle) s).getGravityCenterY();
+			}
 			else
-				getSSG().updateCoordinates("Simulator ("+(((Double)(((RectangularShape) s).getX())).intValue()+5)+","+(((Double)((RectangularShape) s).getY()).intValue()+5)+")");
+			{
+				x = (int) ((RectangularShape) s).getX();
+				y = (int) ((RectangularShape) s).getY();
+			}
+			
+			if(simulatorPilot!= null)
+				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ ") angle: " + simulatorPilot.getAlpha());
+			else
+				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
 			
 		}
 		
@@ -93,9 +106,9 @@ public class SimulationJPanel extends JPanel {
 	
 	public void clear(){
 		
-		Shape triagle = new Triangle((float) (((Triangle) shapes.get(shapes.size()-1)).getX()),
-									 (float) (((Triangle) shapes.get(shapes.size()-1)).getY()),
-									 (float) (((Triangle) shapes.get(shapes.size()-1)).getDegrees()));
+		Shape triagle = new Triangle(((Triangle) shapes.get(shapes.size()-1)).getGravityCenterX(),
+									 ((Triangle) shapes.get(shapes.size()-1)).getGravityCenterY(),
+									 (((Triangle) shapes.get(shapes.size()-1)).getAlpha()));
 //		Shape circleOld = new Ellipse2D.Float((float) (((RectangularShape) shapes.get(shapes.size()-1)).getX()),(float) (((RectangularShape) shapes.get(shapes.size()-1)).getY()),10,10); 			
 		shapes.removeAllElements();
 //		shapes.add(circleOld);

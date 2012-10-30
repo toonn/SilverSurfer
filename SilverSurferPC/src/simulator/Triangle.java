@@ -23,19 +23,18 @@ public class Triangle extends Polygon {
 		addPoint((int) calculateXCoordinateB(), (int) calculateYCoordinateB());
 		addPoint((int) calculateXCoordinateC(), (int) calculateYCoordinateC());
 		
-		System.out.println(super.xpoints[0]);
-		System.out.println(super.xpoints[1]);
-		System.out.println(super.xpoints[2]);
-		System.out.println(super.ypoints[0]);
-		System.out.println(super.ypoints[1]);
-		System.out.println(super.ypoints[2]);
+//		System.out.println(super.xpoints[0]);
+//		System.out.println(super.xpoints[1]);
+//		System.out.println(super.xpoints[2]);
+//		System.out.println(super.ypoints[0]);
+//		System.out.println(super.ypoints[1]);
+//		System.out.println(super.ypoints[2]);
 		
 	}
 	
 	public int getLength() {
 		return length;
 	}
-
 
 	public float getTopAngle() {
 		return topAngle;
