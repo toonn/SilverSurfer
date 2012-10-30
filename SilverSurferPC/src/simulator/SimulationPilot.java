@@ -4,14 +4,6 @@ import gui.SilverSurferGUI;
 
 public class SimulationPilot {
 	
-<<<<<<< HEAD
-=======
-	public SimulationPilot(){
-		gui.getSimulationPanel().setRobotLocation(x, y);
-		gui.getSimulationPanel().setSimulatorPilot(this);
-	}
-	
->>>>>>> f66aab5ab97cacabef0e7920a684b336e97feed7
 	private float x = 220;
 	private float y = 220;
 	private float alpha = 0;
@@ -102,7 +94,7 @@ public class SimulationPilot {
 		
 	public void rotate(float alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
-		gui.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), alpha);
+		gui.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), this.getAlpha());
 	}
 	
 	public void clear(){
