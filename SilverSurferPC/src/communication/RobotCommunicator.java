@@ -7,13 +7,16 @@ import lejos.pc.comm.*;
 
 public class RobotCommunicator extends UnitCommunicator{
 
+	public RobotCommunicator(StatusInfoBuffer status) {
+		super(status);
+	}
+
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
 	private static NXTConnector connection = new NXTConnector();
 	private static String deviceURL = "00:16:53:0A:04:5A";
 	private static String deviceName = "Silver";
-	
-	//private static InfoReceiverThread CRT;
+	private static InfoReceiverThread CRT;
 	
 	@Override
 	public void openUnitConnection() throws IOException {
@@ -22,15 +25,15 @@ public class RobotCommunicator extends UnitCommunicator{
     	dos = connection.getDataOut();
     	if(dis == null || dos == null)
     		throw new IOException();
-    	//CRT = new InfoReceiverThread();
-    	//CRT.setDis(dis);
-    	//CRT.setDos(dos);
-    	//CRT.start();
+    	CRT = new InfoReceiverThread(getStatusInfo());
+    	CRT.setDis(dis);
+    	CRT.setDos(dos);
+    	CRT.start();
 	}
 	
 	@Override
 	public void closeUnitConnection() throws Exception {
-		//CRT.setQuit(true);
+		CRT.setQuit(true);
 		dis.close();
 		dos.close();
 		connection.close();
@@ -38,14 +41,10 @@ public class RobotCommunicator extends UnitCommunicator{
 	
 	@Override
 	public void sendCommandToUnit(int command) throws IOException {
-		dos.writeInt(command); //write(int command) is NIET goed!
+		dos.writeInt(command);
 		dos.flush();
 	}
-
-	private void turnCommandsListenerOn() {
-		// TODO Auto-generated method stub
-
-	}
+	
 	@Override
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {
 		int angle = (int)Math.round(ANGLE_COEF/amtOfAngles);
