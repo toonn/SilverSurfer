@@ -104,10 +104,4 @@ public class Triangle extends Polygon {
 	private float getLengthAC(){
 		return (float) ((float) getLength()/(Math.cos((float) Math.toRadians(getTopAngle()/2))));
 	}
-
-
-	
-	
-	
-	
 }

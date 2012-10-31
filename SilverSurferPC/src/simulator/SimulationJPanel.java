@@ -1,18 +1,11 @@
 package simulator;
+
 import gui.SilverSurferGUI;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.RectangularShape;
+import java.awt.*;
+import java.awt.geom.*;
 import java.util.Vector;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-
+import javax.swing.*;
 
 public class SimulationJPanel extends JPanel {
 	
@@ -21,7 +14,7 @@ public class SimulationJPanel extends JPanel {
 	
 	private Vector<Shape> shapes = new Vector<Shape>();
 		
-	public void addCircle(float x, float y, float degrees){
+	public void addCircle(float x, float y, float degrees) {
 		// remove the last triangle and draw little circles to indicate the path
 		if(shapes.size()>0)
 		{ 	
@@ -77,7 +70,7 @@ public class SimulationJPanel extends JPanel {
 			}
 			
 			if(simulatorPilot!= null)
-				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ ") angle: " + simulatorPilot.getAlpha());
+				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ " , " + simulatorPilot.getAlpha() + ")");
 			else
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
 		}
@@ -104,27 +97,24 @@ public class SimulationJPanel extends JPanel {
 	public void setRobotLocation(float x, float y, float degrees){
 		this.addCircle(x*1, y*1, degrees);
 	}
-
 	
-	public void clear(){
-		
+	public void clear() {
 		Shape triangle = new Triangle(((Triangle) shapes.get(shapes.size()-1)).getGravityCenterX(),
 									 ((Triangle) shapes.get(shapes.size()-1)).getGravityCenterY(),
 									 (((Triangle) shapes.get(shapes.size()-1)).getAlpha()));
 		shapes.removeAllElements();
 		shapes.add(triangle);
-		
 	}
 	
-	public void setSSG(SilverSurferGUI sSG) {
-		SSG = sSG;
+	public void setSSG(SilverSurferGUI SSG) {
+		this.SSG = SSG;
 	}
 	
 	public SilverSurferGUI getSSG() {
 		return SSG;
 	}
 	
-	public void setSimulatorPilot(SimulationPilot simulatorP) {
-		simulatorPilot = simulatorP;
+	public void setSimulatorPilot(SimulationPilot simulatorPilot) {
+		this.simulatorPilot = simulatorPilot;
 	}
 } 

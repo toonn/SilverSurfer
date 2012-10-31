@@ -1,6 +1,7 @@
 package commands;
 
 public class Command {
+	
 	public static final int FORWARD_PRESSED = 0;
 	public static final int FORWARD_RELEASED = 1;
 	public static final int BACKWARD_PRESSED = 2;

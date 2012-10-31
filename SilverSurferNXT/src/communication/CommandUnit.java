@@ -1,20 +1,16 @@
 package communication;
-import java.io.*;
 
-import statemachine.Automatic;
-import statemachine.State;
-import statemachine.Waiting;
-
+import statemachine.*;
 import commands.Command;
 
+import java.io.*;
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 
 public class CommandUnit {
-
+	
 	public State currentState;
 	public static int NORMAL_SPEED = 180;
-	
 	private NXTConnection pcConnection;
 	private DataInputStream dis;
 	private DataOutputStream dos;
@@ -22,18 +18,19 @@ public class CommandUnit {
 	private LightSensor lightSensor;
 	private TouchSensor touchSensor1;
 	private TouchSensor touchSensor2;
-	private String lightStatus = "[LS] 0";
 	private String ultrasonicStatus = "[US] 0";
-	private String pressureStatus1 = "[PS1] false";
-	private String pressureStatus2 = "[PS2] false";
-	private String leftmotorStatus = "[MLM] false 0";
-	private String rightmotorStatus = "[MRM] false 0";
+	private String lightStatus = "[LS] 0";
+	private String touchStatus1 = "[TS1] false";
+	private String touchStatus2 = "[TS2] false";
+	private String leftmotorStatus = "[LM] false 0";
+	private String rightmotorStatus = "[RM] false 0";
 	
 	public CommandUnit() {		
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
 		lightSensor = new LightSensor(SensorPort.S2, false);
 		touchSensor1 = new TouchSensor(SensorPort.S3);
 		touchSensor2 = new TouchSensor(SensorPort.S4);
+		
 		currentState = new Waiting();
 		System.out.println("Waiting...");
     	pcConnection = Bluetooth.waitForConnection();
@@ -82,14 +79,36 @@ public class CommandUnit {
 	public void updateStatus() {
 		ultrasonicStatus = "[US] " + ultrasonicSensor.getDistance();
 		lightStatus = "[LS] " + lightSensor.getLightValue();
-		pressureStatus1 = "[PS1] " + touchSensor1.isPressed();
-		pressureStatus2 = "[PS2] " + touchSensor2.isPressed();
-		leftmotorStatus = "[MLM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed();
-		rightmotorStatus = "[MRM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed();
+		touchStatus1 = "[TS1] " + touchSensor1.isPressed();
+		touchStatus2 = "[TS2] " + touchSensor2.isPressed();
+		leftmotorStatus = "[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed();
+		rightmotorStatus = "[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed();
 	}
 	
+	/**
+	 * The robot will set itself perpendicular to a white line (not on a barcode!)
+	 * This method assumes that the robot is near a white line (it can reach it just by turning around its axis).
+	 */
+	/*private void whiteLineCalibration() {
+		// turn around your axis till you are on a line
+		while(robot.getUnderground() != "WHITE")
+		{
+			robot.turn(1);
+		}
+
+		// turn further around your axis till you find the other side of the line
+		robot.turn(-5);
+		int degreesTurnedNeg = 5;
+		while(robot.getUnderground() != "WHITE")
+		{
+			robot.turn(-1);
+			degreesTurnedNeg++;
+		}
+
+		robot.turn(degreesTurnedNeg/2);
+	}*/
+	
 	public static void main(String[] args) throws IOException {
-		
 		CommandUnit CU = new CommandUnit();
 		
     	while(true) {
@@ -98,8 +117,8 @@ public class CommandUnit {
     			CU.updateStatus();
     			CU.sendStringToUnit(CU.ultrasonicStatus);
     			CU.sendStringToUnit(CU.lightStatus);
-    			CU.sendStringToUnit(CU.pressureStatus1);
-    			CU.sendStringToUnit(CU.pressureStatus2);
+    			CU.sendStringToUnit(CU.touchStatus1);
+    			CU.sendStringToUnit(CU.touchStatus2);
     			CU.sendStringToUnit(CU.leftmotorStatus);
     			CU.sendStringToUnit(CU.rightmotorStatus);
     			System.out.println("Waiting for input...");
@@ -142,13 +161,13 @@ public class CommandUnit {
     				CU.setSpeed(4);
     				break;
     			default:
-    				if(input%10==8){
+    				if(input%10==8) {
     					Automatic auto = new Automatic();
     	    			CU.setCurrentState(auto);
     	    			auto.moveForward((int) (input-Command.AUTOMATIC_MOVE_FORWARD)/100);
     	    			CU.setCurrentState(new Waiting());
     				}
-    				else if(input%10==9){
+    				else if(input%10==9) {
     					Automatic auto = new Automatic();
     	    			CU.setCurrentState(auto);
     	    			auto.turnAngle((input-Command.AUTOMATIC_TURN_ANGLE)/100);
@@ -161,30 +180,6 @@ public class CommandUnit {
     			System.out.println("End of file!");
     			break;
     		}
-    	}
-    	
-    	/**
-    	 * The robot will set itself perpendicular to a white line (not on a barcode!)
-    	 * This method assumes that the robot is near a white line (it can reach it just by turning around its axis).
-    	 */
-    	private void whiteLineCalibration()
-    	{
-    		// turn around your axis till you are on a line
-    		while(robot.getUnderground() != "WHITE")
-    		{
-    			robot.turn(1);
-    		}
-
-    		// turn further around your axis till you find the other side of the line
-    		robot.turn(-5);
-    		int degreesTurnedNeg = 5;
-    		while(robot.getUnderground() != "WHITE")
-    		{
-    			robot.turn(-1);
-    			degreesTurnedNeg++;
-    		}
-
-    		robot.turn(degreesTurnedNeg/2);
     	}
     	
     	CU.dis.close();

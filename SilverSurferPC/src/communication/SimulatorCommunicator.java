@@ -1,25 +1,22 @@
 package communication;
 
-import java.io.IOException;
-
 import commands.Command;
 import simulator.SimulationPilot;
 
+import java.io.IOException;
 
 public class SimulatorCommunicator extends UnitCommunicator {
 
-	
+	private SimulationPilot sim;
+	private int previousCommandForwardOrBackWard = 0;
+
 	public SimulatorCommunicator(StatusInfoBuffer status) {
 		super(status);
 	}
-
-	private SimulationPilot sim;
-	private int previousCommandForwardOrBackWard=0;
 	
 	@Override 
 	public void openUnitConnection(){
 		sim = new SimulationPilot();
-		
 	}
 
 	@Override
@@ -53,14 +50,18 @@ public class SimulatorCommunicator extends UnitCommunicator {
 			sim.rotate(359);
 		else if((command == 6 && previousCommandForwardOrBackWard == 0) || (command == 4 && previousCommandForwardOrBackWard == 2))
 			sim.rotate(1);
-		
 		else if(command%10 == 8)
 			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
 		else if(command%10 == 9)
 			sim.rotate((float) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
-		
 		setPreviousCommand(command);
-		
+	}
+	
+	public void setPreviousCommand(int previousCommand) {
+		if((previousCommand != 0) && (previousCommand != 2))
+			return;
+		else
+			this.previousCommandForwardOrBackWard = previousCommand;
 	}
 	
 	public SimulationPilot getSim() {
@@ -72,15 +73,7 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		return "[SIMULATOR]";
 	}
 	
-	public void setPreviousCommand(int previousCommand){
-		if((previousCommand != 0) && (previousCommand != 2)){
-			return;
-		}
-		else
-		this.previousCommandForwardOrBackWard = previousCommand;
-	}
-	
-	public void clear(){
+	public void clear() {
 		sim.clear();
 	}
 }
