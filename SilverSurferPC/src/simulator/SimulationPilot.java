@@ -8,10 +8,10 @@ public class SimulationPilot {
 	private float y = 220;
 	private float alpha = 0;
 	private int speed = 30;
-	private SilverSurferGUI gui = new SilverSurferGUI();
+	private SilverSurferGUI SSG = new SilverSurferGUI();
 	
-	public SimulationPilot(){
-		gui.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), this.getAlpha());
+	public SimulationPilot() {
+		SSG.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), this.getAlpha());
 	}
 
 	public float getX() {
@@ -65,7 +65,7 @@ public class SimulationPilot {
 			for (int i = 1; i <= distance; i++) {
 				float xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
 				float yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
-				gui.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
+				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
 				try {
 					Thread.sleep(speed);
 				} catch (InterruptedException e) {
@@ -79,7 +79,7 @@ public class SimulationPilot {
 			for (int i = -1; i >= distance; i--) {
 				float xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
 				float yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
-				gui.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
+				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
 				try {
 					Thread.sleep(speed);
 				} catch (InterruptedException e) {
@@ -91,13 +91,12 @@ public class SimulationPilot {
 		}
 	}
 		
-		
 	public void rotate(float alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
-		gui.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), this.getAlpha());
+		SSG.getSimulationPanel().setRobotLocation(this.getX(), this.getY(), this.getAlpha());
 	}
 	
-	public void clear(){
-		gui.getSimulationPanel().clear();
+	public void clear() {
+		SSG.getSimulationPanel().clear();
 	}
 }

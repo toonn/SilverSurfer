@@ -2,15 +2,15 @@ package communication;
 
 import java.io.*;
 
-public class InfoReceiverThread extends Thread{
+public class InfoReceiverThread extends Thread {
 	
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
 	private boolean quit = false;
 	private StatusInfoBuffer infoBuffer;
 	
-	public InfoReceiverThread(StatusInfoBuffer info){
-		this.infoBuffer = info;
+	public InfoReceiverThread(StatusInfoBuffer infoBuffer) {
+		this.infoBuffer = infoBuffer;
 	}
 	
 	public DataInputStream getDis() {
@@ -45,28 +45,28 @@ public class InfoReceiverThread extends Thread{
 					infoBuffer.setLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
 				else if(a.startsWith("[US]"))
 					infoBuffer.setUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
-				else if(a.startsWith("[PS1]"))
-					infoBuffer.setPushSensor1Info(Boolean.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[PS2]"))
-					infoBuffer.setPushSensor2Info(Boolean.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[MLM]")) {
-					if(a.substring(6).startsWith("true")) {
+				else if(a.startsWith("[TS1]"))
+					infoBuffer.setTouchSensor1Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[TS2]"))
+					infoBuffer.setTouchSensor2Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[LM]")) {
+					if(a.substring(5).startsWith("true")) {
 						infoBuffer.setLeftMotorMoving(true);
+						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(10).trim()));
+					}
+					else if(a.substring(5).startsWith("false")) {
+						infoBuffer.setLeftMotorMoving(false);
 						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(11).trim()));
 					}
-					else if(a.substring(6).startsWith("false")) {
-						infoBuffer.setLeftMotorMoving(false);
-						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(12).trim()));
-					}
 				}
-				else if(a.startsWith("[MRM]")) {
-					if(a.substring(6).startsWith("true")) {
+				else if(a.startsWith("[RM]")) {
+					if(a.substring(5).startsWith("true")) {
 						infoBuffer.setRightMotorMoving(true);
-						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
+						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(10).trim()));
 					}
-					else if(a.substring(6).startsWith("false")) {
+					else if(a.substring(5).startsWith("false")) {
 						infoBuffer.setRightMotorMoving(false);
-						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(12).trim()));
+						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
 					}
 				}
 			} catch (IOException e) {

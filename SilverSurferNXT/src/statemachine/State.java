@@ -1,4 +1,5 @@
 package statemachine;
+
 public class State {
 	
 	public State ForwardPressed() {

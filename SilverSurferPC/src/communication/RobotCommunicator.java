@@ -1,11 +1,11 @@
 package communication;
 
-import java.io.*;
-
 import commands.Command;
+
+import java.io.*;
 import lejos.pc.comm.*;
 
-public class RobotCommunicator extends UnitCommunicator{
+public class RobotCommunicator extends UnitCommunicator {
 
 	public RobotCommunicator(StatusInfoBuffer status) {
 		super(status);

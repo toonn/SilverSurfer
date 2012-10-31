@@ -1,7 +1,7 @@
 package commands;
 
 public class Command {
-
+	
 	public static final int FORWARD_PRESSED = 0;
 	public static final int FORWARD_RELEASED = 1;
 	public static final int BACKWARD_PRESSED = 2;
@@ -15,6 +15,5 @@ public class Command {
 	public static final int SLOW_SPEED = 10;
 	public static final int NORMAL_SPEED = 11;
 	public static final int FAST_SPEED = 12;
-	public static final int VERY_FAST_SPEED = 13;
-	
+	public static final int VERY_FAST_SPEED = 13;	
 }

@@ -1,4 +1,5 @@
 package statemachine;
+
 import communication.CommandUnit;
 
 import lejos.nxt.*;
@@ -11,18 +12,22 @@ public class DrivingBackwardRight extends State {
 		Motor.B.backward();
 	}
 	
+	@Override
 	public State ForwardPressed() {
 		return new TurnRight();
 	}
 	
+	@Override
 	public State BackwardReleased() {
 		return new TurnRight();
 	}
 	
+	@Override
 	public State LeftPressed() {
 		return new DrivingBackward();
 	}
 	
+	@Override
 	public State RightReleased() {
 		return new DrivingBackward();
 	}

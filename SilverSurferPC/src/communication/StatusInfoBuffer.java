@@ -6,15 +6,13 @@ public class StatusInfoBuffer {
 
 	private int lightSensorInfo;
 	private int ultraSensorInfo;
-	private boolean pushSensor1Info;
-	private boolean pushSensor2Info;
+	private boolean touchSensor1Info;
+	private boolean touchSensor2Info;
 	private boolean leftMotorMoving;
 	private boolean rightMotorMoving;
 	private int leftMotorSpeed;
 	private int rightMotorSpeed;
 	private SilverSurferGUI SSG;
-
-	
 	
 	public int getLightSensorInfo() {
 		return lightSensorInfo;
@@ -34,21 +32,21 @@ public class StatusInfoBuffer {
 		SSG.updateStatus();
 	}
 	
-	public boolean getPushSensor1Info() {
-		return pushSensor1Info;
+	public boolean getTouchSensor1Info() {
+		return touchSensor1Info;
 	}
 	
-	public void setPushSensor1Info(boolean pushSensor1Info) {
-		this.pushSensor1Info = pushSensor1Info;
+	public void setTouchSensor1Info(boolean touchSensor1Info) {
+		this.touchSensor1Info = touchSensor1Info;
 		SSG.updateStatus();
 	}
 	
-	public boolean getPushSensor2Info() {
-		return pushSensor2Info;
+	public boolean getTouchSensor2Info() {
+		return touchSensor2Info;
 	}
 	
-	public void setPushSensor2Info(boolean pushSensor2Info) {
-		this.pushSensor2Info = pushSensor2Info;
+	public void setTouchSensor2Info(boolean touchSensor2Info) {
+		this.touchSensor2Info = touchSensor2Info;
 		SSG.updateStatus();
 	}
 	
@@ -88,11 +86,11 @@ public class StatusInfoBuffer {
 		SSG.updateStatus();
 	}
 	
-	public void setSSG(SilverSurferGUI sSG) {
-		SSG = sSG;
-	}
-	
 	public SilverSurferGUI getSSG() {
 		return SSG;
+	}
+	
+	public void setSSG(SilverSurferGUI SSG) {
+		this.SSG = SSG;
 	}
 }

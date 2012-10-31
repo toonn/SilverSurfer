@@ -1,8 +1,8 @@
 package gui;
 
-import java.io.IOException;
+import communication.*;
 
-import communication.UnitCommunicator;
+import java.io.IOException;
 
 public class PolygonDrawThread extends Thread {
 	
@@ -13,12 +13,13 @@ public class PolygonDrawThread extends Thread {
 	public PolygonDrawThread(String str) {
 		super(str);
 	}
+	
 	public void run() {
 		System.out.println(unitCommunicator.getConsoleTag() + " Executing polygon with " + angles + " angles and sides of " + length + " cm.");
 		try {
-			unitCommunicator.runPolygon(angles,length);
+			unitCommunicator.runPolygon(angles, length);
 		} catch (IOException e) {
-			System.out.println(unitCommunicator.getConsoleTag()+ "Oops! Failed to execute this polygon.");
+			System.out.println(unitCommunicator.getConsoleTag() + "Oops! Failed to execute this polygon.");
 		}
 	}
 	
@@ -33,6 +34,7 @@ public class PolygonDrawThread extends Thread {
 	public int getAngles() {
 		return angles;
 	}
+	
 	public void setAngles(int angles) {
 		this.angles = angles;
 	}
@@ -44,5 +46,4 @@ public class PolygonDrawThread extends Thread {
 	public void setLength(int length) {
 		this.length = length;
 	}
-
 }
