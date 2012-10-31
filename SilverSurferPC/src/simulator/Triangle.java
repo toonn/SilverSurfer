@@ -7,7 +7,7 @@ import java.awt.Polygon;
 //als de driehoek naar boven wijst (alpha = 270 graden) , staat A links tov C en B rechts.
 public class Triangle extends Polygon {
 	
-	private final int length = 20; //lengte van de tophoek tot loodrecht op basisas
+	private final int length = 15; //lengte van de tophoek tot loodrecht op basisas
 	private final float topAngle = 40; //graden van de tophoek
 	private float gravityCenterX;
 	private float gravityCenterY;
@@ -19,17 +19,10 @@ public class Triangle extends Polygon {
 		this.gravityCenterY = y;
 		this.alpha = alpha;
 		
-		addPoint((int) calculateXCoordinateA(), (int) calculateYCoordinateA());
-		addPoint((int) calculateXCoordinateB(), (int) calculateYCoordinateB());
-		addPoint((int) calculateXCoordinateC(), (int) calculateYCoordinateC());
-		
-//		System.out.println(super.xpoints[0]);
-//		System.out.println(super.xpoints[1]);
-//		System.out.println(super.xpoints[2]);
-//		System.out.println(super.ypoints[0]);
-//		System.out.println(super.ypoints[1]);
-//		System.out.println(super.ypoints[2]);
-		
+		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
+		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
+		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
 	}
 	
 	public int getLength() {
