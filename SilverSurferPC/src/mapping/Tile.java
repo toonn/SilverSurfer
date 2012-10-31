@@ -100,4 +100,8 @@ public class Tile {
 		this.content = cont;
 	}
 
+	@Override
+	public String toString() {
+		return "Content: " + getContent() + " Edges -- North: " + getNorthEdge() + " East: " + getEastEdge() + " South: "+getSouthEdge()+ " West: "+getWestEdge();
+	}
 }

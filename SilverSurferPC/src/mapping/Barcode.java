@@ -27,4 +27,8 @@ public class Barcode extends TileContent{
 	public void setValue(int value) {
 		this.value = value;
 	}
+	@Override
+	public String toString() {
+		return "Barcode-value: " + getValue();
+	}
 }
