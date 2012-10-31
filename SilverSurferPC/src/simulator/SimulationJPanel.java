@@ -32,14 +32,15 @@ public class SimulationJPanel extends JPanel {
 			// add a bigger circle where the robot starts
 			if(shapes.size()==0)
 			{
-				int diam = 7;
+				float diam = 5;
 				Shape bigCircle = new Ellipse2D.Float(oldX - (diam/2), oldY - (diam/2), diam, diam); 
 				shapes.add(bigCircle);
 			}
 			// add smaller red circles to indicate the path of the robot
 			else
 			{
-				Shape path = new Ellipse2D.Float(oldX, oldY, 2, 2);
+				float diam = 3;
+				Shape path = new Ellipse2D.Float(oldX - (diam/2), oldY - (diam/2), diam, diam);
 				shapes.add(path); 
 			}						
 		}
@@ -56,7 +57,9 @@ public class SimulationJPanel extends JPanel {
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
 		((Graphics2D) graph).setColor(Color.red);
-		for(Shape s : shapesx){
+		
+		for(Shape s : shapesx)
+		{
 			((Graphics2D) graph).fill(s);
 			
 			int x;
@@ -77,7 +80,6 @@ public class SimulationJPanel extends JPanel {
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ ") angle: " + simulatorPilot.getAlpha());
 			else
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
-			
 		}
 		
 		Graphics2D g2 = (Graphics2D) graph;
@@ -106,13 +108,11 @@ public class SimulationJPanel extends JPanel {
 	
 	public void clear(){
 		
-		Shape triagle = new Triangle(((Triangle) shapes.get(shapes.size()-1)).getGravityCenterX(),
+		Shape triangle = new Triangle(((Triangle) shapes.get(shapes.size()-1)).getGravityCenterX(),
 									 ((Triangle) shapes.get(shapes.size()-1)).getGravityCenterY(),
 									 (((Triangle) shapes.get(shapes.size()-1)).getAlpha()));
-//		Shape circleOld = new Ellipse2D.Float((float) (((RectangularShape) shapes.get(shapes.size()-1)).getX()),(float) (((RectangularShape) shapes.get(shapes.size()-1)).getY()),10,10); 			
 		shapes.removeAllElements();
-//		shapes.add(circleOld);
-		shapes.add(triagle);
+		shapes.add(triangle);
 		
 	}
 	
