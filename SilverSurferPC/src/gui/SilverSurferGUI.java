@@ -54,9 +54,6 @@ public class SilverSurferGUI {
 
 	private static JButton clearButton;
 
-	private static JButton compassButton;
-	private static ImageIcon compassicon = new ImageIcon("resources/round_grey_arrows/arrow-right.png");
-
 	private  void createAndShowGUI() {
 		informationBuffer = new StatusInfoBuffer();
 		informationBuffer.setSSG(this);
@@ -64,7 +61,6 @@ public class SilverSurferGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setBackground(new Color(221,230,231));
 
-		JPanel compassPanel = compassPanel();
 		JPanel bluetoothPanel = bluetoothPanel();
 		JPanel polygonPanel = polygonPanel();
 		JPanel arrowPanel = arrowPanel();
@@ -81,8 +77,7 @@ public class SilverSurferGUI {
 		frameLayout.setHorizontalGroup(frameLayout.createSequentialGroup()
 				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addGroup(frameLayout.createSequentialGroup()
-								.addComponent(bluetoothPanel)
-								.addComponent(compassPanel))
+								.addComponent(bluetoothPanel))
 								.addComponent(polygonPanel)
 								.addComponent(arrowPanel)
 								.addComponent(speedPanel)
@@ -95,8 +90,7 @@ public class SilverSurferGUI {
 		frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addGroup(frameLayout.createSequentialGroup()
 						.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(bluetoothPanel)
-								.addComponent(compassPanel))
+								.addComponent(bluetoothPanel))
 								.addComponent(polygonPanel)
 								.addComponent(arrowPanel)
 								.addComponent(speedPanel)
@@ -273,28 +267,7 @@ public class SilverSurferGUI {
 
 		return speedPanel;
 	}
-
-	private static JPanel compassPanel() {
-		compassButton = new JButton(compassicon);
-		compassButton.setBorder(BorderFactory.createEmptyBorder());
-		compassButton.setContentAreaFilled(false);
-
-		JPanel compassPanel = new JPanel();
-		compassPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Compass"));
-		compassPanel.setOpaque(false);
-
-		GroupLayout compasslayout = new GroupLayout(compassPanel);
-		compassPanel.setLayout(compasslayout);
-		compasslayout.setAutoCreateGaps(true);
-		compasslayout.setAutoCreateContainerGaps(true);
-		compasslayout.setHorizontalGroup(compasslayout.createSequentialGroup()
-				.addComponent(compassButton));
-		compasslayout.setVerticalGroup(compasslayout.createSequentialGroup()
-				.addComponent(compassButton));
-
-
-		return compassPanel;
-	}
+	
 	private static JPanel focusPanel() {
 		focus = new JButton("Manual Control");
 
