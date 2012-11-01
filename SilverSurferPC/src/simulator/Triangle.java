@@ -36,13 +36,43 @@ public class Triangle extends Polygon {
 	public float getGravityCenterX() {
 		return gravityCenterX;
 	}
+	
+	public void setGravityCenterX(float gravityCenterX){
+		this.gravityCenterX = gravityCenterX;
+		reset();
+		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
+		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
+		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
+		
+	}
 
 	public float getGravityCenterY() {
 		return gravityCenterY;
 	}
+	
+	public void setGravityCenterY(float gravityCenterY){
+		this.gravityCenterY = gravityCenterY;
+		
+		reset();
+		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
+		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
+		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
+	}
 
 	public float getAlpha() {
 		return alpha;
+	}
+	
+	public void setAlpha(float alpha){
+		this.alpha = alpha;
+		
+		reset();
+		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
+		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
+		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
 	}
 	
 	private float calculateXCoordinateA(){
