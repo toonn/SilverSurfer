@@ -190,6 +190,8 @@ public class SimulationJPanel extends JPanel {
 		super.paintComponent(graph);
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
+		
+		
 		((Graphics2D) graph).setColor(Color.red);
 		
 		if(isUpdated){
@@ -197,6 +199,22 @@ public class SimulationJPanel extends JPanel {
 			setUpdated(false);
 		}
 		
+		Graphics2D g2 = (Graphics2D) graph;
+
+		// paints the grid on the panel
+		int count = 50;
+		int size = 40;
+		
+		((Graphics2D) graph).setColor(Color.lightGray);
+			
+
+		for( int i = 0; i < count; i ++)
+			for( int j = 0; j < count; j++)
+				{
+					Rectangle grid = new Rectangle( i * size,j * size, size, size);	
+					g2.draw(grid);
+				}
+		((Graphics2D) graph).setColor(Color.red);
 		for(Shape s : shapesx)
 		{
 			
@@ -223,23 +241,10 @@ public class SimulationJPanel extends JPanel {
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
 		}
 		
-		Graphics2D g2 = (Graphics2D) graph;
 
-		// paints the grid on the panel
-		int count = 50;
-		int size = 40;
+
+
 		
-		((Graphics2D) graph).setColor(Color.lightGray);
-
-		for( int i = 0; i < count; i ++)
-			for( int j = 0; j < count; j++)
-				{
-					Rectangle grid = new Rectangle( i * size,j * size, size, size);	
-					g2.draw(grid);
-				}
-		((Graphics2D) graph).setColor(Color.red);
-
-		repaint();
 	}
 	
 	public void setRobotLocation(float x, float y, float degrees){
