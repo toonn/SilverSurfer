@@ -252,11 +252,20 @@ public class SimulationJPanel extends JPanel {
 	}
 	
 	public void clear() {
-		Shape triangle = new Triangle(((Triangle) shapes.get(shapes.size()-1)).getGravityCenterX(),
-									 ((Triangle) shapes.get(shapes.size()-1)).getGravityCenterY(),
-									 (((Triangle) shapes.get(shapes.size()-1)).getAlpha()));
+		
+//		Shape triangle = new Triangle(((Triangle) shapes.get(shapes.size()-1)).getGravityCenterX(),
+//									 ((Triangle) shapes.get(shapes.size()-1)).getGravityCenterY(),
+//									 (((Triangle) shapes.get(shapes.size()-1)).getAlpha()));
+//
+//		
+		Shape triangle = getVisibleTriangle();
+		Shape triangletwo = getNotVisibleTriangle();
 		shapes.removeAllElements();
+		
 		shapes.add(triangle);
+		shapes.add(triangletwo);
+		
+
 	}
 	
 	public void setSSG(SilverSurferGUI SSG) {
