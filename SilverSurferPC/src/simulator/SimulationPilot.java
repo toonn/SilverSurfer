@@ -126,6 +126,7 @@ public class SimulationPilot {
 			if(this.getAlpha() > 270 || this.getAlpha() < 90)
 			{
 				this.getMapGraph().moveToNextTile(Orientation.EAST);
+				System.out.println(this.getMapGraph().getCurrentTile().toString());
 			}
 			else
 			{
@@ -147,7 +148,7 @@ public class SimulationPilot {
 		}
 	}
 	
-	private void checkForObstructions()
+	public void checkForObstructions()
 	{
 		Orientation currentOrientation = null;
 		
@@ -159,12 +160,12 @@ public class SimulationPilot {
 				if(this.getMapGraph().getObstruction(currentOrientation) == null)
 				{
 					SSG.getSimulationPanel().addWhiteLine(Orientation.calculateOrientation(this.getX(), this.getY(), this.getAlpha()));
-					System.out.println("witte lijn");
+					System.out.println(currentOrientation + ": witte lijn");
 				}
 				else if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL)
 				{
 					SSG.getSimulationPanel().addWall(Orientation.calculateOrientation(this.getX(), this.getY(), this.getAlpha()));
-					System.out.println("muur");
+					System.out.println(currentOrientation + ": muur");
 				}
 				else
 				{
@@ -172,7 +173,6 @@ public class SimulationPilot {
 				}
 
 				this.rotate(45);
-				currentOrientation = Orientation.calculateOrientation(this.getX(), this.getY(), this.getAlpha());
 			}
 			else
 			{
