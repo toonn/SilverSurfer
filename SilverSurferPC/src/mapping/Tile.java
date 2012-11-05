@@ -88,6 +88,46 @@ public class Tile {
 		this.westEdge = westEdge;
 	}
 	
+	public Edge getEdge(Orientation orientation)
+	{
+		if(orientation == Orientation.NORTH)
+		{
+			return northEdge;
+		}
+		if(orientation == Orientation.EAST)
+		{
+			return eastEdge;
+		}
+		if(orientation == Orientation.SOUTH)
+		{
+			return southEdge;
+		}
+		if(orientation == Orientation.WEST)
+		{
+			return westEdge;
+		}
+		return null;
+	}
+	
+	public void setEdge(Edge edge, Orientation orientation)
+	{
+		if(orientation == Orientation.NORTH)
+		{
+			northEdge = edge;
+		}
+		if(orientation == Orientation.EAST)
+		{
+			eastEdge = edge;
+		}
+		if(orientation == Orientation.SOUTH)
+		{
+			southEdge = edge;
+		}
+		if(orientation == Orientation.WEST)
+		{
+			westEdge = edge;
+		}
+	}
 	
 	/**
 	 * Returns the content of this tile. Might be a barcode or null.
