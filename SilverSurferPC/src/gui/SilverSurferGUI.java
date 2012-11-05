@@ -6,9 +6,7 @@ import simulator.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeListener;
 import java.io.*;
-
 import javax.swing.*;
 
 public class SilverSurferGUI {
@@ -51,6 +49,7 @@ public class SilverSurferGUI {
 	private static JButton clearButton;
 
 	private static JButton nightydegreeButton;
+	private static JSpinner lengthButton;
 	private static JButton fortycentimeterButton;
 	
 	private static JTextArea textArea;
@@ -76,7 +75,6 @@ public class SilverSurferGUI {
 		JPanel clearPanel = clearPanel();
 		JPanel mappingPanel = mappingPanel();
 		JPanel consolePanel = consolePanel();
-		JPanel alignPanel = alignPanel();
 		
 		redirectSystemStreams();
 
@@ -88,8 +86,7 @@ public class SilverSurferGUI {
 						.addComponent(polygonPanel)
 						.addComponent(arrowPanel)
 						.addComponent(speedPanel)
-						.addComponent(clearPanel)
-						.addComponent(alignPanel))
+						.addComponent(clearPanel))
 				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(mappingPanel)
 						.addComponent(consolePanel))
@@ -101,8 +98,7 @@ public class SilverSurferGUI {
 						.addComponent(polygonPanel)
 						.addComponent(arrowPanel)
 						.addComponent(speedPanel)
-						.addComponent(clearPanel)
-						.addComponent(alignPanel))
+						.addComponent(clearPanel))
 				.addGroup(frameLayout.createSequentialGroup()
 						.addComponent(mappingPanel)
 						.addComponent(consolePanel))
@@ -311,7 +307,11 @@ public class SilverSurferGUI {
 	}
 
 	private JPanel directionPanel() {
-		nightydegreeButton = new JButton("90ï¿½ turning");
+		nightydegreeButton = new JButton("90° turning");
+		JLabel length = new JLabel("Length (centimeters)", JLabel.CENTER);
+
+		SpinnerNumberModel lenghtModel = new SpinnerNumberModel(10, 0, 1000, 1);
+		lengthButton = new JSpinner(lenghtModel);
 		fortycentimeterButton = new JButton("40cm forward");
 		
 		JPanel directionPanel = new JPanel();
@@ -325,10 +325,12 @@ public class SilverSurferGUI {
 		directionlayout.setHorizontalGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER))
 					.addComponent(nightydegreeButton)
+					.addComponent(lengthButton)
 					.addComponent(fortycentimeterButton));
 		directionlayout.setVerticalGroup(directionlayout.createSequentialGroup()
 				.addGroup(directionlayout.createSequentialGroup()
 					.addComponent(nightydegreeButton)
+					.addComponent(lengthButton)
 					.addComponent(fortycentimeterButton)));
 		
 		
@@ -416,6 +418,7 @@ public class SilverSurferGUI {
         return alignPanel;
     }
 	
+
 	public void updateStatus() {
 		String s = new String("(US: " + informationBuffer.getUltraSensorInfo() + ", LS: " + informationBuffer.getLightSensorInfo()
 				+ ", TS1: " + informationBuffer.getTouchSensor1Info() + ", TS2: " + informationBuffer.getTouchSensor2Info()
