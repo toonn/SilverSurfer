@@ -87,4 +87,6 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	public void clear() {
 		sim.clear();
 	}
+	
+	
 }
