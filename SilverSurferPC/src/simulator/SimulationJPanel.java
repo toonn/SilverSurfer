@@ -308,4 +308,9 @@ public class SimulationJPanel extends JPanel {
 		System.out.println("muur toevoegen");
 		// draw the wal!
 	}
+	
+	public void checkForObstructions()
+	{
+		simulatorPilot.checkForObstructions();
+	}
 }
