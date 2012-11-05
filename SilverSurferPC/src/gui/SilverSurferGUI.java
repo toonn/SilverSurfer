@@ -9,7 +9,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
-public class SilverSurferGUI extends JFrame{
+public class SilverSurferGUI {
 	
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
@@ -78,6 +78,10 @@ public class SilverSurferGUI extends JFrame{
 		
 		redirectSystemStreams();
 
+		// add menu-bar
+		GUIMenuBar bar = new GUIMenuBar(this);
+		getFrame().setJMenuBar(bar);
+			    
 		GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
 		frame.getContentPane().setLayout(frameLayout);
 		frameLayout.setHorizontalGroup(frameLayout.createSequentialGroup()
@@ -122,6 +126,7 @@ public class SilverSurferGUI extends JFrame{
 		addListeners();
 		simulationPanel.requestFocusInWindow();
 		updateStatus();
+		
 	}
 
 	public JFrame getFrame() {
@@ -1061,6 +1066,12 @@ public class SilverSurferGUI extends JFrame{
 		return BorderFactory.createEtchedBorder(1);
 	}
 	
+	public static UnitCommunicator getUnitCommunicator() {
+		return unitCommunicator;
+	}
+	public static UnitCommunicator getPrevCommunicator() {
+		return prevCommunicator;
+	}
 	public static void main(String[] args) {
 		SilverSurferGUI SSG = new SilverSurferGUI();
 		SSG.createAndShowGUI();
