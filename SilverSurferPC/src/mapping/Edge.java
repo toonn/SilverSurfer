@@ -60,7 +60,7 @@ public class Edge {
 	 * @return true if there is no wall or nothingness on the edge.
 	 */
 	public boolean isPassable() {
-		return getObstruction() != Obstruction.WALL && getObstruction() != Obstruction.NOTHINGNESS;
+		return this.getObstruction().isPassible();
 	}
 	
 	/**
