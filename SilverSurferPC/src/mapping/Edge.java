@@ -86,5 +86,19 @@ public class Edge {
 		else return null;
 
 	}
+	
+	@Override
+	public String toString() {
+		String t1 = "T1: null";
+		String t2 = "T2: null";
+		String obstr = "Free Edge";
+		if (getObstruction() != null)
+			obstr = getObstruction().toString();
+		if (getTile1() != null)
+			t1 =  "T1:(" + getTile1().getxCoordinate() + getTile1().getyCoordinate()+")";
+		if (getTile2() != null)
+			t2 =  "T2:(" + getTile2().getxCoordinate() + getTile2().getyCoordinate()+")";
+		return t1 + " " + t2 + " Obstr:"+obstr;
+	}
 
 }
