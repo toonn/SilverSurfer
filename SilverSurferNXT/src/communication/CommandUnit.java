@@ -15,7 +15,7 @@ public class CommandUnit {
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	private UltrasonicSensor ultrasonicSensor;
-	private LightSensor lightSensor;
+	private static LightSensor lightSensor;
 	private TouchSensor touchSensor1;
 	private TouchSensor touchSensor2;
 	private String ultrasonicStatus = "[US] 0";
@@ -97,29 +97,6 @@ public class CommandUnit {
 		sendStringToUnit(rightmotorStatus);
 	}
 	
-	/**
-	 * The robot will set itself perpendicular to a white line (not on a barcode!)
-	 * This method assumes that the robot is near a white line (it can reach it just by turning around its axis).
-	 */
-	/*private void whiteLineCalibration() {
-		// turn around your axis till you are on a line
-		while(robot.getUnderground() != "WHITE")
-		{
-			robot.turn(1);
-		}
-
-		// turn further around your axis till you find the other side of the line
-		robot.turn(-5);
-		int degreesTurnedNeg = 5;
-		while(robot.getUnderground() != "WHITE")
-		{
-			robot.turn(-1);
-			degreesTurnedNeg++;
-		}
-
-		robot.turn(degreesTurnedNeg/2);
-	}*/
-	
 	public static void main(String[] args) throws IOException {
 		CommandUnit CU = new CommandUnit();
 		
@@ -165,6 +142,12 @@ public class CommandUnit {
     			case (Command.VERY_FAST_SPEED):
     				CU.setSpeed(4);
     				break;
+    			case (Command.ALIGN_PERPENDICULAR):
+    			    Automatic alignPerpAuto = new Automatic();
+    			    CU.setCurrentState(alignPerpAuto);
+    			    alignPerpAuto.forwardToWhiteLine(lightSensor);
+    		        alignPerpAuto.whiteLinePerpendicular(lightSensor);
+    			    break;
     			default:
     				if(input%10==8) {
     					Automatic auto = new Automatic();
