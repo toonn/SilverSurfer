@@ -9,7 +9,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
-public class SilverSurferGUI {
+public class SilverSurferGUI extends JFrame{
 	
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
