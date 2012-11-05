@@ -22,7 +22,7 @@ public class MapReader {
 		Tile[][] temporaryGraph = new Tile[infoMatrix.length][infoMatrix[0].length];
 		
 		//Fill a graph with the information in infoMatrix.
-		MapGraph map;
+		MapGraph map = null;
 		//This prints out the information row by row
 		for (int i = 0; i < infoMatrix.length; i++){
 			for (int j = 0; j < infoMatrix[i].length; j++) {
@@ -58,43 +58,37 @@ public class MapReader {
 				}
 				//Only add tileIJ to the tile North of it (there's no west now!)
 				else if (j == 0){
-					
+					if (tileIJ.getNorthEdge().isTile1(tileIJ))
+						tileIJ.getNorthEdge().setTile2(temporaryGraph[i-1][j]);
+					else tileIJ.getNorthEdge().setTile1(temporaryGraph[i-1][j]);
+					temporaryGraph[i-1][j].setSouthEdge(tileIJ.getNorthEdge());
 				}
-				//Add tileIJ to the tile North and West of it.
+				//Add tileIJ only the tile West of it.
+				else if (i == 0){
+					if (tileIJ.getWestEdge().isTile1(tileIJ))
+						tileIJ.getWestEdge().setTile2(temporaryGraph[i][j-1]);
+					else tileIJ.getWestEdge().setTile1(temporaryGraph[i][j-1]);
+					temporaryGraph[i][j-1].setEastEdge(tileIJ.getWestEdge());
+				}
+				// add in both North and West.
 				else{
-					
+					if (tileIJ.getNorthEdge().isTile1(tileIJ))
+						tileIJ.getNorthEdge().setTile2(temporaryGraph[i-1][j]);
+					else tileIJ.getNorthEdge().setTile1(temporaryGraph[i-1][j]);
+					temporaryGraph[i-1][j].setSouthEdge(tileIJ.getNorthEdge());
+					if (tileIJ.getWestEdge().isTile1(tileIJ))
+						tileIJ.getWestEdge().setTile2(temporaryGraph[i][j-1]);
+					else tileIJ.getWestEdge().setTile1(temporaryGraph[i][j-1]);
+					temporaryGraph[i][j-1].setEastEdge(tileIJ.getWestEdge());
 				}
 				if(seperatedInfoIJ.length == 3)
 					tileIJ.setContent(new Barcode(Integer.valueOf(seperatedInfoIJ[2])));
-//				if(infoMatrix[i][j].contains(".")){
-//					//There's a barcode
-//					if((infoMatrix[i][j].split("\\.")).length >2)
-//						System.out.println("Type: " + (infoMatrix[i][j].split("\\."))[0]+ " | Orientation: " + (infoMatrix[i][j].split("\\."))[1]+" | Barcode-Value: " + infoMatrix[i][j].split("\\.")[2]);		
-//					//There's no barcode
-//					else
-//						System.out.println("Type: " + (infoMatrix[i][j].split("\\."))[0]+ " | Orientation: " + (infoMatrix[i][j].split("\\."))[1]);		
-//				}
-//				
-//				//This is a 'Cross' with no obstruction at any side.
-//				else{
-//					tileIJ = new Tile(i, j);
-//
-//					//This is the virtual starting Tile.
-//					if (i == 0 && j == 0){
-//						map = new MapGraph(tileIJ);
-//					}
-//					else{
-//						
-//					}
-//				}
+
 				temporaryGraph[i][j] = tileIJ;
-				System.out.println(temporaryGraph[i][j] );
 			}
-				
-			System.out.println("new row");
 		}
 			
-		return null;
+		return map;
 	}
 	
 	private static String[][] createInfoMatrixFromFile(File f){
@@ -162,13 +156,17 @@ public class MapReader {
 	public static Tile createStraightFromTile(Tile t,String orientation){
 		
 		if(orientation.equals("N") || orientation.equals("S")){
+			emptyNorthEdge(t);
 			addEastWall(t);
+			emptySouthEdge(t);
 			addWestWall(t);
 		}
 		
 		else if (orientation.equals("E") || orientation.equals("W")){
-			addNorthWall(t);			
+			addNorthWall(t);	
+			emptyEastEdge(t);
 			addSouthWall(t);
+			emptyWestEdge(t);
 		}
 
 		return t;
@@ -206,35 +204,59 @@ public class MapReader {
 	}
 	
 	public static Tile createTFromTile(Tile t,String orientation){
-		//TODO vul in.
+
 		if(orientation.equals("N")){
-			
+			addNorthWall(t);
+			emptyEastEdge(t);
+			emptySouthEdge(t);
+			emptyWestEdge(t);
 		}
 		else if (orientation.equals("E")){
-			
+			emptyNorthEdge(t);
+			addEastWall(t);
+			emptySouthEdge(t);
+			emptyWestEdge(t);
 		}
 		else if (orientation.equals("S")){
-			
+			emptyNorthEdge(t);
+			emptyEastEdge(t);
+			addWestWall(t);
+			emptySouthEdge(t);
 		}
 		else if (orientation.equals("W")){
-			
+			emptyNorthEdge(t);
+			emptyEastEdge(t);
+			emptySouthEdge(t);
+			addWestWall(t);
 		}
 		
 		return t;
 	}
 	public static Tile createDeadEndFromTile(Tile t,String orientation){
-		//TODO vul in.
+
 		if(orientation.equals("N")){
-			
+			addNorthWall(t);
+			addEastWall(t);
+			emptySouthEdge(t);
+			addWestWall(t);
 		}
 		else if (orientation.equals("E")){
-			
+			addNorthWall(t);
+			addEastWall(t);
+			addSouthWall(t);
+			emptyWestEdge(t);
 		}
 		else if (orientation.equals("S")){
-			
+			emptyNorthEdge(t);
+			addEastWall(t);
+			addSouthWall(t);
+			addWestWall(t);
 		}
 		else if (orientation.equals("W")){
-			
+			addNorthWall(t);
+			emptyEastEdge(t);
+			addSouthWall(t);
+			addWestWall(t);
 		}
 		return t;
 	}
@@ -316,6 +338,7 @@ public class MapReader {
 		
 		File selected = prompt.getSelectedFile();
 		MapReader.createMapFromFile(selected);
+		
 //		String string= " ";
 //		char[] chars = new char[string.length()];
 //		string.getChars(0, string.length(), chars, 0);

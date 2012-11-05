@@ -6,7 +6,9 @@ import simulator.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 import java.io.*;
+
 import javax.swing.*;
 
 public class SilverSurferGUI {
@@ -48,6 +50,9 @@ public class SilverSurferGUI {
 
 	private static JButton clearButton;
 
+	private static JButton nightydegreeButton;
+	private static JButton fortycentimeterButton;
+	
 	private static JTextArea textArea;
 
 	private static JPanel mappingPanel;
@@ -61,6 +66,7 @@ public class SilverSurferGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setBackground(new Color(221,230,231));
 
+		JPanel directionPanel = directionPanel();
 		JPanel bluetoothPanel = bluetoothPanel();
 		JPanel polygonPanel = polygonPanel();
 		JPanel arrowPanel = arrowPanel();
@@ -68,6 +74,7 @@ public class SilverSurferGUI {
 		JPanel clearPanel = clearPanel();
 		JPanel mappingPanel = mappingPanel();
 		JPanel consolePanel = consolePanel();
+		JPanel alignPanel = alignPanel();
 		
 		redirectSystemStreams();
 
@@ -79,20 +86,26 @@ public class SilverSurferGUI {
 						.addComponent(polygonPanel)
 						.addComponent(arrowPanel)
 						.addComponent(speedPanel)
-						.addComponent(clearPanel))
+						.addComponent(clearPanel)
+						.addComponent(alignPanel))
 				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(mappingPanel)
-						.addComponent(consolePanel)));
+						.addComponent(consolePanel))
+				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(directionPanel)));
 		frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addGroup(frameLayout.createSequentialGroup()
 						.addComponent(bluetoothPanel)
 						.addComponent(polygonPanel)
 						.addComponent(arrowPanel)
 						.addComponent(speedPanel)
-						.addComponent(clearPanel))
+						.addComponent(clearPanel)
+						.addComponent(alignPanel))
 				.addGroup(frameLayout.createSequentialGroup()
 						.addComponent(mappingPanel)
-						.addComponent(consolePanel)));
+						.addComponent(consolePanel))
+				.addGroup(frameLayout.createSequentialGroup()
+						.addComponent(directionPanel)));
 		frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel, speedPanel);
 		frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
 
@@ -295,6 +308,30 @@ public class SilverSurferGUI {
 		return clearPanel;
 	}
 
+	private JPanel directionPanel() {
+		nightydegreeButton = new JButton("90� turning");
+		fortycentimeterButton = new JButton("40cm forward");
+		
+		JPanel directionPanel = new JPanel();
+		directionPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"turning and forward"));
+		directionPanel.setOpaque(false);
+
+		GroupLayout directionlayout = new GroupLayout(directionPanel);
+		directionPanel.setLayout(directionlayout);
+		directionlayout.setAutoCreateGaps(true);
+		directionlayout.setAutoCreateContainerGaps(true);
+		directionlayout.setHorizontalGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER))
+					.addComponent(nightydegreeButton)
+					.addComponent(fortycentimeterButton));
+		directionlayout.setVerticalGroup(directionlayout.createSequentialGroup()
+				.addGroup(directionlayout.createSequentialGroup()
+					.addComponent(nightydegreeButton)
+					.addComponent(fortycentimeterButton)));
+		
+		
+		return directionPanel;
+	}
 	private JPanel mappingPanel() {
 		simulationPanel = new SimulationJPanel();
 		simulationPanel.setSSG(this);
@@ -345,6 +382,34 @@ public class SilverSurferGUI {
 
 		return consolePanel;
 	}
+	
+	private JPanel alignPanel() {
+        Action alignAction = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    unitCommunicator
+                            .sendCommandToUnit(commands.Command.ALIGN_PERPENDICULAR);
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        };
+        JButton alignButton = new JButton("align");
+        alignButton.addActionListener(alignAction);
+        JPanel alignPanel = new JPanel();
+
+        GroupLayout alignLayout = new GroupLayout(alignPanel);
+        alignPanel.setLayout(alignLayout);
+        alignLayout.setHorizontalGroup(alignLayout.createSequentialGroup()
+                .addComponent(alignButton));
+        alignLayout.setVerticalGroup(alignLayout.createSequentialGroup()
+                .addComponent(alignButton));
+
+        return alignPanel;
+    }
 	
 	public void updateStatus() {
 		String s = new String("(US: " + informationBuffer.getUltraSensorInfo() + ", LS: " + informationBuffer.getLightSensorInfo()
@@ -447,6 +512,32 @@ public class SilverSurferGUI {
 				polygonangles.setValue(4);
 				polygonEdgeLength.setValue(10);
 				simulationPanel.requestFocusInWindow();
+			}
+		});
+		fortycentimeterButton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				PolygonDrawThread PDT = new PolygonDrawThread("PDT");
+				PDT.setUnitCommunicator(unitCommunicator);
+				polygonangles.setValue(0);
+				polygonEdgeLength.setValue(40);
+				PDT.setAngles((int)polygonangles.getValue());
+				PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+				PDT.start();
+				simulationPanel.requestFocusInWindow();
+			
 			}
 		});
 		polygondraw.addMouseListener(new MouseListener() {
@@ -709,6 +800,7 @@ public class SilverSurferGUI {
 				System.out.println("[GUI] Screen cleared.");
 				simulationPanel.clear();
 				simulationPanel.requestFocusInWindow();
+				
 			}
 		});
 		simulationPanel.addKeyListener(new KeyListener() {

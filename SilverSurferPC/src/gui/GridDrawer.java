@@ -6,6 +6,7 @@ import simulator.SimulationPilot;
 public class GridDrawer {
 
 	private SimulationJPanel panel;
+	
 	public GridDrawer(SimulationJPanel panel){
 		
 	}
