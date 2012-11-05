@@ -42,6 +42,12 @@ public class UnitCommunicator {
 	 */
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {}
 	
+	
+	public void runForward(int amtOfAngles, int lengthInCM) throws IOException {}
+	
+	public void runTurning(int amtOfAngles, int lengthInCM) throws IOException {}
+
+	
 	public int getSpeed() {
 		return 0; 
 	}

@@ -23,6 +23,24 @@ public class PolygonDrawThread extends Thread {
 		}
 	}
 	
+	public void runForward() {
+		System.out.println(unitCommunicator.getConsoleTag() + " Goes 40 centimeters forward" );
+		try {
+			unitCommunicator.runForward(angles, length);
+		} catch (IOException e) {
+			System.out.println(unitCommunicator.getConsoleTag() + "Oops! Failed to execute the forwarding.");
+		}
+	}
+	
+	public void runTurning() {
+		System.out.println(unitCommunicator.getConsoleTag() + " Turning 90 degrees");
+		try {
+			unitCommunicator.runTurning(angles, length);
+		} catch (IOException e) {
+			System.out.println(unitCommunicator.getConsoleTag() + "Oops! Failed to execute the turning.");
+		}
+	}
+	
 	public UnitCommunicator getUnitCommunicator() {
 		return unitCommunicator;
 	}
