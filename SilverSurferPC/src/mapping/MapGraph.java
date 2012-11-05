@@ -67,153 +67,148 @@ public class MapGraph {
 	}
 	
 	/**
-	 * Tries to move North if possible, returns true if succeeds.
+	 * Tries to move to the given orientation if possible, returns true if succeeds.
 	 */
-	public boolean moveNorth(){
-		if(!canMoveNorth()) return false;
-		else if (getCurrentTile().getNorthEdge().getOtherTile(getCurrentTile()) == null){
-			if (getCurrentTile().getNorthEdge().isTile1(getCurrentTile())){
-				getCurrentTile().getNorthEdge().setTile2(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()+1));
-				getCurrentTile().getNorthEdge().getTile2().setSouthEdge(getCurrentTile().getNorthEdge());
+	public boolean moveToNextTile(Orientation orientation){
+		if(orientation == Orientation.NORTH)
+		{
+			if(!canMoveNorth()) return false;
+			else if (getCurrentTile().getNorthEdge().getOtherTile(getCurrentTile()) == null){
+				if (getCurrentTile().getNorthEdge().isTile1(getCurrentTile())){
+					getCurrentTile().getNorthEdge().setTile2(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()+1));
+					getCurrentTile().getNorthEdge().getTile2().setSouthEdge(getCurrentTile().getNorthEdge());
+					setCurrentTile(getCurrentTile().getNorthEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+				else if (getCurrentTile().getNorthEdge().isTile2(getCurrentTile())){
+					getCurrentTile().getNorthEdge().setTile1(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()+1));
+					getCurrentTile().getNorthEdge().getTile1().setSouthEdge(getCurrentTile().getNorthEdge());
+					setCurrentTile(getCurrentTile().getNorthEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+			}
+			else{
 				setCurrentTile(getCurrentTile().getNorthEdge().getOtherTile(getCurrentTile()));
 				return true;
-				}
-			else if (getCurrentTile().getNorthEdge().isTile2(getCurrentTile())){
-				getCurrentTile().getNorthEdge().setTile1(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()+1));
-				getCurrentTile().getNorthEdge().getTile1().setSouthEdge(getCurrentTile().getNorthEdge());
-				setCurrentTile(getCurrentTile().getNorthEdge().getOtherTile(getCurrentTile()));
-				return true;
-				}
+			}
+			return false;
 		}
-		else{
-			setCurrentTile(getCurrentTile().getNorthEdge().getOtherTile(getCurrentTile()));
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Tries to move East if possible, returns true if succeeds.
-	 */
-	public boolean moveEast(){
-		if(!canMoveNorth()) return false;
-		else if (getCurrentTile().getEastEdge().getOtherTile(getCurrentTile()) == null){
-			if (getCurrentTile().getEastEdge().isTile1(getCurrentTile())){
-				getCurrentTile().getEastEdge().setTile2(new Tile(getCurrentTile().getxCoordinate()+1,getCurrentTile().getyCoordinate()));
-				getCurrentTile().getEastEdge().getTile2().setWestEdge(getCurrentTile().getEastEdge());
+		if(orientation == Orientation.EAST)
+		{
+			if(!canMoveEast()) return false;
+			else if (getCurrentTile().getEastEdge().getOtherTile(getCurrentTile()) == null){
+				if (getCurrentTile().getEastEdge().isTile1(getCurrentTile())){
+					getCurrentTile().getEastEdge().setTile2(new Tile(getCurrentTile().getxCoordinate()+1,getCurrentTile().getyCoordinate()));
+					getCurrentTile().getEastEdge().getTile2().setWestEdge(getCurrentTile().getEastEdge());
+					setCurrentTile(getCurrentTile().getEastEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+				else if (getCurrentTile().getEastEdge().isTile2(getCurrentTile())){
+					getCurrentTile().getEastEdge().setTile1(new Tile(getCurrentTile().getxCoordinate()+1,getCurrentTile().getyCoordinate()));
+					getCurrentTile().getEastEdge().getTile1().setWestEdge(getCurrentTile().getEastEdge());
+					setCurrentTile(getCurrentTile().getEastEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+			}
+			else{
 				setCurrentTile(getCurrentTile().getEastEdge().getOtherTile(getCurrentTile()));
 				return true;
-				}
-			else if (getCurrentTile().getEastEdge().isTile2(getCurrentTile())){
-				getCurrentTile().getEastEdge().setTile1(new Tile(getCurrentTile().getxCoordinate()+1,getCurrentTile().getyCoordinate()));
-				getCurrentTile().getEastEdge().getTile1().setWestEdge(getCurrentTile().getEastEdge());
-				setCurrentTile(getCurrentTile().getEastEdge().getOtherTile(getCurrentTile()));
-				return true;
-				}
+			}
+			return false;
 		}
-		else{
-			setCurrentTile(getCurrentTile().getEastEdge().getOtherTile(getCurrentTile()));
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Tries to move South if possible, returns true if succeeds.
-	 */
-	public boolean moveSouth(){
-		if(!canMoveNorth()) return false;
-		else if (getCurrentTile().getSouthEdge().getOtherTile(getCurrentTile()) == null){
-			if (getCurrentTile().getSouthEdge().isTile1(getCurrentTile())){
-				getCurrentTile().getSouthEdge().setTile2(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()-1));
-				getCurrentTile().getSouthEdge().getTile2().setNorthEdge(getCurrentTile().getSouthEdge());
+		if(orientation == Orientation.SOUTH)
+		{
+			if(!canMoveSouth()) return false;
+			else if (getCurrentTile().getSouthEdge().getOtherTile(getCurrentTile()) == null){
+				if (getCurrentTile().getSouthEdge().isTile1(getCurrentTile())){
+					getCurrentTile().getSouthEdge().setTile2(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()-1));
+					getCurrentTile().getSouthEdge().getTile2().setNorthEdge(getCurrentTile().getSouthEdge());
+					setCurrentTile(getCurrentTile().getSouthEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+				else if (getCurrentTile().getSouthEdge().isTile2(getCurrentTile())){
+					getCurrentTile().getSouthEdge().setTile1(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()-1));
+					getCurrentTile().getSouthEdge().getTile1().setNorthEdge(getCurrentTile().getSouthEdge());
+					setCurrentTile(getCurrentTile().getSouthEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+			}
+			else{
 				setCurrentTile(getCurrentTile().getSouthEdge().getOtherTile(getCurrentTile()));
 				return true;
-				}
-			else if (getCurrentTile().getSouthEdge().isTile2(getCurrentTile())){
-				getCurrentTile().getSouthEdge().setTile1(new Tile(getCurrentTile().getxCoordinate(),getCurrentTile().getyCoordinate()-1));
-				getCurrentTile().getSouthEdge().getTile1().setNorthEdge(getCurrentTile().getSouthEdge());
-				setCurrentTile(getCurrentTile().getSouthEdge().getOtherTile(getCurrentTile()));
-				return true;
-				}
+			}
+			return false;
 		}
-		else{
-			setCurrentTile(getCurrentTile().getSouthEdge().getOtherTile(getCurrentTile()));
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Tries to move West if possible, returns true if succeeds.
-	 */
-	public boolean moveWest(){
-		if(!canMoveNorth()) return false;
-		else if (getCurrentTile().getWestEdge().getOtherTile(getCurrentTile()) == null){
-			if (getCurrentTile().getWestEdge().isTile1(getCurrentTile())){
-				getCurrentTile().getWestEdge().setTile2(new Tile(getCurrentTile().getxCoordinate()-1,getCurrentTile().getyCoordinate()));
-				getCurrentTile().getWestEdge().getTile2().setEastEdge(getCurrentTile().getWestEdge());
+		if(orientation == Orientation.WEST)
+		{
+			if(!canMoveWest()) return false;
+			else if (getCurrentTile().getWestEdge().getOtherTile(getCurrentTile()) == null){
+				if (getCurrentTile().getWestEdge().isTile1(getCurrentTile())){
+					getCurrentTile().getWestEdge().setTile2(new Tile(getCurrentTile().getxCoordinate()-1,getCurrentTile().getyCoordinate()));
+					getCurrentTile().getWestEdge().getTile2().setEastEdge(getCurrentTile().getWestEdge());
+					setCurrentTile(getCurrentTile().getWestEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+				else if (getCurrentTile().getWestEdge().isTile2(getCurrentTile())){
+					getCurrentTile().getWestEdge().setTile1(new Tile(getCurrentTile().getxCoordinate()-1,getCurrentTile().getyCoordinate()));
+					getCurrentTile().getWestEdge().getTile1().setEastEdge(getCurrentTile().getWestEdge());
+					setCurrentTile(getCurrentTile().getWestEdge().getOtherTile(getCurrentTile()));
+					return true;
+				}
+			}
+			else{
 				setCurrentTile(getCurrentTile().getWestEdge().getOtherTile(getCurrentTile()));
 				return true;
-				}
-			else if (getCurrentTile().getWestEdge().isTile2(getCurrentTile())){
-				getCurrentTile().getWestEdge().setTile1(new Tile(getCurrentTile().getxCoordinate()-1,getCurrentTile().getyCoordinate()));
-				getCurrentTile().getWestEdge().getTile1().setEastEdge(getCurrentTile().getWestEdge());
-				setCurrentTile(getCurrentTile().getWestEdge().getOtherTile(getCurrentTile()));
-				return true;
-				}
-		}
-		else{
-			setCurrentTile(getCurrentTile().getWestEdge().getOtherTile(getCurrentTile()));
-			return true;
+			}
+			return false;
 		}
 		return false;
 	}
 	
 	/**
-	 * Adds a given obstruction to edge north of the current tile.
+	 * Adds a given obstruction to the edge on the given orientation of the current tile.
 	 */
-	public void addObstructionNorth(Obstruction obst){
-		getCurrentTile().getNorthEdge().setObstruction(obst);
-	}
-	/**
-	 * Adds a given obstruction to edge east of the current tile.
-	 */
-	public void addObstructionEast(Obstruction obst){
-		getCurrentTile().getEastEdge().setObstruction(obst);
-	}
-	/**
-	 * Adds a given obstruction to edge south of the current tile.
-	 */
-	public void addObstructionSouth(Obstruction obst){
-		getCurrentTile().getSouthEdge().setObstruction(obst);
-	}
-	/**
-	 * Adds a given obstruction to edge west of the current tile.
-	 */
-	public void addObstructionWest(Obstruction obst){
-		getCurrentTile().getWestEdge().setObstruction(obst);
+	public void addObstruction(Obstruction obst, Orientation orientation)
+	{
+		if(orientation == Orientation.NORTH)
+		{
+			getCurrentTile().getNorthEdge().setObstruction(obst);
+		}
+		if(orientation == Orientation.EAST)
+		{
+			getCurrentTile().getEastEdge().setObstruction(obst);
+		}
+		if(orientation == Orientation.SOUTH)
+		{
+			getCurrentTile().getSouthEdge().setObstruction(obst);
+		}
+		if(orientation == Orientation.WEST)
+		{
+			getCurrentTile().getWestEdge().setObstruction(obst);
+		}
 	}
 	
 	/**
-	 * Returns the obstruction north of the current tile.
+	 * Returns the obstruction on the given orientation of the current tile.
 	 */
-	public Obstruction getObstructionNorth(){
-		return getCurrentTile().getNorthEdge().getObstruction();
-	}
-	/**
-	 * Returns the obstruction east of the current tile.
-	 */
-	public Obstruction getObstructionEast(){
-		return getCurrentTile().getEastEdge().getObstruction();
-	}
-	/**
-	 * Returns the obstruction south of the current tile.
-	 */
-	public Obstruction getObstructionSouth(){
-		return getCurrentTile().getSouthEdge().getObstruction();
-	}
-	/**
-	 * Returns the obstruction west of the current tile.
-	 */
-	public Obstruction getObstructionWest(){
-		return getCurrentTile().getWestEdge().getObstruction();
+	public Obstruction getObstruction(Orientation orientation)
+	{
+		if(orientation == Orientation.NORTH)
+		{
+			return getCurrentTile().getNorthEdge().getObstruction();
+		}
+		if(orientation == Orientation.EAST)
+		{
+			return getCurrentTile().getEastEdge().getObstruction();
+		}
+		if(orientation == Orientation.SOUTH)
+		{
+			return getCurrentTile().getSouthEdge().getObstruction();
+		}
+		//if(orientation == Orientation.WEST)
+		else
+		{
+			return getCurrentTile().getWestEdge().getObstruction();
+		}
 	}
 }
