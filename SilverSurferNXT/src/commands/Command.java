@@ -15,5 +15,5 @@ public class Command {
 	public static final int SLOW_SPEED = 10;
 	public static final int NORMAL_SPEED = 11;
 	public static final int FAST_SPEED = 12;
-	public static final int VERY_FAST_SPEED = 13;	
+	public static final int VERY_FAST_SPEED = 13;
 }
