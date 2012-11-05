@@ -48,6 +48,9 @@ public class SilverSurferGUI {
 
 	private static JButton clearButton;
 
+	private static JButton nightydegreeButton;
+	private static JButton fortycentimeterButton;
+	
 	private static JTextArea textArea;
 
 	private static JPanel mappingPanel;
@@ -61,6 +64,7 @@ public class SilverSurferGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setBackground(new Color(221,230,231));
 
+		JPanel directionPanel = directionPanel();
 		JPanel bluetoothPanel = bluetoothPanel();
 		JPanel polygonPanel = polygonPanel();
 		JPanel arrowPanel = arrowPanel();
@@ -82,7 +86,9 @@ public class SilverSurferGUI {
 						.addComponent(clearPanel))
 				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(mappingPanel)
-						.addComponent(consolePanel)));
+						.addComponent(consolePanel))
+				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(directionPanel)));
 		frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addGroup(frameLayout.createSequentialGroup()
 						.addComponent(bluetoothPanel)
@@ -92,7 +98,9 @@ public class SilverSurferGUI {
 						.addComponent(clearPanel))
 				.addGroup(frameLayout.createSequentialGroup()
 						.addComponent(mappingPanel)
-						.addComponent(consolePanel)));
+						.addComponent(consolePanel))
+				.addGroup(frameLayout.createSequentialGroup()
+						.addComponent(directionPanel)));
 		frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel, speedPanel);
 		frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
 
@@ -295,6 +303,30 @@ public class SilverSurferGUI {
 		return clearPanel;
 	}
 
+	private JPanel directionPanel() {
+		nightydegreeButton = new JButton("90° turning");
+		fortycentimeterButton = new JButton("40cm forward");
+		
+		JPanel directionPanel = new JPanel();
+		directionPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"turning and forward"));
+		directionPanel.setOpaque(false);
+
+		GroupLayout directionlayout = new GroupLayout(directionPanel);
+		directionPanel.setLayout(directionlayout);
+		directionlayout.setAutoCreateGaps(true);
+		directionlayout.setAutoCreateContainerGaps(true);
+		directionlayout.setHorizontalGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER))
+					.addComponent(nightydegreeButton)
+					.addComponent(fortycentimeterButton));
+		directionlayout.setVerticalGroup(directionlayout.createSequentialGroup()
+				.addGroup(directionlayout.createSequentialGroup()
+					.addComponent(nightydegreeButton)
+					.addComponent(fortycentimeterButton)));
+		
+		
+		return directionPanel;
+	}
 	private JPanel mappingPanel() {
 		simulationPanel = new SimulationJPanel();
 		simulationPanel.setSSG(this);
@@ -447,6 +479,32 @@ public class SilverSurferGUI {
 				polygonangles.setValue(4);
 				polygonEdgeLength.setValue(10);
 				simulationPanel.requestFocusInWindow();
+			}
+		});
+		fortycentimeterButton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				PolygonDrawThread PDT = new PolygonDrawThread("PDT");
+				PDT.setUnitCommunicator(unitCommunicator);
+				polygonangles.setValue(0);
+				polygonEdgeLength.setValue(40);
+				PDT.setAngles((int)polygonangles.getValue());
+				PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+				PDT.start();
+				simulationPanel.requestFocusInWindow();
+			
 			}
 		});
 		polygondraw.addMouseListener(new MouseListener() {
@@ -709,6 +767,7 @@ public class SilverSurferGUI {
 				System.out.println("[GUI] Screen cleared.");
 				simulationPanel.clear();
 				simulationPanel.requestFocusInWindow();
+				
 			}
 		});
 		simulationPanel.addKeyListener(new KeyListener() {
