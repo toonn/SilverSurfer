@@ -73,6 +73,9 @@ public class SimulationPilot {
 	public MapGraph getMapGraph() {
 		return this.mapGraph;
 	}
+	public void setMapGraph(MapGraph mapGraph) {
+		this.mapGraph = mapGraph;
+	}
 	
 	private float getMaxRoundingError()
 	{
