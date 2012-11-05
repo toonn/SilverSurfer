@@ -24,6 +24,7 @@ public class CommandUnit {
 	private String touchStatus2 = "[TS2] false";
 	private String leftmotorStatus = "[LM] false 0";
 	private String rightmotorStatus = "[RM] false 0";
+	private SensorThread ST;
 	
 	public CommandUnit() {		
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
@@ -38,7 +39,12 @@ public class CommandUnit {
     
     	dis = pcConnection.openDataInputStream();
     	dos = pcConnection.openDataOutputStream();
+    	
     	lightSensor.setFloodlight(true);
+    	
+		ST = new SensorThread("ST");
+		ST.setCommandUnit(this);
+		ST.start();
 	}
 	
 	public State getCurrentState() {
@@ -50,8 +56,8 @@ public class CommandUnit {
 	}
 	
 	public void sendStringToUnit(String info) {
-		byte[] byteArray = info.getBytes();
-		pcConnection.write(byteArray,byteArray.length);
+			byte[] byteArray = info.getBytes();
+			pcConnection.write(byteArray,byteArray.length);
 	}
 	
 	public int getSpeed(int speed) {
@@ -83,6 +89,12 @@ public class CommandUnit {
 		touchStatus2 = "[TS2] " + touchSensor2.isPressed();
 		leftmotorStatus = "[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed();
 		rightmotorStatus = "[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed();
+		sendStringToUnit(ultrasonicStatus);
+		sendStringToUnit(lightStatus);
+		sendStringToUnit(touchStatus1);
+		sendStringToUnit(touchStatus2);
+		sendStringToUnit(leftmotorStatus);
+		sendStringToUnit(rightmotorStatus);
 	}
 	
 	/**
@@ -114,13 +126,6 @@ public class CommandUnit {
     	while(true) {
     		try {
     			LCD.clear();
-    			CU.updateStatus();
-    			CU.sendStringToUnit(CU.ultrasonicStatus);
-    			CU.sendStringToUnit(CU.lightStatus);
-    			CU.sendStringToUnit(CU.touchStatus1);
-    			CU.sendStringToUnit(CU.touchStatus2);
-    			CU.sendStringToUnit(CU.leftmotorStatus);
-    			CU.sendStringToUnit(CU.rightmotorStatus);
     			System.out.println("Waiting for input...");
     			int input = CU.dis.readInt();
     			switch(input) {
@@ -182,6 +187,7 @@ public class CommandUnit {
     		}
     	}
     	
+    	CU.ST.setQuit(true);
     	CU.dis.close();
     	CU.dos.close();
     	CU.pcConnection.close();
