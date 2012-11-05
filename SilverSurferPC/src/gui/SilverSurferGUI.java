@@ -51,6 +51,7 @@ public class SilverSurferGUI {
 	private static JButton nightydegreeButton;
 	private static JSpinner lengthButton;
 	private static JButton fortycentimeterButton;
+	private static JButton lookAroundButton;
 	
 	private static JTextArea textArea;
 
@@ -71,6 +72,7 @@ public class SilverSurferGUI {
 		JPanel arrowPanel = arrowPanel();
 		JPanel speedPanel = speedPanel();
 		JPanel clearPanel = clearPanel();
+		JPanel lookAroundPanel = lookAroundPanel();
 		JPanel mappingPanel = mappingPanel();
 		JPanel consolePanel = consolePanel();
 		
@@ -89,7 +91,8 @@ public class SilverSurferGUI {
 						.addComponent(mappingPanel)
 						.addComponent(consolePanel))
 				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(directionPanel)));
+						.addComponent(directionPanel)
+						.addComponent(lookAroundPanel)));
 		frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addGroup(frameLayout.createSequentialGroup()
 						.addComponent(bluetoothPanel)
@@ -101,7 +104,8 @@ public class SilverSurferGUI {
 						.addComponent(mappingPanel)
 						.addComponent(consolePanel))
 				.addGroup(frameLayout.createSequentialGroup()
-						.addComponent(directionPanel)));
+						.addComponent(directionPanel)
+						.addComponent(lookAroundPanel)));
 		frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel, speedPanel);
 		frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
 
@@ -333,6 +337,26 @@ public class SilverSurferGUI {
 		
 		
 		return directionPanel;
+	}
+	
+	private JPanel lookAroundPanel()
+	{
+		lookAroundButton = new JButton("Look Around");
+		
+		JPanel lookAroundPanel = new JPanel();
+		lookAroundPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Look for obstructions"));
+		lookAroundPanel.setOpaque(false);
+
+		GroupLayout lookAroundLayout = new GroupLayout(lookAroundPanel);
+		lookAroundPanel.setLayout(lookAroundLayout);
+		lookAroundLayout.setAutoCreateGaps(true);
+		lookAroundLayout.setAutoCreateContainerGaps(true);
+		lookAroundLayout.setHorizontalGroup(lookAroundLayout.createSequentialGroup()
+				.addComponent(lookAroundButton));
+		lookAroundLayout.setVerticalGroup(lookAroundLayout.createSequentialGroup()
+				.addComponent(lookAroundButton));
+
+		return lookAroundPanel;
 	}
 	private JPanel mappingPanel() {
 		simulationPanel = new SimulationJPanel();
@@ -805,6 +829,26 @@ public class SilverSurferGUI {
 				System.out.println("[GUI] Screen cleared.");
 				simulationPanel.clear();
 				simulationPanel.requestFocusInWindow();
+				
+			}
+		});
+		lookAroundButton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+
+			@Override
+			public void mousePressed(MouseEvent e) {}
+
+			@Override
+			public void mouseExited(MouseEvent e) {}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("[SIMULATOR] Looking around for obstructions.");
+				simulationPanel.checkForObstructions();
 				
 			}
 		});
