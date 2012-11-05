@@ -12,24 +12,27 @@ public class Command {
 	public static final int RIGHT_RELEASED = 7;
 	public static final int AUTOMATIC_MOVE_FORWARD = 8;
 	public static final int AUTOMATIC_TURN_ANGLE = 9;
+	public static final int ALIGN_PERPENDICULAR = 14;
 	
 	public static String toConsoleString(int c) {
-		if (c == 0)
+		if (c == FORWARD_PRESSED)
 			return "FORWARD_PRESSED";
-		else if (c == 1)
+		else if (c == FORWARD_RELEASED)
 			return "FORWARD_RELEASED";
-		else if (c == 2)
+		else if (c == BACKWARD_PRESSED)
 			return "BACKWARD_PRESSED";
-		else if (c == 3)
+		else if (c == BACKWARD_RELEASED)
 			return "BACKWARD_RELEASED";
-		else if (c == 4)
+		else if (c == LEFT_PRESSED)
 			return "LEFT_PRESSED";
-		else if (c == 5)
+		else if (c == LEFT_RELEASED)
 			return "LEFT_RELEASED";
-		else if (c == 6)
+		else if (c == RIGHT_PRESSED)
 			return "RIGHT_PRESSED";
-		else if (c == 7)
+		else if (c == RIGHT_RELEASED)
 			return "RIGHT_RELEASED";
+		else if (c == ALIGN_PERPENDICULAR)
+		    return "Aligning perpendicularly to a white line";
 		return " ";
 	}
 }
