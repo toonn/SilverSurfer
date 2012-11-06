@@ -42,13 +42,13 @@ public class InfoReceiverThread extends Thread {
 				dis.read(b);
 				String a = new String(b);
 				if(a.startsWith("[LS]"))
-					infoBuffer.setLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
+					infoBuffer.addLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
 				else if(a.startsWith("[US]"))
-					infoBuffer.setUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
+					infoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
 				else if(a.startsWith("[TS1]"))
-					infoBuffer.setTouchSensor1Info(Boolean.valueOf(a.substring(6).trim()));
+					infoBuffer.addTouchSensor1Info(Boolean.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[TS2]"))
-					infoBuffer.setTouchSensor2Info(Boolean.valueOf(a.substring(6).trim()));
+					infoBuffer.addTouchSensor2Info(Boolean.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[LM]")) {
 					if(a.substring(5).startsWith("true")) {
 						infoBuffer.setLeftMotorMoving(true);
