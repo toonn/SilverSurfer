@@ -81,6 +81,7 @@ public class MapGraph {
 		}
 		else
 		{
+			System.out.println("you bumped into a wall");
 			return false;
 		}
 	}
