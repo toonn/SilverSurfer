@@ -22,7 +22,7 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	@Override
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {
 		int angle = (int)((float) Math.round(360.0/amtOfAngles*100));
-		if (amtOfAngles == 1)
+		if (amtOfAngles <= 1)
 			sendCommandToUnit(lengthInCM*100 + Command.AUTOMATIC_MOVE_FORWARD);
 		else for(int i = 0; i<amtOfAngles; i++) {
 			sendCommandToUnit(lengthInCM*100 + Command.AUTOMATIC_MOVE_FORWARD);
