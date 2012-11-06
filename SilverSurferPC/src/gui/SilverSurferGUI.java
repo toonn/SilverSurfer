@@ -1156,6 +1156,10 @@ public class SilverSurferGUI {
 	public static UnitCommunicator getPrevCommunicator() {
 		return prevCommunicator;
 	}
+	public static StatusInfoBuffer getInformationBuffer() {
+		return informationBuffer; 
+	}
+	
 	public static void main(String[] args) {
 		SilverSurferGUI SSG = new SilverSurferGUI();
 		SSG.createAndShowGUI();

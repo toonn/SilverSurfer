@@ -83,69 +83,106 @@ public class SimulationPilot {
 	}
 	
 	public void travel(float distance) {
+		float xOld = this.getX();
+		float yOld = this.getY();
+		
+		float j = distance;
 		if(distance >= 0) {
 			for (int i = 1; i <= distance; i++) {
-				float xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
-				float yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+				xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 				
-				this.travelToNextTileIfNeeded(xOld, yOld);
+				if(!this.travelToNextTileIfNeeded(xOld, yOld, 1))
+				{
+					j = i-1;
+					break;
+				}
 				
 				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
-				try {
-					Thread.sleep(speed);
-				} catch (InterruptedException e) {
-	
-				}
+				try{Thread.sleep(speed);}
+				catch (InterruptedException e) {}
 			}
-			this.setX((float) (this.getX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
-			this.setY((float) (this.getY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+			this.setX((float) (this.getX() + j*Math.cos(Math.toRadians(this.getAlpha()))));
+			this.setY((float) (this.getY() + j*Math.sin(Math.toRadians(this.getAlpha()))));
 		}
+		
 		else if(distance <= 0) {
 			for (int i = -1; i >= distance; i--) {
-				float xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
-				float yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
-				
-				this.travelToNextTileIfNeeded(xOld, yOld);
-				
-				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
-				try {
-					Thread.sleep(speed);
-				} catch (InterruptedException e) {
-	
+				xOld = (float) (this.getX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				yOld = (float) (this.getY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+
+				if(!this.travelToNextTileIfNeeded(xOld, yOld, -1))
+				{
+					j = i+1;
+					break;
 				}
+				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
+				try {Thread.sleep(speed);}
+				catch (InterruptedException e) {}
 			}
-			this.setX((float) (this.getX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
-			this.setY((float) (this.getY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+			this.setX((float) (this.getX() + j*Math.cos(Math.toRadians(this.getAlpha()))));
+			this.setY((float) (this.getY() + j*Math.sin(Math.toRadians(this.getAlpha()))));
 		}
 	}
 
-
-	private void travelToNextTileIfNeeded(float xOld, float yOld) {
+	/**
+	 * returns false if you have bumped a wall, otherwise (you have crossed a line or you are not on a border) true.
+	 * @param	direction
+	 * 		  	1 if you are travelling foreward,
+	 * 			-1 if you are travelling backward
+	 */
+	private boolean travelToNextTileIfNeeded(float xOld, float yOld, int direction) {
 		if((xOld%40) > 40-this.getMaxRoundingError() || (xOld%40) < this.getMaxRoundingError())
 		{
 			if(this.getAlpha() > 270 || this.getAlpha() < 90)
 			{
-				this.getMapGraph().moveToNextTile(Orientation.EAST);
-				System.out.println(this.getMapGraph().getCurrentTile().toString());
+				if(direction == 1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.EAST);
+				}
+				else if(direction == -1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.WEST);
+				}
 			}
 			else
 			{
-				this.getMapGraph().moveToNextTile(Orientation.WEST);
+				if(direction == 1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.WEST);
+				}
+				else if(direction == -1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.EAST);
+				}
 			}
-			this.checkForObstructions();
 		}
 		if((yOld%40) > 40-this.getMaxRoundingError() || (yOld%40) < this.getMaxRoundingError())
 		{
 			if(this.getAlpha() < 180)
 			{
-				this.getMapGraph().moveToNextTile(Orientation.SOUTH);
+				if(direction == 1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.SOUTH);
+				}
+				else if(direction == -1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.NORTH);
+				}
 			}
 			else
 			{
-				this.getMapGraph().moveToNextTile(Orientation.NORTH);
+				if(direction == 1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.NORTH);
+				}
+				else if(direction == -1)
+				{
+					return this.getMapGraph().moveToNextTile(Orientation.SOUTH);
+				}
 			}
-			this.checkForObstructions();
 		}
+		return true;
 	}
 	
 	public void checkForObstructions()
@@ -157,6 +194,7 @@ public class SimulationPilot {
 			if(currentOrientation != Orientation.calculateOrientation(this.getX(), this.getY(), this.getAlpha()))
 			{
 				currentOrientation = Orientation.calculateOrientation(this.getX(), this.getY(), this.getAlpha());
+				//TODO if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WHITE_LINE)
 				if(this.getMapGraph().getObstruction(currentOrientation) == null)
 				{
 					SSG.getSimulationPanel().addWhiteLine(Orientation.calculateOrientation(this.getX(), this.getY(), this.getAlpha()));
@@ -171,13 +209,8 @@ public class SimulationPilot {
 				{
 					System.out.println("Unidentified Obstruction!");;
 				}
-
-				this.rotate(45);
 			}
-			else
-			{
-				this.rotate(45);
-			}
+			this.rotate(45);
 		}
 	}
 		
