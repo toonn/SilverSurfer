@@ -48,7 +48,7 @@ public class SilverSurferGUI {
 
 	private static JButton clearButton;
 
-	private static JButton nightydegreeButton;
+	private static JButton ninetydegreeButton;
 	private static JSpinner lengthButton;
 	private static JButton fortycentimeterButton;
 
@@ -130,6 +130,8 @@ public class SilverSurferGUI {
 		getSimulationPanel().setSimulatorPilot(((SimulatorCommunicator)unitCommunicator).getSim());
 		addListeners();
 		simulationPanel.requestFocusInWindow();
+		unitCommunicator.setSpeed(speedvalues.getValue());
+
 		updateStatus();
 
 	}
@@ -317,7 +319,7 @@ public class SilverSurferGUI {
 	}
 
 	private JPanel directionPanel() {
-		nightydegreeButton = new JButton("90° turning");
+		ninetydegreeButton = new JButton("90° turning");
 		JLabel length = new JLabel("Length (centimeters)", JLabel.CENTER);
 
 		SpinnerNumberModel lenghtModel = new SpinnerNumberModel(10, 0, 1000, 1);
@@ -334,12 +336,12 @@ public class SilverSurferGUI {
 		directionlayout.setAutoCreateContainerGaps(true);
 		directionlayout.setHorizontalGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addGroup(directionlayout.createParallelGroup(GroupLayout.Alignment.CENTER))
-				.addComponent(nightydegreeButton)
+				.addComponent(ninetydegreeButton)
 				.addComponent(lengthButton)
 				.addComponent(fortycentimeterButton));
 		directionlayout.setVerticalGroup(directionlayout.createSequentialGroup()
 				.addGroup(directionlayout.createSequentialGroup()
-						.addComponent(nightydegreeButton)
+						.addComponent(ninetydegreeButton)
 						.addComponent(lengthButton)
 						.addComponent(fortycentimeterButton)));
 
@@ -567,7 +569,7 @@ public class SilverSurferGUI {
 			}
 		});
 
-		nightydegreeButton.addMouseListener(new MouseListener() {
+		ninetydegreeButton.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {}
 
@@ -582,15 +584,24 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				PolygonDrawThread PDT = new PolygonDrawThread("PDT");
-				PDT.setUnitCommunicator(unitCommunicator);
-
+				
 				// voor de robot methoden moveForward() en turnAngle() gebruiken	
 				polygonangles.setValue(0);
 				polygonEdgeLength.setValue(40);
-				PDT.setAngles((int)polygonangles.getValue());
-				PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
-				PDT.runTurning();
+				
+				TurnAngleThread TAT = new TurnAngleThread("TAT");
+				TAT.setUnitCommunicator(unitCommunicator);
+				TAT.setAngles((int)polygonangles.getValue());
+				TAT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+				if (robotConnected){
+					TurnAngleThread TAT1 = new TurnAngleThread("TAT1");
+					TAT1.setUnitCommunicator(prevCommunicator);
+					TAT1.setAngles((int)polygonangles.getValue());
+					TAT1.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+					TAT1.start();
+				}
+				TAT.start();
+
 				simulationPanel.requestFocusInWindow();
 
 			}
@@ -610,15 +621,26 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				PolygonDrawThread PDT = new PolygonDrawThread("PDT");
-				PDT.setUnitCommunicator(unitCommunicator);
-
+				
 				// voor de robot methoden moveForward() en turnAngle() gebruiken	
 				polygonangles.setValue(0);
 				polygonEdgeLength.setValue(40);
-				PDT.setAngles((int)polygonangles.getValue());
-				PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
-				PDT.runForward();
+				
+				RunForwardThread RFT = new RunForwardThread("RFT");
+				RFT.setUnitCommunicator(unitCommunicator);
+				RFT.setAngles((int)polygonangles.getValue());
+				RFT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+				
+				if (robotConnected){
+					RunForwardThread RFT1 = new RunForwardThread("RFT1");
+					RFT1.setUnitCommunicator(prevCommunicator);
+					RFT1.setAngles((int)polygonangles.getValue());
+					RFT1.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+					RFT1.start();
+				}
+				
+				RFT.start();
+
 				simulationPanel.requestFocusInWindow();
 
 			}
@@ -643,6 +665,14 @@ public class SilverSurferGUI {
 				PDT.setAngles((int)polygonangles.getValue());
 				PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
 				PDT.start();
+				
+				if(robotConnected){
+					PolygonDrawThread PDT1 = new PolygonDrawThread("PDT1");
+					PDT1.setUnitCommunicator(prevCommunicator);
+					PDT1.setAngles((int)polygonangles.getValue());
+					PDT1.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+					PDT1.start();
+				}
 				simulationPanel.requestFocusInWindow();
 			}
 		});
