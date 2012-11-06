@@ -11,7 +11,7 @@ public class SimulationPilot {
 	private float x = 220;
 	private float y = 220;
 	private float alpha = 270;
-	private int speed = 30;
+	private int speed = 10;
 	private SilverSurferGUI SSG = new SilverSurferGUI();
 	private File mapFile;
 	private MapGraph mapGraph;
@@ -49,11 +49,11 @@ public class SimulationPilot {
 	}
 	
 	public int getSpeed() {
-		if(speed == 10)
+		if(speed == 48)
 			return 4;
-		else if(speed == 20)
+		else if(speed == 59)
 			return 3;
-		else if(speed == 30)
+		else if(speed == 86)
 			return 2;
 		else
 			return 1;
@@ -61,13 +61,13 @@ public class SimulationPilot {
 	
 	public void setSpeed(int speed) {
 		if(speed == 1)
-			this.speed = 40;
+			this.speed = 194;
 		else if(speed == 2)
-			this.speed = 30;
+			this.speed = 86;
 		else if(speed == 3)
-			this.speed = 20;
+			this.speed = 59;
 		else
-			this.speed = 10;
+			this.speed = 48;
 	}
 
 	public MapGraph getMapGraph() {
