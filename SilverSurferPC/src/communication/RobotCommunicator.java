@@ -49,7 +49,7 @@ public class RobotCommunicator extends UnitCommunicator {
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {
 		int angle = (int)Math.round(ANGLE_COEF/amtOfAngles);
 		int lengthInDeg = (int)Math.round(LENGTH_COEF * lengthInCM);
-		if (amtOfAngles == 1)
+		if (amtOfAngles <= 1)
 			sendCommandToUnit(lengthInDeg*100 + Command.AUTOMATIC_MOVE_FORWARD);
 		else for(int i = 0; i<amtOfAngles; i++) {
 			sendCommandToUnit(lengthInDeg*100 + Command.AUTOMATIC_MOVE_FORWARD);

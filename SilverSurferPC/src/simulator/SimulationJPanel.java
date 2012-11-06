@@ -230,18 +230,19 @@ public class SimulationJPanel extends JPanel {
 			int x;
 			int y;
 
-			if(s instanceof Triangle)
-			{	if(s.equals(getVisibleTriangle()))
-				((Graphics2D) graph).fill(s);
-			x = (int) ((Triangle) s).getGravityCenterX();
-			y = (int) ((Triangle) s).getGravityCenterY();
-
-			}
-			else
+			if(!(s instanceof Triangle))
 			{	
 				((Graphics2D) graph).fill(s);
 				x = (int) ((RectangularShape) s).getX();
 				y = (int) ((RectangularShape) s).getY();
+			}
+			else
+			{	
+				if(s.equals(getVisibleTriangle()))
+					((Graphics2D) graph).fill(s);
+				x = (int) ((Triangle) s).getGravityCenterX();
+				y = (int) ((Triangle) s).getGravityCenterY();
+				
 			}
 
 			if(simulatorPilot!= null)
