@@ -452,8 +452,8 @@ public class SilverSurferGUI {
 
 
 	public void updateStatus() {
-		String s = new String("(US: " + informationBuffer.getUltraSensorInfo() + ", LS: " + informationBuffer.getLightSensorInfo()
-				+ ", TS1: " + informationBuffer.getTouchSensor1Info() + ", TS2: " + informationBuffer.getTouchSensor2Info()
+		String s = new String("(US: " + informationBuffer.getLatestUltraSensorInfo() + ", LS: " + informationBuffer.getLatestLightSensorInfo()
+				+ ", TS1: " + informationBuffer.getLatestTouchSensor1Info() + ", TS2: " + informationBuffer.getLatestTouchSensor2Info()
 				+ ", LM: " + informationBuffer.getLeftMotorMoving() + " " + informationBuffer.getLeftMotorSpeed()
 				+ ", RM: " + informationBuffer.getRightMotorMoving() + " " + informationBuffer.getRightMotorSpeed() + ")");
 		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output " + s));
