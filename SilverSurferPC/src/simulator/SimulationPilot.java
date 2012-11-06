@@ -119,20 +119,19 @@ public class SimulationPilot {
 		}
 	}
 
-
 	private void travelToNextTileIfNeeded(float xOld, float yOld) {
 		if((xOld%40) > 40-this.getMaxRoundingError() || (xOld%40) < this.getMaxRoundingError())
 		{
 			if(this.getAlpha() > 270 || this.getAlpha() < 90)
 			{
 				this.getMapGraph().moveToNextTile(Orientation.EAST);
-				System.out.println(this.getMapGraph().getCurrentTile().toString());
+				// you have crossed a white line
 			}
 			else
 			{
 				this.getMapGraph().moveToNextTile(Orientation.WEST);
+				// you have crossed a white line
 			}
-			this.checkForObstructions();
 		}
 		if((yOld%40) > 40-this.getMaxRoundingError() || (yOld%40) < this.getMaxRoundingError())
 		{
@@ -144,7 +143,6 @@ public class SimulationPilot {
 			{
 				this.getMapGraph().moveToNextTile(Orientation.NORTH);
 			}
-			this.checkForObstructions();
 		}
 	}
 	
@@ -171,13 +169,8 @@ public class SimulationPilot {
 				{
 					System.out.println("Unidentified Obstruction!");;
 				}
-
-				this.rotate(45);
 			}
-			else
-			{
-				this.rotate(45);
-			}
+			this.rotate(45);
 		}
 	}
 		
