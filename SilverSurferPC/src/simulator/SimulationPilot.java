@@ -51,7 +51,7 @@ public class SimulationPilot {
 	public int getSpeed() {
 		if(speed == 48)
 			return 4;
-		else if(speed == 59)
+		else if(speed == 58)
 			return 3;
 		else if(speed == 86)
 			return 2;
@@ -65,7 +65,7 @@ public class SimulationPilot {
 		else if(speed == 2)
 			this.speed = 86;
 		else if(speed == 3)
-			this.speed = 59;
+			this.speed = 58;
 		else
 			this.speed = 48;
 	}
