@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,16 +26,17 @@ public class GUIMenuBar extends JMenuBar {
 	public GUIMenuBar(SilverSurferGUI gui){
 		setGui(gui);
 		this.add(getMapMenu());
-
+		this.add(getBlueToothMenu());
+		setBackground(new Color(221,230,231));
 	}
 
 
 	private JMenu getMapMenu(){
 
-		JMenu menu = new JMenu("Map");
-		menu.setMnemonic('M');
+		JMenu menu = new JMenu("File");
+		menu.setMnemonic('F');
 
-		JMenuItem loadItem = new JMenuItem("Load...");
+		JMenuItem loadItem = new JMenuItem("Load map...");
 		loadItem.setMnemonic('L');
 		menu.add(loadItem);
 
@@ -64,6 +66,40 @@ public class GUIMenuBar extends JMenuBar {
 		return menu;
 }
 
+	private JMenu getBlueToothMenu(){
+		
+		JMenu bluetoothMenu = new JMenu("Bluetooth");
+		bluetoothMenu.setMnemonic('B');
+		
+		JMenuItem connectItem = new JMenuItem("Connect...");
+		connectItem.setMnemonic('C');
+		bluetoothMenu.add(connectItem);
+		
+		JMenuItem disconnectItem = new JMenuItem("Disconnect...");
+		disconnectItem.setMnemonic('D');
+		bluetoothMenu.add(disconnectItem);
+		
+		connectItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				getGui().connectBluetooth();
+				
+			}
+		});
+		
+		disconnectItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getGui().disconnectBluetooth();
+				
+			}
+		});
+		
+		return bluetoothMenu;
+		
+	}
 /**
  * Set the SilverSurferGUI this menubar should operate on.
  */
