@@ -10,13 +10,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
-import org.w3c.dom.ls.LSInput;
 
 import communication.SimulatorCommunicator;
 import communication.StatusInfoBuffer;
@@ -27,9 +23,7 @@ import communication.StatusInfoBuffer.TS2InfoNode;
 
 
 
-import mapping.MapGraph;
-import mapping.MapReader;
-import mapping.Orientation;
+import mapping.*;
 
 
 public class GUIMenuBar extends JMenuBar {
@@ -309,7 +303,7 @@ public class GUIMenuBar extends JMenuBar {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				getGui().connectBluetooth();
+                SilverSurferGUI.connectBluetooth();
 
 			}
 		});

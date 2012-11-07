@@ -1,8 +1,5 @@
 package simulator;
 
-import javax.swing.ImageIcon;
-
-
 import gui.SilverSurferGUI;
 import mapping.*;
 import java.io.File;
