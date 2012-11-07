@@ -1,4 +1,4 @@
-package mapping;
+package mapping; 
 
 import exception.SimulatorCrashedException;
 
@@ -20,7 +20,9 @@ public class MapGraph {
 	private Tile[][] tiles = new Tile[0][0];
 
 	/**
-	 * Creates a new Map
+	 * Creates a new Map with the defined length as its length,
+	 * and the defined width as its width.
+	 * The starting Tile coordinates are initiades 00
 	 */
 	public MapGraph(int lengthx, int lengthy){
 		tiles = new Tile[lengthx][lengthy];
@@ -29,7 +31,9 @@ public class MapGraph {
 	}
 	
 	/**
-	 * Creates a new Map with the tile with defined coordinates as coordinates as starting Tile.
+	 * Creates a new Map with the defined length as its length,
+	 * and the defined width as its width.
+	 * the startingtileCoordinates with defined coordinates as coordinates as starting Tile.
 	 * @param start
 	 */
 	public MapGraph(int x, int y, int lengthx, int lengthy){
@@ -98,23 +102,19 @@ public class MapGraph {
 		
 		return getCurrentTile().getEdge(orientation).isPassable();
 	}
-	
+	/**
+	 * Tries to move to the given orientation if possible, returns true if succeeds.
+	 */
 	public void moveToNextTile(Orientation orientation){
 		try {
 			if(this.canMoveTo(orientation)){
 				setCurrentTileCoordinates(getCurrentTileCoordinates()[0] + Orientation.getArrayToFindNeighbourRelative(orientation)[0], 
 						getCurrentTileCoordinates()[1] + Orientation.getArrayToFindNeighbourRelative(orientation)[1]);}
 		} catch (SimulatorCrashedException e) {
-			reset();
+			
 		}
 			
 	} 
-
-
-	private void reset() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	/**
 	 * Adds a given obstruction to the edge on the given orientation of the current tile.
