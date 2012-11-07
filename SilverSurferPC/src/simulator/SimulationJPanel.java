@@ -300,11 +300,11 @@ public class SimulationJPanel extends JPanel {
 		// draw the white line!
 	}
 
-	public void travelToNextTile(Orientation orientation)
-	{
-		this.getMapGraphConstructed().moveToNextTile(orientation);
-		// kleur het vierkantje bruin
-	}
+//	public void travelToNextTile(Orientation orientation)
+//	{
+//		this.getMapGraphConstructed().moveToNextTile(orientation);
+//		// kleur het vierkantje bruin
+//	}
 
 	public void addWall(Orientation orientation, float[] array)
 	{
