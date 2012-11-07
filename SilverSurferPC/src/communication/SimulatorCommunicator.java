@@ -53,6 +53,7 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	
 	@Override
 	public void sendCommandToUnit(int command) throws IOException {
+
 		if(command == 0)
 			sim.travel(1);
 		else if(command == 2)	
