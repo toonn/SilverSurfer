@@ -9,16 +9,17 @@ import exception.SimulatorCrashedException;
 
 import gui.SilverSurferGUI;
 import mapping.*;
-
 import java.io.File;
 public class SimulationPilot {
-	
+
 	private final float startPositionAbsoluteX = 220;
 	private final float startPositionAbsoluteY = 220;
 	private float currentPositionAbsoluteX = 220;
 	private float currentPositionAbsoluteY = 220;
-	private float alpha = 90;
-	private int speed = 30;
+
+
+	private float alpha = 270;
+	private int speed = 10;
 	private SilverSurferGUI SSG = new SilverSurferGUI();
 	private File mapFile;
 	private MapGraph mapGraph;
@@ -83,11 +84,11 @@ public class SimulationPilot {
 	}
 	
 	public int getSpeed() {
-		if(speed == 10)
+		if(speed == 48)
 			return 4;
-		else if(speed == 20)
+		else if(speed == 58)
 			return 3;
-		else if(speed == 30)
+		else if(speed == 86)
 			return 2;
 		else
 			return 1;
@@ -95,13 +96,13 @@ public class SimulationPilot {
 	
 	public void setSpeed(int speed) {
 		if(speed == 1)
-			this.speed = 40;
+			this.speed = 194;
 		else if(speed == 2)
-			this.speed = 30;
+			this.speed = 86;
 		else if(speed == 3)
-			this.speed = 20;
+			this.speed = 58;
 		else
-			this.speed = 10;
+			this.speed = 48;
 	}
 
 	public MapGraph getMapGraph() {
@@ -117,18 +118,19 @@ public class SimulationPilot {
 	}
 	
 	public void travel(float distance) {
+		float xOld = this.getCurrentPositionAbsoluteX();
+		float yOld = this.getCurrentPositionAbsoluteY();
+		Orientation currentOrientation; 
+		
 		if(distance >= 0) {
 			
-			Orientation currentOrientation; 
-			float xOld = this.getCurrentPositionAbsoluteX();
-			float yOld = this.getCurrentPositionAbsoluteY();
-			
 			for (int i = 1; i <= distance; i++) {
+
 				currentOrientation = Orientation.calculateOrientation(xOld, yOld, this.getAlpha());
-				
-				 xOld = (float) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
-				 yOld = (float) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
-				
+
+				xOld = (float) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				yOld = (float) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+
 				if(onEdge(xOld, yOld) && this.getMapGraph().getObstruction(currentOrientation)!=null ){
 					this.setCurrentPositionAbsoluteX((float) (this.getCurrentPositionAbsoluteX() + (i-1)*Math.cos(Math.toRadians(this.getAlpha()))));
 					this.setCurrentPositionAbsoluteY((float) (this.getCurrentPositionAbsoluteY() + (i-1)*Math.sin(Math.toRadians(this.getAlpha()))));
@@ -137,25 +139,22 @@ public class SimulationPilot {
 				}
 				
 				this.travelToNextTileIfNeeded(xOld, yOld, 1);
+
 				
 				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
-				try {
-					Thread.sleep(speed);
-				} catch (InterruptedException e) {
-	
-				}
+				try{Thread.sleep(speed);}
+				catch (InterruptedException e) {}
 			}
 			this.setCurrentPositionAbsoluteX((float) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
 			this.setCurrentPositionAbsoluteY((float) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+
 		}
-		//TODO achteruit
+		
+		
 		else if(distance <= 0) {
 			
-			Orientation currentOrientation; 
-			float xOld = this.getCurrentPositionAbsoluteX();
-			float yOld = this.getCurrentPositionAbsoluteY();
-			
 			for (int i = -1; i >= distance; i--) {
+
 				xOld = (float) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
 				yOld = (float) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 				
@@ -173,13 +172,13 @@ public class SimulationPilot {
 				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
 				try {
 					Thread.sleep(speed);
-				} catch (InterruptedException e) {
-	
-				}
-			}
+				} catch (InterruptedException e) {}
+			
 			this.setCurrentPositionAbsoluteX((float) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
 			this.setCurrentPositionAbsoluteY((float) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+	
 		}
+	}
 	}
 
 	/**
@@ -189,10 +188,6 @@ public class SimulationPilot {
 	 *       	-1 if you are travelling backward
 	 */
 	private void travelToNextTileIfNeeded(float xOld, float yOld, int direction) {
-//		System.out.println(xOld%40);
-//		System.out.println((xOld%40) > 40-this.getMaxRoundingError() || (xOld%40) < this.getMaxRoundingError());
-//		System.out.println(yOld%40);
-//		System.out.println((yOld%40) > 40-this.getMaxRoundingError() || (yOld%40) < this.getMaxRoundingError());
 		if((xOld%40) > 40-this.getMaxRoundingError() || (xOld%40) < this.getMaxRoundingError())
 		{	
 			System.out.println("horizontale tile overgang");
@@ -240,11 +235,12 @@ public class SimulationPilot {
 //					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[0]);
 //					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[1]);
 //				}
+
 			}
-			this.checkForObstructions();
 		}
 		if((yOld%40) > 40-this.getMaxRoundingError() || (yOld%40) < this.getMaxRoundingError())
 		{
+
 			System.out.println("verticale tile overgang");
 			if(this.getAlpha() < 180 && direction == 1 || this.getAlpha()>180 && direction == -1)
 			{	
@@ -269,9 +265,7 @@ public class SimulationPilot {
 
 			}
 			else
-				
-				
-				
+	
 			{	
 				this.getMapGraph().moveToNextTile(Orientation.NORTH);
 				setCurrentTileFromThisMapToPanelMap();
@@ -292,9 +286,8 @@ public class SimulationPilot {
 //					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[1]);
 //				}
 				
-			}
-			this.checkForObstructions();
 		}
+	}
 	}
 	
 	public void checkForObstructions()
@@ -306,7 +299,9 @@ public class SimulationPilot {
 		{
 			if(!currentOrientation.equals(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha())))
 			{
+
 				currentOrientation = Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
+				//TODO if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WHITE_LINE)
 				if(this.getMapGraph().getObstruction(currentOrientation) == null)
 				{
 					SSG.getSimulationPanel().addWhiteLine(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha()),
@@ -322,13 +317,8 @@ public class SimulationPilot {
 				{
 					System.out.println("Unidentified Obstruction!");;
 				}
-
-				this.rotate(45);
 			}
-			else
-			{
-				this.rotate(45);
-			}
+			this.rotate(45);
 		}
 	}
 		
