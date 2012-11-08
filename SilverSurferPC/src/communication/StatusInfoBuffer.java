@@ -127,7 +127,8 @@ public class StatusInfoBuffer {
 				endLSInfo.next = temp;
 				endLSInfo = temp;
 			}
-			
+			amtLSUpdated++;
+
 		}
 	}
 
@@ -143,7 +144,7 @@ public class StatusInfoBuffer {
 	 */
 	public void addUltraSensorInfo(int ultraSensorInfo) {
 		this.ultraSensorInfo = ultraSensorInfo;
-		SSG.updateStatus();
+		System.out.println("bufferused"+isBufferUsed);
 		if(!isBufferUsed){
 			//Voeg toe aan buffer.
 			if(amtUSUpdated < BUFFER_SIZE){
@@ -170,8 +171,10 @@ public class StatusInfoBuffer {
 				endUSInfo.next = temp;
 				endUSInfo = temp;
 			}
-			
+			amtUSUpdated++;
 		}
+		SSG.updateStatus();
+
 	}
 
 	/**
@@ -213,7 +216,8 @@ public class StatusInfoBuffer {
 				endTS1Info.next = temp;
 				endTS1Info = temp;
 			}
-			
+			amtTS1Updated++;
+
 		}
 	}
 	/**
@@ -255,7 +259,8 @@ public class StatusInfoBuffer {
 				endTS2Info.next = temp;
 				endTS2Info = temp;
 			}
-			
+			amtTS2Updated++;
+
 		}
 	}
 
