@@ -14,16 +14,11 @@ public class CommandUnit {
 	private NXTConnection pcConnection;
 	private DataInputStream dis;
 	private DataOutputStream dos;
+	private boolean quit = false;
 	private UltrasonicSensor ultrasonicSensor;
-	private static LightSensor lightSensor;
+	private LightSensor lightSensor;
 	private TouchSensor touchSensor1;
 	private TouchSensor touchSensor2;
-	private String ultrasonicStatus = "[US] 0";
-	private String lightStatus = "[LS] 0";
-	private String touchStatus1 = "[TS1] false";
-	private String touchStatus2 = "[TS2] false";
-	private String leftmotorStatus = "[LM] false 0";
-	private String rightmotorStatus = "[RM] false 0";
 	private SensorThread ST;
 	
 	public CommandUnit() {		
@@ -39,6 +34,8 @@ public class CommandUnit {
     
     	dis = pcConnection.openDataInputStream();
     	dos = pcConnection.openDataOutputStream();
+    	
+    	quit = false;
     	
     	lightSensor.setFloodlight(true);
     	
@@ -56,8 +53,12 @@ public class CommandUnit {
 	}
 	
 	public void sendStringToUnit(String info) {
-			byte[] byteArray = info.getBytes();
-			pcConnection.write(byteArray,byteArray.length);
+			try {
+				byte[] byteArray = info.getBytes();
+				pcConnection.write(byteArray,byteArray.length);
+			} catch(Exception e) {
+				
+			}
 	}
 	
 	public int getSpeed(int speed) {
@@ -83,24 +84,18 @@ public class CommandUnit {
 	}
 	
 	public void updateStatus() {
-		ultrasonicStatus = "[US] " + ultrasonicSensor.getDistance();
-		lightStatus = "[LS] " + lightSensor.getLightValue();
-		touchStatus1 = "[TS1] " + touchSensor1.isPressed();
-		touchStatus2 = "[TS2] " + touchSensor2.isPressed();
-		leftmotorStatus = "[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed();
-		rightmotorStatus = "[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed();
-		sendStringToUnit(ultrasonicStatus);
-		sendStringToUnit(lightStatus);
-		sendStringToUnit(touchStatus1);
-		sendStringToUnit(touchStatus2);
-		sendStringToUnit(leftmotorStatus);
-		sendStringToUnit(rightmotorStatus);
+		sendStringToUnit("[US] " + ultrasonicSensor.getDistance());
+		sendStringToUnit("[LS] " + lightSensor.getLightValue());
+		sendStringToUnit("[TS1] " + touchSensor1.isPressed());
+		sendStringToUnit("[TS2] " + touchSensor2.isPressed());
+		sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
+		sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
 	}
 	
 	public static void main(String[] args) throws IOException {
 		CommandUnit CU = new CommandUnit();
 		
-    	while(true) {
+    	while(!(CU.quit)) {
     		try {
     			LCD.clear();
     			System.out.println("Waiting for input...");
@@ -143,11 +138,16 @@ public class CommandUnit {
     				CU.setSpeed(4);
     				break;
     			case (Command.ALIGN_PERPENDICULAR):
-    			    Automatic alignPerpAuto = new Automatic();
-    			    CU.setCurrentState(alignPerpAuto);
-    			    alignPerpAuto.forwardToWhiteLine(lightSensor);
-    		        alignPerpAuto.whiteLinePerpendicular(lightSensor);
+    			    Automatic align = new Automatic();
+    			    CU.setCurrentState(align);
+    			    align.alignOnWhiteLine(CU.lightSensor, CU);
+    			    CU.setCurrentState(new Waiting());
     			    break;
+    			case (Command.CLOSE_CONNECTION):
+    				CU.ST.setQuit(true);
+    	    		CU.lightSensor.setFloodlight(false);
+    	    		CU.quit = true;
+    				break;
     			default:
     				if(input%10==8) {
     					Automatic auto = new Automatic();
@@ -170,7 +170,6 @@ public class CommandUnit {
     		}
     	}
     	
-    	CU.ST.setQuit(true);
     	CU.dis.close();
     	CU.dos.close();
     	CU.pcConnection.close();

@@ -1,6 +1,6 @@
 package statemachine;
 
-import communication.CommandUnit;
+import communication.*;
 
 import lejos.nxt.*;
 
@@ -23,80 +23,30 @@ public class Automatic extends State {
         Motor.B.rotate(angle);
     }
 
-    /**
-     * Move the robot forward untill it has passed a white line.
-     */
-    public void forwardToWhiteLine(LightSensor lightSensor) {
-        boolean passedWhiteLine = false;
-        int forwardStepAngle = 5;
-        int passWhiteAngle = 36;
-        int oldLightValue;
-        int newLightValue = lightSensor.getLightValue();
-        int threshold = 10; // Verschil tussen bruin en wit.
+    public void alignOnWhiteLine(LightSensor lightSensor, CommandUnit CU) {
+    	int angle = 0;
+        
+		WhiteLineThread WLTForward = new WhiteLineThread("WLTForward");
+		WLTForward.setCommandUnit(CU);
+		WLTForward.setStartState(1);
+		WLTForward.start();
 
-        while (!passedWhiteLine) {
-            oldLightValue = newLightValue;
-            newLightValue = lightSensor.getLightValue();
+		while(lightSensor.getLightValue() < 54);
+		while(lightSensor.getLightValue() >= 54);
 
-            if (oldLightValue - newLightValue > threshold) {
-                moveForward(passWhiteAngle);
-                passedWhiteLine = true;
-            } else {
-                moveForward(forwardStepAngle);
-            }
-        }
-    }
+		WLTForward.setQuit(true);
 
-    /**
-     * The robot will set itself perpendicular to a white line (not on a
-     * barcode!) This method assumes that the robot is near a white line (it can
-     * reach it just by turning around its axis).
-     */
-    public void whiteLinePerpendicular(LightSensor lightSensor) {
-        boolean alignedPerpendicular = false;
-        boolean reverse = false;
-        int wheelAngle = 5;
-        int angleTurned = 0;
-        int oldLightValue;
-        int newLightValue = lightSensor.getLightValue();
-        int threshold = 10; // Verschil tussen bruin en wit.
-
-        while (!alignedPerpendicular) {
-            oldLightValue = newLightValue;
-            newLightValue = lightSensor.getLightValue();
-
-            if (newLightValue - oldLightValue > threshold) {
-                if (reverse) {
-                    turnAngle(angleTurned / 2);
-                    alignedPerpendicular = true;
-                } else {
-                    reverse = true;
-                }
-            } else {
-                if (reverse) {
-                    turnAngle(-wheelAngle);
-                    angleTurned += wheelAngle;
-                } else {
-                    turnAngle(wheelAngle);
-                }
-            }
-        }
-        // // turn around your axis till you are on a line
-        // while(robot.getUnderground() != "WHITE")
-        // {
-        // robot.turn(1);
-        // }
-        //
-        // // turn further around your axis till you find the other side of the
-        // line
-        // robot.turn(-5);
-        // int degreesTurnedNeg = 5;
-        // while(robot.getUnderground() != "WHITE")
-        // {
-        // robot.turn(-1);
-        // degreesTurnedNeg++;
-        // }
-        //
-        // robot.turn(degreesTurnedNeg/2);
+		while(lightSensor.getLightValue() < 54) {
+			turnAngle(-3);
+		}
+		while(lightSensor.getLightValue() >= 54) {
+			turnAngle(3);
+			angle = angle + 3;
+		}
+		while(lightSensor.getLightValue() < 54) {
+			turnAngle(3);
+			angle = angle + 3;
+		}
+		turnAngle(-(angle/2));
     }
 }
