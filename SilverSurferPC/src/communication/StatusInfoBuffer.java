@@ -1,5 +1,7 @@
 package communication;
 
+import java.awt.Toolkit;
+
 import gui.SilverSurferGUI;
 
 public class StatusInfoBuffer {
@@ -144,7 +146,7 @@ public class StatusInfoBuffer {
 	 */
 	public void addUltraSensorInfo(int ultraSensorInfo) {
 		this.ultraSensorInfo = ultraSensorInfo;
-		System.out.println("bufferused"+isBufferUsed);
+
 		if(!isBufferUsed){
 			//Voeg toe aan buffer.
 			if(amtUSUpdated < BUFFER_SIZE){
@@ -188,6 +190,11 @@ public class StatusInfoBuffer {
 	 * Add new info for Touch Sensor 1.
 	 */
 	public void addTouchSensor1Info(boolean touchSensor1Info) {
+		//Computer makes a beep when bumping a wall.
+		if(touchSensor1Info)
+			Toolkit.getDefaultToolkit().beep();
+		
+
 		this.touchSensor1Info = touchSensor1Info;
 		SSG.updateStatus();
 		if(!isBufferUsed){
@@ -231,6 +238,11 @@ public class StatusInfoBuffer {
 	 * Add new info for Touch Sensor 1.
 	 */
 	public void addTouchSensor2Info(boolean touchSensor2Info) {
+		//Computer makes a beep when bumping a wall.
+		if(touchSensor2Info)
+			Toolkit.getDefaultToolkit().beep();
+		
+		
 		this.touchSensor2Info = touchSensor2Info;
 		SSG.updateStatus();
 		if(!isBufferUsed){
