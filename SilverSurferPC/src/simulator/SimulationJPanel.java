@@ -35,7 +35,9 @@ public class SimulationJPanel extends JPanel {
 	public SimulationJPanel(){
 		shapes.add(triangle1);
 		shapes.add(triangle2);
-	}
+		}
+		
+	
 
 	//	public void addCircle(float x, float y, float degrees) {
 	//		// remove the last triangle and draw little circles to indicate the path

@@ -1,5 +1,7 @@
 package gui;
 
+import java.io.IOException;
+
 import communication.*;
 
 public class MouseClickThread extends Thread {
@@ -14,12 +16,20 @@ public class MouseClickThread extends Thread {
 	}
 	
 	public void run() {
+//		System.err.println("MouseClickThread.run()");
 		while(ride) {
 			try {
+//				System.err.println("about to try to send command by unitComm "+unitCommunicator);
 				unitCommunicator.sendCommandToUnit(command);
+//				System.err.println("command " + command + " uitgevoerd" );
 				Thread.sleep(speed);
-			} catch (Exception e) {
-
+//				System.err.println("just slept "+speed);
+			} catch (IOException e) {
+//				System.err.println("Error in mouseClickThread: "+e.getClass());
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+//				System.err.println("Error in mocuseClickThread: "+e.getClass());
+				e.printStackTrace();
 			}
 		}
 	}

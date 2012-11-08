@@ -3,7 +3,6 @@ package communication;
 import commands.Command;
 
 import java.io.*;
-
 import lejos.pc.comm.*;
 
 public class RobotCommunicator extends UnitCommunicator {
@@ -50,26 +49,12 @@ public class RobotCommunicator extends UnitCommunicator {
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {
 		int angle = (int)Math.round(ANGLE_COEF/amtOfAngles);
 		int lengthInDeg = (int)Math.round(LENGTH_COEF * lengthInCM);
-		if (amtOfAngles <= 1)
+		if (amtOfAngles == 1)
 			sendCommandToUnit(lengthInDeg*100 + Command.AUTOMATIC_MOVE_FORWARD);
 		else for(int i = 0; i<amtOfAngles; i++) {
 			sendCommandToUnit(lengthInDeg*100 + Command.AUTOMATIC_MOVE_FORWARD);
 			sendCommandToUnit(angle*100 + Command.AUTOMATIC_TURN_ANGLE);
 		}
-	}
-	
-	@Override
-	public void runForward(int amtOfAngles, int lengthInCM) throws IOException {
-		int lengthInDeg = (int)Math.round(LENGTH_COEF * lengthInCM);
-		sendCommandToUnit(lengthInDeg*100 + Command.AUTOMATIC_MOVE_FORWARD);
-
-	}
-	
-	@Override
-	public void runTurning(int amtOfAngles, int lengthInCM) throws IOException {
-		int angle = (int)Math.round(ANGLE_COEF/360)*90;
-		sendCommandToUnit(angle*100 + Command.AUTOMATIC_TURN_ANGLE);
-
 	}
 	
 	@Override

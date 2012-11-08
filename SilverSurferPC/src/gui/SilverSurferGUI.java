@@ -11,6 +11,7 @@ import javax.swing.*;
 
 public class SilverSurferGUI {
 
+
     private static JFrame frame;
     private static SimulationJPanel simulationPanel;
     private static StatusInfoBuffer informationBuffer;

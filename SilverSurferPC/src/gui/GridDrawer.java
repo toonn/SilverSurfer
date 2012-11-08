@@ -1,6 +1,7 @@
 package gui;
 
-import simulator.*;
+import simulator.SimulationJPanel;
+import simulator.SimulationPilot;
 
 public class GridDrawer {
 
