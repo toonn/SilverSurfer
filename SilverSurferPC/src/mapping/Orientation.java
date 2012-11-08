@@ -8,6 +8,12 @@ public enum Orientation {
 		return (float) 0.4;
 	}
 
+	/**
+	 * Hier wordt de richting van de edge die ge eerst snijdt (dus NORTH edge, SOUTH edge,...)
+	 * berekend adhv uw coordinaten waar de robot zich bevindt en hoek waaronder die staat.
+	 * bij dit soort methodes is kans op tel of afrondingsfouten groot!!
+	 * TODO normaal wel in orde maar zou kunnen dat het toch soms foute resultaten geeft
+	 */
 	public static Orientation calculateOrientation(float x, float y, float alpha)
 	{
 		float xTemp = x;
@@ -48,16 +54,8 @@ public enum Orientation {
 	}
 	
 	/**
-	 * Return an array with 3 long values for each direction. 
-	 * This array can be added at a dimension to find
-	 * the dimension of the neighbour-square in that direction.
-	 * 
-	 * @param 	direction
-	 * 			The direction to get the array of.
-	 * @return	The array of the given direction.
-	 * @throws  IllegalArgumentException 
-	 * 			The direction is not effective.
-	 * 			| direction == null
+	 * er is dus een verschil met getArrayToFindNeighbourRelative die hier onder staat
+	 * ook weer door het verschil in coordinatensysteem zie uitleg simulationpilot bovenaan
 	 */
 	public static int[] getArrayToFindNeighbourAbsolute(Orientation orientation){
 	
@@ -91,6 +89,7 @@ public enum Orientation {
 		}
 	}
 	
+
 	public static int[] getArrayToFindNeighbourRelative(Orientation orientation){
 		
 		if(orientation == null) {
@@ -123,6 +122,10 @@ public enum Orientation {
 		}
 	}
 	
+	/**
+	 * hulpmethode die verder niet gebruikt wordt..
+	 * is in de setTileMethode van nut
+	 */
 	public static Orientation getOrientationOfArray(int[] array){
 		if(array[0]==1)
 			return EAST;
@@ -135,6 +138,10 @@ public enum Orientation {
 	}
 	
 	/**
+	 *  dit wordt enkel gebruikt in tile en edges doet voor de rest ook niet echt
+	 *  ter zake
+	 *  
+	 *  
 	 *  Return the number of the given direction.
 	 *  
 	 * 	Each pair of opposite directions has received an even and an odd number.
@@ -191,6 +198,9 @@ public enum Orientation {
 		}
 	}
 	
+	/**
+	 * enkel gebruikt in mapreader , doet verder niet ter zake
+	 */
 	public static Orientation getOtherOrientationCorner(Orientation orientation){
 		switch(orientation){
 		case NORTH:
@@ -204,6 +214,9 @@ public enum Orientation {
 		}
 	}
 	
+	/**
+	 * enkel gebruikt in mapreader , doet verder niet ter zake
+	 */
 	public static Orientation switchStringToOrientation(String string){
 		if(string.equals("N"))
 			return NORTH;
