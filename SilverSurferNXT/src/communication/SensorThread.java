@@ -10,8 +10,13 @@ public class SensorThread extends Thread {
 	}
 
 	public void run() {
-		while(!quit) {
-			CU.updateStatus();
+		try {
+			while(!quit) {
+					CU.updateStatus();
+					Thread.sleep(100);
+			}
+		} catch(Exception e) {
+			
 		}
 	}
 	
