@@ -39,7 +39,7 @@ public class CommandUnit {
     	
     	lightSensor.setFloodlight(true);
     	
-		ST = new SensorThread("ST");
+    	ST = new SensorThread("ST");
 		ST.setCommandUnit(this);
 		ST.start();
 	}
@@ -140,7 +140,7 @@ public class CommandUnit {
     			case (Command.ALIGN_PERPENDICULAR):
     			    Automatic align = new Automatic();
     			    CU.setCurrentState(align);
-    			    align.alignOnWhiteLine(CU.lightSensor, CU);
+    			    align.alignOnWhiteLine(CU.lightSensor, CU, CU.lightSensor.getLightValue() + 4);
     			    CU.setCurrentState(new Waiting());
     			    break;
     			case (Command.CLOSE_CONNECTION):

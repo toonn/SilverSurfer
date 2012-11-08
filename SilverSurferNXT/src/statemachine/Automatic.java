@@ -23,7 +23,7 @@ public class Automatic extends State {
         Motor.B.rotate(angle);
     }
 
-    public void alignOnWhiteLine(LightSensor lightSensor, CommandUnit CU) {
+    public void alignOnWhiteLine(LightSensor lightSensor, CommandUnit CU, int treshold) {
     	int angle = 0;
         
 		WhiteLineThread WLTForward = new WhiteLineThread("WLTForward");
@@ -31,19 +31,19 @@ public class Automatic extends State {
 		WLTForward.setStartState(1);
 		WLTForward.start();
 
-		while(lightSensor.getLightValue() < 54);
-		while(lightSensor.getLightValue() >= 54);
+		while(lightSensor.getLightValue() < treshold);
+		while(lightSensor.getLightValue() >= treshold);
 
 		WLTForward.setQuit(true);
 
-		while(lightSensor.getLightValue() < 54) {
+		while(lightSensor.getLightValue() < treshold) {
 			turnAngle(-3);
 		}
-		while(lightSensor.getLightValue() >= 54) {
+		while(lightSensor.getLightValue() >= treshold) {
 			turnAngle(3);
 			angle = angle + 3;
 		}
-		while(lightSensor.getLightValue() < 54) {
+		while(lightSensor.getLightValue() < treshold) {
 			turnAngle(3);
 			angle = angle + 3;
 		}
