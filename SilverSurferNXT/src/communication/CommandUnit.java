@@ -138,9 +138,15 @@ public class CommandUnit {
     				CU.setSpeed(4);
     				break;
     			case (Command.ALIGN_PERPENDICULAR):
-    			    Automatic align = new Automatic();
-    			    CU.setCurrentState(align);
-    			    align.alignOnWhiteLine(CU.lightSensor, CU, CU.lightSensor.getLightValue() + 4);
+    			    Automatic alignPerp = new Automatic();
+    			    CU.setCurrentState(alignPerp);
+    			    alignPerp.alignOnWhiteLine(CU.lightSensor, CU, CU.lightSensor.getLightValue() + 4);
+    			    CU.setCurrentState(new Waiting());
+    			    break;
+    			case (Command.ALIGN_WALL):
+    			    Automatic alignWall = new Automatic();
+    			    CU.setCurrentState(alignWall);
+    			    alignWall.alignOnWall(CU.ultrasonicSensor);
     			    CU.setCurrentState(new Waiting());
     			    break;
     			case (Command.CLOSE_CONNECTION):
