@@ -12,85 +12,324 @@ public class StatusInfoBuffer {
 	private boolean rightMotorMoving;
 	private int leftMotorSpeed;
 	private int rightMotorSpeed;
+
 	private SilverSurferGUI SSG;
+	/**
+	 * Check if the buffer can be updated (can be updated when false).
+	 */
+	private boolean isBufferUsed = false;
+	/**
+	 * Amount of datapoints kept by this buffer.
+	 */
+	private final int BUFFER_SIZE = 1000;
 	
-	public int getLightSensorInfo() {
+	private LSInfoNode startLSInfo = new LSInfoNode();
+	private LSInfoNode endLSInfo = new LSInfoNode();
+	private USInfoNode startUSInfo = new USInfoNode();
+	private USInfoNode endUSInfo = new USInfoNode();
+	private TS1InfoNode startTS1Info = new TS1InfoNode();
+	private TS1InfoNode endTS1Info = new TS1InfoNode();
+	private TS2InfoNode startTS2Info = new TS2InfoNode();
+	private TS2InfoNode endTS2Info = new TS2InfoNode();
+
+	private int amtLSUpdated = 0;
+	private int amtUSUpdated = 0;
+	private int amtTS1Updated = 0;
+	private int amtTS2Updated = 0;
+
+
+	/**
+	 * Used to make a linked-list stack of LS-information.
+	 */
+	public class LSInfoNode {
+		public int info;
+		public LSInfoNode next;
+	}
+	
+	/**
+	 * Used to make a linked-list stack of US-information.
+	 */
+	public class USInfoNode {
+		public int info;
+		public USInfoNode next;
+	}
+	
+	/**
+	 * Used to make a linked-list stack of TS1-information.
+	 */
+	public class TS1InfoNode {
+		public boolean info;
+		public TS1InfoNode next;
+	}
+	
+	/**
+	 * Used to make a linked-list stack of TS1-information.
+	 */
+	public class TS2InfoNode {
+		public boolean info;
+		public TS2InfoNode next;
+	}
+
+
+	/**
+	 * Set a claim on the buffer so that information in it can be used to calculate. 
+	 * Buffer won't update as long as claim has been withdraw.
+	 */
+	public void claimBuffer() {
+		isBufferUsed = true;
+
+	}
+
+	/**
+	 * Makes sure the buffer can be updated again.
+	 */
+	public void freeBuffer() {
+		isBufferUsed = false;
+
+	}
+
+	/**
+	 * Returns the latest info available for the Light Sensor
+	 */
+	public int getLatestLightSensorInfo() {
 		return lightSensorInfo;
 	}
-	
-	public void setLightSensorInfo(int lightSensorInfo) {
+
+	/**
+	 * Add new info for the light Sensor.
+	 */
+	public void addLightSensorInfo(int lightSensorInfo) {
 		this.lightSensorInfo = lightSensorInfo;
 		SSG.updateStatus();
+		if(!isBufferUsed){
+			//Voeg toe aan buffer.
+			if(amtLSUpdated < BUFFER_SIZE){
+				if(amtLSUpdated != 0){
+					LSInfoNode temp = new LSInfoNode();
+					temp.info = lightSensorInfo;
+					temp.next = null;
+					endLSInfo.next = temp;
+					endLSInfo = temp;
+				}
+				else{
+					startLSInfo = new LSInfoNode();
+					startLSInfo.info = lightSensorInfo;
+					startLSInfo.next = null;
+					endLSInfo = startLSInfo;
+				}
+			}
+			//Vewijder eerste element en voeg één toe.
+			else{
+				startLSInfo = startLSInfo.next;
+				LSInfoNode temp = new LSInfoNode();
+				temp.info = lightSensorInfo;
+				temp.next = null;
+				endLSInfo.next = temp;
+				endLSInfo = temp;
+			}
+			amtLSUpdated++;
+
+		}
 	}
-	
-	public int getUltraSensorInfo() {
+
+	/**
+	 * Returns the latest info available for the Ultrasonic Sensor
+	 */
+	public int getLatestUltraSensorInfo() {
 		return ultraSensorInfo;
 	}
-	
-	public void setUltraSensorInfo(int ultraSensorInfo) {
+
+	/**
+	 * Add new info for the Ulstrasonic Sensor.
+	 */
+	public void addUltraSensorInfo(int ultraSensorInfo) {
 		this.ultraSensorInfo = ultraSensorInfo;
+		System.out.println("bufferused"+isBufferUsed);
+		if(!isBufferUsed){
+			//Voeg toe aan buffer.
+			if(amtUSUpdated < BUFFER_SIZE){
+				if(amtUSUpdated != 0){
+					USInfoNode temp = new USInfoNode();
+					temp.info = ultraSensorInfo;
+					temp.next = null;
+					endUSInfo.next = temp;
+					endUSInfo = temp;
+				}
+				else{
+					startUSInfo = new USInfoNode();
+					startUSInfo.info = ultraSensorInfo;
+					startUSInfo.next = null;
+					endUSInfo = startUSInfo;
+				}
+			}
+			//Vewijder eerste element en voeg één toe.
+			else{
+				startUSInfo = startUSInfo.next;
+				USInfoNode temp = new USInfoNode();
+				temp.info = ultraSensorInfo;
+				temp.next = null;
+				endUSInfo.next = temp;
+				endUSInfo = temp;
+			}
+			amtUSUpdated++;
+		}
 		SSG.updateStatus();
+
 	}
-	
-	public boolean getTouchSensor1Info() {
+
+	/**
+	 * Returns the latest info available for the first Touch Sensor
+	 */
+	public boolean getLatestTouchSensor1Info() {
 		return touchSensor1Info;
 	}
-	
-	public void setTouchSensor1Info(boolean touchSensor1Info) {
+
+	/**
+	 * Add new info for Touch Sensor 1.
+	 */
+	public void addTouchSensor1Info(boolean touchSensor1Info) {
 		this.touchSensor1Info = touchSensor1Info;
 		SSG.updateStatus();
+		if(!isBufferUsed){
+			//Voeg toe aan buffer.
+			if(amtTS1Updated < BUFFER_SIZE){
+				if(amtTS1Updated != 0){
+					TS1InfoNode temp = new TS1InfoNode();
+					temp.info = touchSensor1Info;
+					temp.next = null;
+					endTS1Info.next = temp;
+					endTS1Info = temp;
+				}
+				else{
+					startTS1Info = new TS1InfoNode();
+					startTS1Info.info = touchSensor1Info;
+					startTS1Info.next = null;
+					endTS1Info = startTS1Info;
+				}
+			}
+			//Vewijder eerste element en voeg één toe.
+			else{
+				startTS1Info = startTS1Info.next;
+				TS1InfoNode temp = new TS1InfoNode();
+				temp.info = touchSensor1Info;
+				temp.next = null;
+				endTS1Info.next = temp;
+				endTS1Info = temp;
+			}
+			amtTS1Updated++;
+
+		}
 	}
-	
-	public boolean getTouchSensor2Info() {
+	/**
+	 * Returns the latest info available for the 2nd Touch Sensor
+	 */
+	public boolean getLatestTouchSensor2Info() {
 		return touchSensor2Info;
 	}
-	
-	public void setTouchSensor2Info(boolean touchSensor2Info) {
+
+	/**
+	 * Add new info for Touch Sensor 1.
+	 */
+	public void addTouchSensor2Info(boolean touchSensor2Info) {
 		this.touchSensor2Info = touchSensor2Info;
 		SSG.updateStatus();
+		if(!isBufferUsed){
+			//Voeg toe aan buffer.
+			if(amtTS2Updated < BUFFER_SIZE){
+				if(amtTS2Updated != 0){
+					TS2InfoNode temp = new TS2InfoNode();
+					temp.info = touchSensor2Info;
+					temp.next = null;
+					endTS2Info.next = temp;
+					endTS2Info = temp;
+				}
+				else{
+					startTS2Info = new TS2InfoNode();
+					startTS2Info.info = touchSensor2Info;
+					startTS2Info.next = null;
+					endTS2Info = startTS2Info;
+				}
+			}
+			//Vewijder eerste element en voeg één toe.
+			else{
+				startTS2Info = startTS2Info.next;
+				TS2InfoNode temp = new TS2InfoNode();
+				temp.info = touchSensor2Info;
+				temp.next = null;
+				endTS2Info.next = temp;
+				endTS2Info = temp;
+			}
+			amtTS2Updated++;
+
+		}
 	}
-	
+
 	public boolean getLeftMotorMoving() {
 		return leftMotorMoving;
 	}
-	
+
 	public void setLeftMotorMoving(boolean leftMotorMoving) {
 		this.leftMotorMoving = leftMotorMoving;
 		SSG.updateStatus();
 	}
-	
+
 	public boolean getRightMotorMoving() {
 		return rightMotorMoving;
 	}
-	
+
 	public void setRightMotorMoving(boolean rightMotorMoving) {
 		this.rightMotorMoving = rightMotorMoving;
 		SSG.updateStatus();
 	}
-	
+
 	public int getLeftMotorSpeed() {
 		return leftMotorSpeed;
 	}
-	
+
 	public void setLeftMotorSpeed(int leftMotorSpeed) {
 		this.leftMotorSpeed = leftMotorSpeed;
 		SSG.updateStatus();
 	}
-	
+
 	public int getRightMotorSpeed() {
 		return rightMotorSpeed;
 	}
-	
+
 	public void setRightMotorSpeed(int rightMotorSpeed) {
 		this.rightMotorSpeed = rightMotorSpeed;
 		SSG.updateStatus();
 	}
-	
+
 	public SilverSurferGUI getSSG() {
 		return SSG;
 	}
-	
+
 	public void setSSG(SilverSurferGUI SSG) {
 		this.SSG = SSG;
+	}
+	
+	/**
+	 * Get the head of the LS-infostack.
+	 */
+	public LSInfoNode getStartLSInfo() {
+		return startLSInfo;
+	}
+	/**
+	 * Get the head of the US-infostack.
+	 */
+	public USInfoNode getStartUSInfo() {
+		return startUSInfo;
+	}
+	/**
+	 * Get the head of the TS1-infostack.
+	 */
+	public TS1InfoNode getStartTS1Info() {
+		return startTS1Info;
+	}
+	/**
+	 * Get the head of the TS2-infostack.
+	 */
+	public TS2InfoNode getStartTS2Info() {
+		return startTS2Info;
 	}
 }
