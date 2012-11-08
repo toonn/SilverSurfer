@@ -1,6 +1,13 @@
 package mapping;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -12,75 +19,47 @@ public class MapReader {
 
 	public static MapGraph createMapFromFile(File txtFile){
 		String [][] infoMatrix = createInfoMatrixFromFile(txtFile);
-		Tile[][] temporaryGraph = new Tile[infoMatrix.length][infoMatrix[0].length];
 		
 		//Fill a graph with the information in infoMatrix.
 		MapGraph map = null;
+		map = new MapGraph(infoMatrix.length, infoMatrix[0].length);
 		//This prints out the information row by row
 		for (int i = 0; i < infoMatrix.length; i++){
 			for (int j = 0; j < infoMatrix[i].length; j++) {
+				
 				Tile tileIJ = null;
 				String[] seperatedInfoIJ = infoMatrix[i][j].split("\\.");
 				
 				//Create the desired tile form first
 				//connect it to the graph in a right way later!
-				tileIJ = new Tile(i,j);
-
+				tileIJ = new Tile(j,i);
+				
 				if (seperatedInfoIJ[0].equals("Cross")){
-					tileIJ = createCrossFromTile(tileIJ);
+					createCrossFromTile(tileIJ);
 				}
 				else if (seperatedInfoIJ[0].equals("Straight")){
-					tileIJ = createStraightFromTile(tileIJ, seperatedInfoIJ[1]);
+					createStraightFromTile(tileIJ, Orientation.switchStringToOrientation(seperatedInfoIJ[1]));
 
 				}
 				else if (seperatedInfoIJ[0].equals("Corner")){
-					tileIJ = createCornerFromTile(tileIJ, seperatedInfoIJ[1]);
+					createCornerFromTile(tileIJ, Orientation.switchStringToOrientation(seperatedInfoIJ[1]));
 
 				}
 				else if (seperatedInfoIJ[0].equals("T")){
-					tileIJ = createTFromTile(tileIJ, seperatedInfoIJ[1]);
+					createTFromTile(tileIJ, Orientation.switchStringToOrientation(seperatedInfoIJ[1]));
 
 				}
 				else if (seperatedInfoIJ[0].equals("DeadEnd")){
-					tileIJ = createDeadEndFromTile(tileIJ, seperatedInfoIJ[1]);
+					createDeadEndFromTile(tileIJ, Orientation.switchStringToOrientation(seperatedInfoIJ[1]));
 				}
+			
 				
-				//Create a new graph with this as starting tile.
-				if (i == 0 && j == 0){
-					map = new MapGraph(tileIJ);
-				}
-				//Only add tileIJ to the tile North of it (there's no west now!)
-				else if (j == 0){
-					if (tileIJ.getNorthEdge().isTile1(tileIJ))
-						tileIJ.getNorthEdge().setTile2(temporaryGraph[i-1][j]);
-					else tileIJ.getNorthEdge().setTile1(temporaryGraph[i-1][j]);
-					temporaryGraph[i-1][j].setSouthEdge(tileIJ.getNorthEdge());
-				}
-				//Add tileIJ only the tile West of it.
-				else if (i == 0){
-					if (tileIJ.getWestEdge().isTile1(tileIJ))
-						tileIJ.getWestEdge().setTile2(temporaryGraph[i][j-1]);
-					else tileIJ.getWestEdge().setTile1(temporaryGraph[i][j-1]);
-					temporaryGraph[i][j-1].setEastEdge(tileIJ.getWestEdge());
-				}
-				// add in both North and West.
-				else{
-					if (tileIJ.getNorthEdge().isTile1(tileIJ))
-						tileIJ.getNorthEdge().setTile2(temporaryGraph[i-1][j]);
-					else tileIJ.getNorthEdge().setTile1(temporaryGraph[i-1][j]);
-					temporaryGraph[i-1][j].setSouthEdge(tileIJ.getNorthEdge());
-					if (tileIJ.getWestEdge().isTile1(tileIJ))
-						tileIJ.getWestEdge().setTile2(temporaryGraph[i][j-1]);
-					else tileIJ.getWestEdge().setTile1(temporaryGraph[i][j-1]);
-					temporaryGraph[i][j-1].setEastEdge(tileIJ.getWestEdge());
-				}
 				if(seperatedInfoIJ.length == 3)
 					tileIJ.setContent(new Barcode(Integer.valueOf(seperatedInfoIJ[2])));
 
-				temporaryGraph[i][j] = tileIJ;
+				map.setTileXY(i, j, tileIJ);
 			}
 		}
-			
 		return map;
 	}
 	
@@ -135,180 +114,35 @@ public class MapReader {
 	/**
 	 * Makes sure all edges of this Tile are un-obstructed.
 	 */
-	public static Tile createCrossFromTile(Tile t){
-		
-		emptyNorthEdge(t);
-		emptyEastEdge(t);
-		emptySouthEdge(t);
-		emptyWestEdge(t);
-		
-		return t;
+	public static void createCrossFromTile(Tile t){	
+		return;
 	}
 
 	
-	public static Tile createStraightFromTile(Tile t,String orientation){
-		
-		if(orientation.equals("N") || orientation.equals("S")){
-			emptyNorthEdge(t);
-			addEastWall(t);
-			emptySouthEdge(t);
-			addWestWall(t);
-		}
-		
-		else if (orientation.equals("E") || orientation.equals("W")){
-			addNorthWall(t);	
-			emptyEastEdge(t);
-			addSouthWall(t);
-			emptyWestEdge(t);
-		}
-
-		return t;
-	}
-
-	
-	public static Tile createCornerFromTile(Tile t,String orientation){
-
-		if(orientation.equals("N")){
-			addNorthWall(t);
-			emptyEastEdge(t);
-			emptySouthEdge(t);
-			addWestWall(t);
-		}
-		else if (orientation.equals("E")){
-			addNorthWall(t);
-			addEastWall(t);
-			emptySouthEdge(t);
-			emptyWestEdge(t);
+	public static void createStraightFromTile(Tile t,Orientation orientation){
+		for(Orientation ori: Orientation.values()){	
+			if( (!(ori.equals(orientation))) && (!(ori.equals(Orientation.getOppositeOrientation(orientation)))) ){
+		t.getEdge(ori).setObstruction(Obstruction.WALL);}
 			
-		}
-		else if (orientation.equals("S")){
-			emptyNorthEdge(t);
-			addEastWall(t);
-			addSouthWall(t);
-			emptyWestEdge(t);
-		}
-		else if (orientation.equals("W")){
-			emptyNorthEdge(t);
-			emptyEastEdge(t);
-			addSouthWall(t);
-			addWestWall(t);
-		}
-		return t;
+	}
 	}
 	
-	public static Tile createTFromTile(Tile t,String orientation){
-
-		if(orientation.equals("N")){
-			addNorthWall(t);
-			emptyEastEdge(t);
-			emptySouthEdge(t);
-			emptyWestEdge(t);
-		}
-		else if (orientation.equals("E")){
-			emptyNorthEdge(t);
-			addEastWall(t);
-			emptySouthEdge(t);
-			emptyWestEdge(t);
-		}
-		else if (orientation.equals("S")){
-			emptyNorthEdge(t);
-			emptyEastEdge(t);
-			addWestWall(t);
-			emptySouthEdge(t);
-		}
-		else if (orientation.equals("W")){
-			emptyNorthEdge(t);
-			emptyEastEdge(t);
-			emptySouthEdge(t);
-			addWestWall(t);
-		}
-		
-		return t;
-	}
-	public static Tile createDeadEndFromTile(Tile t,String orientation){
-
-		if(orientation.equals("N")){
-			addNorthWall(t);
-			addEastWall(t);
-			emptySouthEdge(t);
-			addWestWall(t);
-		}
-		else if (orientation.equals("E")){
-			addNorthWall(t);
-			addEastWall(t);
-			addSouthWall(t);
-			emptyWestEdge(t);
-		}
-		else if (orientation.equals("S")){
-			emptyNorthEdge(t);
-			addEastWall(t);
-			addSouthWall(t);
-			addWestWall(t);
-		}
-		else if (orientation.equals("W")){
-			addNorthWall(t);
-			emptyEastEdge(t);
-			addSouthWall(t);
-			addWestWall(t);
-		}
-		return t;
+	public static void createCornerFromTile(Tile t,Orientation orientation){
+		t.getEdge(orientation).setObstruction(Obstruction.WALL);
+		t.getEdge(Orientation.getOtherOrientationCorner(orientation)).setObstruction(Obstruction.WALL);
 	}
 	
-	private static void addNorthWall(Tile t) {
-		if(t.getNorthEdge() == null)
-			t.setNorthEdge(new Edge(t, null));
-		
-		t.getNorthEdge().setObstruction(Obstruction.WALL);
+	public static void createTFromTile(Tile t,Orientation orientation){
+		t.getEdge(orientation).setObstruction(Obstruction.WALL);
 	}
+	public static void createDeadEndFromTile(Tile t,Orientation orientation){
 
-	private static void addEastWall(Tile t) {
-		if(t.getEastEdge() == null)
-			t.setEastEdge(new Edge(t, null));
-		
-		t.getEastEdge().setObstruction(Obstruction.WALL);
+		for(Orientation ori : Orientation.values()){
+			if(!ori.equals(Orientation.getOppositeOrientation(orientation)))
+				t.getEdge(ori).setObstruction(Obstruction.WALL);
+		}
 	}
-
-	private static void addSouthWall(Tile t) {
-		if(t.getSouthEdge() == null)
-			t.setSouthEdge(new Edge(t, null));
-		
-		t.getSouthEdge().setObstruction(Obstruction.WALL);
-	}
-
-	private static void addWestWall(Tile t) {
-		if(t.getWestEdge() == null)
-			t.setWestEdge(new Edge(t, null));
-		
-		t.getWestEdge().setObstruction(Obstruction.WALL);
-	}
-
-	private static void emptyNorthEdge(Tile t) {
-		if (t.getNorthEdge() == null)
-			t.setNorthEdge(new Edge(t, null));
-		
-		t.getNorthEdge().setObstruction(null);
-	}
-
-	private static void emptyEastEdge(Tile t) {
-		if (t.getEastEdge() == null)
-			t.setEastEdge(new Edge(t, null));
-			
-		t.getEastEdge().setObstruction(null);
-	}
-
-	private static void emptySouthEdge(Tile t) {
-		if (t.getSouthEdge() == null)
-			t.setSouthEdge(new Edge(t, null));
-				
-		t.getSouthEdge().setObstruction(null);
-	}
-
-	private static void emptyWestEdge(Tile t) {
-		if (t.getWestEdge() == null)
-			t.setWestEdge(new Edge(t, null));
-			
-		t.getWestEdge().setObstruction(null);
-	}
+	
 
 	/**
 	 * Checks if this String has any character that isn't a whitespace-character.
