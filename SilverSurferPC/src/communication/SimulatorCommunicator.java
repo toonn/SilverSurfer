@@ -46,9 +46,13 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		return sim.getSpeed();
 	}
 	
-	private float getAngularSpeed() {
+	/**
+	 * Gets the amount of angles the arrow should turn in one event
+	 * to be at par with the robot.
+	 */
+	public float getAngularSpeed() {
 		switch(getSpeed()){
-		case 1: return (float) 1.79;
+		case 1: return (float) 1.80;
 		case 2: return (float) 2.74;
 		case 3: return (float) 2.80;
 		case 4: return (float) 3.00;

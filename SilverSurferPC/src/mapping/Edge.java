@@ -14,7 +14,7 @@ package mapping;
  * 
  * @author Gerlinde Van Roey
  *
- */ 
+ */
 public class Edge {
 
 	/**
@@ -29,6 +29,8 @@ public class Edge {
 	 */
 	private Tile tile2;
 	private Obstruction obstruction;
+	
+	
 	
 	/**
 	 * Initialize this new edge with a value of -1 for the number of the PairDirection.
@@ -289,11 +291,8 @@ public class Edge {
 	 * @return true if there is no wall or nothingness on the edge.
 	 */
 	public boolean isPassable() {
-		return this.getObstruction() == null;
+		return (getObstruction() == null);
 	}
-	
-	
-
 	
 	@Override
 	public String toString() {

@@ -375,10 +375,10 @@ public class Tile{
 //		}
 //	}
 
-	//TODO
-//	@Override
-//	public String toString() {
-//		return "Content: " + getContent() + " Edges -- North: " + getEdge(Orientation.NORTH) + " East: " + getEdge(Orientation.EAST) + " South: "+getEdge(Orientation.SOUTH)+ " West: "+getEdge(Orientation.WEST);
-//	}
+
+	@Override
+	public String toString() {
+		return "Content: " + getContent() + " Edges -- North: " + getEdge(Orientation.NORTH) + " East: " + getEdge(Orientation.EAST) + " South: "+getEdge(Orientation.SOUTH)+ " West: "+getEdge(Orientation.WEST);
+	}
 
 }

@@ -1,17 +1,10 @@
 package simulator;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-
-import exception.SimulatorCrashedException;
-
-
 import gui.SilverSurferGUI;
 import mapping.*;
 import java.io.File;
 public class SimulationPilot {
-
+	
 	private final float startPositionAbsoluteX = 220;
 	private final float startPositionAbsoluteY = 220;
 	private float currentPositionAbsoluteX = 220;
@@ -74,6 +67,9 @@ public class SimulationPilot {
 	public int getStartPositionRelativeY(){
 		return this.getMapGraph().getStartingTileCoordinates()[1];
 	}
+
+
+	
 	
 	public float getAlpha() {
 		return alpha;
@@ -114,7 +110,7 @@ public class SimulationPilot {
 	
 	private float getMaxRoundingError()
 	{
-		return (float) 0.4;
+		return (float) 1;
 	}
 	
 	public void travel(float distance) {
@@ -138,7 +134,7 @@ public class SimulationPilot {
 					return;
 				}
 				
-				this.travelToNextTileIfNeeded(xOld, yOld, 1);
+				this.travelToNextTileIfNeeded(xOld, yOld);
 
 				
 				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
@@ -167,7 +163,7 @@ public class SimulationPilot {
 					return;
 				}
 				
-				this.travelToNextTileIfNeeded(xOld, yOld, -1);
+				this.travelToNextTileIfNeeded(xOld, yOld);
 				
 				SSG.getSimulationPanel().setRobotLocation(xOld, yOld, this.getAlpha());
 				try {
@@ -183,112 +179,20 @@ public class SimulationPilot {
 
 	/**
 	 * returns false if you have bumped a wall, otherwise (you have crossed a line or you are not on a border) true.
-	 * @param  direction
-	 *         	 1 if you are travelling foreward,
-	 *       	-1 if you are travelling backward
 	 */
-	private void travelToNextTileIfNeeded(float xOld, float yOld, int direction) {
-		if((xOld%40) > 40-this.getMaxRoundingError() || (xOld%40) < this.getMaxRoundingError())
-		{	
-			System.out.println("horizontale tile overgang");
-			if( ((this.getAlpha() > 270 || this.getAlpha() < 90) && direction == 1) ||
-					(this.getAlpha() > 90 && this.getAlpha() < 270 && direction == -1))
-			{
-				
-				this.getMapGraph().moveToNextTile(Orientation.EAST);
+	private void travelToNextTileIfNeeded(float xOld, float yOld) {
+		if((xOld%40) > 40-this.getMaxRoundingError() || (xOld%40) < this.getMaxRoundingError() ||
+				(yOld%40) > 40-this.getMaxRoundingError() || (yOld%40) < this.getMaxRoundingError())
+		{			
+				setCurrentTileCoordinates(mapGraph, xOld, yOld);
 				setCurrentTileFromThisMapToPanelMap();
-				SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.EAST);
-//					try {
-//						this.getMapGraph().moveToNextTile(Orientation.EAST);
-//						setCurrentTileFromThisMapToPanelMap();
-//						SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.EAST);
-//					} catch (SimulatorCrashedException e1) {
-//						reset();
-//						System.out.println("heeft gereset en heeft nu coordinaten: ");
-//						System.out.println("pilot");
-//						System.out.println(mapGraph.getCurrentTileCoordinates()[0]);
-//						System.out.println(mapGraph.getCurrentTileCoordinates()[1]);
-//						System.out.println("panel");
-//						System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[0]);
-//						System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[1]);
-//					}
-				
-			}
-			else
-			{	
-				this.getMapGraph().moveToNextTile(Orientation.WEST);
-				setCurrentTileFromThisMapToPanelMap();
-				SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.WEST);
-				
-//				try {
-//					this.getMapGraph().moveToNextTile(Orientation.WEST);
-//					setCurrentTileFromThisMapToPanelMap();
-//					SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.WEST);
-//			}
-//				catch (SimulatorCrashedException e1) {
-//					reset();
-//					System.out.println("heeft gereset en heeft nu coordinaten: ");
-//					System.out.println("pilot");
-//					System.out.println(mapGraph.getCurrentTileCoordinates()[0]);
-//					System.out.println(mapGraph.getCurrentTileCoordinates()[1]);
-//					System.out.println("panel");
-//					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[0]);
-//					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[1]);
-//				}
-
-			}
+				setCurrentTileCoordinates(SSG.getSimulationPanel().getMapGraphConstructed(), xOld, yOld);	
 		}
-		if((yOld%40) > 40-this.getMaxRoundingError() || (yOld%40) < this.getMaxRoundingError())
-		{
-
-			System.out.println("verticale tile overgang");
-			if(this.getAlpha() < 180 && direction == 1 || this.getAlpha()>180 && direction == -1)
-			{	
-				this.getMapGraph().moveToNextTile(Orientation.SOUTH);
-				setCurrentTileFromThisMapToPanelMap();
-				SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.SOUTH);
-				
-//				try {
-//					this.getMapGraph().moveToNextTile(Orientation.SOUTH);
-//					setCurrentTileFromThisMapToPanelMap();
-//					SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.SOUTH);
-//				} catch (SimulatorCrashedException e) {
-//					reset();
-//					System.out.println("heeft gereset en heeft nu coordinaten: ");
-//					System.out.println("pilot");
-//					System.out.println(mapGraph.getCurrentTileCoordinates()[0]);
-//					System.out.println(mapGraph.getCurrentTileCoordinates()[1]);
-//					System.out.println("panel");
-//					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[0]);
-//					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[1]);
-//				}
-
-			}
-			else
-	
-			{	
-				this.getMapGraph().moveToNextTile(Orientation.NORTH);
-				setCurrentTileFromThisMapToPanelMap();
-				SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.NORTH);
-				
-//				try {
-//					this.getMapGraph().moveToNextTile(Orientation.NORTH);
-//					setCurrentTileFromThisMapToPanelMap();
-//					SSG.getSimulationPanel().getMapGraphConstructed().moveToNextTile(Orientation.NORTH);
-//				} catch (SimulatorCrashedException e) {
-//					reset();
-//					System.out.println("heeft gereset en heeft nu coordinaten: ");
-//					System.out.println("pilot");
-//					System.out.println(mapGraph.getCurrentTileCoordinates()[0]);
-//					System.out.println(mapGraph.getCurrentTileCoordinates()[1]);
-//					System.out.println("panel");
-//					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[0]);
-//					System.out.println(SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTileCoordinates()[1]);
-//				}
-				
-		}
+		else
+			return;
 	}
-	}
+
+
 	
 	public void checkForObstructions()
 	{
@@ -321,10 +225,16 @@ public class SimulationPilot {
 			this.rotate(45);
 		}
 	}
+
 		
 	public void rotate(float alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
 		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
+	}
+
+	
+	public void clear() {
+		SSG.getSimulationPanel().clear();
 	}
 	
 	public boolean onEdge(float x, float y){
@@ -332,100 +242,84 @@ public class SimulationPilot {
 				(y%40) > 40-this.getMaxRoundingError() || (y%40) < this.getMaxRoundingError();
 				
 	}
-	
-	public void clear() {
-		SSG.getSimulationPanel().clear();
-	}	
-	
-public int[] setAbsoluteToRelative(float x, float y){
-	if(x%40 ==0 || y%40 == 0){
-		throw new IllegalArgumentException("you are located on an edge.");
-	}
-	float a = x - startPositionAbsoluteX;
-	float b = y - startPositionAbsoluteY;
-	int c;
-	int d;
-	if(a>0){
-	c = (int) a/40 + 1;}
-	else
-		c = (int) a/40 -1;
-	if(b>0){
-	d = (int) b/40 + 1;}
-	else
-		d = (int) b/40 -1;
-	if(a==0){
-		c = 0;
-	}
-	if(b==0){
-		d = 0;
-	}
-	int[] array = new int[2];
-	array[0] = getStartPositionRelativeX() + c;
-	array[1] = getStartPositionRelativeY() + d;
-	return array;
-}
 
-
-/**
- * geeft de absolute coordinaten van het middelpunt van het vakje
- * 
- * @param x
- * @param y
- * @return
- */
-public float[] setRelativeToAbsolute(int x, int y){
-	int a = x - getStartPositionRelativeX();
-	int b = y - getStartPositionRelativeY();
-	float c = a*40;
-	float d = b*40;
-	float[] array = new float[2];
-	array[0] = startPositionAbsoluteX + c;
-	array[1] = startPositionAbsoluteX + d;
-	return array;
-}
-
-
-
-public void setCurrentTileFromThisMapToPanelMap(){
-	Tile tile = new Tile(mapGraph.getCurrentTile().getyCoordinate(), mapGraph.getCurrentTile().getxCoordinate());
-	for(Orientation orientation: Orientation.values()){
-		if(mapGraph.getCurrentTile().getEdge(orientation).getObstruction()!=null){
-			tile.getEdge(orientation).setObstruction(Obstruction.WALL);
+	//steeds naar beneden
+		public int setToMultipleOf40(float a){
+			return (int) (Math.floor(a/40)*40);
 		}
+		
+	public int[] setAbsoluteToRelative(float x, float y){
+		System.out.println(x + " en " + y);
+		float a = x - setToMultipleOf40(startPositionAbsoluteX);
+		float b = y - setToMultipleOf40(startPositionAbsoluteY);
+		int c;
+		int d;
+		if(a>0){
+		c = (int) Math.floor(a/40);}
+		else
+			c = (int) Math.ceil(a/40);
+		if(b>0){
+		d = (int) Math.floor(b/40);}
+		else
+			d = (int) Math.ceil(b/40);
+		if(a==0){
+			c = 0;
+		}
+		if(b==0){
+			d = 0;
+		}
+		int[] array = new int[2];
+		array[0] = getStartPositionRelativeX() + d;
+		array[1] = getStartPositionRelativeY() + c;
+		return array;
 	}
-	SSG.getSimulationPanel().getMapGraphConstructed().setTileXY(mapGraph.getCurrentTileCoordinates()[0],mapGraph.getCurrentTileCoordinates()[1], tile);
-	
-}
-
-public void reset(){
-	System.out.println("reset wordt uitgevoerd");
-	int[] relativePosition = setAbsoluteToRelative(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-	mapGraph.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-	SSG.getSimulationPanel().getMapGraphConstructed().setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-}
-
-//public static void main(String[] args) {
-//
-//MapGraph mapGraph = MapReader.createMapFromFile(new File("resources/maze_maps/example_map.txt"));
-//for(int i = 0 ; i<6 ; i++){
-//	for (int j =0; j<4; j++){
-//		System.out.println("alle richtingen");
-//		Tile tile = mapGraph.getTileXY(i,j);
-//		System.out.println(i+ " " + j);
-//		System.out.println(tile.getEdge(Orientation.NORTH).isPassable());
-//		System.out.println(tile.getEdge(Orientation.EAST).isPassable());
-//		System.out.println(tile.getEdge(Orientation.SOUTH).isPassable());
-//		System.out.println(tile.getEdge(Orientation.WEST).isPassable());
-//		System.out.println(tile.getxCoordinate());
-//		System.out.println(tile.getyCoordinate());
-//		System.out.println(" ");
-//		System.out.println(" ");
-//		System.out.println(" ");
-//		System.out.println(" ");
-//	}
-//}
-//
-//}
 
 
-}
+	/**
+	 * geeft de absolute coordinaten van het middelpunt van het vakje
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public float[] setRelativeToAbsolute(int x, int y){
+		int a = x - getStartPositionRelativeX();
+		int b = y - getStartPositionRelativeY();
+		float c = a*40;
+		float d = b*40;
+		float[] array = new float[2];
+		array[0] = startPositionAbsoluteX + c;
+		array[1] = startPositionAbsoluteX + d;
+		return array;
+	}
+
+
+
+	public void setCurrentTileFromThisMapToPanelMap(){
+		Tile tile = new Tile(mapGraph.getCurrentTile().getyCoordinate(), mapGraph.getCurrentTile().getxCoordinate());
+		for(Orientation orientation: Orientation.values()){
+			if(mapGraph.getCurrentTile().getEdge(orientation).getObstruction()!=null){
+				tile.getEdge(orientation).setObstruction(Obstruction.WALL);
+			}
+		}
+		SSG.getSimulationPanel().getMapGraphConstructed().setTileXY(mapGraph.getCurrentTileCoordinates()[0],mapGraph.getCurrentTileCoordinates()[1], tile);
+		
+	}
+
+	public void setCurrentTileCoordinates(MapGraph map, float xOld, float yOld){
+		System.out.println("setCurrentCoordinates wordt uitgevoerd");
+		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
+		System.out.println(relativePosition[0] + " en " + relativePosition[1] );
+		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
+	}
+
+
+
+	public static void main(String[] args) {
+		float a = 239;
+		System.out.println(Math.floor(a/40)*40);
+		System.out.println(Math.floor(-a/40)*40);
+		}
+
+
+	}
