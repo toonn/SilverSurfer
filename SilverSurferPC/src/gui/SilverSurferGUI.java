@@ -58,10 +58,13 @@ public class SilverSurferGUI {
     private static JButton speedButton;
 
     private static JButton clearButton;
+    
+    private static JButton alignButton;
 
-    private static JButton ninetydegreeButton;
-    private static JSpinner lengthButton;
-    private static JButton fortycentimeterButton;
+    private static JSpinner angle;
+    private static JButton turnButton;
+    private static JSpinner length;
+    private static JButton moveButton;
 
     private static JButton lookAroundButton;
 
@@ -86,6 +89,7 @@ public class SilverSurferGUI {
         JPanel arrowPanel = arrowPanel();
         JPanel speedPanel = speedPanel();
         JPanel clearPanel = clearPanel();
+        JPanel alignPanel = alignPanel();
         JPanel lookAroundPanel = lookAroundPanel();
         JPanel mappingPanel = mappingPanel();
         JPanel consolePanel = consolePanel();
@@ -120,7 +124,8 @@ public class SilverSurferGUI {
                                 .createParallelGroup(
                                         GroupLayout.Alignment.CENTER)
                                 .addComponent(directionPanel)
-                                .addComponent(lookAroundPanel)));
+                                .addComponent(lookAroundPanel)
+                                .addComponent(alignPanel)));
         frameLayout.setVerticalGroup(frameLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addGroup(
@@ -137,11 +142,12 @@ public class SilverSurferGUI {
                 .addGroup(
                         frameLayout.createSequentialGroup()
                                 .addComponent(directionPanel)
-                                .addComponent(lookAroundPanel)));
-        frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel,
-                speedPanel);
-        frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel,
-                consolePanel);
+                                .addComponent(lookAroundPanel)
+                                .addComponent(alignPanel)));
+        frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel, speedPanel);
+        frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
+        frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
+        frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
 
         frame.pack();
         frame.setSize(1000, 800);
@@ -379,40 +385,47 @@ public class SilverSurferGUI {
     }
 
     private JPanel directionPanel() {
-        ninetydegreeButton = new JButton("90\u00b0 turning"); // "\u00b0" is de
-                                                              // escape sequence
-                                                              // voor het graden
-                                                              // symbool
-        JLabel length = new JLabel("Length (centimeters)", JLabel.CENTER);
-
-        SpinnerNumberModel lenghtModel = new SpinnerNumberModel(10, 0, 1000, 1);
-        lengthButton = new JSpinner(lenghtModel);
-        fortycentimeterButton = new JButton("40cm forward");
+    	JLabel angleLabel = new JLabel("Angle (degrees)", JLabel.CENTER);
+    	
+    	SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0, 1080, 1);
+    	angle = new JSpinner(angleModel);
+    	
+        turnButton = new JButton("Turn"); // "\u00b0" is de escape sequence voor het graden symbool
+        
+        JLabel lengthLabel = new JLabel("Length (centimeters)", JLabel.CENTER);
+        
+        SpinnerNumberModel lenghtModel = new SpinnerNumberModel(20, 0, 1000, 1);
+        length = new JSpinner(lenghtModel);
+        
+        moveButton = new JButton("Move");
 
         JPanel directionPanel = new JPanel();
         directionPanel.setBorder(BorderFactory.createTitledBorder(
-                createBorder(), "turning and forward"));
+                createBorder(), "Turn and Move"));
         directionPanel.setOpaque(false);
 
-        GroupLayout directionlayout = new GroupLayout(directionPanel);
-        directionPanel.setLayout(directionlayout);
-        directionlayout.setAutoCreateGaps(true);
-        directionlayout.setAutoCreateContainerGaps(true);
-        directionlayout
-                .setHorizontalGroup(directionlayout
-                        .createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addGroup(
-                                directionlayout
-                                        .createParallelGroup(GroupLayout.Alignment.CENTER))
-                        .addComponent(ninetydegreeButton)
-                        .addComponent(lengthButton)
-                        .addComponent(fortycentimeterButton));
-        directionlayout.setVerticalGroup(directionlayout
-                .createSequentialGroup().addGroup(
-                        directionlayout.createSequentialGroup()
-                                .addComponent(ninetydegreeButton)
-                                .addComponent(lengthButton)
-                                .addComponent(fortycentimeterButton)));
+        GroupLayout directionLayout = new GroupLayout(directionPanel);
+        directionPanel.setLayout(directionLayout);
+        directionLayout.setAutoCreateGaps(true);
+        directionLayout.setAutoCreateContainerGaps(true);
+        directionLayout.setHorizontalGroup(directionLayout.createSequentialGroup()
+                		.addGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                		.addComponent(angleLabel)
+                		.addComponent(angle)
+                        .addComponent(turnButton))
+                		.addGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(lengthLabel)
+                        .addComponent(length)
+                        .addComponent(moveButton)));
+        directionLayout.setVerticalGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+        				.addGroup(directionLayout.createSequentialGroup()
+                        		.addComponent(angleLabel)
+                        		.addComponent(angle)
+                                .addComponent(turnButton))
+        				.addGroup(directionLayout.createSequentialGroup()
+                                .addComponent(lengthLabel)
+                                .addComponent(length)
+                                .addComponent(moveButton)));
 
         return directionPanel;
     }
@@ -492,7 +505,7 @@ public class SilverSurferGUI {
     }
 
     private JPanel alignPanel() {
-        Action alignAction = new AbstractAction() {
+        /*Action alignAction = new AbstractAction() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -508,13 +521,18 @@ public class SilverSurferGUI {
                     e1.printStackTrace();
                 }
             }
-        };
-        JButton alignButton = new JButton("align");
-        alignButton.addActionListener(alignAction);
+        };*/
+        alignButton = new JButton("Align");
+        //alignButton.addActionListener(alignAction);
         JPanel alignPanel = new JPanel();
+        alignPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+                "Align"));
+        alignPanel.setOpaque(false);
 
         GroupLayout alignLayout = new GroupLayout(alignPanel);
         alignPanel.setLayout(alignLayout);
+        alignLayout.setAutoCreateGaps(true);
+        alignLayout.setAutoCreateContainerGaps(true);
         alignLayout.setHorizontalGroup(alignLayout.createSequentialGroup()
                 .addComponent(alignButton));
         alignLayout.setVerticalGroup(alignLayout.createSequentialGroup()
@@ -660,7 +678,7 @@ public class SilverSurferGUI {
             }
         });
 
-        ninetydegreeButton.addMouseListener(new MouseListener() {
+        turnButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {
             }
@@ -703,7 +721,7 @@ public class SilverSurferGUI {
 
             }
         });
-        fortycentimeterButton.addMouseListener(new MouseListener() {
+        moveButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {
             }
@@ -1092,6 +1110,35 @@ public class SilverSurferGUI {
             public void mouseClicked(MouseEvent e) {
                 System.out.println("[GUI] Screen cleared.");
                 simulationPanel.clear();
+                simulationPanel.requestFocusInWindow();
+
+            }
+        });
+        alignButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println(unitCommunicator.getConsoleTag() + " Aligning on white line.");
+                try {
+                	unitCommunicator.sendCommandToUnit(14);
+                } catch(Exception ex) {
+                	
+                }
                 simulationPanel.requestFocusInWindow();
 
             }
