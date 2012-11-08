@@ -37,6 +37,7 @@ public class SimulationJPanel extends JPanel {
 		shapes.add(triangle2);
 		}
 		
+	
 
 	//	public void addCircle(float x, float y, float degrees) {
 	//		// remove the last triangle and draw little circles to indicate the path
@@ -106,6 +107,7 @@ public class SimulationJPanel extends JPanel {
 	public void setMapGraphConstructed(MapGraph mapGraph) {
 		this.mapGraphConstructed = mapGraph;
 	}
+
 
 	public void setVisibleTriangle1(){
 		isVisible = 1;
@@ -234,19 +236,18 @@ public class SimulationJPanel extends JPanel {
 			int x;
 			int y;
 
-			if(!(s instanceof Triangle))
+			if(s instanceof Triangle)
+			{	if(s.equals(getVisibleTriangle()))
+				((Graphics2D) graph).fill(s);
+			x = (int) ((Triangle) s).getGravityCenterX();
+			y = (int) ((Triangle) s).getGravityCenterY();
+
+			}
+			else
 			{	
 				((Graphics2D) graph).fill(s);
 				x = (int) ((RectangularShape) s).getX();
 				y = (int) ((RectangularShape) s).getY();
-			}
-			else
-			{	
-				if(s.equals(getVisibleTriangle()))
-					((Graphics2D) graph).fill(s);
-				x = (int) ((Triangle) s).getGravityCenterX();
-				y = (int) ((Triangle) s).getGravityCenterY();
-				
 			}
 
 			if(simulatorPilot!= null)
