@@ -35,7 +35,6 @@ public class SimulationJPanel extends JPanel {
 	public SimulationJPanel(){
 		shapes.add(triangle1);
 		shapes.add(triangle2);
-		mapGraphConstructed = new MapGraph(new Tile(0,0));
 	}
 
 	//	public void addCircle(float x, float y, float degrees) {
@@ -102,6 +101,11 @@ public class SimulationJPanel extends JPanel {
 	public MapGraph getMapGraphConstructed() {
 		return this.mapGraphConstructed;
 	}
+	
+	public void setMapGraphConstructed(MapGraph mapGraph) {
+		this.mapGraphConstructed = mapGraph;
+	}
+
 
 	public void setVisibleTriangle1(){
 		isVisible = 1;
@@ -230,19 +234,18 @@ public class SimulationJPanel extends JPanel {
 			int x;
 			int y;
 
-			if(!(s instanceof Triangle))
+			if(s instanceof Triangle)
+			{	if(s.equals(getVisibleTriangle()))
+				((Graphics2D) graph).fill(s);
+			x = (int) ((Triangle) s).getGravityCenterX();
+			y = (int) ((Triangle) s).getGravityCenterY();
+
+			}
+			else
 			{	
 				((Graphics2D) graph).fill(s);
 				x = (int) ((RectangularShape) s).getX();
 				y = (int) ((RectangularShape) s).getY();
-			}
-			else
-			{	
-				if(s.equals(getVisibleTriangle()))
-					((Graphics2D) graph).fill(s);
-				x = (int) ((Triangle) s).getGravityCenterX();
-				y = (int) ((Triangle) s).getGravityCenterY();
-				
 			}
 
 			if(simulatorPilot!= null)
@@ -290,22 +293,22 @@ public class SimulationJPanel extends JPanel {
 		this.simulatorPilot = simulatorPilot;
 	}
 
-	public void addWhiteLine(Orientation orientation)
+	public void addWhiteLine(Orientation orientation, float[] array)
 	{
-		this.getMapGraphConstructed().addObstruction(Obstruction.WHITE_LINE, orientation);
+		//this.getMapGraphConstructed().addObstruction(Obstruction.WHITE_LINE, orientation);
 		System.out.println("witte lijn toevoegen");
 		// draw the white line!
 	}
 
-	public void travelToNextTile(Orientation orientation)
-	{
-		this.getMapGraphConstructed().moveToNextTile(orientation);
-		// kleur het vierkantje bruin
-	}
+//	public void travelToNextTile(Orientation orientation)
+//	{
+//		this.getMapGraphConstructed().moveToNextTile(orientation);
+//		// kleur het vierkantje bruin
+//	}
 
-	public void addWall(Orientation orientation)
+	public void addWall(Orientation orientation, float[] array)
 	{
-		this.getMapGraphConstructed().addObstruction(Obstruction.WALL, orientation);
+		//this.getMapGraphConstructed().addObstruction(Obstruction.WALL, orientation);
 		System.out.println("muur toevoegen");
 		// draw the wal!
 	}
