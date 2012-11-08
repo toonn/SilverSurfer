@@ -9,7 +9,7 @@ public class MouseClickThread extends Thread {
 	private UnitCommunicator unitCommunicator;
 	private int command;
 	private int speed = 30;
-	private boolean ride = true;
+	private boolean quit = false;
 
 	public MouseClickThread(String str) {
 		super(str);
@@ -17,7 +17,7 @@ public class MouseClickThread extends Thread {
 	
 	public void run() {
 //		System.err.println("MouseClickThread.run()");
-		while(ride) {
+		while(!quit) {
 			try {
 //				System.err.println("about to try to send command by unitComm "+unitCommunicator);
 				unitCommunicator.sendCommandToUnit(command);
@@ -46,8 +46,8 @@ public class MouseClickThread extends Thread {
 		this.command = command;
 	}
 	
-	public void setRide(boolean ride) {
-		this.ride = ride;
+	public void setQuit(boolean quit) {
+		this.quit = quit;
 	}
 	
 	public void setSpeed(int speed) {

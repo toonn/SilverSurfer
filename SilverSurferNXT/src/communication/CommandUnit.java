@@ -160,7 +160,13 @@ public class CommandUnit {
     	    			CU.setCurrentState(auto);
     	    			auto.turnAngle((input-Command.AUTOMATIC_TURN_ANGLE)/100);
     	    			CU.setCurrentState(new Waiting());
-    				} 
+    				}
+    				else if(input%100==-91) {
+    					Automatic auto = new Automatic();
+    	    			CU.setCurrentState(auto);
+    	    			auto.turnAngle((input-Command.AUTOMATIC_TURN_ANGLE)/100);
+    	    			CU.setCurrentState(new Waiting());
+    				}
         			break;
     			}
     		}
