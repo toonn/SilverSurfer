@@ -31,14 +31,9 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	}
 	
 	@Override
-	public void runForward(int amtOfAngles, int lengthInCM) throws IOException {
-		sim.travel(40);
-
-	}
-	
-	@Override
-	public void runTurning(int amtOfAngles, int lengthInCM) throws IOException {
-		sim.rotate(90);
+	public void moveTurn(int amtOfAngles, int lengthInCM) throws IOException {
+		sim.travel(lengthInCM);
+		sim.rotate(amtOfAngles);
 	}
 	
 	@Override
