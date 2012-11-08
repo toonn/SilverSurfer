@@ -9,6 +9,8 @@ package mapping;
  * 
  * Elke methode in deze klasse is aangepast zodat je het relatieve coordinatensysteem kan gebruiken
  * 
+ * ook nog eens uitgelegd in pilot want was vergeten dat het hier al stond, maar miss voor als het
+ * niet duidelijk is, snap je het hiermee wel dus laat ik het hier ook maar staan :)
  *
  */
 
@@ -146,7 +148,7 @@ public class MapGraph {
 					
 					orientation = Orientation.getOrientationOfArray(ar);
 					
-				tile.replaceEdge(Orientation.getOppositeOrientation(orientation), tiles[i][j].getEdge(orientation));
+				tiles[i][j].replaceEdge(orientation,tile.getEdge(Orientation.getOppositeOrientation(orientation)));
 				}
 			}
 	}
