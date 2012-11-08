@@ -46,6 +46,17 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		return sim.getSpeed();
 	}
 	
+	private float getAngularSpeed() {
+		switch(getSpeed()){
+		case 1: return (float) 1.79;
+		case 2: return (float) 2.74;
+		case 3: return (float) 2.80;
+		case 4: return (float) 3.00;
+		}
+		return (float) 2.75;
+
+	}
+	
 	@Override
 	public void setSpeed(int speed) {
 		sim.setSpeed(speed);
@@ -59,9 +70,9 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		else if(command == 2)	
 			sim.travel(-1);
 		else if((command == 4 && previousCommandForwardOrBackWard == 0) || (command == 6 && previousCommandForwardOrBackWard == 2))
-			sim.rotate(359);
+			sim.rotate((float) 360.0-getAngularSpeed());
 		else if((command == 6 && previousCommandForwardOrBackWard == 0) || (command == 4 && previousCommandForwardOrBackWard == 2))
-			sim.rotate(1);
+			sim.rotate(getAngularSpeed());
 		else if(command%10 == 8)
 			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
 		else if(command%10 == 9)

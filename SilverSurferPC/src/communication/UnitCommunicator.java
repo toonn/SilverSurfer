@@ -5,7 +5,7 @@ import java.io.IOException;
 public class UnitCommunicator {
 
 	protected static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
-	protected static final double ANGLE_COEF = 701; //Amount of degrees needed for a 360 degree turn.
+	protected static final double ANGLE_COEF = 705; //Amount of degrees needed for a 360 degree turn.
 	protected StatusInfoBuffer statusInfo;
 	
 	public UnitCommunicator(StatusInfoBuffer status) {
