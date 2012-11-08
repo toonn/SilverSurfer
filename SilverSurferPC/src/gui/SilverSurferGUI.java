@@ -697,28 +697,19 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-
-                // voor de robot methoden moveForward() en turnAngle() gebruiken
-                polygonangles.setValue(0);
-                polygonEdgeLength.setValue(40);
-
-                TurnAngleThread TAT = new TurnAngleThread("TAT");
-                TAT.setUnitCommunicator(unitCommunicator);
-                TAT.setAngles((int) polygonangles.getValue());
-                TAT.setLength(Integer.parseInt(polygonEdgeLength.getValue()
-                        .toString()));
+            	MoveTurnThread MTT = new MoveTurnThread("MTT");
+                MTT.setUnitCommunicator(unitCommunicator);
+                MTT.setAngles(Integer.parseInt(angle.getValue().toString()));
+                MTT.setLength(0);
                 if (robotConnected) {
-                    TurnAngleThread TAT1 = new TurnAngleThread("TAT1");
-                    TAT1.setUnitCommunicator(prevCommunicator);
-                    TAT1.setAngles((int) polygonangles.getValue());
-                    TAT1.setLength(Integer.parseInt(polygonEdgeLength
-                            .getValue().toString()));
-                    TAT1.start();
+                    MoveTurnThread MMT1 = new MoveTurnThread("MTT1");
+                    MMT1.setUnitCommunicator(prevCommunicator);
+                    MMT1.setAngles(Integer.parseInt(angle.getValue().toString()));
+                    MMT1.setLength(0);
+                    MMT1.start();
                 }
-                TAT.start();
-
+                MTT.start();
                 simulationPanel.requestFocusInWindow();
-
             }
         });
         moveButton.addMouseListener(new MouseListener() {
@@ -740,30 +731,19 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-
-                // voor de robot methoden moveForward() en turnAngle() gebruiken
-                polygonangles.setValue(0);
-                polygonEdgeLength.setValue(40);
-
-                RunForwardThread RFT = new RunForwardThread("RFT");
-                RFT.setUnitCommunicator(unitCommunicator);
-                RFT.setAngles((int) polygonangles.getValue());
-                RFT.setLength(Integer.parseInt(polygonEdgeLength.getValue()
-                        .toString()));
-
+            	MoveTurnThread MTT = new MoveTurnThread("MTT");
+                MTT.setUnitCommunicator(unitCommunicator);
+                MTT.setAngles(0);
+                MTT.setLength(Integer.parseInt(length.getValue().toString()));
                 if (robotConnected) {
-                    RunForwardThread RFT1 = new RunForwardThread("RFT1");
-                    RFT1.setUnitCommunicator(prevCommunicator);
-                    RFT1.setAngles((int) polygonangles.getValue());
-                    RFT1.setLength(Integer.parseInt(polygonEdgeLength
-                            .getValue().toString()));
-                    RFT1.start();
+                    MoveTurnThread MTT1 = new MoveTurnThread("MTT1");
+                    MTT1.setUnitCommunicator(prevCommunicator);
+                    MTT1.setAngles(0);
+                    MTT1.setLength(Integer.parseInt(angle.getValue().toString()));
+                    MTT1.start();
                 }
-
-                RFT.start();
-
+                MTT.start();
                 simulationPanel.requestFocusInWindow();
-
             }
         });
         polygondraw.addMouseListener(new MouseListener() {

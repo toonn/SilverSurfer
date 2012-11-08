@@ -4,8 +4,9 @@ import java.io.IOException;
 
 public class UnitCommunicator {
 
-	protected static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
-	protected static final double ANGLE_COEF = 705; //Amount of degrees needed for a 360 degree turn.
+	protected static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward in a polygon.
+	protected static final double ANGLE_COEF = 708; //Amount of degrees needed for a 360 degree turn in a polygon.
+	protected static final double ANGLE_COEF_TURN = 718; //Amount of degrees needed for a 360 degree turn in a polygon.
 	protected StatusInfoBuffer statusInfo;
 	
 	public UnitCommunicator(StatusInfoBuffer status) {
@@ -42,11 +43,7 @@ public class UnitCommunicator {
 	 */
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {}
 	
-	
-	public void runForward(int amtOfAngles, int lengthInCM) throws IOException {}
-	
-	public void runTurning(int amtOfAngles, int lengthInCM) throws IOException {}
-
+	public void moveTurn(int amtOfAngles, int lengthInCM) throws IOException {}
 	
 	public int getSpeed() {
 		return 0; 
