@@ -52,12 +52,12 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	 */
 	public float getAngularSpeed() {
 		switch(getSpeed()){
-		case 1: return (float) 1.80;
+		case 1: return (float) 1.82;
 		case 2: return (float) 2.74;
-		case 3: return (float) 2.80;
-		case 4: return (float) 3.00;
+		case 3: return (float) 2.76;
+		case 4: return (float) 1.80;
 		}
-		return (float) 2.75;
+		return (float) 2.74;
 
 	}
 	
