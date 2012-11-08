@@ -2,7 +2,7 @@ package statemachine;
 
 import communication.CommandUnit;
 
-import lejos.nxt.Motor;
+import lejos.nxt.*;
 
 public class TurnLeft extends State {
 	

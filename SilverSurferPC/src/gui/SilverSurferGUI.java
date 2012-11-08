@@ -559,6 +559,7 @@ public class SilverSurferGUI {
 
     protected static void disconnectBluetooth() {
         try {
+        	unitCommunicator.sendCommandToUnit(15);
             unitCommunicator.closeUnitConnection();
             unitCommunicator = prevCommunicator;
             bluetoothConnect.setText("Connect");
