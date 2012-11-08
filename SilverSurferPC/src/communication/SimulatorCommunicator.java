@@ -49,8 +49,8 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		switch(getSpeed()){
 		case 1: return (float) 1.82;
 		case 2: return (float) 2.74;
-		case 3: return (float) 2.76;
-		case 4: return (float) 1.80;
+		case 3: return (float) 2.77;
+		case 4: return (float) 1.82;
 		}
 		return (float) 2.74;
 
