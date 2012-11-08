@@ -62,8 +62,10 @@ public class RobotCommunicator extends UnitCommunicator {
 	public void moveTurn(int amtOfAngles, int lengthInCM) throws IOException {
 		int angle = (int)Math.round(ANGLE_COEF_TURN/(360.0/(double)amtOfAngles));
 		int lengthInDeg = (int)Math.round(LENGTH_COEF * lengthInCM);
-		sendCommandToUnit(lengthInDeg*100 + Command.AUTOMATIC_MOVE_FORWARD);
-		sendCommandToUnit(angle*100 + Command.AUTOMATIC_TURN_ANGLE);
+		if(lengthInDeg != 0)
+			sendCommandToUnit(lengthInDeg*100 + Command.AUTOMATIC_MOVE_FORWARD);
+		if(angle != 0)
+			sendCommandToUnit(angle*100 + Command.AUTOMATIC_TURN_ANGLE);
 	}
 	
 	@Override

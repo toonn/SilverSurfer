@@ -48,5 +48,6 @@ public class Automatic extends State {
 			angle = angle + 3;
 		}
 		turnAngle(-(angle/2));
+		//moveForward(541); //Lengthcoef (20.8) * lengte tot midden volgende vak (26 cm) afgerond
     }
 }

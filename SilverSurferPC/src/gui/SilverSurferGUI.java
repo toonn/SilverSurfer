@@ -11,7 +11,6 @@ import javax.swing.*;
 
 public class SilverSurferGUI {
 
-
     private static JFrame frame;
     private static SimulationJPanel simulationPanel;
     private static StatusInfoBuffer informationBuffer;
@@ -62,7 +61,8 @@ public class SilverSurferGUI {
     private static JButton alignButton;
 
     private static JSpinner angle;
-    private static JButton turnButton;
+    private static JButton turnLeftButton;
+    private static JButton turnRightButton;
     private static JSpinner length;
     private static JButton moveButton;
 
@@ -96,9 +96,8 @@ public class SilverSurferGUI {
 
         redirectSystemStreams();
 
-        // add menu-bar
         GUIMenuBar bar = new GUIMenuBar(this);
-        getFrame().setJMenuBar(bar);
+        frame.setJMenuBar(bar);
 
         GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
         frame.getContentPane().setLayout(frameLayout);
@@ -158,17 +157,14 @@ public class SilverSurferGUI {
             unitCommunicator.openUnitConnection();
             System.out.println("[CONNECTION] Entered simulator mode.");
         } catch (IOException e) {
-            System.out
-                    .println("[CONNECTION] Oops! Something went wrong initializing!");
+            System.out.println("[CONNECTION] Oops! Something went wrong initializing!");
         }
-        getSimulationPanel().setSimulatorPilot(
-                ((SimulatorCommunicator) unitCommunicator).getSim());
+        getSimulationPanel().setSimulatorPilot(((SimulatorCommunicator) unitCommunicator).getSim());
         addListeners();
         simulationPanel.requestFocusInWindow();
         unitCommunicator.setSpeed(speedvalues.getValue());
 
         updateStatus();
-
     }
 
     public JFrame getFrame() {
@@ -206,7 +202,7 @@ public class SilverSurferGUI {
     private JPanel polygonPanel() {
         JLabel polygonAnglesLabel = new JLabel("Angles", JLabel.CENTER);
 
-        polygonangles = new JSlider(JSlider.HORIZONTAL, 2, 32, 5);
+        polygonangles = new JSlider(JSlider.HORIZONTAL, 2, 32, 4);
         polygonangles.setSnapToTicks(true);
         polygonangles.setMajorTickSpacing(3);
         polygonangles.setMinorTickSpacing(1);
@@ -390,11 +386,12 @@ public class SilverSurferGUI {
     	SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0, 1080, 1);
     	angle = new JSpinner(angleModel);
     	
-        turnButton = new JButton("Turn"); // "\u00b0" is de escape sequence voor het graden symbool
+        turnLeftButton = new JButton("Turn left"); // "\u00b0" is de escape sequence voor het graden symbool
+        turnRightButton = new JButton("Turn right");
         
         JLabel lengthLabel = new JLabel("Length (centimeters)", JLabel.CENTER);
         
-        SpinnerNumberModel lenghtModel = new SpinnerNumberModel(20, 0, 1000, 1);
+        SpinnerNumberModel lenghtModel = new SpinnerNumberModel(26, 0, 1000, 1);
         length = new JSpinner(lenghtModel);
         
         moveButton = new JButton("Move");
@@ -408,24 +405,24 @@ public class SilverSurferGUI {
         directionPanel.setLayout(directionLayout);
         directionLayout.setAutoCreateGaps(true);
         directionLayout.setAutoCreateContainerGaps(true);
-        directionLayout.setHorizontalGroup(directionLayout.createSequentialGroup()
-                		.addGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                		.addComponent(angleLabel)
-                		.addComponent(angle)
-                        .addComponent(turnButton))
-                		.addGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(lengthLabel)
-                        .addComponent(length)
-                        .addComponent(moveButton)));
-        directionLayout.setVerticalGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-        				.addGroup(directionLayout.createSequentialGroup()
+        directionLayout.setHorizontalGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+		                		.addComponent(angleLabel)
+		                		.addComponent(angle)
+		                		.addGroup(directionLayout.createSequentialGroup()
+				                        .addComponent(turnLeftButton)
+				                        .addComponent(turnRightButton))
+		                        .addComponent(lengthLabel)
+		                        .addComponent(length)
+		                        .addComponent(moveButton));
+        directionLayout.setVerticalGroup(directionLayout.createSequentialGroup()
                         		.addComponent(angleLabel)
                         		.addComponent(angle)
-                                .addComponent(turnButton))
-        				.addGroup(directionLayout.createSequentialGroup()
+		                		.addGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				                        .addComponent(turnLeftButton)
+				                        .addComponent(turnRightButton))
                                 .addComponent(lengthLabel)
                                 .addComponent(length)
-                                .addComponent(moveButton)));
+                                .addComponent(moveButton));
 
         return directionPanel;
     }
@@ -505,25 +502,8 @@ public class SilverSurferGUI {
     }
 
     private JPanel alignPanel() {
-        /*Action alignAction = new AbstractAction() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    unitCommunicator
-                            .sendCommandToUnit(commands.Command.ALIGN_PERPENDICULAR);
-                    if (robotConnected)
-                        prevCommunicator
-                                .sendCommandToUnit(commands.Command.ALIGN_PERPENDICULAR);
-
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-            }
-        };*/
         alignButton = new JButton("Align");
-        //alignButton.addActionListener(alignAction);
+        
         JPanel alignPanel = new JPanel();
         alignPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
                 "Align"));
@@ -583,13 +563,11 @@ public class SilverSurferGUI {
             unitCommunicator = prevCommunicator;
             bluetoothConnect.setText("Connect");
             bluetoothStatus.setIcon(bluetoothNotConnectedIcon);
-            System.out
-                    .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
+            System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
             speedvalues.setValue(2);
             unitCommunicator.setSpeed(speedvalues.getValue());
             speedLabel.setText("Current Speed Level: 2");
-            System.out.println(unitCommunicator.getConsoleTag()
-                    + " Current Speed Level: 2.");
+            System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: 2.");
             simulationPanel.requestFocusInWindow();
             robotConnected = false;
         } catch (Exception e) {
@@ -613,14 +591,12 @@ public class SilverSurferGUI {
             unitCommunicator.setSpeed(speedvalues.getValue());
             prevCommunicator.setSpeed(speedvalues.getValue());
             speedLabel.setText("Current Speed Level: 2");
-            System.out.println(unitCommunicator.getConsoleTag()
-                    + " Current Speed Level: 2.");
+            System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: 2.");
             simulationPanel.requestFocusInWindow();
         } catch (IOException e) {
             unitCommunicator = prevCommunicator;
             robotConnected = false;
-            System.out
-                    .println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
+            System.out.println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
             simulationPanel.requestFocusInWindow();
         }
     }
@@ -645,11 +621,10 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                if (bluetoothConnect.getText() == "Connect") {
+                if (bluetoothConnect.getText() == "Connect")
                     connectBluetooth();
-                } else if (bluetoothConnect.getText() == "Disconnect") {
+                else if (bluetoothConnect.getText() == "Disconnect")
                     disconnectBluetooth();
-                }
             }
 
         });
@@ -677,8 +652,41 @@ public class SilverSurferGUI {
                 simulationPanel.requestFocusInWindow();
             }
         });
+        turnLeftButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+            }
 
-        turnButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+            	MoveTurnThread MTT = new MoveTurnThread("MTT");
+                MTT.setUnitCommunicator(unitCommunicator);
+                MTT.setAngles(-1*Integer.parseInt(angle.getValue().toString()));
+                MTT.setLength(0);
+                if (robotConnected) {
+                    MoveTurnThread MMT1 = new MoveTurnThread("MTT1");
+                    MMT1.setUnitCommunicator(prevCommunicator);
+                    MMT1.setAngles(-1*Integer.parseInt(angle.getValue().toString()));
+                    MMT1.setLength(0);
+                    MMT1.start();
+                }
+                MTT.start();
+                simulationPanel.requestFocusInWindow();
+            }
+        });
+        turnRightButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {
             }
@@ -768,16 +776,13 @@ public class SilverSurferGUI {
                 PolygonDrawThread PDT = new PolygonDrawThread("PDT");
                 PDT.setUnitCommunicator(unitCommunicator);
                 PDT.setAngles((int) polygonangles.getValue());
-                PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue()
-                        .toString()));
+                PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
                 PDT.start();
-
                 if (robotConnected) {
                     PolygonDrawThread PDT1 = new PolygonDrawThread("PDT1");
                     PDT1.setUnitCommunicator(prevCommunicator);
                     PDT1.setAngles((int) polygonangles.getValue());
-                    PDT1.setLength(Integer.parseInt(polygonEdgeLength
-                            .getValue().toString()));
+                    PDT1.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
                     PDT1.start();
                 }
                 simulationPanel.requestFocusInWindow();
@@ -789,16 +794,10 @@ public class SilverSurferGUI {
             @Override
             public void mouseReleased(MouseEvent arg0) {
                 try {
-                    if (unitCommunicator instanceof SimulatorCommunicator)
-                        MCT.setRide(false);
-                    unitCommunicator
-                            .sendCommandToUnit(Command.FORWARD_RELEASED);
-                    if (robotConnected) {
-                        MCT.setRide(false);
-                        prevCommunicator
-                                .sendCommandToUnit(Command.FORWARD_RELEASED);
-
-                    }
+                    MCT.setQuit(true);
+                    unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
+                    if (robotConnected)
+                        prevCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
                     uparrow.setIcon(uparrowicon);
                     simulationPanel.requestFocusInWindow();
                 } catch (IOException e) {
@@ -808,17 +807,16 @@ public class SilverSurferGUI {
 
             @Override
             public void mousePressed(MouseEvent arg0) {
+                MCT = new MouseClickThread("MCT");
                 if (unitCommunicator instanceof SimulatorCommunicator) {
-                    MCT = new MouseClickThread("MCT");
                     MCT.setUnitCommunicator(unitCommunicator);
                     MCT.setCommand(Command.FORWARD_PRESSED);
                     MCT.setSpeed(unitCommunicator.getSpeed());
                     MCT.start();
-                } else if (unitCommunicator instanceof RobotCommunicator) {
+                } 
+                else if (unitCommunicator instanceof RobotCommunicator) {
                     try {
-                        unitCommunicator
-                                .sendCommandToUnit(Command.FORWARD_PRESSED);
-                        MCT = new MouseClickThread("MCT");
+                        unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
                         MCT.setUnitCommunicator(prevCommunicator);
                         MCT.setCommand(Command.FORWARD_PRESSED);
                         MCT.setSpeed(prevCommunicator.getSpeed());
@@ -848,13 +846,10 @@ public class SilverSurferGUI {
             @Override
             public void mouseReleased(MouseEvent arg0) {
                 try {
-                    // if(unitCommunicator instanceof SimulatorCommunicator)
-                    MCT.setRide(false);
+                    MCT.setQuit(true);
+                    unitCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
                     if (robotConnected)
-                        prevCommunicator
-                                .sendCommandToUnit(Command.BACKWARD_RELEASED);
-                    unitCommunicator
-                            .sendCommandToUnit(Command.BACKWARD_RELEASED);
+                        prevCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
                     downarrow.setIcon(downarrowicon);
                     simulationPanel.requestFocusInWindow();
                 } catch (IOException e) {
@@ -864,17 +859,16 @@ public class SilverSurferGUI {
 
             @Override
             public void mousePressed(MouseEvent arg0) {
+                MCT = new MouseClickThread("MCT");
                 if (unitCommunicator instanceof SimulatorCommunicator) {
-                    MCT = new MouseClickThread("MCT");
                     MCT.setUnitCommunicator(unitCommunicator);
                     MCT.setCommand(Command.BACKWARD_PRESSED);
                     MCT.setSpeed(unitCommunicator.getSpeed());
                     MCT.start();
-                } else if (unitCommunicator instanceof RobotCommunicator) {
+                }
+                else if (unitCommunicator instanceof RobotCommunicator) {
                     try {
-                        unitCommunicator
-                                .sendCommandToUnit(Command.BACKWARD_PRESSED);
-                        MCT = new MouseClickThread("MCT");
+                        unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
                         MCT.setUnitCommunicator(prevCommunicator);
                         MCT.setCommand(Command.BACKWARD_PRESSED);
                         MCT.setSpeed(prevCommunicator.getSpeed());
@@ -904,12 +898,10 @@ public class SilverSurferGUI {
             @Override
             public void mouseReleased(MouseEvent arg0) {
                 try {
-                    // if(unitCommunicator instanceof SimulatorCommunicator)
-                    MCT.setRide(false);
-                    if (robotConnected)
-                        prevCommunicator
-                                .sendCommandToUnit(Command.LEFT_RELEASED);
+                    MCT.setQuit(true);
                     unitCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
+                    if (robotConnected)
+                        prevCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
                     leftarrow.setIcon(leftarrowicon);
                     simulationPanel.requestFocusInWindow();
                 } catch (IOException e) {
@@ -919,22 +911,20 @@ public class SilverSurferGUI {
 
             @Override
             public void mousePressed(MouseEvent arg0) {
+                MCT = new MouseClickThread("MCT");
                 if (unitCommunicator instanceof SimulatorCommunicator) {
-                    MCT = new MouseClickThread("MCT");
                     MCT.setUnitCommunicator(unitCommunicator);
                     MCT.setCommand(Command.LEFT_PRESSED);
                     MCT.setSpeed(unitCommunicator.getSpeed());
                     MCT.start();
-                } else if (unitCommunicator instanceof RobotCommunicator) {
+                }
+                else if (unitCommunicator instanceof RobotCommunicator) {
                     try {
-                        unitCommunicator
-                                .sendCommandToUnit(Command.LEFT_PRESSED);
-                        MCT = new MouseClickThread("MCT");
+                        unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
                         MCT.setUnitCommunicator(prevCommunicator);
                         MCT.setCommand(Command.LEFT_PRESSED);
                         MCT.setSpeed(prevCommunicator.getSpeed());
                         MCT.start();
-
                     } catch (IOException e) {
 
                     }
@@ -960,12 +950,10 @@ public class SilverSurferGUI {
             @Override
             public void mouseReleased(MouseEvent arg0) {
                 try {
-                    // if(unitCommunicator instanceof SimulatorCommunicator)
-                    MCT.setRide(false);
-                    if (robotConnected)
-                        prevCommunicator
-                                .sendCommandToUnit(Command.RIGHT_RELEASED);
+                    MCT.setQuit(true);
                     unitCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
+                    if (robotConnected)
+                        prevCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
                     rightarrow.setIcon(rightarrowicon);
                     simulationPanel.requestFocusInWindow();
                 } catch (IOException e) {
@@ -975,21 +963,20 @@ public class SilverSurferGUI {
 
             @Override
             public void mousePressed(MouseEvent arg0) {
+                MCT = new MouseClickThread("MCT");
                 if (unitCommunicator instanceof SimulatorCommunicator) {
-                    MCT = new MouseClickThread("MCT");
                     MCT.setUnitCommunicator(unitCommunicator);
                     MCT.setCommand(Command.RIGHT_PRESSED);
                     MCT.setSpeed(unitCommunicator.getSpeed());
                     MCT.start();
-                } else if (unitCommunicator instanceof RobotCommunicator) {
+                }
+                else if (unitCommunicator instanceof RobotCommunicator) {
                     try {
-                        MCT = new MouseClickThread("MCT");
+                        unitCommunicator.sendCommandToUnit(Command.RIGHT_PRESSED);
                         MCT.setUnitCommunicator(prevCommunicator);
                         MCT.setCommand(Command.RIGHT_PRESSED);
                         MCT.setSpeed(prevCommunicator.getSpeed());
                         MCT.start();
-                        unitCommunicator
-                                .sendCommandToUnit(Command.RIGHT_PRESSED);
                     } catch (IOException e) {
 
                     }
@@ -1033,8 +1020,7 @@ public class SilverSurferGUI {
                 if (robotConnected)
                     prevCommunicator.setSpeed(speedvalues.getValue());
                 speedLabel.setText("Current Speed Level: 2");
-                System.out.println(unitCommunicator.getConsoleTag()
-                        + " Current Speed Level: 2.");
+                System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: 2.");
                 simulationPanel.requestFocusInWindow();
             }
         });
@@ -1060,12 +1046,8 @@ public class SilverSurferGUI {
                 unitCommunicator.setSpeed(speedvalues.getValue());
                 if (robotConnected)
                     prevCommunicator.setSpeed(speedvalues.getValue());
-
-                speedLabel.setText("Current Speed Level: "
-                        + speedvalues.getValue());
-                System.out.println(unitCommunicator.getConsoleTag()
-                        + " Current Speed Level: " + speedvalues.getValue()
-                        + ".");
+                speedLabel.setText("Current Speed Level: " + speedvalues.getValue());
+                System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: " + speedvalues.getValue() + ".");
                 simulationPanel.requestFocusInWindow();
             }
         });
@@ -1091,7 +1073,6 @@ public class SilverSurferGUI {
                 System.out.println("[GUI] Screen cleared.");
                 simulationPanel.clear();
                 simulationPanel.requestFocusInWindow();
-
             }
         });
         alignButton.addMouseListener(new MouseListener() {
@@ -1120,7 +1101,6 @@ public class SilverSurferGUI {
                 	
                 }
                 simulationPanel.requestFocusInWindow();
-
             }
         });
         lookAroundButton.addMouseListener(new MouseListener() {
@@ -1142,10 +1122,9 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out
-                        .println("[SIMULATOR] Looking around for obstructions.");
+                System.out.println("[SIMULATOR] Looking around for obstructions.");
                 simulationPanel.checkForObstructions();
-
+                simulationPanel.requestFocusInWindow();
             }
         });
         simulationPanel.addKeyListener(new KeyListener() {
@@ -1167,56 +1146,38 @@ public class SilverSurferGUI {
                 try {
                     if (e.getKeyCode() == KeyEvent.VK_UP) {
                         if (!runningD) {
-                            // if(unitCommunicator instanceof
-                            // SimulatorCommunicator)
-                            MCTU.setRide(false);
+                            MCTU.setQuit(true);
                             runningU = false;
-                            unitCommunicator
-                                    .sendCommandToUnit(Command.FORWARD_RELEASED);
+                            unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
                             if (robotConnected)
-                                prevCommunicator
-                                        .sendCommandToUnit(Command.FORWARD_RELEASED);
+                                prevCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
                             uparrow.setIcon(uparrowicon);
                         }
                     } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                         if (!runningU) {
-                            // if(unitCommunicator instanceof
-                            // SimulatorCommunicator)
-                            MCTD.setRide(false);
+                            MCTD.setQuit(true);
                             runningD = false;
-                            unitCommunicator
-                                    .sendCommandToUnit(Command.BACKWARD_RELEASED);
+                            unitCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
                             if (robotConnected)
-                                prevCommunicator
-                                        .sendCommandToUnit(Command.BACKWARD_RELEASED);
+                                prevCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
                             downarrow.setIcon(downarrowicon);
                         }
                     } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                         if (!runningR) {
-                            // if(unitCommunicator instanceof
-                            // SimulatorCommunicator)
-                            MCTL.setRide(false);
+                            MCTL.setQuit(true);
                             runningL = false;
-                            unitCommunicator
-                                    .sendCommandToUnit(Command.LEFT_RELEASED);
+                            unitCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
                             if (robotConnected)
-                                prevCommunicator
-                                        .sendCommandToUnit(Command.LEFT_RELEASED);
-
+                                prevCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
                             leftarrow.setIcon(leftarrowicon);
                         }
                     } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                         if (!runningL) {
-                            // if(unitCommunicator instanceof
-                            // SimulatorCommunicator)
-                            MCTR.setRide(false);
+                            MCTR.setQuit(true);
                             runningR = false;
-                            unitCommunicator
-                                    .sendCommandToUnit(Command.RIGHT_RELEASED);
+                            unitCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
                             if (robotConnected)
-                                prevCommunicator
-                                        .sendCommandToUnit(Command.RIGHT_RELEASED);
-
+                                prevCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
                             rightarrow.setIcon(rightarrowicon);
                         }
                     }
@@ -1227,111 +1188,89 @@ public class SilverSurferGUI {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if (!runningD) {
-                        if (!runningU
-                                && unitCommunicator instanceof SimulatorCommunicator) {
-                            MCTU = new MouseClickThread("MCTU");
-                            MCTU.setUnitCommunicator(unitCommunicator);
-                            MCTU.setCommand(Command.FORWARD_PRESSED);
-                            MCTU.setSpeed(unitCommunicator.getSpeed());
-                            MCTU.start();
-                        } else if (!runningU
-                                && unitCommunicator instanceof RobotCommunicator) {
-                            try {
-                                unitCommunicator
-                                        .sendCommandToUnit(Command.FORWARD_PRESSED);
-                                MCTU = new MouseClickThread("MCTU");
-                                MCTU.setUnitCommunicator(prevCommunicator);
-                                MCTU.setCommand(Command.FORWARD_PRESSED);
-                                MCTU.setSpeed(prevCommunicator.getSpeed());
-                                MCTU.start();
-                            } catch (IOException ex) {
-
-                            }
-                        }
-                        runningU = true;
-                        uparrow.setIcon(uparrowpressedicon);
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if (!runningU) {
-                        if (!runningD
-                                && unitCommunicator instanceof SimulatorCommunicator) {
-                            MCTD = new MouseClickThread("MCTD");
-                            MCTD.setUnitCommunicator(unitCommunicator);
-                            MCTD.setCommand(Command.BACKWARD_PRESSED);
-                            MCTD.setSpeed(unitCommunicator.getSpeed());
-                            MCTD.start();
-                        } else if (!runningD
-                                && unitCommunicator instanceof RobotCommunicator) {
-                            try {
-                                unitCommunicator
-                                        .sendCommandToUnit(Command.BACKWARD_PRESSED);
-                                MCTD = new MouseClickThread("MCTD");
-                                MCTD.setUnitCommunicator(prevCommunicator);
-                                MCTD.setCommand(Command.BACKWARD_PRESSED);
-                                MCTD.setSpeed(prevCommunicator.getSpeed());
-                                MCTD.start();
-                            } catch (IOException ex) {
-
-                            }
-                        }
-                        runningD = true;
-                        downarrow.setIcon(downarrowpressedicon);
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    if (!runningR) {
-                        if (!runningL
-                                && unitCommunicator instanceof SimulatorCommunicator) {
-                            MCTL = new MouseClickThread("MCTL");
-                            MCTL.setUnitCommunicator(unitCommunicator);
-                            MCTL.setCommand(Command.LEFT_PRESSED);
-                            MCTL.setSpeed(unitCommunicator.getSpeed());
-                            MCTL.start();
-                        } else if (!runningL
-                                && unitCommunicator instanceof RobotCommunicator) {
-                            try {
-                                unitCommunicator
-                                        .sendCommandToUnit(Command.LEFT_PRESSED);
-                                MCTL = new MouseClickThread("MCTL");
-                                MCTL.setUnitCommunicator(prevCommunicator);
-                                MCTL.setCommand(Command.LEFT_PRESSED);
-                                MCTL.setSpeed(prevCommunicator.getSpeed());
-                                MCTL.start();
-                            } catch (IOException ex) {
-
-                            }
-                        }
-                        runningL = true;
-                        leftarrow.setIcon(leftarrowpressedicon);
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    if (!runningL) {
-                        if (!runningR
-                                && unitCommunicator instanceof SimulatorCommunicator) {
-                            MCTR = new MouseClickThread("MCTR");
-                            MCTR.setUnitCommunicator(unitCommunicator);
-                            MCTR.setCommand(Command.RIGHT_PRESSED);
-                            MCTR.setSpeed(unitCommunicator.getSpeed());
-                            MCTR.start();
-                        } else if (!runningR
-                                && unitCommunicator instanceof RobotCommunicator) {
-                            try {
-                                MCTR = new MouseClickThread("MCTR");
-                                MCTR.setUnitCommunicator(prevCommunicator);
-                                MCTR.setCommand(Command.RIGHT_PRESSED);
-                                MCTR.setSpeed(prevCommunicator.getSpeed());
-                                MCTR.start();
-                                unitCommunicator
-                                        .sendCommandToUnit(Command.RIGHT_PRESSED);
-                            } catch (IOException ex) {
-
-                            }
-                        }
-                        runningR = true;
-                        rightarrow.setIcon(rightarrowpressedicon);
-                    }
-                }
+                try {
+	                if (e.getKeyCode() == KeyEvent.VK_UP) {
+	                    if (!runningD) {
+	                        if (!runningU && unitCommunicator instanceof SimulatorCommunicator) {
+	                            MCTU = new MouseClickThread("MCTU");
+	                            MCTU.setUnitCommunicator(unitCommunicator);
+	                            MCTU.setCommand(Command.FORWARD_PRESSED);
+	                            MCTU.setSpeed(unitCommunicator.getSpeed());
+	                            MCTU.start();
+	                        }
+	                        else if (!runningU && unitCommunicator instanceof RobotCommunicator) {
+	                                unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
+	                                MCTU = new MouseClickThread("MCTU");
+	                                MCTU.setUnitCommunicator(prevCommunicator);
+	                                MCTU.setCommand(Command.FORWARD_PRESSED);
+	                                MCTU.setSpeed(prevCommunicator.getSpeed());
+	                                MCTU.start();
+	                        }
+	                        runningU = true;
+	                        uparrow.setIcon(uparrowpressedicon);
+	                    }
+	                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+	                    if (!runningU) {
+	                        if (!runningD && unitCommunicator instanceof SimulatorCommunicator) {
+	                            MCTD = new MouseClickThread("MCTD");
+	                            MCTD.setUnitCommunicator(unitCommunicator);
+	                            MCTD.setCommand(Command.BACKWARD_PRESSED);
+	                            MCTD.setSpeed(unitCommunicator.getSpeed());
+	                            MCTD.start();
+	                        } else if (!runningD && unitCommunicator instanceof RobotCommunicator) {
+	                            unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
+	                            MCTD = new MouseClickThread("MCTD");
+	                            MCTD.setUnitCommunicator(prevCommunicator);
+	                            MCTD.setCommand(Command.BACKWARD_PRESSED);
+	                            MCTD.setSpeed(prevCommunicator.getSpeed());
+	                            MCTD.start();
+	                        }
+	                        runningD = true;
+	                        downarrow.setIcon(downarrowpressedicon);
+	                    }
+	                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+	                    if (!runningR) {
+	                        if (!runningL && unitCommunicator instanceof SimulatorCommunicator) {
+	                            MCTL = new MouseClickThread("MCTL");
+	                            MCTL.setUnitCommunicator(unitCommunicator);
+	                            MCTL.setCommand(Command.LEFT_PRESSED);
+	                            MCTL.setSpeed(unitCommunicator.getSpeed());
+	                            MCTL.start();
+	                        } else if (!runningL && unitCommunicator instanceof RobotCommunicator) {
+	                        	unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
+	                        	MCTL = new MouseClickThread("MCTL");
+	                        	MCTL.setUnitCommunicator(prevCommunicator);
+	                        	MCTL.setCommand(Command.LEFT_PRESSED);
+	                        	MCTL.setSpeed(prevCommunicator.getSpeed());
+	                        	MCTL.start();
+	                        }
+	                        runningL = true;
+	                        leftarrow.setIcon(leftarrowpressedicon);
+	                    }
+	                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+	                    if (!runningL) {
+	                        if (!runningR && unitCommunicator instanceof SimulatorCommunicator) {
+	                            MCTR = new MouseClickThread("MCTR");
+	                            MCTR.setUnitCommunicator(unitCommunicator);
+	                            MCTR.setCommand(Command.RIGHT_PRESSED);
+	                            MCTR.setSpeed(unitCommunicator.getSpeed());
+	                            MCTR.start();
+	                        } else if (!runningR && unitCommunicator instanceof RobotCommunicator) {
+	                        	unitCommunicator .sendCommandToUnit(Command.RIGHT_PRESSED);
+	                        	MCTR = new MouseClickThread("MCTR");
+	                        	MCTR.setUnitCommunicator(prevCommunicator);
+	                        	MCTR.setCommand(Command.RIGHT_PRESSED);
+	                        	MCTR.setSpeed(prevCommunicator.getSpeed());
+	                        	MCTR.start();
+	                        }
+	                        runningR = true;
+	                        rightarrow.setIcon(rightarrowpressedicon);
+	                    }
+	                }
+	            }
+	            catch (IOException ex) {
+	
+	            }
             }
         });
     }

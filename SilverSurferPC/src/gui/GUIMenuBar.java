@@ -36,15 +36,14 @@ public class GUIMenuBar extends JMenuBar {
 
 	private SilverSurferGUI gui;
 
-	public GUIMenuBar(SilverSurferGUI gui){
+	public GUIMenuBar(SilverSurferGUI gui) {
 		setGui(gui);
 		this.add(getFileMenu());
 		this.add(getBlueToothMenu());
 		setBackground(new Color(221,230,231));
 	}
 
-
-	private JMenu getFileMenu(){
+	private JMenu getFileMenu() {
 
 		JMenu menu = new JMenu("File");
 		menu.setMnemonic('F');
@@ -53,8 +52,7 @@ public class GUIMenuBar extends JMenuBar {
 		loadItem.setMnemonic('L');
 		menu.add(loadItem);
 
-		loadItem.addActionListener(
-				new ActionListener(){
+		loadItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e)
 					{
 						//Prompt for a File
@@ -72,9 +70,7 @@ public class GUIMenuBar extends JMenuBar {
 						System.out.println("[I/O] Map succesfully loaded!");
 					}
 
-				}
-
-		);
+				});
 
 		JMenuItem exportLSItem = new JMenuItem("Export Lightsensor data");
 		menu.add(exportLSItem);
@@ -182,7 +178,6 @@ public class GUIMenuBar extends JMenuBar {
 
 			}
 		});
-
 		
 		JMenuItem exportTS1Item = new JMenuItem("Export Touchsensor1 data");
 		menu.add(exportTS1Item);
@@ -327,12 +322,14 @@ public class GUIMenuBar extends JMenuBar {
 		return bluetoothMenu;
 
 	}
+	
 	/**
 	 * Set the SilverSurferGUI this menubar should operate on.
 	 */
 	public void setGui(SilverSurferGUI gui) {
 		this.gui = gui;
 	}
+	
 	/**
 	 * get the SilverSurferGUI this menubar is operating on.
 	 */
