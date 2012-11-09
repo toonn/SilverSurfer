@@ -4,8 +4,13 @@ import gui.SilverSurferGUI;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
@@ -15,6 +20,12 @@ public class SimulationJPanel extends JPanel {
 
 	private SilverSurferGUI SSG;
 	private SimulationPilot simulatorPilot;
+
+	/**
+	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
+	 */
+	private BufferedImage verticalWallImage;
+	private BufferedImage horizontalWallImage;
 	/**
 	 * 2 driehoeken die elkaar afwisselen om afgebeeld te worden
 	 * de ene wordt afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden
@@ -31,7 +42,7 @@ public class SimulationJPanel extends JPanel {
 	private boolean isUpdated = false;
 
 	private Vector<Shape> shapes = new Vector<Shape>();
-	
+
 	/**
 	 * Houdt een map bij met coordinaten die verwijzen naar de muur die erop staat
 	 * de positie van de muur ten opzichte van de coordinaten staat uitgelegd in de klasse
@@ -40,6 +51,17 @@ public class SimulationJPanel extends JPanel {
 	private HashMap<Point2D, Wall> walls = new HashMap<Point2D, Wall>();
 
 	public SimulationJPanel(){
+
+
+		try {
+			verticalWallImage = ImageIO.read(new File("resources/wallImages/verticalwall.png"));
+			horizontalWallImage = ImageIO.read(new File("resources/wallImages/horizontalwall.png"));
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		shapes.add(triangle1);
 		shapes.add(triangle2);
 	}
@@ -143,19 +165,22 @@ public class SimulationJPanel extends JPanel {
 				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
 				g2.draw(grid);
 			}
-		
+
 		Graphics2D g3 = (Graphics2D) graph;
-		
+
 		// paint the walls on the panel
 		//TODO momenteel is de hashmap leeg dus tekent die niks omdat addwall en 
 		//addwhiteline getoggled zijn
-		
+
 		((Graphics2D) graph).setColor(Color.BLACK);
-		
+
 		for(Wall wall : walls.values()){
-			g3.fill(wall);
+			if(wall.getState() == State.VERTICAL)
+				g3.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
+			else g3.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
 		}
-		
+
+
 		((Graphics2D) graph).setColor(Color.red);
 		for(Shape s : shapesx)
 		{
@@ -194,7 +219,7 @@ public class SimulationJPanel extends JPanel {
 	}
 
 	public void clear() {
-	
+
 		Shape triangle = getVisibleTriangle();
 		Shape triangletwo = getNotVisibleTriangle();
 		shapes.removeAllElements();
@@ -226,9 +251,9 @@ public class SimulationJPanel extends JPanel {
 			return;
 		removeWallFrom(point);
 		System.out.println(orientation + "witte lijn toevoegen");
-		
+
 	}
-	
+
 	/**
 	 * voegt een muur bij aan hashmap
 	 * muur is afhankelijk van de orientatie
@@ -246,21 +271,28 @@ public class SimulationJPanel extends JPanel {
 		}
 		setWall(point, wall);
 	}
-	
-	
+
+
 	public void setWall(Point2D point, Wall wall){
 		walls.put(point, wall);
 	}
-	
+
 	public void removeWallFrom(Point2D point){
 		walls.remove(point);
 	}
-	
+
 	//TODO dit snap ik niet goed wat die doet want wordt nergens anders opgeroepen buiten 
 	//de mouseclickthread, ik denk dat nele ze hier gezet heeft, maar dat is niet de methode
 	//die gebruikt wordt! miss werkt het als de juiste methode in die mouseclickthread staat!
 	public void checkForObstructions()
 	{
 		simulatorPilot.checkForObstructions();
+	}
+	
+	public BufferedImage getVerticalWallImage() {
+		return verticalWallImage;
+	}
+	public BufferedImage getHorizontalWallImage() {
+		return horizontalWallImage;
 	}
 }
