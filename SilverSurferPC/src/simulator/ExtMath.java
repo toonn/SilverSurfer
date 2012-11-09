@@ -93,15 +93,7 @@ public class ExtMath {
 		float a = (float) Math.abs(generator.nextGaussian())*100;
 		float b = (float) Math.abs(generator.nextGaussian())*100;
 		System.out.println(a);
-		System.out.println(b);
-		System.out.println(calculateWallPoint(Orientation.NORTH, a, b).getX());
-		System.out.println(calculateWallPoint(Orientation.NORTH, a, b).getY());
-		System.out.println(calculateWallPoint(Orientation.EAST, a, b).getX());
-		System.out.println(calculateWallPoint(Orientation.EAST, a, b).getY());
-		System.out.println(calculateWallPoint(Orientation.SOUTH, a, b).getX());
-		System.out.println(calculateWallPoint(Orientation.SOUTH, a, b).getY());
-		System.out.println(calculateWallPoint(Orientation.WEST, a, b).getX());
-		System.out.println(calculateWallPoint(Orientation.WEST, a, b).getY());
+		System.out.println(Math.round(a/90) * 90);
 	}
 	
 	

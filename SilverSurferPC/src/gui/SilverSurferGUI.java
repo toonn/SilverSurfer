@@ -1095,15 +1095,18 @@ public class SilverSurferGUI {
             @Override
             public void mouseEntered(MouseEvent e) {
             }
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(unitCommunicator.getConsoleTag() + " Aligning on white line.");
-                try {
-                	unitCommunicator.sendCommandToUnit(14);
-                } catch(Exception ex) {
-                	
+                	AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
+                    AWL.setUnitCommunicator(unitCommunicator);
+                    if (robotConnected) {
+                        AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
+                        AWL1.setUnitCommunicator(prevCommunicator);
+                        AWL1.start();
                 }
+                AWL.start();
                 simulationPanel.requestFocusInWindow();
             }
         });

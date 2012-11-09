@@ -300,6 +300,26 @@ public class SimulationPilot {
 		SSG.getSimulationPanel().clear();
 	}
 	
+	public void allignOnWhiteLine(){
+		Orientation orientation = Orientation.calculateOrientation(getCurrentPositionAbsoluteX(),
+				getCurrentPositionAbsoluteY(), getAlpha());
+		
+		while(!onEdge(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY())){
+			travel(1);
+		}
+		
+		float requiredAlpha = (float) Orientation.getRightAngle(orientation);
+//		float requiredAlpha = Math.round(getAlpha()/90) * 90;
+		while (!(getAlpha()<requiredAlpha+1 && getAlpha()>requiredAlpha-1) ){
+			if(getAlpha() < requiredAlpha){
+				rotate(1);
+			}
+			else
+				rotate(-1);
+		}
+		
+	}
+	
 	/**
 	 * checkt of de robot zich binnen de marge van een edge bevindt
 	 */
