@@ -54,8 +54,8 @@ public class SimulationJPanel extends JPanel {
 
 
 		try {
-			verticalWallImage = ImageIO.read(new File("resources/wallImages/verticalwall.png"));
-			horizontalWallImage = ImageIO.read(new File("resources/wallImages/horizontalwall.png"));
+			verticalWallImage = ImageIO.read(new File("resources/wallImages/verticalwall2.png"));
+			horizontalWallImage = ImageIO.read(new File("resources/wallImages/horizontalwall2.png"));
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
