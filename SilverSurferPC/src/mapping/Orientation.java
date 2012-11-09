@@ -137,6 +137,35 @@ public enum Orientation {
 			return SOUTH;
 	}
 	
+	public static Orientation getOppositeOrientation(Orientation orientation){
+		switch(orientation){
+		case NORTH:
+			return SOUTH;
+		case SOUTH:
+			return NORTH;
+		case EAST:
+			return WEST;
+		default:
+			return EAST;
+		}
+	}
+	
+	/**
+	 * enkel gebruikt in mapreader , doet verder niet ter zake
+	 */
+	public static Orientation getOtherOrientationCorner(Orientation orientation){
+		switch(orientation){
+		case NORTH:
+			return WEST;
+		case SOUTH:
+			return EAST;
+		case EAST:
+			return NORTH;
+		default:
+			return SOUTH;
+		}
+	}
+	
 	/**
 	 *  dit wordt enkel gebruikt in tile en edges doet voor de rest ook niet echt
 	 *  ter zake
@@ -184,36 +213,7 @@ public enum Orientation {
 			return -1;
 		}
 	}
-	
-	public static Orientation getOppositeOrientation(Orientation orientation){
-		switch(orientation){
-		case NORTH:
-			return SOUTH;
-		case SOUTH:
-			return NORTH;
-		case EAST:
-			return WEST;
-		default:
-			return EAST;
-		}
-	}
-	
-	/**
-	 * enkel gebruikt in mapreader , doet verder niet ter zake
-	 */
-	public static Orientation getOtherOrientationCorner(Orientation orientation){
-		switch(orientation){
-		case NORTH:
-			return WEST;
-		case SOUTH:
-			return EAST;
-		case EAST:
-			return NORTH;
-		default:
-			return SOUTH;
-		}
-	}
-	
+
 	/**
 	 * enkel gebruikt in mapreader , doet verder niet ter zake
 	 */
@@ -226,6 +226,29 @@ public enum Orientation {
 			return EAST;
 		else
 			return WEST;
+	}
+	
+	/**
+	 * enkel gebruikt in whiteAllignAlgoritme , doet verder niet ter zake
+	 */
+	public static int getRightAngle(Orientation orientation){
+
+		if(orientation == null) {
+		throw new IllegalArgumentException();}
+		
+		switch(orientation){
+		case NORTH:
+			return 270;
+		case SOUTH:
+			return 90;
+		case EAST:
+			return 0;
+		case WEST:
+			return 180;
+		// This line will never be reached, each valid direction has a return statement.
+		default:
+			return -1;
+		}
 	}
 	
 }
