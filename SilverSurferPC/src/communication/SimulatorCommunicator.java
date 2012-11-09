@@ -72,6 +72,9 @@ public class SimulatorCommunicator extends UnitCommunicator {
 			sim.rotate((float) 360.0-getAngularSpeed());
 		else if((command == 6 && previousCommandForwardOrBackWard == 0) || (command == 4 && previousCommandForwardOrBackWard == 2))
 			sim.rotate(getAngularSpeed());
+		else if(command == 14){
+			sim.allignOnWhiteLine();
+		}
 		else if(command%10 == 8)
 			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
 		else if(command%10 == 9)
