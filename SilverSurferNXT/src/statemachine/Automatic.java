@@ -50,4 +50,35 @@ public class Automatic extends State {
 		turnAngle(-(angle/2));
 		//moveForward(541); //Lengthcoef (20.8) * lengte tot midden volgende vak (26 cm) afgerond
     }
+    
+    public boolean alignOnWall(UltrasonicSensor ultrasonicSensor) {
+    	int firstUSRead;
+    	int secondUSRead;
+    	
+    	turnAngle(179); //90 graden
+    	firstUSRead = ultrasonicSensor.getDistance();
+    	if (firstUSRead < 32) {
+    		moveForward((int)Math.round((firstUSRead-23)*20.8));
+        	turnAngle(-179);
+        	turnAngle(-179);
+    		secondUSRead = ultrasonicSensor.getDistance();
+    		if(!(secondUSRead < 25 && secondUSRead > 21))
+        		moveForward((int)Math.round((secondUSRead-23)*20.8));
+    		turnAngle(179);
+    		return true;
+    	}
+    	else {
+        	turnAngle(-179);
+    		turnAngle(-179);
+    		secondUSRead = ultrasonicSensor.getDistance();
+    		if (secondUSRead < 32) {
+        		moveForward((int)Math.round((secondUSRead-23)*20.8));
+        		turnAngle(179);
+    			return true;
+    		}
+    		else 
+        		turnAngle(179);
+    			return false;
+    	}
+    }
 }

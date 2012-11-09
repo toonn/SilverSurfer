@@ -6,7 +6,7 @@ public class UnitCommunicator {
 
 	protected static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward in a polygon.
 	protected static final double ANGLE_COEF = 708; //Amount of degrees needed for a 360 degree turn in a polygon.
-	protected static final double ANGLE_COEF_TURN = 718; //Amount of degrees needed for a 360 degree turn in a polygon.
+	protected static final double ANGLE_COEF_TURN = 716; //Amount of degrees needed for a 360 degree turn.
 	protected StatusInfoBuffer statusInfo;
 	
 	public UnitCommunicator(StatusInfoBuffer status) {
