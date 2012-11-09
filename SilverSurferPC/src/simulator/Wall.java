@@ -38,6 +38,9 @@ public class Wall extends Rectangle{
 		float x;
 		float y;
 		if(state == State.HORIZONTAL){
+			
+			setSize(standardLength, standardWidth);
+			
 		x = xPosition;
 		y = yPosition -1;
 				}

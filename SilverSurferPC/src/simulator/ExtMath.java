@@ -72,8 +72,12 @@ public class ExtMath {
 		float xCoordinate = (float) (Math.floor(x/40)*40);
 		float yCoordinate = (float) (Math.floor(y/40)*40);
 		
-		if(orientation.equals(Orientation.SOUTH)){
-			yCoordinate = yCoordinate + 40;
+		if(orientation.equals(Orientation.NORTH)){
+			yCoordinate = yCoordinate -1;
+		}
+		
+		else if(orientation.equals(Orientation.SOUTH)){
+			yCoordinate = yCoordinate + 39;
 		}
 		else if(orientation.equals(Orientation.EAST)) {
 			xCoordinate = xCoordinate + 40;

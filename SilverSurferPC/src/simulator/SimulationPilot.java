@@ -48,6 +48,10 @@ public class SimulationPilot {
 	 */
 	private final float detectionDistanceUltrasonicSensorRobot =20;
 	
+	private int howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
+	private Orientation previousDirection = null;
+	private int currentTileCoordinateXPreviousCheck = -1;
+	private int currentTileCoordinateYPreviousCheck = -1;
 	
 	public SimulationPilot() {
 		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
@@ -245,18 +249,38 @@ public class SimulationPilot {
 	public void checkForObstructions()
 	{
 		System.out.println("SimulationPilot.checkForObstructions()");
+		
 		Orientation currentOrientation = Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
+		
+		if(getCurrentPositionRelativeX() != currentTileCoordinateXPreviousCheck &&
+			getCurrentPositionRelativeX() != currentTileCoordinateYPreviousCheck
+			&& previousDirection != currentOrientation){
+			howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
+			currentTileCoordinateXPreviousCheck = getCurrentPositionRelativeX();
+			currentTileCoordinateYPreviousCheck = getCurrentPositionRelativeY();
+			previousDirection = currentOrientation;
+			return;
+		}
+		
+		else if(howManyTimesCheckedOnSameCurrentTileInSameDirection != 5){
+			howManyTimesCheckedOnSameCurrentTileInSameDirection++;
+			System.out.println("howManyTimesCheckedOnSameCurrentTileInSameDirection");
+			System.out.println(howManyTimesCheckedOnSameCurrentTileInSameDirection + "========================================");
+			return;
+		}
 
-		if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL)
+		else if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL)
 		{
 			SSG.getSimulationPanel().addWall(currentOrientation,
 					getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+			howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
 		}
 		else
 		{
 			//roept addwhiteline op, deze methode verwijdert de muur terug uit het panel
 				SSG.getSimulationPanel().addWhiteLine(currentOrientation,
 						getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+				howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
 		}
 	}
 
