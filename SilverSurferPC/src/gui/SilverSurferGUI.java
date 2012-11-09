@@ -58,7 +58,8 @@ public class SilverSurferGUI {
 
     private static JButton clearButton;
     
-    private static JButton alignButton;
+    private static JButton alignWhiteLineButton;
+    private static JButton alignWall;
 
     private static JSpinner angle;
     private static JButton turnLeftButton;
@@ -502,7 +503,8 @@ public class SilverSurferGUI {
     }
 
     private JPanel alignPanel() {
-        alignButton = new JButton("Align");
+        alignWhiteLineButton = new JButton("Align on white line");
+        alignWall = new JButton("Align on walls");
         
         JPanel alignPanel = new JPanel();
         alignPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
@@ -513,10 +515,12 @@ public class SilverSurferGUI {
         alignPanel.setLayout(alignLayout);
         alignLayout.setAutoCreateGaps(true);
         alignLayout.setAutoCreateContainerGaps(true);
-        alignLayout.setHorizontalGroup(alignLayout.createSequentialGroup()
-                .addComponent(alignButton));
+        alignLayout.setHorizontalGroup(alignLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(alignWhiteLineButton)
+                .addComponent(alignWall));
         alignLayout.setVerticalGroup(alignLayout.createSequentialGroup()
-                .addComponent(alignButton));
+                .addComponent(alignWhiteLineButton)
+                .addComponent(alignWall));
 
         return alignPanel;
     }
@@ -558,7 +562,7 @@ public class SilverSurferGUI {
 
     protected static void disconnectBluetooth() {
         try {
-        	unitCommunicator.sendCommandToUnit(15);
+        	unitCommunicator.sendCommandToUnit(16);
             unitCommunicator.closeUnitConnection();
             unitCommunicator = prevCommunicator;
             bluetoothConnect.setText("Connect");
@@ -1075,7 +1079,7 @@ public class SilverSurferGUI {
                 simulationPanel.requestFocusInWindow();
             }
         });
-        alignButton.addMouseListener(new MouseListener() {
+        alignWhiteLineButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
             }
@@ -1097,6 +1101,34 @@ public class SilverSurferGUI {
                 System.out.println(unitCommunicator.getConsoleTag() + " Aligning on white line.");
                 try {
                 	unitCommunicator.sendCommandToUnit(14);
+                } catch(Exception ex) {
+                	
+                }
+                simulationPanel.requestFocusInWindow();
+            }
+        });
+        alignWall.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println(unitCommunicator.getConsoleTag() + " Aligning on walls.");
+                try {
+                	unitCommunicator.sendCommandToUnit(15);
                 } catch(Exception ex) {
                 	
                 }
