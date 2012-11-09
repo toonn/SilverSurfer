@@ -1,6 +1,16 @@
 package simulator;
 
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.swing.ImageIcon;
 
 public class Wall extends Rectangle{
 
@@ -51,5 +61,12 @@ public class Wall extends Rectangle{
 		setLocation((int) x, (int) y);
 		
 	}
+	
+	
+	public State getState() {
+		return state;
+	}
+	
+	
 
 }
