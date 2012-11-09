@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.FileDialog;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -11,10 +12,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import org.w3c.dom.ls.LSInput;
 
@@ -48,11 +54,11 @@ public class GUIMenuBar extends JMenuBar {
 		JMenu menu = new JMenu("File");
 		menu.setMnemonic('F');
 
-		JMenuItem loadItem = new JMenuItem("Load map...");
-		loadItem.setMnemonic('L');
-		menu.add(loadItem);
+		JMenuItem loadMapItem = new JMenuItem("Load map...");
+		loadMapItem.setMnemonic('M');
+		menu.add(loadMapItem);
 
-		loadItem.addActionListener(new ActionListener() {
+		loadMapItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e)
 					{
 						//Prompt for a File
@@ -64,7 +70,25 @@ public class GUIMenuBar extends JMenuBar {
 						File mapFile = new File(prompt.getDirectory() + prompt.getFile()); // Load and display selection
 						prompt.dispose();                     // Get rid of the dialog box
 
-						MapGraph map = MapReader.createMapFromFile(mapFile);
+						
+						JPanel messagePanel = new JPanel();
+						SpinnerNumberModel xModel = new SpinnerNumberModel(1, 0, 1000, 1);
+						SpinnerNumberModel yModel = new SpinnerNumberModel(1, 0, 1000, 1);
+						JLabel x = new JLabel("x:");
+						JLabel y = new JLabel("y:");
+
+				        JSpinner xcoord = new JSpinner(xModel);
+				        JSpinner ycoord = new JSpinner(yModel);
+				        messagePanel.add(x);
+				        messagePanel.add(xcoord);
+				        messagePanel.add(y);
+				        messagePanel.add(ycoord);
+
+						// Populate your panel components here.
+				        JOptionPane.showMessageDialog(getGui().getFrame(), messagePanel, "Enter relative starting coordinates:", JOptionPane.OK_OPTION);
+						
+
+						MapGraph map = MapReader.createMapFromFile(mapFile,Integer.valueOf(xcoord.getValue().toString()),Integer.valueOf(ycoord.getValue().toString()));
 						((SimulatorCommunicator)getGui().getUnitCommunicator()).getSim().setMapGraph(map);
 
 						System.out.println("[I/O] Map succesfully loaded!");
@@ -73,6 +97,7 @@ public class GUIMenuBar extends JMenuBar {
 				});
 
 		JMenuItem exportLSItem = new JMenuItem("Export Lightsensor data");
+		exportLSItem.setMnemonic('L');
 		menu.add(exportLSItem);
 
 		exportLSItem.addActionListener(new ActionListener() {
@@ -126,6 +151,7 @@ public class GUIMenuBar extends JMenuBar {
 		});
 
 		JMenuItem exportUSItem = new JMenuItem("Export Ultrasonicsensor data");
+		exportUSItem.setMnemonic('U');
 		menu.add(exportUSItem);
 
 		exportUSItem.addActionListener(new ActionListener() {
@@ -181,7 +207,8 @@ public class GUIMenuBar extends JMenuBar {
 		
 		JMenuItem exportTS1Item = new JMenuItem("Export Touchsensor1 data");
 		menu.add(exportTS1Item);
-
+		exportTS1Item.setMnemonic('1');
+		
 		exportTS1Item.addActionListener(new ActionListener() {
 
 			@Override
@@ -234,6 +261,7 @@ public class GUIMenuBar extends JMenuBar {
 
 		JMenuItem exportTS2Item = new JMenuItem("Export Touchsensor2 data");
 		menu.add(exportTS2Item);
+		exportTS2Item.setMnemonic('2');
 
 		exportTS2Item.addActionListener(new ActionListener() {
 
@@ -336,4 +364,6 @@ public class GUIMenuBar extends JMenuBar {
 	public SilverSurferGUI getGui() {
 		return gui;
 	}
+	
+
 }
