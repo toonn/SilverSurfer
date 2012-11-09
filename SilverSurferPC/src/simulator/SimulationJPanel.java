@@ -221,10 +221,10 @@ public class SimulationJPanel extends JPanel {
 	 */
 	public void addWhiteLine(Orientation orientation, float x, float y)
 	{
-//		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
-//		if(!walls.containsKey(point))
-//			return;
-//		removeWallFrom(point);
+		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
+		if(!walls.containsKey(point))
+			return;
+		removeWallFrom(point);
 		System.out.println(orientation + "witte lijn toevoegen");
 		
 	}
@@ -236,15 +236,15 @@ public class SimulationJPanel extends JPanel {
 	public void addWall(Orientation orientation, float x, float y)
 	{	
 		System.out.println(orientation + "muur toevoegen");
-//		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
-//		Wall wall;
-//		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
-//			wall = new Wall(State.HORIZONTAL, (float) point.getX(), (float) point.getY());
-//		}
-//		else{
-//			wall = new Wall(State.VERTICAL, (float) point.getX(), (float) point.getY());
-//		}
-//		setWall(point, wall);
+		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
+		Wall wall;
+		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
+			wall = new Wall(State.HORIZONTAL, (float) point.getX(), (float) point.getY());
+		}
+		else{
+			wall = new Wall(State.VERTICAL, (float) point.getX(), (float) point.getY());
+		}
+		setWall(point, wall);
 	}
 	
 	
