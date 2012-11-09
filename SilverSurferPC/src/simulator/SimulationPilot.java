@@ -56,7 +56,7 @@ public class SimulationPilot {
 	public SimulationPilot() {
 		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		mapFile = new File("resources/maze_maps/example_map.txt");
-		mapGraph = MapReader.createMapFromFile(mapFile);
+		mapGraph = MapReader.createMapFromFile(mapFile,0,0);
 	}
 	
 	//TODO
@@ -65,7 +65,7 @@ public class SimulationPilot {
 	public SimulationPilot(int startPositionRelativeX, int startPositionRelativeY) {
 		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		mapFile = new File("resources/maze_maps/example_map.txt");
-		mapGraph = MapReader.createMapFromFile(mapFile);
+		mapGraph = MapReader.createMapFromFile(mapFile,0,0);
 		mapGraph.setStartingTileCoordinates(startPositionRelativeX, startPositionRelativeY);
 		}
 

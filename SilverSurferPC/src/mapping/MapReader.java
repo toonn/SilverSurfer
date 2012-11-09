@@ -17,12 +17,12 @@ import javax.swing.JFrame;
   */
 public class MapReader {
 
-	public static MapGraph createMapFromFile(File txtFile){
+	public static MapGraph createMapFromFile(File txtFile, int relCoX, int relCoY){
 		String [][] infoMatrix = createInfoMatrixFromFile(txtFile);
 		
 		//Fill a graph with the information in infoMatrix.
 		MapGraph map = null;
-		map = new MapGraph(infoMatrix.length, infoMatrix[0].length);
+		map = new MapGraph(relCoX,relCoY, infoMatrix.length, infoMatrix[0].length);
 		//This prints out the information row by row
 		for (int i = 0; i < infoMatrix.length; i++){
 			for (int j = 0; j < infoMatrix[i].length; j++) {
@@ -158,19 +158,5 @@ public class MapReader {
 	}
 
 	
-	public static void main(String[] args) {
-		JFrame jfr = new JFrame();
-		JFileChooser prompt = new JFileChooser();
-		prompt.showDialog(jfr,"Open");
-		
-		File selected = prompt.getSelectedFile();
-		MapReader.createMapFromFile(selected);
-		
-//		String string= " ";
-//		char[] chars = new char[string.length()];
-//		string.getChars(0, string.length(), chars, 0);
-//		for (char c : chars) {
-//			System.out.println(c + " char");
-//		}
-	}
+	
 }
