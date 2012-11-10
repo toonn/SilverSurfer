@@ -1,0 +1,10 @@
+5 7
+
+#begin op positie 6 4
+Cross	T.E	Corner.N	Corner.E	DeadEnd.N
+T.S	Corner.W	DeadEnd.S	Straight.S	Straight.S
+Corner.N	T.N	T.N	T.S	T.E
+Straight.S	DeadEnd.S	Straight.S	DeadEnd.N	DeadEnd.S
+Corner.W	Straight.E	Cross	T.S	Corner.E
+T.N	Corner.E	Straight.S	DeadEnd.N	Straight.S
+Cross	T.E	Corner.W	Corner.S	DeadEnd.S
