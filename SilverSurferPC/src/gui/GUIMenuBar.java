@@ -90,10 +90,7 @@ public class GUIMenuBar extends JMenuBar {
 				        int xCo = Integer.valueOf(xcoord.getValue().toString());
 				        int yCo = Integer.valueOf(ycoord.getValue().toString());
 
-						MapGraph map = MapReader.createMapFromFile(mapFile,xCo,yCo);
-						map.setStartingTileCoordinates(xCo, yCo);
-						map.setCurrentTileCoordinates(xCo, yCo);
-						((SimulatorCommunicator)getGui().getUnitCommunicator()).getSim().setMapGraph(map);
+				        ((SimulatorCommunicator)getGui().getUnitCommunicator()).getSim().setMapFile(mapFile,xCo,yCo);
 
 						System.out.println("[I/O] Map succesfully loaded!");
 					}
