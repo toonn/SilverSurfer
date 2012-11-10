@@ -28,19 +28,7 @@ public enum Orientation {
 			i++;
 		}
 
-		if((xTemp%40) > 40-getMaxRoundingError() || (xTemp%40) < getMaxRoundingError())
-		{
-			if(alpha <= 45 || alpha >= 315)
-			{
-				return EAST;
-			}
-			else
-			{
-				return WEST;
-			}
-		}
-		//if((yTemp%40) > 40-this.getMaxRoundingError() || (yTemp%40) < this.getMaxRoundingError())
-		else
+		if((yTemp%40) > 40-getMaxRoundingError() || (yTemp%40) < getMaxRoundingError())
 		{
 			if(alpha <= 180)
 			{
@@ -49,6 +37,18 @@ public enum Orientation {
 			else
 			{
 				return NORTH;
+			}
+		}
+		//if((yTemp%40) > 40-this.getMaxRoundingError() || (yTemp%40) < this.getMaxRoundingError())
+		else
+		{
+			if(alpha >= 270 || alpha < 90)
+			{
+				return EAST;
+			}
+			else
+			{
+				return WEST;
 			}
 		}
 	}

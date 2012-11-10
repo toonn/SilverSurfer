@@ -94,11 +94,11 @@ public class MapGraph {
 		return getCurrentTile().getEdge(orientation).isPassable();
 	}
 	
-	public void moveToNextTile(Orientation orientation){
-			if(this.canMoveTo(orientation)){
-				setCurrentTileCoordinates(getCurrentTileCoordinates()[0] + Orientation.getArrayToFindNeighbourRelative(orientation)[0], 
-						getCurrentTileCoordinates()[1] + Orientation.getArrayToFindNeighbourRelative(orientation)[1]);}
-		} 
+//	public void moveToNextTile(Orientation orientation){
+//			if(this.canMoveTo(orientation)){
+//				setCurrentTileCoordinates(getCurrentTileCoordinates()[0] + Orientation.getArrayToFindNeighbourRelative(orientation)[0], 
+//						getCurrentTileCoordinates()[1] + Orientation.getArrayToFindNeighbourRelative(orientation)[1]);}
+//		} 
 
 	/**
 	 * Adds a given obstruction to the edge on the given orientation of the current tile.
