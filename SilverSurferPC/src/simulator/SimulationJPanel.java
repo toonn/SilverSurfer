@@ -273,6 +273,21 @@ public class SimulationJPanel extends JPanel {
 	{	
 		System.out.println(orientation + "muur toevoegen");
 		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
+		
+		double XOther = point.getX() + Orientation.getOtherPointLine(orientation)[0];
+		double YOther =	point.getY() +Orientation.getOtherPointLine(orientation)[1];
+		
+		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, x, y) > 21 ){
+			System.out.println("=======================================================");
+			System.out.println(point.getX() + " en " + point.getY() + " en " + XOther + " en " + YOther);
+			System.out.println(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, x, y) > 25);
+			return;
+		}
+		
+//		if(point.distance((double) x, (double) y) > 40){
+//			return;
+//		}
+		
 		Wall wall;
 		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
 			wall = new Wall(State.HORIZONTAL, (float) point.getX(), (float) point.getY());

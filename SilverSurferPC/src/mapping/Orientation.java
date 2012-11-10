@@ -251,4 +251,32 @@ public enum Orientation {
 		}
 	}
 	
+	public static int[] getOtherPointLine(Orientation orientation){
+
+		switch(orientation){
+	case NORTH:
+			int[] north = new int[2];
+			north[0] = 40;
+			north[1] = 0;
+			return north;
+	case SOUTH:
+			int[] south = new int[2];
+			south[0] = 40;
+			south[1] = 0;
+			return south;
+	case EAST:
+			int[] east = new int[2];
+			east[0] = 0;
+			east[1] = 40;
+			return east;
+	case WEST:
+		int[] west = new int[2];
+			west[0] = 0;
+			west[1] = 40;
+			return west;
+		// This line will never be reached, each valid direction has a return statement.
+			default:
+				return new int[0];
+		}}
+	
 }
