@@ -57,14 +57,13 @@ public class SimulationPilot {
 	public SimulationPilot() {
 		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		mapFile = new File("resources/maze_maps/example_map.txt");
-		mapGraph = MapReader.createMapFromFile(mapFile,0,0);
+		this.setMapFile(mapFile, 0, 0);
 	}
 	
 	public SimulationPilot(int startPositionRelativeX, int startPositionRelativeY) {
 		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		mapFile = new File("resources/maze_maps/example_map.txt");
-		mapGraph = MapReader.createMapFromFile(mapFile,0,0);
-		mapGraph.setStartingTileCoordinates(startPositionRelativeX, startPositionRelativeY);
+		this.setMapFile(mapFile, startPositionRelativeX, startPositionRelativeY);
 		}
 
 	
@@ -136,10 +135,44 @@ public class SimulationPilot {
 			this.speed = 48;
 	}
 
+	public File getMapFile() {
+		return this.mapFile;
+	}
+
+	public void setMapFile(File mapFile) {
+		this.setMapFile(mapFile,0,0);
+		
+	}
+	
+	public void setMapFile(File mapFile,int xCo,int yCo) {
+		this.mapFile = mapFile;
+		this.setMapGraph(MapReader.createMapFromFile(mapFile,xCo,yCo));
+		this.getSSG().updateCoordinates("Simulator (" + (this.getCurrentPositionAbsoluteX()+5) + " , "
+				                                      + (this.getCurrentPositionAbsoluteY()+5 )+ " , "
+				                                      + this.getAlpha() + ", Map: " + this.getMapString() + ")");
+		this.getSSG().getSimulationPanel().clearTotal();
+	}
+	
+	public SilverSurferGUI getSSG(){
+		return this.SSG;
+	}
+	
 	public MapGraph getMapGraph() {
 		return this.mapGraph;
 	}
-	public void setMapGraph(MapGraph mapGraph) {
+	
+	public String getMapString() {
+		if(this.getMapGraph() == null)
+		{
+			return "/";
+		}
+		return this.mapFile.getName();
+	}
+	
+	/**
+	 * Use this method only intern! If you want to change the map, use the setMapFile-method!
+	 */
+	private void setMapGraph(MapGraph mapGraph) {
 		this.mapGraph = mapGraph;
 	}
 	
@@ -291,7 +324,7 @@ public class SimulationPilot {
 		
 	public void rotate(float alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
-		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
+		this.getSSG().getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		//weer een checkForObstructions
 		if(ExtMath.calculateDistanceFromPointToEdge(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(), ExtMath.addDegree(this.getAlpha(), alpha)) < detectionDistanceUltrasonicSensorRobot){
 			checkForObstructions();
@@ -300,7 +333,7 @@ public class SimulationPilot {
 
 	
 	public void clear() {
-		SSG.getSimulationPanel().clear();
+		this.getSSG().getSimulationPanel().clear();
 	}
 	
 	public void allignOnWhiteLine(){
