@@ -23,6 +23,7 @@ import gui.SilverSurferGUI;
 import mapping.*;
 
 import java.io.File;
+import java.util.Random;
 public class SimulationPilot {
 	
 	/**
@@ -332,7 +333,7 @@ public class SimulationPilot {
 	//zet een float om in een veelvoud van 40 kleiner dan de float (ook bij negatief
 	//maar doet normaal niet ter zake aangezien de coordinaten in het echte coordinatensysteem 
 	//niet negatief	kunnen zijn
-		public int setToMultipleOf40(float a){
+		public static int setToMultipleOf40(float a){
 			return (int) (Math.floor(a/40)*40);
 		}
 		
@@ -346,20 +347,9 @@ public class SimulationPilot {
 		float b = y - setToMultipleOf40(startPositionAbsoluteY);
 		int c;
 		int d;
-		if(a>0){
-		c = (int) Math.floor(a/40);}
-		else
-			c = (int) Math.ceil(a/40);
-		if(b>0){
-		d = (int) Math.floor(b/40);}
-		else
-			d = (int) Math.ceil(b/40);
-		if(a==0){
-			c = 0;
-		}
-		if(b==0){
-			d = 0;
-		}
+		c = (int) Math.floor(a/40);
+		d = (int) Math.floor(b/40);
+		
 		int[] array = new int[2];
 		//d en c wisselen om door de echte naar relatieve coordinatensysteem transformatie
 		array[0] = getStartPositionRelativeX() + d;
@@ -398,5 +388,6 @@ public class SimulationPilot {
 		System.out.println(relativePosition[0] + " en " + relativePosition[1] );
 		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
 	}
+
 
 	}
