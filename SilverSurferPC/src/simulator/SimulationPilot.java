@@ -60,9 +60,6 @@ public class SimulationPilot {
 		mapGraph = MapReader.createMapFromFile(mapFile,0,0);
 	}
 	
-	//TODO
-	//Hier zou nog een knop op de GUI moeten gemaakt worden die deze startpositie van
-	//de robot op de map ingeeft.
 	public SimulationPilot(int startPositionRelativeX, int startPositionRelativeY) {
 		SSG.getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		mapFile = new File("resources/maze_maps/example_map.txt");
@@ -249,13 +246,15 @@ public class SimulationPilot {
 	 */
 	public void checkForObstructions()
 	{
-		System.out.println("SimulationPilot.checkForObstructions()");
-		
 		Orientation currentOrientation = Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		
-		if(getCurrentPositionRelativeX() != currentTileCoordinateXPreviousCheck &&
-			getCurrentPositionRelativeX() != currentTileCoordinateYPreviousCheck
-			&& previousDirection != currentOrientation){
+		System.out.println("previousTileChecks");
+		System.out.println(currentTileCoordinateXPreviousCheck);
+		System.out.println(currentTileCoordinateYPreviousCheck);
+		
+		if(!(getCurrentPositionRelativeX() == currentTileCoordinateXPreviousCheck &&
+			getCurrentPositionRelativeY() == currentTileCoordinateYPreviousCheck
+			&& previousDirection == currentOrientation)){
 			howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
 			currentTileCoordinateXPreviousCheck = getCurrentPositionRelativeX();
 			currentTileCoordinateYPreviousCheck = getCurrentPositionRelativeY();
@@ -263,15 +262,18 @@ public class SimulationPilot {
 			return;
 		}
 		
-		else if(howManyTimesCheckedOnSameCurrentTileInSameDirection != 5){
+		else if(howManyTimesCheckedOnSameCurrentTileInSameDirection != 4){
 			howManyTimesCheckedOnSameCurrentTileInSameDirection++;
-			System.out.println("howManyTimesCheckedOnSameCurrentTileInSameDirection");
-			System.out.println(howManyTimesCheckedOnSameCurrentTileInSameDirection + "========================================");
 			return;
 		}
 
 		else if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL)
 		{
+			System.out.println("addwall wordt uitgevoerd");
+			System.out.println("argumenten die worden meegegeven zijn: orientation =" + currentOrientation + " currentPositionX = " +getCurrentPositionAbsoluteX() + 
+					 " currentpositiony = " + getCurrentPositionAbsoluteY());
+			System.out.println("CurrentTileCoordinaten zijn : " + getCurrentPositionRelativeX() + " en " + getCurrentPositionRelativeY());
+			
 			SSG.getSimulationPanel().addWall(currentOrientation,
 					getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
 			howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
@@ -389,5 +391,8 @@ public class SimulationPilot {
 		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
 	}
 
-
+//	public boolean checkRightEdgeRightRightTile(){
+//		
+//	}
+	
 	}
