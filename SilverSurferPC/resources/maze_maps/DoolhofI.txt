@@ -1,0 +1,7 @@
+5 4
+
+#fluz
+Corner.N	Corner.E	DeadEnd.N	DeadEnd.N	DeadEnd.N
+Straight.S	T.W	T.S	T.E	Straight.S
+Straight.S	Corner.W	Corner.E	Straight.S	Straight.S
+Corner.W	Straight.E	Corner.S	Corner.W	Corner.S
