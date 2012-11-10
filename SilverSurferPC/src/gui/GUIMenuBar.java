@@ -87,8 +87,12 @@ public class GUIMenuBar extends JMenuBar {
 						// Populate your panel components here.
 				        JOptionPane.showMessageDialog(getGui().getFrame(), messagePanel, "Enter relative starting coordinates:", JOptionPane.OK_OPTION);
 						
+				        int xCo = Integer.valueOf(xcoord.getValue().toString());
+				        int yCo = Integer.valueOf(ycoord.getValue().toString());
 
-						MapGraph map = MapReader.createMapFromFile(mapFile,Integer.valueOf(xcoord.getValue().toString()),Integer.valueOf(ycoord.getValue().toString()));
+						MapGraph map = MapReader.createMapFromFile(mapFile,xCo,yCo);
+						map.setStartingTileCoordinates(xCo, yCo);
+						map.setCurrentTileCoordinates(xCo, yCo);
 						((SimulatorCommunicator)getGui().getUnitCommunicator()).getSim().setMapGraph(map);
 
 						System.out.println("[I/O] Map succesfully loaded!");
