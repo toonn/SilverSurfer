@@ -203,7 +203,7 @@ public class SimulationJPanel extends JPanel {
 			}
 
 			if(simulatorPilot!= null)
-				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ " , " + simulatorPilot.getAlpha() + ")");
+				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ " , " + simulatorPilot.getAlpha() + ", Map: " + simulatorPilot.getMapString() + ")");
 			else
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
 		}
@@ -218,14 +218,25 @@ public class SimulationJPanel extends JPanel {
 		this.addCircle(x*1, y*1, degrees);
 	}
 
+	/**
+	 * Deletes the former path of the robot
+	 */
 	public void clear() {
 
 		Shape triangle = getVisibleTriangle();
 		Shape triangletwo = getNotVisibleTriangle();
-		shapes.removeAllElements();
+		shapes.removeAllElements();		
 
 		shapes.add(triangle);
 		shapes.add(triangletwo);
+	}
+	
+	/**
+	 * Deletes the former path of the robot and all the walls that have been explored as yet.
+	 */
+	public void clearTotal() {
+		this.clear();
+		walls = new HashMap<Point2D, Wall>();
 	}
 
 	public void setSSG(SilverSurferGUI SSG) {
