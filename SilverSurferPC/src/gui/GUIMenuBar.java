@@ -97,7 +97,7 @@ public class GUIMenuBar extends JMenuBar {
 
 				});
 		
-		JMenuItem deleteMapItem = new JMenuItem("Delete map...");
+		JMenuItem deleteMapItem = new JMenuItem("Delete map");
 		deleteMapItem.setMnemonic('D');
 		menu.add(deleteMapItem);
 
