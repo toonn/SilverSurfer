@@ -96,6 +96,27 @@ public class GUIMenuBar extends JMenuBar {
 					}
 
 				});
+		
+		JMenuItem deleteMapItem = new JMenuItem("Delete map...");
+		deleteMapItem.setMnemonic('D');
+		menu.add(deleteMapItem);
+
+		deleteMapItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e)
+					{
+						((SimulatorCommunicator)getGui().getUnitCommunicator()).getSim().setMapGraph(null);
+						
+						JPanel messagePanel = new JPanel();
+						JLabel x = new JLabel("Map succesfully deleted!");
+						messagePanel.add(x);
+
+						// Populate your panel components here.
+				        JOptionPane.showMessageDialog(getGui().getFrame(), messagePanel, "Map deleted:", JOptionPane.OK_OPTION);
+
+						System.out.println("[I/O] Map succesfully deleted!");
+					}
+
+				});
 
 		JMenuItem exportLSItem = new JMenuItem("Export Lightsensor data");
 		exportLSItem.setMnemonic('L');

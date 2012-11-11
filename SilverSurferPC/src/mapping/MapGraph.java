@@ -54,9 +54,6 @@ public class MapGraph {
 	public void setStartingTileCoordinates(int x, int y) {
 		startingTileCoordinates[0] = x;
 		startingTileCoordinates[1] = y;
-		System.out.println(this);
-		System.out.println(startingTileCoordinates[0]);
-		System.out.println(startingTileCoordinates[1]);
 	}
 
 
@@ -73,10 +70,6 @@ public class MapGraph {
 	public void setCurrentTileCoordinates(int x, int y) {
 		currentTileCoordinates[0] = x;
 		currentTileCoordinates[1] = y;
-		System.out.println("current");
-		System.out.println(this);
-		System.out.println(currentTileCoordinates[0]);
-		System.out.println(currentTileCoordinates[1]);
 	}
 
 	public void addContentToCurrentTile(TileContent code){

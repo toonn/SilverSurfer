@@ -202,7 +202,7 @@ public class SimulationJPanel extends JPanel {
 				y = (int) ((RectangularShape) s).getY();
 			}
 
-			if(simulatorPilot!= null)
+			if(simulatorPilot!= null && simulatorPilot.getMapGraph()!= null)
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ " , " + simulatorPilot.getAlpha() + ", Map: " + simulatorPilot.getMapString() + ")");
 			else
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
@@ -236,7 +236,7 @@ public class SimulationJPanel extends JPanel {
 	 */
 	public void clearTotal() {
 		this.clear();
-		walls = new HashMap<Point2D, Wall>();
+		walls.clear();
 	}
 
 	public void setSSG(SilverSurferGUI SSG) {
@@ -261,8 +261,6 @@ public class SimulationJPanel extends JPanel {
 		if(!walls.containsKey(point))
 			return;
 		removeWallFrom(point);
-		System.out.println(orientation + "witte lijn toevoegen");
-
 	}
 
 	/**
@@ -271,16 +269,12 @@ public class SimulationJPanel extends JPanel {
 	 */
 	public void addWall(Orientation orientation, float x, float y)
 	{	
-		System.out.println(orientation + "muur toevoegen");
 		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
 		
 		double XOther = point.getX() + Orientation.getOtherPointLine(orientation)[0];
 		double YOther =	point.getY() +Orientation.getOtherPointLine(orientation)[1];
 		
 		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, x, y) > 21 ){
-			System.out.println("=======================================================");
-			System.out.println(point.getX() + " en " + point.getY() + " en " + XOther + " en " + YOther);
-			System.out.println(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, x, y) > 25);
 			return;
 		}
 		
