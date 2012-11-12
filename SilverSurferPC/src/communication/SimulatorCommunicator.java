@@ -80,6 +80,8 @@ public class SimulatorCommunicator extends UnitCommunicator {
 			sim.rotate((double) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
 		else if(command == Command.ALIGN_WALL)
 			sim.allignOnWalls();
+		else if(command == Command.LOOK_AROUND)
+            sim.checkForObstructions();
 		setPreviousCommand(command);
 	}
 	
@@ -102,6 +104,4 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	public void clear() {
 		sim.clear();
 	}
-	
-	
 }
