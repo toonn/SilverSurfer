@@ -20,13 +20,13 @@ public class Wall extends Rectangle{
 	 * linkeruiteinde van de rechthoek als de wall horizontaal ligt, en boven aan het uiteinde als 
 	 * de wall verticaal staat.
 	 */
-	private float xPosition;
+	private double xPosition;
 	/**
 	 * dit is de y positie van de rechthoek in het midden van de breedte helemaal links
 	 * aan het uiteinde als de wall horizontaal ligt, en boven aan het uiteinde als 
 	 * de wall verticaal staat.
 	 */
-	private float yPosition;
+	private double yPosition;
 	
 	/**
 	 * als ge deze standaardbreedte wilt veranderen moet je in 
@@ -40,13 +40,13 @@ public class Wall extends Rectangle{
 	private static final int standardWidth = 3;
 	private static final int standardLength = 40;
 	
-	public Wall(State state, float xPosition, float yPosition){
+	public Wall(State state, double xPosition, double yPosition){
 		super(standardWidth, standardLength);
 		this.state = state;
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
-		float x;
-		float y;
+		double x;
+		double y;
 		if(state == State.HORIZONTAL){
 			
 			setSize(standardLength, standardWidth);
