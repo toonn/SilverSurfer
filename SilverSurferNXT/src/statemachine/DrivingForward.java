@@ -5,8 +5,10 @@ import communication.CommandUnit;
 import lejos.nxt.*;
 
 public class DrivingForward extends State {
+	SongThread playSong = new SongThread();
 
 	public DrivingForward() {
+		playSong.start();
 		Motor.A.setSpeed(CommandUnit.NORMAL_SPEED);
 		Motor.B.setSpeed(CommandUnit.NORMAL_SPEED);
 		Motor.A.forward();
