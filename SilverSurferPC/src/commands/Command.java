@@ -14,6 +14,7 @@ public class Command {
 	public static final int AUTOMATIC_TURN_ANGLE = 9;
 	public static final int ALIGN_PERPENDICULAR = 14;
 	public static final int ALIGN_WALL = 15;
+	public static final int LOOK_AROUND = 17;
 	
 	public static String toConsoleString(int c) {
 		if (c == FORWARD_PRESSED)
@@ -34,6 +35,10 @@ public class Command {
 			return "RIGHT_RELEASED";
 		else if (c == ALIGN_PERPENDICULAR)
 		    return "Aligning perpendicularly to a white line";
+		else if (c == ALIGN_WALL)
+		    return "Aligning on walls";
+		else if (c == LOOK_AROUND)
+		    return "Looking around";
 		return " ";
 	}
 }

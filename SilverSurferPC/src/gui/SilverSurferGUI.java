@@ -1172,8 +1172,17 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("[SIMULATOR] Looking around for obstructions.");
-                simulationPanel.checkForObstructions();
+                System.out.println(unitCommunicator.getConsoleTag() + " Looking around for obstructions.");
+                AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
+                AWL.setUnitCommunicator(unitCommunicator);
+                AWL.setCommand(Command.LOOK_AROUND);
+                if (robotConnected) {
+                	AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
+                	AWL1.setUnitCommunicator(prevCommunicator);
+                    AWL1.setCommand(Command.LOOK_AROUND);
+                	AWL1.start();
+                }
+                AWL.start();
                 simulationPanel.requestFocusInWindow();
             }
         });
