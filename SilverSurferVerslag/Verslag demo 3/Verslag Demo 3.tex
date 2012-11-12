@@ -40,18 +40,17 @@
 
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
-\label{ssec:abstr}
+\label{ssec:abstr} % 3 ?
 De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauwkeurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en enkele klassen die de werking van de robot simuleren (simulator).\\
 De sensoren worden voor demo 2 wel geïnstalleerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
-De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI.\\
-De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zicht hierdoor beweegt.
+De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zicht hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn).
 
 \end{abstract}
 
 \tableofcontents
 
 %figuur robot
-\begin{figure}[!b]
+\begin{figure}[!hb]
 \begin{flushright}
     \includegraphics[width=1\textwidth]{robotFP2}
     \label{fig:robotFP}
@@ -62,19 +61,18 @@ De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een vi
 \newpage 
 
 % == INLEIDING == %
-\section{Inleiding} % ok demo2!
+\section{Inleiding} % 3 ok!
 \label{ssec:inl}
-In het kader van het vak 'Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk volledig autonoom een doolhof kunnen verkennen.
-Op de tweede demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan autonoom een witte lijn zoeken in het doolhof en kan zich hier loodrecht op ori\"enteren. De GUI laat toe de sensorwaarden van de robot te lezen; via deze waarden kan een bestuurder het doolhof tekenen zonder het doolhof te zien.
-De simulator is in staat dezelfde demonstratie te tonen.
+In het kader van het vak 'Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk volledig autonoom een doolhof kunnen verkennen.\\
+Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom voortbewegen. Wanneer de robot zich in een doolhof voortbeweegt, kan hij deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar zijn beginpositie en rijdt hier in hoge snelheid naartoe.
 
 % == BOUW == %
-\section{Bouw van de robot} % ok demo2!
+\section{Bouw van de robot} % 3 ?
 \label{sec:bouw}
 LEGO Mindstorms\footnote{\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
 
 % == fysieke bouw == %
-\subsection{Fysieke bouw} % tekst: ok demo2! foto nog niet
+\subsection{Fysieke bouw} % 3 ?
 \label{ssec:fysbouw}
 Bij het bouwen van de robot (zie figuur \ref{robot}) werd het ontwerpboekje gevolgd dat bij het bouwpakket geleverd zat. Deze compacte samenstelling leek geen directe nadelen te hebben. Twee grote wielen worden elk met hun eigen motor aangestuurd. Kleine wielen achteraan zorgen voor meer stabiliteit en worden niet aangedreven. De sensoren werden als volgt ge\"implementeert: 
 
@@ -117,7 +115,7 @@ Een alternatieve opstelling bestaat erin de NXT plat te leggen met ernaast de tw
 
 
 % == calibratie == %
-\subsection{Calibratie van de motoren} % inleiding ok demo2! rest nog niet
+\subsection{Calibratie van de motoren} % 3 ?
 \label{ssec:calibM}
 De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de twee wielen. De aansturing gebeurt door te bepalen hoeveel graden de wielen moeten draaien. Beide wielen kunnen onafhankelijk ingesteld worden. De robot kan \'e\'en cm vooruit bewegen (beide wielen draaien x aantal graden in dezelfde richting) en rond zijn as (beide wielen draaien y aantal graden in tegengestelde richting). De resultaten van de calibratie worden weergegeven in tabel \ref{tab:resultCalibM}. Het bepalen van parameters x en y gebeurt als volgt:
 
@@ -140,7 +138,7 @@ De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de t
 
 
 
-\subsubsection{E\'en cm vooruit bewegen: bepalen van x} % nog na te kijken demo2! + meetwaarden!
+\subsubsection{E\'en cm vooruit bewegen: bepalen van x} % 3 ?
 \label{ssec:calibMx}
 Een schatting voor x via de diameter van het wiel, waarbij x voor het aantal graden staat en de diameter in centimeter:
 
@@ -217,12 +215,12 @@ meetwaarden en grafieken toevoegen
 \end{table}
 
 % == ALGORITMES == %
-\section{Algoritmes} % ok demo2!
+\section{Algoritmes} % 3 ?
 \label{sec:algo}
 Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoeren.
 
 % == veelhoek == %
-\subsection{Het rijden van een veelhoek} % redelijk demo2!
+\subsection{Het rijden van een veelhoek} % 3 ?
 \label{ssec:algoVeelH}
 De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is. Enkele parameters zijn van belang:
 
@@ -249,7 +247,7 @@ Voor i van 0 tot amtOfAngles
 
 
 % == witte lijn == %
-\subsection{Het rechtzetten op een witte lijn} % redelijk demo2!
+\subsection{Het rechtzetten op een witte lijn} % 3 ?
 \label{ssec:algoWitteL}
 
 De robot en de simulator kunnen zich loodrecht ori\"enteren op een witte lijn.
@@ -275,13 +273,13 @@ Draai AngleTurned/2 naar rechts.
 \end{lstlisting}
 
 % == SOFTWARE == %
-\section{Software} % ok demo2!
+\section{Software} % 3 ?
 \label{sec:softw}
 De software bestaat uit twee delen: een project dat op de NXT van de robot loopt en een project dat op de computer loopt. Alles wordt aangestuurd via de Graphical User Interface (GUI). Deze toepassing laat toe de robot te besturen (via bluetooth) en de reacties van de robot te simuleren met de simulator. Een Communication-pakket stuurt de commando's van de GUI door naar de juiste unit.
 De simulator kan gebruikt worden om de software op te testen zonder telkens op de robot te moeten wachten.
 
 % == software design == %
-\subsection{Software ontwerp} % ok demo2!
+\subsection{Software ontwerp} % 3 ?
 \label{ssec:Sdesign}
 Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren 4 en 5 tonen een klassendiagram.\\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
@@ -311,12 +309,12 @@ Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction
 \end{figure}
 
 % == commando's == %
-\subsection{Het doorgeven van commando's}
+\subsection{Het doorgeven van commando's} % 3 ok!
 \label{ssec:commands}
 De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt gerepresenteerd door een integer dat naar de \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers (dit wordt in de volgende sectie in detail beschreven).\\
 De \textit{UnitCommunicator} stuurt de bekomen integer door naar ofwel de \textit{RobotCommunicator} ofwel de \textit{SimulatorCommunicator}. Deze zetten de integer weer om in de juiste actie van respectievelijk de robot en de simulator. De wijze waarop dit gebeurt, verschilt licht voor beide gevallen. Zo stuurt de \textit{RobotCommunicator} zijn commando's via Bluetooth door naar de NXT-brick, terwijl de \textit{SimulatorCommunicator} zo'n verbinding niet nodig heeft.\\
 
-\subsubsection{De bewerking op de integers} % ok demo2!
+\subsubsection{De bewerking op de integers} % 3 ok!
 \label{sssec:integer}
 Integers stellen de commando's voor. In twee gevallen is echter meer informatie nodig: om de robot een bepaalde afstand te laten afleggen en om de robot een bepaald aantal graden te laten draaien. Deze afstand en dit aantal graden moet mee doorgegeven worden met de integer. De eenheden waarin de afstand en de hoek worden doorgestuurd zijn respectievelijk cm en graden.\\\\
 De doorgegeven integer wordt als volgt opgebouwd:
@@ -337,7 +335,7 @@ Om de bekomen resultaten terug op te splitsen in de twee oorspronkelijke gegeven
 Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek) kan slechts tot 2 cijfer(s) na de komma doorgegeven worden. De robot kan niet nauwkeuriger dan 0,1 cm aangestuurd worden. Hierdoor is het niet nodig de afstand nauwkeuriger door te geven. De nauwkeurigheid van de hoek is gevoeliger. De veelhoek stapelt immers veel afrondingsfouten op naarmate de lengte van de zijde en/of het aantal hoeken stijgt. Doordat de begin- en eindpunten niet samen vallen is te zien dat de som van de berekende hoeken samen geen 360 graden vormt. 
 
 % == gui == %
-\subsection{GUI} % klopt mss niet met nieuwste gui demo2?
+\subsection{GUI} % 3 ?
 \label{ssec:GUI}
 De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat. In deze sectie wordt verder enkel de robot vermeld. Dezelfde functionaliteiten gelden echter ook voor de simulator.
 
@@ -370,14 +368,14 @@ Voor de moveknop is er een Jslider voorzien net zoals voor de polygonDraw. Hierm
 \end{figure}
 
 % == bluetooth == %
-\subsection{Bluetooth} % ok demo2!
+\subsection{Bluetooth} % 3 ok!
 \label{ssec:bluetooth}
 De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de klassen \textit{UnitCommunicator} en \textit{RobotCommunicator}.
 
 De leJOS-API\footnote{\textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: 'Silver' en '00:16:53:0A:04:5A'.
 
 % == robot == %
-\subsection{Robot} % deel over witte lijnen demo2?
+\subsection{Robot} % 3 ?
 \label{ssec:robot}
 Een \textit{Finite State Machine} geeft de robot een concreet uitvoeringsschema. Een object van de klasse \textit{CommandUnit} houdt een currentState bij - een object van de superklasse \textit{State}. Negen subklassen verzorgen het nodige onderscheid: \textit{Waiting}, \textit{DrivingBackward}, \textit{TurnLeft}, \textit{DrivingRightForward}, …  en \'e\'en speciale toestand: de klasse \textit{Automatic}. De \textit{CommandUnit} ontvangt commando's via bluetooth. De \textit{CommandUnit} wijzigt de currentState naar een nieuw object van een \textit{State}-subklasse. De constructoren van elke subklasse passen het gedrag van de motoren aan bij de overgang naar de bepaalde state.
 Bijvoorbeeld: De robot staat stil en zijn currentState is \textit{Waiting}.
@@ -385,7 +383,7 @@ Als de gebruiker de robot voorwaarts wil laten gaan, drukt hij de up-toets in. D
 Tot slot is er de klasse \textit{Automatic}. Deze heeft vier methoden: \textit{turnAngle(int)}, \textit{driveForward(int)}, \textit{forwardToWhiteLine(LightSensor)} en \textit{whiteLinePerpendicular(LightSensor)}. De \textit{CommandUnit} roept deze methoden op met argumenten die hij geparsed heeft uit de informatie van de ontvangen signalen, zoals beschreven in sectie \ref{ssec:commands}.
 
 % == simulator == %
-\subsection{Simulator} % nog niet up-to-date demo2?
+\subsection{Simulator} % 3 ?
 \label{ssec:simulator}
 De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot. De GUI stuurt de simulator aan via de klassen \textit{UnitCommunicator} en \textit{SimulatorCommunicator}. Deze ontvangen de uit te voeren commando's, analyseren ze en sturen ze door naar de simulator.
 \\
@@ -404,7 +402,7 @@ Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. 
 Wanneer de 'robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige orientatie van de 'robot' wordt bovenaan het simulatorpaneel in de GUI weergegeven.
 
 % == BESLUIT == %
-\section{Besluit} % ok demo2!
+\section{Besluit} % 3 ?
 \label{sec:besl}
 De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren.
 De calibratie van de robot zorgt ervoor dat hij precies aangestuurd kan worden en dat de sensoren waarden teruggeven die overeenkomen met de werkelijkheid.
@@ -415,7 +413,7 @@ De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handm
 \makeappendix
 
 % == DEMO 1 == %
-\section{Demo 1} % ok demo2!
+\section{Demo 1} % 3 ?
 \label{Asec:demo1}
 De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-
 keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software
@@ -424,17 +422,17 @@ uit een Grafical User Interface (GUI), enkele Communication klassen die informat
 enkele klassen die de werking van de robot simuleren (simulator).
 
 % == resulaten == %
-\subsection{Resultaten} % ok demo2!
+\subsection{Resultaten} % 3 ?
 \label{Assec:result1}
 Bij het rijden van de veelhoek had de robot een kleine afwijking. De afwijking werd groter bij grotere veelhoeken en meerdere hoeken om wille van de geaggregeerde fout.
 
 % == conclusies == %
-\subsection{Conclusies} % ok demo2!
+\subsection{Conclusies} % 3 ?
 \label{Assec:conc1}
 Calibratie moet meer getest worden. De GUI kan gebruiksvriendelijker, ook moet het scherm van de simulator herschaald worden, zodat de lijn van simulator nog wordt weergegeven als de simulator van de robot uit het scherm gaat.
 
 % == aanpassingen == %
-\subsection{Oplijsting aanpassingen verslag}
+\subsection{Oplijsting aanpassingen verslag} % 3 ?
 \label{Assec:aanp1}
 Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 
