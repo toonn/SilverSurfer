@@ -379,6 +379,11 @@ public class SimulationPilot {
 			else
 				rotate(-1);
 		}
+		for(int i = 0; i<6; i++)
+			travel(-1);
+	}
+	
+	public void allignOnWalls() {
 		
 	}
 	

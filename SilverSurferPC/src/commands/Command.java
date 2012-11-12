@@ -13,6 +13,7 @@ public class Command {
 	public static final int AUTOMATIC_MOVE_FORWARD = 8;
 	public static final int AUTOMATIC_TURN_ANGLE = 9;
 	public static final int ALIGN_PERPENDICULAR = 14;
+	public static final int ALIGN_WALL = 15;
 	
 	public static String toConsoleString(int c) {
 		if (c == FORWARD_PRESSED)

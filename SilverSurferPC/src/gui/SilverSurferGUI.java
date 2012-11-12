@@ -534,7 +534,8 @@ public class SilverSurferGUI {
                 + informationBuffer.getLeftMotorMoving() + " "
                 + informationBuffer.getLeftMotorSpeed() + ", RM: "
                 + informationBuffer.getRightMotorMoving() + " "
-                + informationBuffer.getRightMotorSpeed() + ")");
+                + informationBuffer.getRightMotorSpeed() + ", B: "
+                + informationBuffer.getBusy() + ")");
         consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
                 "Output " + s));
     }
@@ -1099,12 +1100,14 @@ public class SilverSurferGUI {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(unitCommunicator.getConsoleTag() + " Aligning on white line.");
-                	AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
-                    AWL.setUnitCommunicator(unitCommunicator);
-                    if (robotConnected) {
-                        AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
-                        AWL1.setUnitCommunicator(prevCommunicator);
-                        AWL1.start();
+                AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
+                AWL.setUnitCommunicator(unitCommunicator);
+                AWL.setCommand(Command.ALIGN_PERPENDICULAR);
+                if (robotConnected) {
+                	AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
+                	AWL1.setUnitCommunicator(prevCommunicator);
+                    AWL1.setCommand(Command.ALIGN_PERPENDICULAR);
+                	AWL1.start();
                 }
                 AWL.start();
                 simulationPanel.requestFocusInWindow();
@@ -1130,11 +1133,16 @@ public class SilverSurferGUI {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(unitCommunicator.getConsoleTag() + " Aligning on walls.");
-                try {
-                	unitCommunicator.sendCommandToUnit(15);
-                } catch(Exception ex) {
-                	
+                AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
+                AWL.setUnitCommunicator(unitCommunicator);
+                AWL.setCommand(Command.ALIGN_WALL);
+                if (robotConnected) {
+                	AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
+                	AWL1.setUnitCommunicator(prevCommunicator);
+                    AWL1.setCommand(Command.ALIGN_WALL);
+                	AWL1.start();
                 }
+                AWL.start();
                 simulationPanel.requestFocusInWindow();
             }
         });

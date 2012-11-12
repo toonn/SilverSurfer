@@ -4,7 +4,7 @@ import simulator.SimulationJPanel;
 import simulator.SimulationPilot;
 
 public class GridDrawer {
-
+/*
 	private SimulationJPanel panel;
 	
 	public GridDrawer(SimulationJPanel panel){
@@ -23,5 +23,5 @@ public class GridDrawer {
 		// TODO Auto-generated method stub
 
 	}
-	
+	*/
 }

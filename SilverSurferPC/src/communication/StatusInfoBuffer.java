@@ -14,6 +14,7 @@ public class StatusInfoBuffer {
 	private boolean rightMotorMoving;
 	private int leftMotorSpeed;
 	private int rightMotorSpeed;
+	private boolean busy;
 
 	private SilverSurferGUI SSG;
 	/**
@@ -343,5 +344,14 @@ public class StatusInfoBuffer {
 	 */
 	public TS2InfoNode getStartTS2Info() {
 		return startTS2Info;
+	}
+	
+	public boolean getBusy() {
+		return busy;
+	}
+	
+	public void setBusy(boolean busy) {
+		this.busy = busy;
+		SSG.updateStatus();
 	}
 }
