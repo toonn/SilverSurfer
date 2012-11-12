@@ -4,6 +4,7 @@ import statemachine.*;
 import commands.Command;
 
 import java.io.*;
+
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 
@@ -104,6 +105,7 @@ public class CommandUnit {
     			LCD.clear();
     			CU.busy = false;
     			CU.updateStatus();
+    			lejos.nxt.Sound.playSample(new File("SSCut.wav"), lejos.nxt.Sound.VOL_MAX);
     			System.out.println("Waiting for input...");
     			int input = CU.dis.readInt();
     			CU.busy = true;
