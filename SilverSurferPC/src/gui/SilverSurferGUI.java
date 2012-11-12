@@ -565,6 +565,7 @@ public class SilverSurferGUI {
         	unitCommunicator.sendCommandToUnit(16);
             unitCommunicator.closeUnitConnection();
             unitCommunicator = prevCommunicator;
+            ((SimulatorCommunicator)unitCommunicator).getSim().setRealRobot(false);
             bluetoothConnect.setText("Connect");
             bluetoothStatus.setIcon(bluetoothNotConnectedIcon);
             System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
@@ -585,6 +586,7 @@ public class SilverSurferGUI {
     protected static void connectBluetooth() {
         prevCommunicator = unitCommunicator;
         try {
+        	((SimulatorCommunicator)prevCommunicator).getSim().setRealRobot(true);
             robotConnected = true;
             unitCommunicator = new RobotCommunicator(informationBuffer);
             unitCommunicator.openUnitConnection();

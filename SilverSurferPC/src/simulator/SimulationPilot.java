@@ -44,7 +44,7 @@ public class SimulationPilot {
 	private SilverSurferGUI SSG = new SilverSurferGUI();
 	private File mapFile;
 	private MapGraph mapGraph;
-	
+	private boolean isRealRobot = false;	
 	/**
 	 * waarde die afhangt van de robot!
 	 */
@@ -339,6 +339,13 @@ public class SimulationPilot {
 	
 	public void clear() {
 		this.getSSG().getSimulationPanel().clear();
+	}
+	
+	public void setRealRobot(boolean isRealRobot) {
+		this.isRealRobot = isRealRobot;
+	}
+	public boolean isRealRobot(){
+		return isRealRobot;
 	}
 	
 	public void allignOnWhiteLine(){
