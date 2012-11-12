@@ -341,6 +341,10 @@ public class SimulationPilot {
 		this.getSSG().getSimulationPanel().clear();
 	}
 	
+	public void updateArc(int distance){
+		getSSG().getSimulationPanel().updateArc(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(), getAlpha(), distance);
+	}
+	
 	public void setRealRobot(boolean isRealRobot) {
 		this.isRealRobot = isRealRobot;
 	}
