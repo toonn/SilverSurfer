@@ -146,9 +146,9 @@ public class SimulationPilot {
 	public void setMapFile(File mapFile,int xCo,int yCo) {
 		this.mapFile = mapFile;
 		this.setMapGraph(MapReader.createMapFromFile(mapFile,xCo,yCo));
-		this.getSSG().updateCoordinates("Simulator (" + (this.getCurrentPositionAbsoluteX()+5) + " , "
-				                                      + (this.getCurrentPositionAbsoluteY()+5 )+ " , "
-				                                      + this.getAlpha() + ", Map: " + this.getMapString() + ")");
+		this.getSSG().updateCoordinates("Simulator (" + (this.getCurrentPositionAbsoluteX()) + " , "
+				                                      + (this.getCurrentPositionAbsoluteY())+ " , "
+				                                      + (int) this.getAlpha() + "°, Map: " + this.getMapString() + ")");
 		this.startPositionAbsoluteX = getCurrentPositionAbsoluteX();
 		this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
 		this.getSSG().getSimulationPanel().clearTotal();
