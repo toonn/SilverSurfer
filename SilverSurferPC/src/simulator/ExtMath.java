@@ -15,23 +15,23 @@ import mapping.Orientation;
 
 public class ExtMath {
 	
-	public static float addDegree(float a, float b){
+	public static double addDegree(double a, double b){
 		if(a+b > 360){
 			return (a+b-360);
 		}
 		return a+b;
 	}
 	
-	public static float cosinusRegelToCalculateZijde(float a, float b, float alpha){
-		return (float) Math.sqrt(a*a + b*b -2*a*b*Math.cos(Math.toRadians(alpha)));
+	public static double cosinusRegelToCalculateZijde(double a, double b, double alpha){
+		return (double) Math.sqrt(a*a + b*b -2*a*b*Math.cos(Math.toRadians(alpha)));
 	}
 	
 	/**
 	 * a is the side opposite to alpha (the angle to calculate)
 	 */
-	public static float cosineRuleAngle(float a, float b, float c){
+	public static double cosineRuleAngle(double a, double b, double c){
 		
-		return (float) Math.toDegrees((float) Math.acos((- a*a + b*b + c*c)/(2*b*c)));
+		return (double) Math.toDegrees((double) Math.acos((- a*a + b*b + c*c)/(2*b*c)));
 	}
 	
 	/**
@@ -39,16 +39,16 @@ public class ExtMath {
 	 * in de richting waarin hij gekeerd is
 	 * als de afstand klein genoeg is worden 'de sensoren' ingeschakeld en wordt
 	 * de checkObstruction methode opgeroepen
-	 * dus dit wordt opgeroepen in de iftest van rotate en float voor checkForobstructions
+	 * dus dit wordt opgeroepen in de iftest van rotate en double voor checkForobstructions
 	 * wordt opgeroepen
 	 */
-	public static double calculateDistanceFromPointToEdge(float x, float y, float alpha){
+	public static double calculateDistanceFromPointToEdge(double x, double y, double alpha){
 		int i =1;
-		float xEdge = x;
-		float yEdge = y;
+		double xEdge = x;
+		double yEdge = y;
 		while (!(xEdge%40<4 || yEdge%40 <4)) {
-			xEdge = (float) (x + i* Math.cos(Math.toRadians(alpha)));
-			yEdge = (float) (y + i* Math.sin(Math.toRadians(alpha)));
+			xEdge = (double) (x + i* Math.cos(Math.toRadians(alpha)));
+			yEdge = (double) (y + i* Math.sin(Math.toRadians(alpha)));
 			i++;}
 		Point2D xy = new Point2D.Double(x, y);
 		Point2D xyEdge = new Point2D.Double(xEdge, yEdge);
@@ -67,10 +67,10 @@ public class ExtMath {
 	 * het linkerbovenhoekpunt van de 'rectangle omdat dit makkelijk is om af te ronden
 	 * tot op een veelvoud van 40)
 	 */
-	public static Point2D calculateWallPoint(Orientation orientation, float x, float y){
+	public static Point2D calculateWallPoint(Orientation orientation, double x, double y){
 		
-		float xCoordinate = (float) (Math.floor(x/40)*40);
-		float yCoordinate = (float) (Math.floor(y/40)*40);
+		double xCoordinate = (double) (Math.floor(x/40)*40);
+		double yCoordinate = (double) (Math.floor(y/40)*40);
 		
 		if(orientation.equals(Orientation.NORTH)){
 			yCoordinate = yCoordinate -1;
@@ -84,14 +84,14 @@ public class ExtMath {
 		}
 		else{}
 		
-		Point2D point = new Point2D.Float(xCoordinate, yCoordinate);
+		Point2D point = new Point2D.Double(xCoordinate, yCoordinate);
 		return point;
 	}
 	
 	public static void main(String[] args) {
 		Random generator = new Random();
-		float a = (float) Math.abs(generator.nextGaussian())*100;
-		float b = (float) Math.abs(generator.nextGaussian())*100;
+		double a = (double) Math.abs(generator.nextGaussian())*100;
+		double b = (double) Math.abs(generator.nextGaussian())*100;
 		System.out.println(a);
 		System.out.println(Math.round(a/90) * 90);
 	}
