@@ -202,7 +202,7 @@ public class SimulationJPanel extends JPanel {
 				y = (int) ((RectangularShape) s).getY();
 			}
 
-			if(simulatorPilot!= null && simulatorPilot.getMapGraph()!= null)
+			if(simulatorPilot!= null)
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ " , " + simulatorPilot.getAlpha() + ", Map: " + simulatorPilot.getMapString() + ")");
 			else
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
