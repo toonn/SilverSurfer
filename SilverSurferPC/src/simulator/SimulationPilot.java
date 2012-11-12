@@ -384,7 +384,56 @@ public class SimulationPilot {
 	}
 	
 	public void allignOnWalls() {
-		
+//		
+//		rotate(90);
+//		
+//		Orientation orientation = Orientation.calculateOrientation(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(), getAlpha());
+//		
+//		if(this.getMapGraph().getObstruction(orientation) == Obstruction.WALL){
+//			
+//			Point2D point = ExtMath.calculateWallPoint(orientation,
+//					getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+//			
+//			double XOther = point.getX() + Orientation.getOtherPointLine(orientation)[0];
+//			double YOther =	point.getY() + Orientation.getOtherPointLine(orientation)[1];
+//			
+//			double bla = Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+//			System.out.println(bla);
+//			if(bla >= 20){
+//				travel(bla - 20);
+//			}
+//			else{
+//				for(int i = 0; i<20-bla; i++)
+//					travel(-1);
+//			}
+//			
+//		}
+//		
+//		rotate(180);
+//		
+//		orientation = Orientation.calculateOrientation(getCurrentPositionAbsoluteX(), getCurrentPositionRelativeY(), getAlpha());
+//		
+//		if(this.getMapGraph().getObstruction(orientation) == Obstruction.WALL){
+//			
+//			Point2D point = ExtMath.calculateWallPoint(orientation,
+//					getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+//			
+//			double XOther = point.getX() + Orientation.getOtherPointLine(orientation)[0];
+//			double YOther =	point.getY() + Orientation.getOtherPointLine(orientation)[1];
+//			
+//			double bla = Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+//			if(bla >= 20){
+//				travel(bla - 20);
+//			}
+//			else{
+//				for(int i = 0; i<20-bla; i++)
+//					travel(-1);
+//			}
+//			
+//		}
+//		
+//		rotate(90);
+//		
 	}
 	
 	/**
