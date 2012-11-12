@@ -62,7 +62,7 @@ public class Automatic extends State {
         	turnAngle(-179);
         	turnAngle(-179);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(!(secondUSRead < 25 && secondUSRead > 21))
+    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 32)
         		moveForward((int)Math.round((secondUSRead-23)*20.8));
     		turnAngle(179);
     		return true;
