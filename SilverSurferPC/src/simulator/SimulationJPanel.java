@@ -152,86 +152,92 @@ public class SimulationJPanel extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics graph) {
-	
-		// paints the path of the robot
-		super.paintComponent(graph);
-		Vector<Shape> shapesx = new Vector<Shape>();
-		shapesx.addAll(shapes);
+		paintPathComponent(graph);
+		paintGridComponent(graph);
+		paintWallComponent(graph);
+		paintBeamComponent(graph);
+	}
 
-
-		((Graphics2D) graph).setColor(Color.red);
-
-		if(isUpdated){
-			setOtherTriangleVisible();
-			setUpdated(false);
+	private void paintBeamComponent(Graphics graph) {
+		Graphics2D g = (Graphics2D) graph;
+		if(simulatorPilot != null && simulatorPilot.isRealRobot())
+		{
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                    0.4f));
+			g.setColor(new Color(12,24,244));
+			g.fill(sonarArc);
 		}
+	}
 
-		Graphics2D g2 = (Graphics2D) graph;
 
-		// paints the grid on the panel
+	private void paintWallComponent(Graphics graph) {
+		Graphics2D g = (Graphics2D) graph;
+		((Graphics2D) graph).setColor(Color.BLACK);
+
+		for(Wall wall : walls.values()){
+			if(wall.getState() == State.VERTICAL)
+				g.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
+			else g.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
+		}
+	}
+
+
+	private void paintGridComponent(Graphics graph) {
+		Graphics2D g = (Graphics2D) graph;
+
 		int count = 50;
 		int size = 40;
 
 		((Graphics2D) graph).setColor(Color.lightGray);
 
-
 		for( int i = 0; i < count; i ++)
 			for( int j = 0; j < count; j++)
 			{
 				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
-				g2.draw(grid);
+				g.draw(grid);
 			}
+	}
 
-		Graphics2D g3 = (Graphics2D) graph;
 
-		// paint the walls on the panel
-		//TODO momenteel is de hashmap leeg dus tekent die niks omdat addwall en 
-		//addwhiteline getoggled zijn
-
-		((Graphics2D) graph).setColor(Color.BLACK);
-
-		for(Wall wall : walls.values()){
-			if(wall.getState() == State.VERTICAL)
-				g3.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
-			else g3.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
-		}
+	private void paintPathComponent(Graphics graph) {
+		super.paintComponent(graph);
+		Vector<Shape> shapesx = new Vector<Shape>();
+		shapesx.addAll(shapes);
 
 		((Graphics2D) graph).setColor(Color.red);
 		for(Shape s : shapesx)
 		{
-
 			int x;
 			int y;
 
 			if(s instanceof Triangle)
-			{	if(s.equals(getVisibleTriangle()))
-				((Graphics2D) graph).fill(s);
-			x = (int) ((Triangle) s).getGravityCenterX();
-			y = (int) ((Triangle) s).getGravityCenterY();
+			{
+				if(s.equals(getVisibleTriangle()))
+				{
+					((Graphics2D) graph).fill(s);
+				}
+				x = (int) ((Triangle) s).getGravityCenterX();
+				y = (int) ((Triangle) s).getGravityCenterY();
 
-
-			if(simulatorPilot!= null)
-				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y )+ " , " + simulatorPilot.getAlpha() + "°, Map: " + simulatorPilot.getMapString() + ")");
-			else
-				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y) + ")");
-			
+				if(simulatorPilot!= null)
+				{
+					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulatorPilot.getAlpha() + "°, Map: " + simulatorPilot.getMapString() + ")");
+				}
+				else
+				{
+					getSSG().updateCoordinates("Simulator (" + x + " , " + y + ")");
+				}
 			}
 			else
 			{	
 				((Graphics2D) graph).fill(s);
 			}
-
 		}
 
-		if(simulatorPilot != null && simulatorPilot.isRealRobot()){
-			g3.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                    0.4f));
-			g3.setColor(new Color(12,24,244));
-			g3.fill(sonarArc);
+		if(isUpdated){
+			setOtherTriangleVisible();
+			setUpdated(false);
 		}
-
-
-
 	}
 
 	public void setRobotLocation(double x, double y, double degrees){
