@@ -40,6 +40,8 @@ public class SimulationJPanel extends JPanel {
 	 * is true als de coordinaten van de driehoek die niet afgebeeld wordt, berekend zijn.
 	 */
 	private boolean isUpdated = false;
+	
+	private Arc2D sonarArc;
 
 	private Vector<Shape> shapes = new Vector<Shape>();
 
@@ -130,6 +132,10 @@ public class SimulationJPanel extends JPanel {
 	public boolean waitingTriangleIsUpdated(){
 		return isUpdated;
 	}
+	
+	public void updateArc(double x, double y, double radius, double midAngle){
+		
+	}
 
 	public void setUpdated(boolean isUpdated){
 		this.isUpdated = isUpdated;
@@ -137,6 +143,7 @@ public class SimulationJPanel extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics graph) {
+	
 		// paints the path of the robot
 		super.paintComponent(graph);
 		Vector<Shape> shapesx = new Vector<Shape>();
@@ -208,7 +215,9 @@ public class SimulationJPanel extends JPanel {
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
 		}
 
-
+		if(simulatorPilot.isRealRobot())
+			g3.fill(sonarArc);
+			
 
 
 
