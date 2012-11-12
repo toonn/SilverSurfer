@@ -74,12 +74,14 @@ public class SimulatorCommunicator extends UnitCommunicator {
 			sim.rotate(getAngularSpeed());
 		else if(command == Command.ALIGN_PERPENDICULAR)
 			sim.allignOnWhiteLine();
+		else if(command == Command.ALIGN_WALL)
+			sim.allignOnWalls();
+		else if(command == Command.LOOK_AROUND)
+            sim.checkForObstructions();
 		else if(command%10 == Command.AUTOMATIC_MOVE_FORWARD)
 			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
 		else if(command%10 == Command.AUTOMATIC_TURN_ANGLE)
 			sim.rotate((double) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
-		else if(command == Command.ALIGN_WALL)
-			sim.allignOnWalls();
 		setPreviousCommand(command);
 	}
 	
@@ -102,6 +104,4 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	public void clear() {
 		sim.clear();
 	}
-	
-	
 }

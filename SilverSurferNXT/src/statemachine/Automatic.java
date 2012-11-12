@@ -81,4 +81,27 @@ public class Automatic extends State {
     			return false;
     	}
     }
+    
+    public String lookAround(UltrasonicSensor ultrasonicSensor) {
+    	String front = "no wall";
+    	String back = "no wall";
+    	String left = "no wall";
+    	String right = "no wall";
+    	
+    	if(ultrasonicSensor.getDistance() < 32)
+    		front = "wall";
+    	turnAngle(179);
+    	if(ultrasonicSensor.getDistance() < 32)
+    		right = "wall";
+    	turnAngle(179);
+    	if(ultrasonicSensor.getDistance() < 32)
+    		back = "wall";
+    	turnAngle(179);
+    	if(ultrasonicSensor.getDistance() < 32)
+    		left = "wall";
+    	turnAngle(-179);
+    	turnAngle(-179);
+    	turnAngle(-179);
+    	return "Front: " + front + ", back: " + back + ", left: " + left + ", right: " + right;
+    }
 }

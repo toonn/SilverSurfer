@@ -57,6 +57,7 @@ public class SongThread extends Thread{
 		for (int i = 0; i < hedwigDurations.length; i++) {
 			Sound.playTone(hedwigFrequencies[i], hedwigDurations[i]);
 		}
+
 	}
 	
 	

@@ -4,7 +4,9 @@ import statemachine.*;
 import commands.Command;
 
 import java.io.*;
+
 import lejos.nxt.*;
+import lejos.nxt.addon.IRSeekerV2.Mode;
 import lejos.nxt.comm.*;
 
 public class CommandUnit {
@@ -20,7 +22,8 @@ public class CommandUnit {
 	private TouchSensor touchSensor1;
 	private TouchSensor touchSensor2;
 	private boolean busy = false;
-	private boolean result = false;
+	private boolean resultAlignOnWalls = false;
+	private String resultLookAround;
 	private SensorThread ST;
 	
 	public CommandUnit() {		
@@ -93,7 +96,6 @@ public class CommandUnit {
 		sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
 		sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
 		sendStringToUnit("[B] " + busy);
-		sendStringToUnit("[R] " + result);
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -149,18 +151,27 @@ public class CommandUnit {
     			    Automatic alignPerp = new Automatic();
     			    CU.setCurrentState(alignPerp);
     			    alignPerp.alignOnWhiteLine(CU.lightSensor, CU, CU.lightSensor.getLightValue() + 4);
+    			    CU.sendStringToUnit("[RAL] Done");
     			    CU.setCurrentState(new Waiting());
     			    break;
     			case (Command.ALIGN_WALL):
     			    Automatic alignWall = new Automatic();
     			    CU.setCurrentState(alignWall);
-    			    CU.result = alignWall.alignOnWall(CU.ultrasonicSensor);
+    			    CU.resultAlignOnWalls = alignWall.alignOnWall(CU.ultrasonicSensor);
+    			    CU.sendStringToUnit("[RAW] " + CU.resultAlignOnWalls);
     			    CU.setCurrentState(new Waiting());
     			    break;
     			case (Command.CLOSE_CONNECTION):
     				CU.ST.setQuit(true);
     	    		CU.lightSensor.setFloodlight(false);
     	    		CU.quit = true;
+    				break;
+    			case (Command.LOOK_AROUND):
+    			    Automatic lookAround = new Automatic();
+    			    CU.setCurrentState(lookAround);
+    			    CU.resultLookAround = lookAround.lookAround(CU.ultrasonicSensor);
+    			    CU.sendStringToUnit("[RLA] " + CU.resultLookAround);
+    			    CU.setCurrentState(new Waiting());
     				break;
     			default:
     				if(input%10==8) {
