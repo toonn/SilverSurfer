@@ -41,7 +41,7 @@ public class SimulationJPanel extends JPanel {
 	 */
 	private boolean isUpdated = false;
 	
-	private Arc2D sonarArc;
+	private Arc2D sonarArc = new Arc2D.Double();
 
 	private Vector<Shape> shapes = new Vector<Shape>();
 
@@ -133,8 +133,15 @@ public class SimulationJPanel extends JPanel {
 		return isUpdated;
 	}
 	
-	public void updateArc(double x, double y, double radius, double midAngle){
-		
+	public void updateArc(double robotX, double robotY, double robotAngle, double USDistance){
+		double correctedUSDistance = USDistance-5.5;
+		double arcUpperLeftX = robotX-correctedUSDistance;
+		double arcUpperLeftY = robotY-correctedUSDistance;
+		double arcStart = 360 - robotAngle - 15;
+		double arcExtent = 30;
+
+		double side = 2*correctedUSDistance;
+		this.sonarArc = new Arc2D.Double(arcUpperLeftX,arcUpperLeftY,side,side,arcStart,arcExtent,Arc2D.PIE);
 	}
 
 	public void setUpdated(boolean isUpdated){
@@ -215,9 +222,12 @@ public class SimulationJPanel extends JPanel {
 				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
 		}
 
-		if(simulatorPilot.isRealRobot())
+		if(simulatorPilot.isRealRobot()){
+			g3.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                    0.4f));
+			g3.setColor(new Color(12,24,244));
 			g3.fill(sonarArc);
-			
+		}
 
 
 
