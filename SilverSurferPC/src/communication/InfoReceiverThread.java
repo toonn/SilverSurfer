@@ -69,6 +69,10 @@ public class InfoReceiverThread extends Thread {
 						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
 					}
 				}
+				else if(a.startsWith("[B]"))
+					infoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
+				else if(a.startsWith("[R]"))
+					System.out.println("Align on walls: " + Boolean.valueOf(a.substring(4).trim()));
 			} catch (IOException e) {
 
 			}
