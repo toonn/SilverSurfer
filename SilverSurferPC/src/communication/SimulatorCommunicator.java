@@ -21,7 +21,7 @@ public class SimulatorCommunicator extends UnitCommunicator {
 
 	@Override
 	public void runPolygon(int amtOfAngles, int lengthInCM) throws IOException {
-		int angle = (int)((float) Math.round(360.0/amtOfAngles*100));
+		int angle = (int)((double) Math.round(360.0/amtOfAngles*100));
 		if (amtOfAngles == 1)
 			sendCommandToUnit(lengthInCM*100 + Command.AUTOMATIC_MOVE_FORWARD);
 		else for(int i = 0; i<amtOfAngles; i++) {
@@ -45,14 +45,14 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	 * Gets the amount of angles the arrow should turn in one event
 	 * to be at par with the robot.
 	 */
-	public float getAngularSpeed() {
+	public double getAngularSpeed() {
 		switch(getSpeed()){
-		case 1: return (float) 1.82;
-		case 2: return (float) 2.74;
-		case 3: return (float) 2.77;
-		case 4: return (float) 1.82;
+		case 1: return (double) 1.82;
+		case 2: return (double) 2.74;
+		case 3: return (double) 2.77;
+		case 4: return (double) 1.82;
 		}
-		return (float) 2.74;
+		return (double) 2.74;
 
 	}
 	
@@ -69,7 +69,7 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		else if(command == 2)	
 			sim.travel(-1);
 		else if((command == 4 && previousCommandForwardOrBackWard == 0) || (command == 6 && previousCommandForwardOrBackWard == 2))
-			sim.rotate((float) 360.0-getAngularSpeed());
+			sim.rotate((double) 360.0-getAngularSpeed());
 		else if((command == 6 && previousCommandForwardOrBackWard == 0) || (command == 4 && previousCommandForwardOrBackWard == 2))
 			sim.rotate(getAngularSpeed());
 		else if(command == 14){
@@ -78,7 +78,7 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		else if(command%10 == 8)
 			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
 		else if(command%10 == 9)
-			sim.rotate((float) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
+			sim.rotate((double) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
 		setPreviousCommand(command);
 	}
 	

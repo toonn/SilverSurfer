@@ -3,9 +3,9 @@ package mapping;
 public enum Orientation {
 	NORTH, EAST, WEST, SOUTH;
 	
-	private static float getMaxRoundingError()
+	private static double getMaxRoundingError()
 	{
-		return (float) 0.4;
+		return (double) 0.4;
 	}
 
 	/**
@@ -14,17 +14,17 @@ public enum Orientation {
 	 * bij dit soort methodes is kans op tel of afrondingsfouten groot!!
 	 * TODO normaal wel in orde maar zou kunnen dat het toch soms foute resultaten geeft
 	 */
-	public static Orientation calculateOrientation(float x, float y, float alpha)
+	public static Orientation calculateOrientation(double x, double y, double alpha)
 	{
-		float xTemp = x;
-		float yTemp = y;
+		double xTemp = x;
+		double yTemp = y;
 		int i = 1;
 
 		while(!(((xTemp%40) > 40-getMaxRoundingError() || (xTemp%40) < getMaxRoundingError())
 				|| ((yTemp%40) > 40-getMaxRoundingError() || (yTemp%40) < getMaxRoundingError())))
 		{
-			xTemp = (float) (x + i* Math.cos(Math.toRadians(alpha)));
-			yTemp = (float) (y + i* Math.sin(Math.toRadians(alpha)));
+			xTemp = (double) (x + i* Math.cos(Math.toRadians(alpha)));
+			yTemp = (double) (y + i* Math.sin(Math.toRadians(alpha)));
 			i++;
 		}
 
