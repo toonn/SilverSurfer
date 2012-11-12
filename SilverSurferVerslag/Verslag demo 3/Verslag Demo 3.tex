@@ -41,9 +41,10 @@
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
 \label{ssec:abstr}
-De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauwkeurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en enkele klassen die de werking van de robot simuleren (simulator).
-Voor demo 2 worden de sensoren wel op de robot geplaatst. Nadat ze gecalibreerd zijn, kunnen ze informatie doorzenden naar de robot. Er zijn twee threads, \'e\'en die de sensoren uitleest en een ander die de informatie ontvangt en opslaagt in de \item \textit{infoStatusBuffer:}. 
-Er is een lichtsensor en een ultrasone sensor. 
+De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauwkeurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en enkele klassen die de werking van de robot simuleren (simulator).\\
+De sensoren worden voor demo 2 wel geïnstalleerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
+De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI.\\
+De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zicht hierdoor beweegt.
 
 \end{abstract}
 

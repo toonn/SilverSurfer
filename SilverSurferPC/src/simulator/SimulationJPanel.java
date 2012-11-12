@@ -208,18 +208,18 @@ public class SimulationJPanel extends JPanel {
 			x = (int) ((Triangle) s).getGravityCenterX();
 			y = (int) ((Triangle) s).getGravityCenterY();
 
+
+			if(simulatorPilot!= null)
+				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y )+ " , " + simulatorPilot.getAlpha() + ", Map: " + simulatorPilot.getMapString() + ")");
+			else
+				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y) + ")");
+			
 			}
 			else
 			{	
 				((Graphics2D) graph).fill(s);
-				x = (int) ((RectangularShape) s).getX();
-				y = (int) ((RectangularShape) s).getY();
 			}
 
-			if(simulatorPilot!= null && simulatorPilot.getMapGraph()!= null)
-				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5 )+ " , " + simulatorPilot.getAlpha() + ", Map: " + simulatorPilot.getMapString() + ")");
-			else
-				getSSG().updateCoordinates("Simulator (" + (x+5) + " , " + (y+5) + ")");
 		}
 
 		if(simulatorPilot.isRealRobot()){
