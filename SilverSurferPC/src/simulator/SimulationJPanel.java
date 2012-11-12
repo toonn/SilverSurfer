@@ -58,10 +58,12 @@ public class SimulationJPanel extends JPanel {
 		{
 			verticalWallImage = ImageIO.read(new File("resources/wallImages/verticalwall2.png"));
 			horizontalWallImage = ImageIO.read(new File("resources/wallImages/horizontalwall2.png"));
-
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
+			System.out.println("1");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("2");
 		}
 
 		shapes.add(triangle1);
@@ -221,7 +223,7 @@ public class SimulationJPanel extends JPanel {
 
 		}
 
-		if(simulatorPilot.isRealRobot()){
+		if(simulatorPilot != null && simulatorPilot.isRealRobot()){
 			g3.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
                     0.4f));
 			g3.setColor(new Color(12,24,244));
