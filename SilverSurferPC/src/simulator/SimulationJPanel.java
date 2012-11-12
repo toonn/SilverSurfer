@@ -52,10 +52,10 @@ public class SimulationJPanel extends JPanel {
 	 */
 	private HashMap<Point2D, Wall> walls = new HashMap<Point2D, Wall>();
 
-	public SimulationJPanel(){
-
-
-		try {
+	public SimulationJPanel()
+	{
+		try
+		{
 			verticalWallImage = ImageIO.read(new File("resources/wallImages/verticalwall2.png"));
 			horizontalWallImage = ImageIO.read(new File("resources/wallImages/horizontalwall2.png"));
 
@@ -76,7 +76,7 @@ public class SimulationJPanel extends JPanel {
 			double oldY = this.getVisibleTriangle().getGravityCenterY();
 
 			// add a bigger circle where the robot starts
-			if(shapes.size()==0)
+			if(shapes.size()<=3)
 			{
 				double diam = 5;
 				Shape bigCircle = new Ellipse2D.Double(oldX - (diam/2), oldY - (diam/2), diam, diam); 
@@ -85,7 +85,7 @@ public class SimulationJPanel extends JPanel {
 			// add smaller red circles to indicate the path of the robot
 			else
 			{
-				double diam = 3;
+				double diam = 2;
 				Shape path = new Ellipse2D.Double(x - (diam/2), y - (diam/2), diam, diam);
 				shapes.add(path); 
 			}						
@@ -194,7 +194,6 @@ public class SimulationJPanel extends JPanel {
 			else g3.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
 		}
 
-
 		((Graphics2D) graph).setColor(Color.red);
 		for(Shape s : shapesx)
 		{
@@ -210,7 +209,7 @@ public class SimulationJPanel extends JPanel {
 
 
 			if(simulatorPilot!= null)
-				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y )+ " , " + simulatorPilot.getAlpha() + ", Map: " + simulatorPilot.getMapString() + ")");
+				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y )+ " , " + simulatorPilot.getAlpha() + "°, Map: " + simulatorPilot.getMapString() + ")");
 			else
 				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y) + ")");
 			
