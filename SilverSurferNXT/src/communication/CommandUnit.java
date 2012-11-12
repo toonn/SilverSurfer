@@ -6,6 +6,7 @@ import commands.Command;
 import java.io.*;
 
 import lejos.nxt.*;
+import lejos.nxt.addon.IRSeekerV2.Mode;
 import lejos.nxt.comm.*;
 
 public class CommandUnit {
@@ -105,7 +106,6 @@ public class CommandUnit {
     			LCD.clear();
     			CU.busy = false;
     			CU.updateStatus();
-    			lejos.nxt.Sound.playSample(new File("SSCut.wav"), lejos.nxt.Sound.VOL_MAX);
     			System.out.println("Waiting for input...");
     			int input = CU.dis.readInt();
     			CU.busy = true;
@@ -151,6 +151,7 @@ public class CommandUnit {
     			    Automatic alignPerp = new Automatic();
     			    CU.setCurrentState(alignPerp);
     			    alignPerp.alignOnWhiteLine(CU.lightSensor, CU, CU.lightSensor.getLightValue() + 4);
+    			    CU.sendStringToUnit("[RAL] Done");
     			    CU.setCurrentState(new Waiting());
     			    break;
     			case (Command.ALIGN_WALL):

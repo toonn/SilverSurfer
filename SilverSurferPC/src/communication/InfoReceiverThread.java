@@ -71,6 +71,8 @@ public class InfoReceiverThread extends Thread {
 				}
 				else if(a.startsWith("[B]"))
 					infoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
+				else if(a.startsWith("[RAL]"))
+					System.out.println("Align on white line: " + a.substring(6).trim());
 				else if(a.startsWith("[RAW]"))
 					System.out.println("Align on walls: " + Boolean.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[RLA]"))
