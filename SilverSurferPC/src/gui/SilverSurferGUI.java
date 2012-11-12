@@ -526,8 +526,9 @@ public class SilverSurferGUI {
     }
 
     public void updateStatus() {
+    	int latestUltraSensor = informationBuffer.getLatestUltraSensorInfo();
         String s = new String("(US: "
-                + informationBuffer.getLatestUltraSensorInfo() + ", LS: "
+                + latestUltraSensor + ", LS: "
                 + informationBuffer.getLatestLightSensorInfo() + ", TS1: "
                 + informationBuffer.getLatestTouchSensor1Info() + ", TS2: "
                 + informationBuffer.getLatestTouchSensor2Info() + ", LM: "
@@ -538,6 +539,10 @@ public class SilverSurferGUI {
                 + informationBuffer.getBusy() + ")");
         consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
                 "Output " + s));
+        
+        if(robotConnected){
+        	((SimulatorCommunicator)prevCommunicator).getSim().updateArc(latestUltraSensor);
+        }
     }
 
     private static void redirectSystemStreams() {
@@ -566,6 +571,7 @@ public class SilverSurferGUI {
         	unitCommunicator.sendCommandToUnit(16);
             unitCommunicator.closeUnitConnection();
             unitCommunicator = prevCommunicator;
+            ((SimulatorCommunicator)unitCommunicator).getSim().setRealRobot(false);
             bluetoothConnect.setText("Connect");
             bluetoothStatus.setIcon(bluetoothNotConnectedIcon);
             System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
@@ -586,6 +592,7 @@ public class SilverSurferGUI {
     protected static void connectBluetooth() {
         prevCommunicator = unitCommunicator;
         try {
+        	((SimulatorCommunicator)prevCommunicator).getSim().setRealRobot(true);
             robotConnected = true;
             unitCommunicator = new RobotCommunicator(informationBuffer);
             unitCommunicator.openUnitConnection();
