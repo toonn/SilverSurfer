@@ -31,6 +31,8 @@ public class CommandUnit {
 		lightSensor = new LightSensor(SensorPort.S2, false);
 		touchSensor1 = new TouchSensor(SensorPort.S3);
 		touchSensor2 = new TouchSensor(SensorPort.S4);
+		SongThread s = new SongThread();
+		s.start();
 		
 		currentState = new Waiting();
 		System.out.println("Waiting...");
@@ -100,8 +102,8 @@ public class CommandUnit {
 	
 	public static void main(String[] args) throws IOException {
 		CommandUnit CU = new CommandUnit();
-		
-    	while(!(CU.quit)) {
+				
+		while(!(CU.quit)) {
     		try {
     			LCD.clear();
     			CU.busy = false;
