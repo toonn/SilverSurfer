@@ -64,21 +64,22 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	@Override
 	public void sendCommandToUnit(int command) throws IOException {
 
-		if(command == 0)
+		if(command == Command.FORWARD_PRESSED)
 			sim.travel(1);
-		else if(command == 2)	
+		else if(command == Command.BACKWARD_PRESSED)	
 			sim.travel(-1);
-		else if((command == 4 && previousCommandForwardOrBackWard == 0) || (command == 6 && previousCommandForwardOrBackWard == 2))
+		else if((command == Command.LEFT_PRESSED && previousCommandForwardOrBackWard == 0) || (command == Command.RIGHT_PRESSED && previousCommandForwardOrBackWard == 2))
 			sim.rotate((double) 360.0-getAngularSpeed());
-		else if((command == 6 && previousCommandForwardOrBackWard == 0) || (command == 4 && previousCommandForwardOrBackWard == 2))
+		else if((command == Command.RIGHT_PRESSED && previousCommandForwardOrBackWard == 0) || (command == Command.LEFT_PRESSED && previousCommandForwardOrBackWard == 2))
 			sim.rotate(getAngularSpeed());
-		else if(command == 14){
+		else if(command == Command.ALIGN_PERPENDICULAR)
 			sim.allignOnWhiteLine();
-		}
-		else if(command%10 == 8)
+		else if(command%10 == Command.AUTOMATIC_MOVE_FORWARD)
 			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
-		else if(command%10 == 9)
+		else if(command%10 == Command.AUTOMATIC_TURN_ANGLE)
 			sim.rotate((double) (command-Command.AUTOMATIC_TURN_ANGLE)/1000);
+		else if(command == Command.ALIGN_WALL)
+			sim.allignOnWalls();
 		setPreviousCommand(command);
 	}
 	

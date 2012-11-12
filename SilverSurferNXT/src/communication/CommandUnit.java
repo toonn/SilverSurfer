@@ -19,6 +19,8 @@ public class CommandUnit {
 	private LightSensor lightSensor;
 	private TouchSensor touchSensor1;
 	private TouchSensor touchSensor2;
+	private boolean busy = false;
+	private boolean result = false;
 	private SensorThread ST;
 	
 	public CommandUnit() {		
@@ -90,6 +92,8 @@ public class CommandUnit {
 		sendStringToUnit("[TS2] " + touchSensor2.isPressed());
 		sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
 		sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
+		sendStringToUnit("[B] " + busy);
+		sendStringToUnit("[R] " + result);
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -98,8 +102,12 @@ public class CommandUnit {
     	while(!(CU.quit)) {
     		try {
     			LCD.clear();
+    			CU.busy = false;
+    			CU.updateStatus();
     			System.out.println("Waiting for input...");
     			int input = CU.dis.readInt();
+    			CU.busy = true;
+    			CU.updateStatus();
     			switch(input) {
     			case (Command.FORWARD_PRESSED):
     				CU.setCurrentState(CU.getCurrentState().ForwardPressed());
@@ -146,7 +154,7 @@ public class CommandUnit {
     			case (Command.ALIGN_WALL):
     			    Automatic alignWall = new Automatic();
     			    CU.setCurrentState(alignWall);
-    			    alignWall.alignOnWall(CU.ultrasonicSensor);
+    			    CU.result = alignWall.alignOnWall(CU.ultrasonicSensor);
     			    CU.setCurrentState(new Waiting());
     			    break;
     			case (Command.CLOSE_CONNECTION):

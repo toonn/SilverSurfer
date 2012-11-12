@@ -22,6 +22,8 @@ package simulator;
 import gui.SilverSurferGUI;
 import mapping.*;
 
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.Random;
 public class SimulationPilot {
@@ -209,11 +211,11 @@ public class SimulationPilot {
 
 				if(mapGraph != null){
 				
-				if(onEdge(xOld, yOld) && this.getMapGraph().getObstruction(currentOrientation)!=null ){
+				if(onEdge(xOld, yOld) && checkForObstructions() ){
 					//deze if wordt uitgevoerd wanneer er een wall in de weg staat
 					this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + (i-1)*Math.cos(Math.toRadians(this.getAlpha()))));
 					this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + (i-1)*Math.sin(Math.toRadians(this.getAlpha()))));
-					System.out.println("SimulationPilot.travel() : Er staat een muur in de weg");
+					System.out.println("Er staat een muur in de weg");
 					return;
 				}
 				
@@ -222,7 +224,8 @@ public class SimulationPilot {
 
 				//dit checkt of hij dicht genoeg bij een edge is om te checken of er een muur staat
 				if(ExtMath.calculateDistanceFromPointToEdge(xOld, yOld, getAlpha()) < detectionDistanceUltrasonicSensorRobot){
-					checkForObstructions();
+					if(checkForObstructions()){
+						addWall();}
 				}
 				}
 				
@@ -289,41 +292,57 @@ public class SimulationPilot {
 	 * deze wordt opgeroepen in travel en rotate, 
 	 *
 	 */
-	public void checkForObstructions()
+	public boolean checkForObstructions()
 	{
 		Orientation currentOrientation = Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 
-		if(!(getCurrentPositionRelativeX() == currentTileCoordinateXPreviousCheck &&
-			getCurrentPositionRelativeY() == currentTileCoordinateYPreviousCheck
-			&& previousDirection == currentOrientation)){
-			howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
-			currentTileCoordinateXPreviousCheck = getCurrentPositionRelativeX();
-			currentTileCoordinateYPreviousCheck = getCurrentPositionRelativeY();
-			previousDirection = currentOrientation;
-			return;
+		Point2D point = ExtMath.calculateWallPoint(currentOrientation,
+				getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+		
+		double XOther = point.getX() + Orientation.getOtherPointLine(currentOrientation)[0];
+		double YOther =	point.getY() + Orientation.getOtherPointLine(currentOrientation)[1];
+		
+		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY()) > 21 ){
+			return false;
 		}
 		
-		else if(howManyTimesCheckedOnSameCurrentTileInSameDirection != 4){
-			howManyTimesCheckedOnSameCurrentTileInSameDirection++;
-			return;
-		}
-
-		else if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL)
-		{
-			SSG.getSimulationPanel().addWall(currentOrientation,
-					getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
-			howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
-		}
-		else
-		{
-			//roept addwhiteline op, deze methode verwijdert de muur terug uit het panel
-				SSG.getSimulationPanel().addWhiteLine(currentOrientation,
-						getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
-				howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
-		}
+		return this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL;
 	}
 
 
+	public void addWall(){
+		
+		Orientation currentOrientation = Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
+		
+		if(!(getCurrentPositionRelativeX() == currentTileCoordinateXPreviousCheck &&
+				getCurrentPositionRelativeY() == currentTileCoordinateYPreviousCheck
+				&& previousDirection == currentOrientation)){
+				howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
+				currentTileCoordinateXPreviousCheck = getCurrentPositionRelativeX();
+				currentTileCoordinateYPreviousCheck = getCurrentPositionRelativeY();
+				previousDirection = currentOrientation;
+				return;
+			}
+			
+			else if(howManyTimesCheckedOnSameCurrentTileInSameDirection != 4){
+				howManyTimesCheckedOnSameCurrentTileInSameDirection++;
+				return;
+			}
+
+			else if(this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL)
+			{
+				SSG.getSimulationPanel().addWall(currentOrientation,
+						getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+				howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
+			}
+			else
+			{
+				//roept addwhiteline op, deze methode verwijdert de muur terug uit het panel
+					SSG.getSimulationPanel().addWhiteLine(currentOrientation,
+							getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+					howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
+			}
+	}
 		
 	public void rotate(double alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
@@ -332,7 +351,9 @@ public class SimulationPilot {
 		//weer een checkForObstructions
 		if(mapGraph != null){
 		if(ExtMath.calculateDistanceFromPointToEdge(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(), ExtMath.addDegree(this.getAlpha(), alpha)) < detectionDistanceUltrasonicSensorRobot){
-			checkForObstructions();}
+			if(checkForObstructions()){
+				addWall();
+			}}
 		}
 	}
 
@@ -369,6 +390,11 @@ public class SimulationPilot {
 			else
 				rotate(-1);
 		}
+		for(int i = 0; i<6; i++)
+			travel(-1);
+	}
+	
+	public void allignOnWalls() {
 		
 	}
 	
