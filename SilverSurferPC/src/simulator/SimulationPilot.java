@@ -30,16 +30,16 @@ public class SimulationPilot {
 	 * verandert wanneer een nieuwe map wordt ingeladen naar de positie waar
 	 * het pijltje staat wanneer de map ingeladen wordt
 	 */
-	private float startPositionAbsoluteX = 220;
-	private float startPositionAbsoluteY = 220;
+	private double startPositionAbsoluteX = 220;
+	private double startPositionAbsoluteY = 220;
 	/**
 	 * coordinaat in het echte assenstelsel van de robot
 	 */
-	private float currentPositionAbsoluteX = 220;
-	private float currentPositionAbsoluteY = 220;
+	private double currentPositionAbsoluteX = 220;
+	private double currentPositionAbsoluteY = 220;
 
 
-	private float alpha = 270;
+	private double alpha = 270;
 	private int speed = 10;
 	private SilverSurferGUI SSG = new SilverSurferGUI();
 	private File mapFile;
@@ -48,7 +48,7 @@ public class SimulationPilot {
 	/**
 	 * waarde die afhangt van de robot!
 	 */
-	private final float detectionDistanceUltrasonicSensorRobot =20;
+	private final double detectionDistanceUltrasonicSensorRobot =20;
 	
 	private int howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
 	private Orientation previousDirection = null;
@@ -64,19 +64,19 @@ public class SimulationPilot {
 		}
 
 	
-	public float getCurrentPositionAbsoluteX() {
+	public double getCurrentPositionAbsoluteX() {
 		return currentPositionAbsoluteX;
 	}
 	
-	public void setCurrentPositionAbsoluteX(float x) {
+	public void setCurrentPositionAbsoluteX(double x) {
 		this.currentPositionAbsoluteX = x;
 	}
 	
-	public float getCurrentPositionAbsoluteY() {
+	public double getCurrentPositionAbsoluteY() {
 		return currentPositionAbsoluteY;
 	}
 
-	public void setCurrentPositionAbsoluteY(float y) {
+	public void setCurrentPositionAbsoluteY(double y) {
 		this.currentPositionAbsoluteY = y;
 	}
 	
@@ -102,11 +102,11 @@ public class SimulationPilot {
 
 	
 	
-	public float getAlpha() {
+	public double getAlpha() {
 		return alpha;
 	}
 	
-	public void setAlpha(float alpha) {
+	public void setAlpha(double alpha) {
 		this.alpha = alpha;
 	}
 	
@@ -187,15 +187,15 @@ public class SimulationPilot {
 	 * currentPositionAbsolute
 	 * dit gebeurt in setCurrentTileCoordinates
 	 */
-	private float getEdgeMarge()
+	private double getEdgeMarge()
 	{
-		return (float) 1;
+		return (double) 1;
 	}
 	
 	
-	public void travel(float distance) {
-		float xOld = this.getCurrentPositionAbsoluteX();
-		float yOld = this.getCurrentPositionAbsoluteY();
+	public void travel(double distance) {
+		double xOld = this.getCurrentPositionAbsoluteX();
+		double yOld = this.getCurrentPositionAbsoluteY();
 		Orientation currentOrientation; 
 		
 		if(distance >= 0) {
@@ -204,15 +204,15 @@ public class SimulationPilot {
 				//dit kan veranderen wanneer je over een edge gaat
 				currentOrientation = Orientation.calculateOrientation(xOld, yOld, this.getAlpha());
 
-				xOld = (float) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
-				yOld = (float) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+				xOld = (double) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				yOld = (double) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 
 				if(mapGraph != null){
 				
 				if(onEdge(xOld, yOld) && this.getMapGraph().getObstruction(currentOrientation)!=null ){
 					//deze if wordt uitgevoerd wanneer er een wall in de weg staat
-					this.setCurrentPositionAbsoluteX((float) (this.getCurrentPositionAbsoluteX() + (i-1)*Math.cos(Math.toRadians(this.getAlpha()))));
-					this.setCurrentPositionAbsoluteY((float) (this.getCurrentPositionAbsoluteY() + (i-1)*Math.sin(Math.toRadians(this.getAlpha()))));
+					this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + (i-1)*Math.cos(Math.toRadians(this.getAlpha()))));
+					this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + (i-1)*Math.sin(Math.toRadians(this.getAlpha()))));
 					System.out.println("SimulationPilot.travel() : Er staat een muur in de weg");
 					return;
 				}
@@ -230,8 +230,8 @@ public class SimulationPilot {
 				try{Thread.sleep(speed);}
 				catch (InterruptedException e) {}
 			}
-			this.setCurrentPositionAbsoluteX((float) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
-			this.setCurrentPositionAbsoluteY((float) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+			this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
+			this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
 
 		}
 		
@@ -240,16 +240,16 @@ public class SimulationPilot {
 			
 			for (int i = -1; i >= distance; i--) {
 
-				xOld = (float) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
-				yOld = (float) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+				xOld = (double) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				yOld = (double) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 				
 				currentOrientation = Orientation.getOppositeOrientation(Orientation.calculateOrientation(xOld, yOld, this.getAlpha()));
 				
 				if(mapGraph != null){
 				
 				if(onEdge(xOld, yOld) && this.getMapGraph().getObstruction(currentOrientation)!=null ){
-					this.setCurrentPositionAbsoluteX((float) (this.getCurrentPositionAbsoluteX() + (i+1)*Math.cos(Math.toRadians(this.getAlpha()))));
-					this.setCurrentPositionAbsoluteY((float) (this.getCurrentPositionAbsoluteY() + (i+1)*Math.sin(Math.toRadians(this.getAlpha()))));
+					this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + (i+1)*Math.cos(Math.toRadians(this.getAlpha()))));
+					this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + (i+1)*Math.sin(Math.toRadians(this.getAlpha()))));
 					System.out.println("Er staat een muur in de weg");
 					return;
 				}
@@ -263,8 +263,8 @@ public class SimulationPilot {
 					Thread.sleep(speed);
 				} catch (InterruptedException e) {}
 			
-			this.setCurrentPositionAbsoluteX((float) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
-			this.setCurrentPositionAbsoluteY((float) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+			this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
+			this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
 	
 		}
 	}
@@ -274,7 +274,7 @@ public class SimulationPilot {
 	 * Checkt of het een edge is gepasseerd 
 	 * zoja past hij zijn currenttileCoordinates aan
 	 */
-	private void travelToNextTileIfNeeded(float xOld, float yOld) {
+	private void travelToNextTileIfNeeded(double xOld, double yOld) {
 		if((xOld%40) > 40-this.getEdgeMarge() || (xOld%40) < this.getEdgeMarge() ||
 				(yOld%40) > 40-this.getEdgeMarge() || (yOld%40) < this.getEdgeMarge())
 		{			
@@ -325,7 +325,7 @@ public class SimulationPilot {
 
 
 		
-	public void rotate(float alpha) {
+	public void rotate(double alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
 		this.getSSG().getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		
@@ -349,8 +349,8 @@ public class SimulationPilot {
 			travel(1);
 		}
 		
-		float requiredAlpha = (float) Orientation.getRightAngle(orientation);
-//		float requiredAlpha = Math.round(getAlpha()/90) * 90;
+		double requiredAlpha = (double) Orientation.getRightAngle(orientation);
+//		double requiredAlpha = Math.round(getAlpha()/90) * 90;
 		while (!(getAlpha()<requiredAlpha+1 && getAlpha()>requiredAlpha-1) ){
 			if(getAlpha() < requiredAlpha){
 				rotate(1);
@@ -364,16 +364,16 @@ public class SimulationPilot {
 	/**
 	 * checkt of de robot zich binnen de marge van een edge bevindt
 	 */
-	public boolean onEdge(float x, float y){
+	public boolean onEdge(double x, double y){
 		return (x%40) > 40-this.getEdgeMarge() || (x%40) < this.getEdgeMarge()||
 				(y%40) > 40-this.getEdgeMarge() || (y%40) < this.getEdgeMarge();
 				
 	}
 
-	//zet een float om in een veelvoud van 40 kleiner dan de float (ook bij negatief
+	//zet een double om in een veelvoud van 40 kleiner dan de double (ook bij negatief
 	//maar doet normaal niet ter zake aangezien de coordinaten in het echte coordinatensysteem 
 	//niet negatief	kunnen zijn
-		public static int setToMultipleOf40(float a){
+		public static int setToMultipleOf40(double a){
 			return (int) (Math.floor(a/40)*40);
 		}
 		
@@ -381,9 +381,9 @@ public class SimulationPilot {
 		 * Deze methode zet de coordinaten van het echte systeem om 
 		 * in de coordinaten van de matrix
 		 */
-	public int[] setAbsoluteToRelative(float x, float y){
-		float a = x - setToMultipleOf40(startPositionAbsoluteX);
-		float b = y - setToMultipleOf40(startPositionAbsoluteY);
+	public int[] setAbsoluteToRelative(double x, double y){
+		double a = x - setToMultipleOf40(startPositionAbsoluteX);
+		double b = y - setToMultipleOf40(startPositionAbsoluteY);
 		int c;
 		int d;
 		c = (int) Math.floor(a/40);
@@ -403,12 +403,12 @@ public class SimulationPilot {
 	 * geeft het middelpunt van het vak weer da overeenkomt met de coordinaten van 
 	 * de matrix die je moet ingeven als argumenten
 	 */
-	public float[] setRelativeToAbsolute(int x, int y){
+	public double[] setRelativeToAbsolute(int x, int y){
 		int a = x - getStartPositionRelativeX();
 		int b = y - getStartPositionRelativeY();
-		float c = a*40;
-		float d = b*40;
-		float[] array = new float[2];
+		double c = a*40;
+		double d = b*40;
+		double[] array = new double[2];
 		array[0] = startPositionAbsoluteX + c;
 		array[1] = startPositionAbsoluteX + d;
 		return array;
@@ -421,7 +421,7 @@ public class SimulationPilot {
 	 * moeten hier ingegeven worden omdat bij de travelmethode je de currentabsoluteposition
 	 * pas terug juist zet op het einde van de lus
 	 */
-	public void setCurrentTileCoordinates(MapGraph map, float xOld, float yOld){
+	public void setCurrentTileCoordinates(MapGraph map, double xOld, double yOld){
 		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
 		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
 	}

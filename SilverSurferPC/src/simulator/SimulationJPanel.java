@@ -66,25 +66,25 @@ public class SimulationJPanel extends JPanel {
 		shapes.add(triangle2);
 	}
 
-	public void addCircle(float x, float y, float degrees) {
+	public void addCircle(double x, double y, double degrees) {
 		// remove the last triangle and draw little circles to indicate the path
 		if(shapes.size()>0)
 		{ 	
-			float oldX = this.getVisibleTriangle().getGravityCenterX();
-			float oldY = this.getVisibleTriangle().getGravityCenterY();
+			double oldX = this.getVisibleTriangle().getGravityCenterX();
+			double oldY = this.getVisibleTriangle().getGravityCenterY();
 
 			// add a bigger circle where the robot starts
 			if(shapes.size()==0)
 			{
-				float diam = 5;
-				Shape bigCircle = new Ellipse2D.Float(oldX - (diam/2), oldY - (diam/2), diam, diam); 
+				double diam = 5;
+				Shape bigCircle = new Ellipse2D.Double(oldX - (diam/2), oldY - (diam/2), diam, diam); 
 				shapes.add(bigCircle);
 			}
 			// add smaller red circles to indicate the path of the robot
 			else
 			{
-				float diam = 3;
-				Shape path = new Ellipse2D.Float(x - (diam/2), y - (diam/2), diam, diam);
+				double diam = 3;
+				Shape path = new Ellipse2D.Double(x - (diam/2), y - (diam/2), diam, diam);
 				shapes.add(path); 
 			}						
 		}
@@ -214,7 +214,7 @@ public class SimulationJPanel extends JPanel {
 
 	}
 
-	public void setRobotLocation(float x, float y, float degrees){
+	public void setRobotLocation(double x, double y, double degrees){
 		this.addCircle(x*1, y*1, degrees);
 	}
 
@@ -255,7 +255,7 @@ public class SimulationJPanel extends JPanel {
 	 * verwijdert de muur als er een muur staat,
 	 * als er geen muur staat, return
 	 */
-	public void addWhiteLine(Orientation orientation, float x, float y)
+	public void addWhiteLine(Orientation orientation, double x, double y)
 	{
 		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
 		if(!walls.containsKey(point))
@@ -267,7 +267,7 @@ public class SimulationJPanel extends JPanel {
 	 * voegt een muur bij aan hashmap
 	 * muur is afhankelijk van de orientatie
 	 */
-	public void addWall(Orientation orientation, float x, float y)
+	public void addWall(Orientation orientation, double x, double y)
 	{	
 		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
 		
@@ -284,10 +284,10 @@ public class SimulationJPanel extends JPanel {
 		
 		Wall wall;
 		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
-			wall = new Wall(State.HORIZONTAL, (float) point.getX(), (float) point.getY());
+			wall = new Wall(State.HORIZONTAL, (double) point.getX(), (double) point.getY());
 		}
 		else{
-			wall = new Wall(State.VERTICAL, (float) point.getX(), (float) point.getY());
+			wall = new Wall(State.VERTICAL, (double) point.getX(), (double) point.getY());
 		}
 		setWall(point, wall);
 	}
