@@ -744,17 +744,17 @@ public class SilverSurferGUI {
             @Override
             public void mouseClicked(MouseEvent arg0) {
             	MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setUnitCommunicator(unitCommunicator);
-                MTT.setAngles(0);
-                MTT.setLength(Integer.parseInt(length.getValue().toString()));
-                if (robotConnected) {
-                    MoveTurnThread MTT1 = new MoveTurnThread("MTT1");
-                    MTT1.setUnitCommunicator(prevCommunicator);
-                    MTT1.setAngles(0);
-                    MTT1.setLength(Integer.parseInt(angle.getValue().toString()));
-                    MTT1.start();
-                }
-                MTT.start();
+            	MTT.setUnitCommunicator(unitCommunicator);
+            	MTT.setAngles(0);
+            	MTT.setLength(Integer.parseInt(length.getValue().toString()));
+            	if (robotConnected) {
+            		MoveTurnThread MTT1 = new MoveTurnThread("MTT1");
+            		MTT1.setUnitCommunicator(prevCommunicator);
+            		MTT1.setAngles(0);
+            		MTT1.setLength(Integer.parseInt(length.getValue().toString()));
+            		MTT1.start();
+            	}
+            	MTT.start();
                 simulationPanel.requestFocusInWindow();
             }
         });
