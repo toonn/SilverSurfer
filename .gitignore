@@ -41,3 +41,8 @@ Thumbs.db
 ##########################
 .metadata
 bin
+
+# Specifiek voor latex #
+########################
+*.aux
+*.toc
