@@ -141,7 +141,7 @@ public class MapGraph {
 					
 					orientation = Orientation.getOrientationOfArray(ar);
 					
-				tiles[i][j].replaceEdge(orientation,tile.getEdge(Orientation.getOppositeOrientation(orientation)));
+				tiles[i][j].replaceEdge(orientation,tile.getEdge(orientation.getOppositeOrientation()));
 				}
 			}
 	}

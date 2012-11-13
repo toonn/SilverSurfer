@@ -182,7 +182,7 @@ public class Edge {
 	private boolean doesTile1ReferenceThisEdge(){
 		for(Orientation orientation : Orientation.values()){
 			if(ExtMath.isNumberDirectionEven(orientation) && 
-					Orientation.getNumberOrientation(orientation)%3 == getNumberPairDirections() ){
+					orientation.getNumberOrientation()%3 == getNumberPairDirections() ){
 				if(getTile1().getEdge(orientation) == this)
 					return true;}
 			}
@@ -198,7 +198,7 @@ public class Edge {
 	private boolean doesTile2ReferenceThisEdge(){
 		for(Orientation orientation : Orientation.values()){
 			if(!ExtMath.isNumberDirectionEven(orientation)&& 
-					Orientation.getNumberOrientation(orientation)%3 == getNumberPairDirections()){
+					orientation.getNumberOrientation()%3 == getNumberPairDirections()){
 				if(getTile2().getEdge(orientation) == this)
 					return true;}
 			}

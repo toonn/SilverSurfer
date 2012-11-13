@@ -215,6 +215,7 @@ public class SimulationPilot {
 						//deze if wordt uitgevoerd wanneer er een wall in de weg staat
 						this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + (i-1)*Math.cos(Math.toRadians(this.getAlpha()))));
 						this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + (i-1)*Math.sin(Math.toRadians(this.getAlpha()))));
+						this.getSSG().updateStatus();
 						System.out.println("Er staat een muur in de weg");
 						return;
 					}
@@ -235,6 +236,7 @@ public class SimulationPilot {
 			}
 			this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
 			this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+			this.getSSG().updateStatus();
 
 		}
 
@@ -246,13 +248,14 @@ public class SimulationPilot {
 				xOld = (double) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
 				yOld = (double) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 
-				currentOrientation = Orientation.getOppositeOrientation(Orientation.calculateOrientation(xOld, yOld, this.getAlpha()));
+				currentOrientation = Orientation.calculateOrientation(xOld, yOld, this.getAlpha()).getOppositeOrientation();
 
 				if(mapGraph != null){
 
 					if(onEdge(xOld, yOld) && this.getMapGraph().getObstruction(currentOrientation)!=null ){
 						this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + (i+1)*Math.cos(Math.toRadians(this.getAlpha()))));
 						this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + (i+1)*Math.sin(Math.toRadians(this.getAlpha()))));
+						this.getSSG().updateStatus();
 						System.out.println("Er staat een muur in de weg");
 						return;
 					}
@@ -268,6 +271,7 @@ public class SimulationPilot {
 
 				this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
 				this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
+				this.getSSG().updateStatus();
 
 			}
 		}
@@ -299,8 +303,8 @@ public class SimulationPilot {
 		Point2D point = ExtMath.calculateWallPoint(currentOrientation,
 				getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
 
-		double XOther = point.getX() + Orientation.getOtherPointLine(currentOrientation)[0];
-		double YOther =	point.getY() + Orientation.getOtherPointLine(currentOrientation)[1];
+		double XOther = point.getX() + currentOrientation.getOtherPointLine()[0];
+		double YOther =	point.getY() + currentOrientation.getOtherPointLine()[1];
 
 		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY()) > 21 ){
 			return false;
@@ -347,6 +351,7 @@ public class SimulationPilot {
 	public void rotate(double alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
 		this.getSSG().getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
+		this.getSSG().updateStatus();
 
 		//weer een checkForObstructions
 		if(mapGraph != null){
@@ -374,65 +379,64 @@ public class SimulationPilot {
 	}
 	
 	/**
+	 * Returns a number from a normal districution that represents a lightsensor value.
+	 * 
 	 * nog niet af!! dit is slechts een schets van hoe de methode moet worden.
 	 */
 	public int getLightSensorValue()
 	{
 		if(this.isRealRobot())
 		{
-			return getSSG().getInformationBuffer().getLatestLightSensorInfo();
+			return SilverSurferGUI.getInformationBuffer().getLatestLightSensorInfo();
 		}
 		else
 		{
-			// waarde die aangeeft hoeveel meetwaarden je in de arrays opslaat
-			int n = 20;
+			// initialisation
 			Random random = new Random();
-			random.nextInt(n);
-			
-			// zet hier n meetwaarden in die de echte robot kan geven in de gegeven situatie
-			int[] lightSensorWhiteLine = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-			int[] lightSensorTile = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-			int[] lightSensorBarcode1 = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-			int[] lightSensorBarcode0 = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+			double mean = 0;
+			double standardDeviation = 1;
 			
 			// check on which sort of underground your are standing
-			// and return a number from the right list of values.
-			if(onEdge(this.getCurrentPositionAbsoluteX(),this.getCurrentPositionAbsoluteY()))
+			// and adjust the mean and standardDeviation accordingly
+			if(onEmptyTile(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY()))
 			{
-				return lightSensorWhiteLine[n];
+				mean = SimulationSensorData.getMEmptyPanelLS();
+				standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
 			}
-			if(!onEdge(this.getCurrentPositionAbsoluteX(),this.getCurrentPositionAbsoluteY()))
+			else if(onWhiteLine(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY()))
 			{
-				return lightSensorTile[n];
+				mean = SimulationSensorData.getMWhiteLineLS();
+				standardDeviation = SimulationSensorData.getSDWhiteLineLS();
 			}
-			if(!onEdge(this.getCurrentPositionAbsoluteX(),this.getCurrentPositionAbsoluteY()))
+			else if(onBarcodeTile(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY()))
 			{
-				return lightSensorBarcode1[n];
+				int color = this.getMapGraph().getContentCurrentTile().getColorValue(getCurrentPositionAbsoluteX()%40, getCurrentPositionAbsoluteY()%40);
+				mean = SimulationSensorData.getMBarcodeTileLS(color);
+				standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
 			}
-			if(!onEdge(this.getCurrentPositionAbsoluteX(),this.getCurrentPositionAbsoluteY()))
-			{
-				return lightSensorBarcode0[n];
-			}
-			else
-			{
-				return -1;
-			}
+			
+			return (int) Math.round(mean + (random.nextGaussian() * standardDeviation));
 		}
 	}
 	
+	/**
+	 * Returns a number from a normal districution that represents a ultrasonic sensor value.
+	 * 
+	 * nog niet af!! dit is slechts een schets van hoe de methode moet worden.
+	 */
 	public int getUltraSensorValue()
 	{
 		if(this.isRealRobot())
 		{
-			return getSSG().getInformationBuffer().getLatestUltraSensorInfo();
+			return SilverSurferGUI.getInformationBuffer().getLatestUltraSensorInfo();
 		}
 		else
 		{
 			Random random = new Random();
+			double mean = this.calculateDistanceToWall();
+			double standardDeviation = SimulationSensorData.getSDUS();
 			
-			// calculate the distance to the next wall
-			int distance = 0;
-			return distance + (int) (5*random.nextFloat());
+			return (int) Math.round(mean + (random.nextGaussian() * standardDeviation));
 		}
 	}
 	
@@ -440,23 +444,31 @@ public class SimulationPilot {
 	{
 		if(this.isRealRobot())
 		{
-			return getSSG().getInformationBuffer().getLatestTouchSensor1Info();
+			return SilverSurferGUI.getInformationBuffer().getLatestTouchSensor1Info();
 		}
 		else
 		{
-			return false; // to do!
+			// to be implemented!!
+			return false;
 		}
 	}
 	public boolean getTouchSensor2Value()
 	{
 		if(this.isRealRobot())
 		{
-			return getSSG().getInformationBuffer().getLatestTouchSensor2Info();
+			return SilverSurferGUI.getInformationBuffer().getLatestTouchSensor2Info();
 		}
 		else
 		{
-			return false; // to do!
+			// to be implemented!!
+			return false;
 		}
+	}
+	
+	private double calculateDistanceToWall()
+	{
+		// to be implemented!!
+		return 0;
 	}
 
 
@@ -468,7 +480,7 @@ public class SimulationPilot {
 			travel(1);
 		}
 
-		double requiredAlpha = (double) Orientation.getRightAngle(orientation);
+		double requiredAlpha = (double) orientation.getRightAngle();
 		//		double requiredAlpha = Math.round(getAlpha()/90) * 90;
 		while (!(getAlpha()<requiredAlpha+1 && getAlpha()>requiredAlpha-1) ){
 			if(getAlpha() < requiredAlpha){
@@ -542,6 +554,43 @@ public class SimulationPilot {
 		(y%40) > 40-this.getEdgeMarge() || (y%40) < this.getEdgeMarge();
 
 	}
+	
+	/**
+	 * True if the robot is on an edge and this edge is not a wall
+	 */
+	public boolean onWhiteLine(double x, double y){
+		//System.out.println("w: " + (this.onEdge(x,y)  && (this.getMapGraph() == null || this.getMapGraph().getObstruction(Orientation.calculateOrientation(x, y, this.getAlpha())) != Obstruction.WALL)));
+		return this.onEdge(x,y)
+		       && (this.getMapGraph() == null
+		    		   || this.getMapGraph().getObstruction(Orientation.calculateOrientation(x, y, this.getAlpha())) != Obstruction.WALL);
+
+	}
+	
+	/**
+	 * True if the robot is not on an edge, but on a tile without a content.
+	 */
+	public boolean onEmptyTile(double x, double y){
+		//System.out.println("e: " + (!this.onEdge(x,y) && (this.getMapGraph() == null || this.getMapGraph().getContentCurrentTile() == null)));
+		return (!this.onEdge(x,y) && this.getMapGraph() == null) || (!this.onEdge(x,y) && this.getMapGraph().getContentCurrentTile() == null) ;
+
+	}
+	
+	/**
+	 * True if the robot is not on an edge, but on a tile containing a barcode.
+	 */
+	public boolean onBarcodeTile(double x, double y){
+		if(this.getMapGraph() == null)
+		{
+		//	System.out.println("b: /");
+			return false;
+		}
+		else
+		{
+		//	System.out.println("b: " + (!this.onEdge(x,y) && (this.getMapGraph().getContentCurrentTile() instanceof Barcode)));
+			return !this.onEdge(x,y) && (this.getMapGraph().getContentCurrentTile() instanceof Barcode) ;
+		}
+	}
+
 
 	//zet een double om in een veelvoud van 40 kleiner dan de double (ook bij negatief
 	//maar doet normaal niet ter zake aangezien de coordinaten in het echte coordinatensysteem 

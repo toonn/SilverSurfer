@@ -121,7 +121,7 @@ public class MapReader {
 	
 	public static void createStraightFromTile(Tile t,Orientation orientation){
 		for(Orientation ori: Orientation.values()){	
-			if( (!(ori.equals(orientation))) && (!(ori.equals(Orientation.getOppositeOrientation(orientation)))) ){
+			if( (!(ori.equals(orientation))) && (!(ori.equals(orientation.getOppositeOrientation()))) ){
 		t.getEdge(ori).setObstruction(Obstruction.WALL);}
 			
 	}
@@ -129,7 +129,7 @@ public class MapReader {
 	
 	public static void createCornerFromTile(Tile t,Orientation orientation){
 		t.getEdge(orientation).setObstruction(Obstruction.WALL);
-		t.getEdge(Orientation.getOtherOrientationCorner(orientation)).setObstruction(Obstruction.WALL);
+		t.getEdge(orientation.getOtherOrientationCorner()).setObstruction(Obstruction.WALL);
 	}
 	
 	public static void createTFromTile(Tile t,Orientation orientation){
@@ -138,7 +138,7 @@ public class MapReader {
 	public static void createDeadEndFromTile(Tile t,Orientation orientation){
 
 		for(Orientation ori : Orientation.values()){
-			if(!ori.equals(Orientation.getOppositeOrientation(orientation)))
+			if(!ori.equals(orientation.getOppositeOrientation()))
 				t.getEdge(ori).setObstruction(Obstruction.WALL);
 		}
 	}

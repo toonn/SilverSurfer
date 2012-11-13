@@ -190,7 +190,7 @@ public class Tile{
 						|| (! ExtMath.isNumberDirectionEven(orientation) && 
 								(edge.getTile2() == null)&&
 								this.areNeighbours(edge.getTile1()))) 
-				return ( edge.getNumberPairDirections() == Orientation.getNumberOrientation(orientation)%3);
+				return ( edge.getNumberPairDirections() == orientation.getNumberOrientation()%3);
 			}
 			return false;
 			}
@@ -284,7 +284,7 @@ public class Tile{
 			}
 			setEdge(orientation, edge);
 			edge.setTileAtRightField(orientation, this);
-			edge.setNumberPairDirections(Orientation.getNumberOrientation(orientation)%3);
+			edge.setNumberPairDirections(orientation.getNumberOrientation()%3);
 			
 		}
 		
@@ -350,7 +350,7 @@ public class Tile{
 					Edge edge = new Edge();
 					setEdge(orientation, edge);
 					edge.setTileAtRightField(orientation, this);
-					edge.setNumberPairDirections(Orientation.getNumberOrientation(orientation)%3);
+					edge.setNumberPairDirections(orientation.getNumberOrientation()%3);
 		}
 	}
 	
