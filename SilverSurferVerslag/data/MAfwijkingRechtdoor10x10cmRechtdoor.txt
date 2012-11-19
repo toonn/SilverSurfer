@@ -1,0 +1,12 @@
+rij 10 maal 10cm rechtdoor en meet de afgelegde afstand
+
+99.1
+100
+99.1
+99.4
+99.6
+99.9
+100
+99.5
+99.4
+99.7

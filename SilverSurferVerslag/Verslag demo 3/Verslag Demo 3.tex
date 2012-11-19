@@ -115,7 +115,7 @@ Een alternatieve opstelling bestaat erin de NXT plat te leggen met ernaast de tw
 
 
 % == calibratie == %
-\subsection{Calibratie van de motoren} % 3 ?
+\subsection{Calibratie van de motoren} % 3 MEETWAARDEN + BOXPLOT
 \label{ssec:calibM}
 De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de twee wielen. De aansturing gebeurt door te bepalen hoeveel graden de wielen moeten draaien. Beide wielen kunnen onafhankelijk ingesteld worden. De robot kan \'e\'en cm vooruit bewegen (beide wielen draaien x aantal graden in dezelfde richting) en rond zijn as (beide wielen draaien y aantal graden in tegengestelde richting). De resultaten van de calibratie worden weergegeven in tabel \ref{tab:resultCalibM}. Het bepalen van parameters x en y gebeurt als volgt:
 
@@ -138,7 +138,7 @@ De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de t
 
 
 
-\subsubsection{E\'en cm vooruit bewegen: bepalen van x} % 3 ?
+\subsubsection{E\'en cm vooruit bewegen: bepalen van x} % 3 GEEN MEETWAARDEN VAN HET AANPASPROCES + BOXPLOT
 \label{ssec:calibMx}
 Een schatting voor x via de diameter van het wiel, waarbij x voor het aantal graden staat en de diameter in centimeter:
 
@@ -147,15 +147,19 @@ x_{0} \approx \frac{360}{\pi \cdot diameter}
 \end{equation*}
 
 De parameter x kan verder bepaald worden via tests.
-De robot rijdt naast een lintmeter 100 keer \'e\'en cm af. De wielen draaien met andere woorden 100 keer x graden. De totale afwijking (in centimeter) op deze volledige meter is de som van alle afwijkingen op \'e\'en centimeter. De afwijking op \'e\'en centimeter is voor elke centimeter gelijk. Een betere schatting van x wordt als volgt gegeven:
+De robot rijdt naast een lintmeter tien keer tien cm af. De wielen draaien met andere woorden tien keer $10 \cdot x$ graden. De totale afwijking (in centimeter) op deze volledige meter is de som van alle afwijkingen op tien centimeter. Wanneer in \'e\'en keer \'e\'en meter wordt gereden is de totale afwijking kleiner.\\
+Uit de test blijkt dat de robot een afwijking naar links heeft bij het rechtdoor rijden.
 
-\begin{equation*}
-x_{1} \approx \frac{360}{\pi \cdot diameter_{wiel}} \cdot \left(1-\frac{afwijking_{totaal}}{100}\right)
-\end{equation*}
+%boxplot motoren
+\begin{figure}[tbp]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
+    \caption{Boxplot meetwaarden motoren}
+    \label{fig:boxMot}
+\end{center}
+\end{figure}
 
-Door dit steeds te herhalen, wordt een steeds betere waarde voor x gevonden. De diameter en de afwijking zijn ook slechts benaderingen van de werkelijke waarden. 
-
-\subsubsection{Volledig rond de as draaien: bepalen van y} % niet in orde demo2! + meetwaarden!
+\subsubsection{Volledig rond de as draaien: bepalen van y} % 3 GEEN MEETWAARDEN VAN HET AANPASPROCES + BOXPLOT
 \label{ssec:calibMy}
 
 Een schatting voor y via de diameter van het wiel, met y in aantal graden en de as (afstand tussen beide wielen) en de diameter in centimeter:
@@ -164,56 +168,38 @@ Een schatting voor y via de diameter van het wiel, met y in aantal graden en de 
 y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 \end{equation*}
 
-Om de robot om zijn as te laten draaien, bewegen de beide wielen in tegengestelde richting. De robot wordt naast een lijn geplaatst. De parameter wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkwam.
+Om de robot om zijn as te laten draaien, bewegen de beide wielen in tegengestelde richting. De robot wordt naast een lijn geplaatst. De parameter wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
 
-\subsection{Calibratie van de lichtsensor} % niet in orde demo2! + meetwaarden!
+\subsection{Calibratie van de lichtsensor} % 3 BOXPLOT UPDATEN
 \label{ssec:calibLS}
-De lichtsensor meet verschillende waarden onder verschillende omstandigheden
-Verschillende waarden werden opgemeten met de lichtsensor in verschillende lichtomstandigheden.\\
-meetwaarden en grafieken toevoegen: bvb grijskaart (dat zijn standaardkleuren) toevoegen en waarden van de sensor in verschillenden lichtsituaties
+De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe meer dit licht geabsorbeerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.\\
+De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht (VL - veel licht), in de schaduw (WL - weinig licht), terwijl de robot rijdt (R - rijdend) en terwijl hij stilstaat (NR - niet rijdend). Dit voor alle soorten ondergrond: een paneel, een witte lijn of een zwarte lijn. De resultaten van deze metingen laten toe de lichtsensorwaarden de interpreteren en te simuleren. Een boxplot wordt weergegeven in figuur \ref{fig:boxLicht}. Deze toont dat het gemiddelde weinig afhangt van de omstandigheden. De afwijking wordt echter sterk bepaald door het feit of de robot rijdt of stilstaat.
 
-%resultaten meetwaarden
-\begin{table}[hb]
+%boxplot lichtsensor
+\begin{figure}[tbp]
 \begin{center}
-\begin{tabular}{ r || c | c | c | c | c | c | c | c}
-max & 56 & 55 & 56 & 55 & 55 & 50 & 50 & 50 \\ \hline
-$Q_{0,75}$ & 56 & 55 & 55 & 55 & 50 & 49 & 50 & 50 \\ \hline
-mediaan & 55 & 55 & 55 & 55 & 49 & 49 & 49 & 50 \\ \hline
-$Q_{0,25}$ & 55 & 55 & 55 & 55 & 49 & 49 & 49 & 50 \\ \hline
-min & 49 & 55 & 49 & 55 & 47 & 49 & 47 & 50
-\end{tabular}
-\caption{Resultaten}
-\label{tab:result}
+    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
+    \caption{Boxplot meetwaarden lichtsensor}
+    \label{fig:boxLicht}
 \end{center}
-\end{table}
+\end{figure}
 
-\subsection{Calibratie van de ultrasone sensor} % niet in orde demo2! + meetwaarden!
+\subsection{Calibratie van de ultrasone sensor} % 3 TE WEINIG TESTS + BOXPLOTS
 \label{ssec:calibUS}
-Verschillende afstanden werden opgemeten voor de ultrasone sensor.\\
-meetwaarden en grafieken toevoegen
+Een ultrasone sensor zendt ultrasone geluidsgolven uit. De golven weerkaatsen op een object dat zich binnen het bereik bevindt. Bij ontvangst van zijn eigen geluidsgolven, weet de robot dat er een object in de buurt is.\\
+In het kader van een doolhof, kan een robot muren tegenkomen als objecten. Maar ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om een onderscheid te maken tussen de paaltjes en de muren, dient de meetwaarde pas ge\"iterpreteerd worden wanneer de sensor aangeeft dat hij zich op 20 cm van een object bevindt. In dat geval kan het object veilig als muur geïnterpreteerd worden. Deze veiligheidsmarge werd vastgelegd op basis van testen.\\
+% WELKE TESTEN?? MEETRESULTATEN!!!
+De afwijking van de ultrasone sensor wordt gemeten door de robot op 30 cm van een muur te zetten en de bekomen meetwaarden te interpreteren. De robot staat in eerste instantie loodrecht ten opzichte van de muur en vervolgens met een afwijking van 20\degree van deze loodrecht stand. Een boxplot van de meetwaarden wordt weergegeven in figuur \ref{fig:boxUltra}.
+% OOK VOOR ANDERE AFSTANDEN METEN!!!
 
-\begin{table}[hb]
+%boxplot lichtsensor
+\begin{figure}[tbp]
 \begin{center}
-    \begin{tabular}{  l || c | c  }
-     & rechts & scheef  \\ \hline \hline
-     32 & 32 & 32 \\
-     32 & 32 & 33 \\
-	    & 31 & 32 \\
-	 32 & 32 & 32 \\
-	 32 & 33 & 32 \\
-	 33 & 32 & 32 \\
-	 33 & 32 & 33 \\ \hline
-     27 & 28 & 29 \\
-     27 & 28 & 29 \\
-     27 & 28 & 29 \\
-     27 & 30 & 29 \\
-     28 & 27 & 28 \\
-     28 & 27 & 29 \\
-    \end{tabular}
-    \caption{Resultaten calibratie van de ultrasone sensor}
-    \label{tab:resultCaliUltra}
+    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
+    \caption{Boxplot meetwaarden ultrasone sensor}
+    \label{fig:boxUltra}
 \end{center}
-\end{table}
+\end{figure}
 
 % == ALGORITMES == %
 \section{Algoritmes} % 3 ?

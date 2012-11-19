@@ -1,3 +1,5 @@
+Lichtsensor - meetwaarden op een witte lijn, bij veel licht en terwijl de robot stilstaat.
+
 53
 55
 55
