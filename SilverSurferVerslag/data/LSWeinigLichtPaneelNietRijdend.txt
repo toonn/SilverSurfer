@@ -1,3 +1,5 @@
+Lichtsensor - meetwaarden op het paneel, bij weinig licht en terwijl de robot stilstaat
+
 49
 49
 49
