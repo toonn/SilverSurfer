@@ -543,6 +543,7 @@ public class SilverSurferGUI {
         if(robotConnected){
         	((SimulatorCommunicator)prevCommunicator).getSim().updateArc(latestUltraSensor);
         }
+        else ((SimulatorCommunicator) unitCommunicator).getSim().updateArc(latestUltraSensor);
     }
 
     private static void redirectSystemStreams() {

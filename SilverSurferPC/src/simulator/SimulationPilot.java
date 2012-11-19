@@ -302,11 +302,17 @@ public class SimulationPilot {
 		double XOther = point.getX() + Orientation.getOtherPointLine(currentOrientation)[0];
 		double YOther =	point.getY() + Orientation.getOtherPointLine(currentOrientation)[1];
 
-		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY()) > 21 ){
+		Double distance = Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
+		if(distance > 21 ){
 			return false;
 		}
 
-		return this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL;
+		if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL){
+			getSSG().getInformationBuffer().addUltraSensorInfo(distance.intValue());
+			return true;
+		}
+		
+		return false;
 	}
 
 

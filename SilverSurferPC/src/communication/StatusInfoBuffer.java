@@ -24,7 +24,7 @@ public class StatusInfoBuffer {
 	/**
 	 * Amount of datapoints kept by this buffer.
 	 */
-	private final int BUFFER_SIZE = 1000;
+	private final int BUFFER_SIZE = 300;
 	
 	private LSInfoNode startLSInfo = new LSInfoNode();
 	private LSInfoNode endLSInfo = new LSInfoNode();
