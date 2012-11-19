@@ -19,7 +19,7 @@ import mapping.*;
 public class SimulationJPanel extends JPanel {
 
 	private SilverSurferGUI SSG;
-	private SimulationPilot simulatorPilot;
+	private SimulationPilot simulationPilot;
 
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
@@ -136,7 +136,9 @@ public class SimulationJPanel extends JPanel {
 	}
 	
 	public void updateArc(double robotX, double robotY, double robotAngle, double USDistance){
-		double correctedUSDistance = USDistance-5.5;
+		double correctedUSDistance = USDistance;
+		if (simulationPilot.isRealRobot())
+			correctedUSDistance = correctedUSDistance-5.5;
 		double arcUpperLeftX = robotX-correctedUSDistance;
 		double arcUpperLeftY = robotY-correctedUSDistance;
 		double arcStart = 360 - robotAngle - 15;
@@ -153,14 +155,15 @@ public class SimulationJPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics graph) {
 		paintPathComponent(graph);
-		paintGridComponent(graph);
 		paintWallComponent(graph);
 		paintBeamComponent(graph);
+		paintGridComponent(graph);
+
 	}
 
 	private void paintBeamComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
-		if(simulatorPilot != null && simulatorPilot.isRealRobot())
+		if(simulationPilot != null && simulationPilot.isRealRobot())
 		{
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
                     0.4f));
@@ -219,9 +222,9 @@ public class SimulationJPanel extends JPanel {
 				x = (int) ((Triangle) s).getGravityCenterX();
 				y = (int) ((Triangle) s).getGravityCenterY();
 
-				if(simulatorPilot!= null)
+				if(simulationPilot!= null)
 				{
-					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulatorPilot.getAlpha() + "°, Map: " + simulatorPilot.getMapString() + ")");
+					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
 				}
 				else
 				{
@@ -273,8 +276,12 @@ public class SimulationJPanel extends JPanel {
 		return SSG;
 	}
 
-	public void setSimulatorPilot(SimulationPilot simulatorPilot) {
-		this.simulatorPilot = simulatorPilot;
+	public SimulationPilot getSimulationPilot() {
+		return this.simulationPilot;
+	}
+	
+	public void setSimulationPilot(SimulationPilot simulationPilot) {
+		this.simulationPilot = simulationPilot;
 	}
 
 	/**
@@ -332,7 +339,7 @@ public class SimulationJPanel extends JPanel {
 	//die gebruikt wordt! miss werkt het als de juiste methode in die mouseclickthread staat!
 	public void checkForObstructions()
 	{
-		simulatorPilot.checkForObstructions();
+		simulationPilot.checkForObstructions();
 	}
 	
 	public BufferedImage getVerticalWallImage() {
