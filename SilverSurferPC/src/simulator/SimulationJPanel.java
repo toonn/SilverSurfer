@@ -160,6 +160,7 @@ public class SimulationJPanel extends JPanel {
 
 	private void paintBeamComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
+
 		if(simulationPilot != null && simulationPilot.isRealRobot())
 		{
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,

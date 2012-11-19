@@ -17,6 +17,7 @@ public class ExtMath {
 	 * 			|   (Direction.getNumberDirection(direction)%2 == 0)
 	 */
 	public static boolean isNumberDirectionEven(Orientation orientation){
+
 		return (orientation.getNumberOrientation()%2 == 0);
 	}
 

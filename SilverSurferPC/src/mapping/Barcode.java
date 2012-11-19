@@ -18,7 +18,7 @@ public class Barcode extends TileContent{
 	public Barcode(){
 		this(0);
 	}
-	
+
 	/**
 	 * Gets the decimal value this barcode represents. Should be used to perform the right action.
 	 */
@@ -45,7 +45,6 @@ public class Barcode extends TileContent{
 		return 0;
 	}
 
-	
 	@Override
 	public String toString() {
 		return "Barcode-value: " + getValue();

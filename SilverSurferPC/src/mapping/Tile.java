@@ -285,7 +285,6 @@ public class Tile{
 			setEdge(orientation, edge);
 			edge.setTileAtRightField(orientation, this);
 			edge.setNumberPairDirections(orientation.getNumberOrientation()%3);
-			
 		}
 		
 		/**

@@ -1,7 +1,6 @@
 package mapping;
 
 public enum Orientation {
-
 	NORTH
 	{
 		@Override
@@ -365,5 +364,4 @@ public enum Orientation {
 		else
 			return WEST;
 	}
-
 }

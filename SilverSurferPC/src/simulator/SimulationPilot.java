@@ -216,6 +216,7 @@ public class SimulationPilot {
 						this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + (i-1)*Math.cos(Math.toRadians(this.getAlpha()))));
 						this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + (i-1)*Math.sin(Math.toRadians(this.getAlpha()))));
 						this.getSSG().updateStatus();
+						
 						System.out.println("Er staat een muur in de weg");
 						return;
 					}
@@ -236,8 +237,8 @@ public class SimulationPilot {
 			}
 			this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
 			this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
-			this.getSSG().updateStatus();
 
+			this.getSSG().updateStatus();
 		}
 
 
@@ -255,7 +256,9 @@ public class SimulationPilot {
 					if(onEdge(xOld, yOld) && this.getMapGraph().getObstruction(currentOrientation)!=null ){
 						this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + (i+1)*Math.cos(Math.toRadians(this.getAlpha()))));
 						this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + (i+1)*Math.sin(Math.toRadians(this.getAlpha()))));
+
 						this.getSSG().updateStatus();
+
 						System.out.println("Er staat een muur in de weg");
 						return;
 					}
@@ -271,8 +274,8 @@ public class SimulationPilot {
 
 				this.setCurrentPositionAbsoluteX((double) (this.getCurrentPositionAbsoluteX() + distance*Math.cos(Math.toRadians(this.getAlpha()))));
 				this.setCurrentPositionAbsoluteY((double) (this.getCurrentPositionAbsoluteY() + distance*Math.sin(Math.toRadians(this.getAlpha()))));
-				this.getSSG().updateStatus();
 
+				this.getSSG().updateStatus();
 			}
 		}
 	}
@@ -351,6 +354,7 @@ public class SimulationPilot {
 	public void rotate(double alpha) {
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
 		this.getSSG().getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
+		
 		this.getSSG().updateStatus();
 
 		//weer een checkForObstructions
@@ -419,20 +423,17 @@ public class SimulationPilot {
 		}
 	}
 	
-	/**
-	 * Returns a number from a normal districution that represents a ultrasonic sensor value.
-	 * 
-	 * nog niet af!! dit is slechts een schets van hoe de methode moet worden.
-	 */
 	public int getUltraSensorValue()
 	{
 		if(this.isRealRobot())
 		{
 			return SilverSurferGUI.getInformationBuffer().getLatestUltraSensorInfo();
+
 		}
 		else
 		{
 			Random random = new Random();
+
 			double mean = this.calculateDistanceToWall();
 			double standardDeviation = SimulationSensorData.getSDUS();
 			
@@ -452,6 +453,7 @@ public class SimulationPilot {
 			return false;
 		}
 	}
+		
 	public boolean getTouchSensor2Value()
 	{
 		if(this.isRealRobot())
@@ -471,7 +473,6 @@ public class SimulationPilot {
 		return 0;
 	}
 
-
 	public void allignOnWhiteLine(){
 		Orientation orientation = Orientation.calculateOrientation(getCurrentPositionAbsoluteX(),
 				getCurrentPositionAbsoluteY(), getAlpha());
@@ -481,6 +482,7 @@ public class SimulationPilot {
 		}
 
 		double requiredAlpha = (double) orientation.getRightAngle();
+
 		//		double requiredAlpha = Math.round(getAlpha()/90) * 90;
 		while (!(getAlpha()<requiredAlpha+1 && getAlpha()>requiredAlpha-1) ){
 			if(getAlpha() < requiredAlpha){
@@ -554,7 +556,7 @@ public class SimulationPilot {
 		(y%40) > 40-this.getEdgeMarge() || (y%40) < this.getEdgeMarge();
 
 	}
-	
+
 	/**
 	 * True if the robot is on an edge and this edge is not a wall
 	 */
@@ -590,7 +592,6 @@ public class SimulationPilot {
 			return !this.onEdge(x,y) && (this.getMapGraph().getContentCurrentTile() instanceof Barcode) ;
 		}
 	}
-
 
 	//zet een double om in een veelvoud van 40 kleiner dan de double (ook bij negatief
 	//maar doet normaal niet ter zake aangezien de coordinaten in het echte coordinatensysteem 
