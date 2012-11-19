@@ -199,6 +199,7 @@ public class SimulationPilot {
 		double xOld = this.getCurrentPositionAbsoluteX();
 		double yOld = this.getCurrentPositionAbsoluteY();
 		Orientation currentOrientation; 
+		SimulationSensorData.setDriving(true);
 
 		if(distance >= 0) {
 
@@ -278,6 +279,8 @@ public class SimulationPilot {
 				this.getSSG().updateStatus();
 			}
 		}
+		SimulationSensorData.setDriving(false);
+
 	}
 
 	/**
@@ -358,6 +361,7 @@ public class SimulationPilot {
 	}
 
 	public void rotate(double alpha) {
+		SimulationSensorData.setDriving(true);
 		this.setAlpha(ExtMath.addDegree(this.getAlpha(), alpha));
 		this.getSSG().getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
 		
@@ -370,6 +374,8 @@ public class SimulationPilot {
 					addWall();
 				}}
 		}
+		SimulationSensorData.setDriving(false);
+
 	}
 
 
@@ -425,6 +431,7 @@ public class SimulationPilot {
 				standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
 			}
 			
+			System.out.println((mean + (random.nextGaussian() * standardDeviation)));
 			return (int) Math.round(mean + (random.nextGaussian() * standardDeviation));
 		}
 	}
