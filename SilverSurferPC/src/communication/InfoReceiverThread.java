@@ -77,6 +77,8 @@ public class InfoReceiverThread extends Thread {
 					System.out.println("Align on walls: " + Boolean.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[RLA]"))
 					System.out.println("Look around: " + a.substring(6).trim());
+				else if(a.startsWith("[BC]"))
+					infoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
 			} catch (IOException e) {
 
 			}

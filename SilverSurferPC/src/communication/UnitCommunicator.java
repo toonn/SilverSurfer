@@ -62,4 +62,6 @@ public class UnitCommunicator {
 	public String getConsoleTag() {
 		return "";
 	}
+	
+	public void playSong() {}
 }

@@ -15,6 +15,7 @@ public class StatusInfoBuffer {
 	private int leftMotorSpeed;
 	private int rightMotorSpeed;
 	private boolean busy;
+	private int barcode;
 
 	private SilverSurferGUI SSG;
 	/**
@@ -353,5 +354,14 @@ public class StatusInfoBuffer {
 	public void setBusy(boolean busy) {
 		this.busy = busy;
 		SSG.updateStatus();
+	}	
+	
+	public int getBarcode() {
+		return barcode;
+	}
+	
+	public void setBarcode(int barcode) {
+		this.barcode = barcode;
+		SSG.executeBarcode();
 	}
 }

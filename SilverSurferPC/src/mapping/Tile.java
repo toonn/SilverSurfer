@@ -7,6 +7,8 @@ public class Tile{
 	private int xCoordinate;
 	private int yCoordinate;
 	private TileContent content;
+	private boolean marking = false;
+	private int manhattanValue;
 	
 	public Tile(int x, int y){
 		setxCoordinate(x);
@@ -20,9 +22,28 @@ public class Tile{
 	 * and the tile west of that one is: (-1,1).
 	 * @return
 	 */
+	
+	public int getManhattanValue(){
+		return manhattanValue;
+	}
+	
+	public void setManhattanValue(int manhattanValue){
+		this.manhattanValue = manhattanValue;
+	}
+	
 	public int getxCoordinate() {
 		return xCoordinate;
 	}
+	
+	public void setMarking (boolean marking){
+		this.marking = true;
+
+	}
+	
+	public boolean isMarked(){
+		return marking;
+	}
+	
 	public void setxCoordinate(int xCoordinate) {
 		this.xCoordinate = xCoordinate;
 	}
