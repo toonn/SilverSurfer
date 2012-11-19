@@ -2,6 +2,8 @@ package communication;
 
 import java.io.IOException;
 
+import commands.Command;
+
 public class UnitCommunicator {
 
 	protected static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward in a polygon.
@@ -63,5 +65,11 @@ public class UnitCommunicator {
 		return "";
 	}
 	
-	public void playSong() {}
+	public void playSong() {
+		try {
+			sendCommandToUnit(Command.PLAY_SONG);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

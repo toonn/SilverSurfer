@@ -345,6 +345,7 @@ public class SimulationPilot {
                 YOther, getCurrentPositionAbsoluteX(),
                 getCurrentPositionAbsoluteY());
         if (distance > 21) {
+        	SilverSurferGUI.getInformationBuffer().addUltraSensorInfo(10);
             return false;
         }
 

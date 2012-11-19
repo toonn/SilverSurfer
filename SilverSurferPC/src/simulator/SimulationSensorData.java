@@ -11,7 +11,7 @@ public class SimulationSensorData
 {
 	// whether there the light is bright or quite dark. influences the light sensor
 	private static boolean isBrightLight = true;
-	private static boolean isDriving = false;
+	private static boolean isDriving = true;
 
 	private static boolean isBrightLight()
 	{
