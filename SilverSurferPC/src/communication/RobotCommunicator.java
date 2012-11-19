@@ -92,4 +92,13 @@ public class RobotCommunicator extends UnitCommunicator {
 	public String getConsoleTag() {
 		return "[ROBOT]";
 	}
+	
+	@Override
+	public void playSong() {
+		try {
+			sendCommandToUnit(18);
+		} catch (Exception e) {
+			
+		}
+	}
 }

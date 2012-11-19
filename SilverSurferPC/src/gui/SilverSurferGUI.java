@@ -626,7 +626,7 @@ public class SilverSurferGUI {
 		}
 	}
 
-	private static void addListeners() {
+	private void addListeners() {
 		bluetoothConnect.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
@@ -1068,11 +1068,7 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				unitCommunicator.setSpeed(speedvalues.getValue());
-				if (robotConnected)
-					prevCommunicator.setSpeed(speedvalues.getValue());
-				speedLabel.setText("Current Speed Level: " + speedvalues.getValue());
-				System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: " + speedvalues.getValue() + ".");
+				changeSpeed(speedvalues.getValue());
 				simulationPanel.requestFocusInWindow();
 			}
 		});
@@ -1346,6 +1342,14 @@ public class SilverSurferGUI {
 			}
 		});
 	}
+	
+	public void changeSpeed(int value) {
+		unitCommunicator.setSpeed(value);
+        if (robotConnected)
+            prevCommunicator.setSpeed(value);
+        speedLabel.setText("Current Speed Level: " + value);
+        System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: " + value + ".");
+	}
 
 	private static javax.swing.border.Border createBorder() {
 		return BorderFactory.createEtchedBorder(1);
@@ -1361,7 +1365,12 @@ public class SilverSurferGUI {
 
 	public static StatusInfoBuffer getInformationBuffer() {
 		return informationBuffer;
-	}
+	}    
+	
+    public void executeBarcode() {
+    	BarDecoder barDecoder = new BarDecoder(this, unitCommunicator);
+    	barDecoder.decode(informationBuffer.getBarcode());
+    }
 
 	public static void main(String[] args) {
 		SilverSurferGUI SSG = new SilverSurferGUI();
