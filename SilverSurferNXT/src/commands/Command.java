@@ -20,4 +20,5 @@ public class Command {
 	public static final int ALIGN_WALL = 15;
 	public static final int CLOSE_CONNECTION = 16;
 	public static final int LOOK_AROUND = 17;
+	public static final int PLAY_SONG = 18;
 }
