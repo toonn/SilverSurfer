@@ -161,26 +161,22 @@ public class SimulationSensorData
 			{
 				if(isDriving())
 				{
-					// to be implemented!
-					return 0;
+					return 33.05;
 				}
 				else
 				{
-					// to be implemented!
-					return 0;
+					return 34;
 				}
 			}
 			else
 			{
 				if(isDriving())
 				{
-					// to be implemented!
-					return 0;
+					return 33.42;
 				}
 				else
 				{
-					// to be implemented!
-					return 0;
+					return 33;
 				}
 			}
 		}
@@ -209,12 +205,10 @@ public class SimulationSensorData
 			{
 				if(isDriving())
 				{
-					// to be implemented!
-					return 0;
+					return 0.272790608;
 				}
 				else
 				{
-					// to be implemented!
 					return 0;
 				}
 			}
@@ -222,12 +216,10 @@ public class SimulationSensorData
 			{
 				if(isDriving())
 				{
-					// to be implemented!
-					return 0;
+					return 0.575648536;
 				}
 				else
 				{
-					// to be implemented!
 					return 0;
 				}
 			}
@@ -249,7 +241,6 @@ public class SimulationSensorData
 	 */
 	public static final double getSDUS()
 	{
-		// to be implemented!
-		return 0;
+		return 0.523148364;
 	}
 }
