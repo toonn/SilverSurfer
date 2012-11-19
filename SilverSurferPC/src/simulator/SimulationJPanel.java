@@ -136,7 +136,9 @@ public class SimulationJPanel extends JPanel {
 	}
 	
 	public void updateArc(double robotX, double robotY, double robotAngle, double USDistance){
-		double correctedUSDistance = USDistance-5.5;
+		double correctedUSDistance = USDistance;
+		if (simulationPilot.isRealRobot())
+			correctedUSDistance = correctedUSDistance-5.5;
 		double arcUpperLeftX = robotX-correctedUSDistance;
 		double arcUpperLeftY = robotY-correctedUSDistance;
 		double arcStart = 360 - robotAngle - 15;
@@ -153,14 +155,14 @@ public class SimulationJPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics graph) {
 		paintPathComponent(graph);
-		paintGridComponent(graph);
 		paintWallComponent(graph);
 		paintBeamComponent(graph);
+		paintGridComponent(graph);
+
 	}
 
 	private void paintBeamComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
-
 		if(simulationPilot != null && simulationPilot.isRealRobot())
 		{
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
