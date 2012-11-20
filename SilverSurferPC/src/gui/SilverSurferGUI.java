@@ -265,6 +265,7 @@ public class SilverSurferGUI {
 												GroupLayout.Alignment.CENTER)
 												.addComponent(resetpolygonButton)
 												.addComponent(polygondraw)));
+		polygonPanel.hide();
 
 		return polygonPanel;
 	}
@@ -311,6 +312,8 @@ public class SilverSurferGUI {
 						arrowlayout.createSequentialGroup()
 						.addComponent(uparrow).addComponent(downarrow))
 						.addComponent(rightarrow));
+		
+		arrowPanel.hide();
 
 		return arrowPanel;
 	}
