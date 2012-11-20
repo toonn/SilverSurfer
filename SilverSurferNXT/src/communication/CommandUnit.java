@@ -179,11 +179,17 @@ public class CommandUnit {
                     CU.sendStringToUnit("[RLA] " + CU.resultLookAround);
                     CU.setCurrentState(new Waiting());
                     break;
+                case (Command.PLAY_SONG):
+    				SongThread ST = new SongThread();
+    				ST.start();
+    				break;
                 default:
                     if (input % 10 == 8) {
                         Automatic auto = new Automatic();
                         CU.setCurrentState(auto);
-                        auto.moveForward((int) (input - Command.AUTOMATIC_MOVE_FORWARD) / 100);
+                        int result = auto.moveForward((int) (input-Command.AUTOMATIC_MOVE_FORWARD)/100, CU.lightSensor, CU.ultrasonicSensor);
+    	    			if(result != 0)
+    	    				CU.sendStringToUnit("[BC] " + result);
                         CU.setCurrentState(new Waiting());
                     } else if (input % 10 == 9) {
                         Automatic auto = new Automatic();

@@ -5,22 +5,22 @@
 \contentsline {subsection}{\numberline {2.2}Calibratie van de motoren}{3}
 \contentsline {subsubsection}{\numberline {2.2.1}E\'en cm vooruit bewegen: bepalen van x}{3}
 \contentsline {subsubsection}{\numberline {2.2.2}Volledig rond de as draaien: bepalen van y}{4}
-\contentsline {subsection}{\numberline {2.3}Calibratie van de lichtsensor}{4}
-\contentsline {subsection}{\numberline {2.4}Calibratie van de ultrasone sensor}{4}
-\contentsline {section}{\numberline {3}Algoritmes}{4}
-\contentsline {subsection}{\numberline {3.1}Het rijden van een veelhoek}{4}
-\contentsline {subsection}{\numberline {3.2}Het rechtzetten op een witte lijn}{5}
-\contentsline {section}{\numberline {4}Software}{5}
-\contentsline {subsection}{\numberline {4.1}Software ontwerp}{6}
-\contentsline {subsection}{\numberline {4.2}Het doorgeven van commando's}{6}
-\contentsline {subsubsection}{\numberline {4.2.1}De bewerking op de integers}{6}
-\contentsline {subsection}{\numberline {4.3}GUI}{9}
-\contentsline {subsection}{\numberline {4.4}Bluetooth}{10}
-\contentsline {subsection}{\numberline {4.5}Robot}{10}
-\contentsline {subsection}{\numberline {4.6}Simulator}{11}
-\contentsline {section}{\numberline {5}Besluit}{11}
+\contentsline {subsection}{\numberline {2.3}Calibratie van de lichtsensor}{5}
+\contentsline {subsection}{\numberline {2.4}Calibratie van de ultrasone sensor}{5}
+\contentsline {section}{\numberline {3}Algoritmes}{6}
+\contentsline {subsection}{\numberline {3.1}Het rijden van een veelhoek}{6}
+\contentsline {subsection}{\numberline {3.2}Het rechtzetten op een witte lijn}{7}
+\contentsline {section}{\numberline {4}Software}{7}
+\contentsline {subsection}{\numberline {4.1}Software ontwerp}{7}
+\contentsline {subsection}{\numberline {4.2}Het doorgeven van commando's}{10}
+\contentsline {subsubsection}{\numberline {4.2.1}De bewerking op de integers}{10}
+\contentsline {subsection}{\numberline {4.3}GUI}{10}
+\contentsline {subsection}{\numberline {4.4}Bluetooth}{11}
+\contentsline {subsection}{\numberline {4.5}Robot}{12}
+\contentsline {subsection}{\numberline {4.6}Simulator}{12}
+\contentsline {section}{\numberline {5}Besluit}{12}
 \setcounter {tocdepth}{1}
-\contentsline {section}{\numberline {A}Demo 1}{12}
-\contentsline {subsection}{\numberline {A.1}Resultaten}{12}
-\contentsline {subsection}{\numberline {A.2}Conclusies}{12}
-\contentsline {subsection}{\numberline {A.3}Oplijsting aanpassingen verslag}{12}
+\contentsline {section}{\numberline {A}Demo 1}{14}
+\contentsline {subsection}{\numberline {A.1}Resultaten}{14}
+\contentsline {subsection}{\numberline {A.2}Conclusies}{14}
+\contentsline {subsection}{\numberline {A.3}Oplijsting aanpassingen verslag}{14}

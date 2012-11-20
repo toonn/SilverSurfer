@@ -1,0 +1,39 @@
+99.1
+100
+99.1
+99.4
+99.6
+99.9
+100
+99.5
+99.4
+99.7
+--> ongeveer 99.7 cm bij 10 x 10cm vooruit
+
+1.8
+2.3
+2.1
+1.7
+1.9
+2.2
+2.3
+1.8
+--> ongeveer 2 cm afwijking naar links bij 10 x 10cm vooruit+
+
+4
+3
+4
+4
+5
+--> ongeveer 4 graden afwijking bij 4 x 90 graden draaien
+
+lichtsensor:
+49-50 (plakaat)
+51 (plakaat met fietslicht op 20 cm)
+55-56 (witte lijn)
+57 (witte lijn met fietslicht op 20 cm)
+
+ultrasonic:
+20: kan volledig ronddraaien
+19: kan (juist) volledig ronddraaien
+18: kan volledig ronddraaien maar zal eindigen op 19 ipv 18

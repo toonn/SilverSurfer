@@ -1,0 +1,20 @@
+Ultrasone sensor - meetwaarden op 30 cm van een muur, maar met 20° afwijking op de loodrechte (de robot staat scheeft t.o.v. de muur)
+
+27
+28
+29
+27
+28
+29
+27
+28
+29
+27
+30
+29
+28
+27
+28
+28
+27
+29

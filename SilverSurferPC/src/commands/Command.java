@@ -15,6 +15,7 @@ public class Command {
 	public static final int ALIGN_PERPENDICULAR = 14;
 	public static final int ALIGN_WALL = 15;
 	public static final int LOOK_AROUND = 17;
+	public static final int PLAY_SONG = 18;
 	
 	public static String toConsoleString(int c) {
 		if (c == FORWARD_PRESSED)
@@ -39,6 +40,8 @@ public class Command {
 		    return "Aligning on walls";
 		else if (c == LOOK_AROUND)
 		    return "Looking around";
+		else if (c == PLAY_SONG)
+			return "Playing a song";
 		return " ";
 	}
 }

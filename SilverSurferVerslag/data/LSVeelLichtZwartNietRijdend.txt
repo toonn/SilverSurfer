@@ -1,3 +1,5 @@
+Lichtsensor - meetwaarden op het zwart van de barcode, bij veellicht en terwijl de robot stilstaat.
+
 34
 34
 34

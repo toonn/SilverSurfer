@@ -1,3 +1,5 @@
+Lichtsensor - meetwaarden op het zwart van de barcode, bij weinig licht en terwijl de robot rijdt.
+
 33
 33
 33

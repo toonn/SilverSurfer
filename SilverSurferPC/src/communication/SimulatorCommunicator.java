@@ -1,5 +1,6 @@
 package communication;
 
+import audio.SongThread;
 import commands.Command;
 import simulator.SimulationPilot;
 
@@ -77,7 +78,11 @@ public class SimulatorCommunicator extends UnitCommunicator {
 		else if(command == Command.ALIGN_WALL)
 			sim.allignOnWalls();
 		else if(command == Command.LOOK_AROUND)
-            sim.checkForObstructions();
+            sim.checkForObstructions();		
+		else if(command == Command.PLAY_SONG){
+    			SongThread song = new SongThread(); 
+    			song.start();
+		}
 		else if(command%10 == Command.AUTOMATIC_MOVE_FORWARD)
 			sim.travel((command-Command.AUTOMATIC_MOVE_FORWARD)/100);
 		else if(command%10 == Command.AUTOMATIC_TURN_ANGLE)
@@ -103,5 +108,7 @@ public class SimulatorCommunicator extends UnitCommunicator {
 	
 	public void clear() {
 		sim.clear();
-	}
+	}	
+	
+	
 }

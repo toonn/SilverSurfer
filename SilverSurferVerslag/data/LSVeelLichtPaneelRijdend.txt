@@ -1,3 +1,5 @@
+Lichtsensor - meetwaarden op het paneel, bij veel licht en terwijl de robot rijdt.
+
 47
 49
 49
