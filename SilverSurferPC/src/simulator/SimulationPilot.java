@@ -24,6 +24,7 @@ import mapping.*;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.io.Console;
 import java.io.File;
 import java.util.Random;
 
@@ -512,33 +513,99 @@ public class SimulationPilot {
 		 }
 	 }
 
+	 /**
+	  * Calculates the distance to the first wall the robot will encounter facing its current orientation.
+	  * Returns 250 if no map is loaded or no wall is found whithin the range of the sensor.
+	  * The maximum range of the sensor is 120 cm.
+	  * 
+	  * By virtually moving forward (the temporary coordinates) en on every border checking whether there is a wall.
+	  * If so, you calculate the distance to is. If not, keep om moving (the robot doesn't move!)
+	  */
 	 private double calculateDistanceToWall()
 	 {
+		 // current temporary position; to check whether there are walls in the direction the robot is facing
 		 double xTemp = this.getCurrentPositionAbsoluteX();
 		 double yTemp = this.getCurrentPositionAbsoluteY();
+		 // keep the last temporary position, so you can compare with the current temporary position
+		 double xTempPrev = this.getCurrentPositionAbsoluteX();
+		 double yTempPrev = this.getCurrentPositionAbsoluteY();
+
+		 if(this.getMapGraph() == null)
+		 {
+			 return 250;
+		 }
+		 Tile tileTemp = this.getMapGraph().getCurrentTile();
 		 int i = 1;
 
 		 while(i < 120)
 		 {
-			 while(!(((xTemp%40) > 40-this.getEdgeMarge() || (xTemp%40) < this.getEdgeMarge())
-					 || ((yTemp%40) > 40-this.getEdgeMarge() || (yTemp%40) < this.getEdgeMarge())))
+			 while(!(Math.abs(xTempPrev%40 - xTemp%40) > 5) && !(Math.abs(yTempPrev%40 - yTemp%40) > 5))
 			 {
+				 xTempPrev = xTemp;
+				 yTempPrev = yTemp;
+				 
 				 xTemp = (double) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
 				 yTemp = (double) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 				 i++;
 			 }
 
-			 Orientation ori = Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), this.getAlpha());
-			 // dit klopt enkel de eerste loop !!
-			 if(!this.getMapGraph().getCurrentTile().getEdge(ori).isPassable())
+			 Orientation oriTemp = null;
+			 
+			 // you have crossed a horizontal border
+			 if(Math.abs(yTempPrev%40 - yTemp%40) > 5)
 			 {
-				 return Math.sqrt(Math.pow(xTemp, 2) + Math.pow(yTemp, 2));
+				 if(yTempPrev%40 < 20)
+				 {
+					 oriTemp = Orientation.NORTH;
+				 }
+				 //if(xTempPrev%40 < 20)
+				 else
+				 {
+					 oriTemp = Orientation.SOUTH;
+				 }
 			 }
+			// you have crossed a vertical border
+			 else if(Math.abs(xTempPrev%40 - xTemp%40) > 5)
+			 {
+				 if(xTempPrev%40 > 20) 
+				 {
+					 oriTemp = Orientation.EAST;
+				 }
+				 //if(xTempPrev%40 < 20)
+				 else
+				 {
+					 oriTemp = Orientation.WEST;
+				 }
+			 }
+			 else
+			 {
+				 // no orientation is calculated!
+				 return 0;
+			 }
+			 
+			 // the edge you have found, does not contain a wall, you can look right over it.
+			 // change the current tile to the next tile en move a few steps foreward (with the temporary coordinates).
+			 if(tileTemp.getEdge(oriTemp).isPassable())
+			 {
+				 tileTemp = tileTemp.getEdge(oriTemp).getNeighbour(tileTemp);
+				 for(int j = 0; j<35; j++)
+				 {
+					 xTempPrev = xTemp;
+					 yTempPrev = yTemp;
 
+					 xTemp = (double) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+					 yTemp = (double) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+					 i++;
+				 }
+			 }
+			 else
+			 {
+				 return Math.sqrt(Math.pow(xTemp-this.getCurrentPositionAbsoluteX(), 2) + Math.pow(yTemp-this.getCurrentPositionAbsoluteY(), 2));
+			 }
 		 }
-		
-
-		 return 0;
+		 
+	     // no wall is found within the range of the ultrasonic sensor
+		 return 250;
 	 }
 
 		 public void allignOnWhiteLine() {
