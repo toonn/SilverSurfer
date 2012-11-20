@@ -152,15 +152,24 @@ public class SimulationJPanel extends JPanel {
 		this.isUpdated = isUpdated;
 	}
 
+	/**
+	 * Methode die alle paint methodes samenvoegd en uitvoert in het JPanel
+	 */
 	@Override
 	protected void paintComponent(Graphics graph) {
+
 		paintPathComponent(graph);
+//		paintGridComponent(graph);
 		paintWallComponent(graph);
 		paintBeamComponent(graph);
-		paintGridComponent(graph);
+
+
 
 	}
-
+/**
+ * Tekent de beam die de ultrasone sensor voorstelt op de JPanel
+ * @param graph
+ */
 	private void paintBeamComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
 		if(simulationPilot != null && simulationPilot.isRealRobot())
@@ -172,7 +181,10 @@ public class SimulationJPanel extends JPanel {
 		}
 	}
 
-
+/**
+ * tekent de muren op het JPanel paneel
+ * @param graph
+ */
 	private void paintWallComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
 		((Graphics2D) graph).setColor(Color.BLACK);
@@ -184,7 +196,10 @@ public class SimulationJPanel extends JPanel {
 		}
 	}
 
-
+/**
+ * Tekent het grid (rooster) op de achtergrond van de mapping
+ * @param graph
+ */
 	private void paintGridComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
 
@@ -201,47 +216,119 @@ public class SimulationJPanel extends JPanel {
 			}
 	}
 
+/**
+ * Tekent het pad van de robot en de robot zelf met daarachter het grid.
+ * @param graph
+ */
+	private void paintPathComponent(Graphics graph){
+	super.paintComponent(graph);
+	Vector<Shape> shapesx = new Vector<Shape>();
+	shapesx.addAll(shapes);
 
-	private void paintPathComponent(Graphics graph) {
-		super.paintComponent(graph);
-		Vector<Shape> shapesx = new Vector<Shape>();
-		shapesx.addAll(shapes);
 
-		((Graphics2D) graph).setColor(Color.red);
-		for(Shape s : shapesx)
+	((Graphics2D) graph).setColor(Color.red);
+
+	if(isUpdated){
+		setOtherTriangleVisible();
+		setUpdated(false);
+		}
+	
+	Graphics2D g = (Graphics2D) graph;
+
+	int count = 50;
+	int size = 40;
+
+	((Graphics2D) graph).setColor(Color.lightGray);
+
+	for( int i = 0; i < count; i ++)
+		for( int j = 0; j < count; j++)
 		{
-			int x;
-			int y;
-
-			if(s instanceof Triangle)
-			{
-				if(s.equals(getVisibleTriangle()))
-				{
-					((Graphics2D) graph).fill(s);
-				}
-				x = (int) ((Triangle) s).getGravityCenterX();
-				y = (int) ((Triangle) s).getGravityCenterY();
-
-				if(simulationPilot!= null)
-				{
-					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
-				}
-				else
-				{
-					getSSG().updateCoordinates("Simulator (" + x + " , " + y + ")");
-				}
-			}
-			else
-			{	
-				((Graphics2D) graph).fill(s);
-			}
+			Rectangle grid = new Rectangle( i * size,j * size, size, size);	
+			g.draw(grid);
 		}
 
-		if(isUpdated){
-			setOtherTriangleVisible();
-			setUpdated(false);
+
+	((Graphics2D) graph).setColor(Color.red);
+	for(Shape s : shapesx)
+
+	{
+
+		int x;
+		int y;
+
+		if(s instanceof Triangle)
+		{	if(s.equals(getVisibleTriangle()))
+			((Graphics2D) graph).fill(s);
+		x = (int) ((Triangle) s).getGravityCenterX();
+		y = (int) ((Triangle) s).getGravityCenterY();
+
+
+		if(simulationPilot!= null)
+			getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y )+ " , " + simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
+		else
+			getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y) + ")");
+		
 		}
+		else
+		{	
+			((Graphics2D) graph).fill(s);
+		}
+
 	}
+
+	Graphics2D g3 = (Graphics2D) graph;
+	if(simulationPilot.isRealRobot()){
+		g3.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                0.4f));
+		g3.setColor(new Color(12,24,244));
+		g3.fill(sonarArc);
+	}
+
+
+
+	}
+
+
+//	private void paintPathComponent(Graphics graph) {
+//		super.paintComponent(graph);
+//		Vector<Shape> shapesx = new Vector<Shape>();
+//		shapesx.addAll(shapes);
+//
+//		((Graphics2D) graph).setColor(Color.red);
+//		for(Shape s : shapesx)
+//		{
+//			int x;
+//			int y;
+//
+//			if(s instanceof Triangle)
+//			{
+//				if(s.equals(getVisibleTriangle()))
+//				{
+//					((Graphics2D) graph).fill(s);
+//				}
+//				x = (int) ((Triangle) s).getGravityCenterX();
+//				y = (int) ((Triangle) s).getGravityCenterY();
+//
+//				if(simulationPilot!= null)
+//				{
+//					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
+//				}
+//				else
+//				{
+//					getSSG().updateCoordinates("Simulator (" + x + " , " + y + ")");
+//				}
+//			}
+//			else
+//			{	
+//				((Graphics2D) graph).fill(s);
+//			}
+//		}
+//
+//		if(isUpdated){
+//			setOtherTriangleVisible();
+//			setUpdated(false);
+//		}
+//	}
 
 	public void setRobotLocation(double x, double y, double degrees){
 		this.addCircle(x*1, y*1, degrees);
