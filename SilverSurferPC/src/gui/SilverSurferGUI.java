@@ -525,23 +525,6 @@ public class SilverSurferGUI {
 		return alignPanel;
 	}
 
-	// oude versie van de methode;  
-	//    public void updateStatus() {
-	//        String s = new String(
-	//        		"(US: " + informationBuffer.getLatestUltraSensorInfo()
-	//        		+ ", LS: " + informationBuffer.getLatestLightSensorInfo()
-	//        		+ ", TS1: " + informationBuffer.getLatestTouchSensor1Info()
-	//              + ", TS2: " + informationBuffer.getLatestTouchSensor2Info()
-	//              + ", LM: " + informationBuffer.getLeftMotorMoving() + " " + informationBuffer.getLeftMotorSpeed()
-	//              + ", RM: " + informationBuffer.getRightMotorMoving() + " " + informationBuffer.getRightMotorSpeed()
-	//              + ", B: " + informationBuffer.getBusy() + ")");
-	//        consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Output " + s));
-	//        
-	//        if(robotConnected){
-	//        	((SimulatorCommunicator)prevCommunicator).getSim().updateArc(informationBuffer.getLatestUltraSensorInfo());
-	//        }
-	//    }
-
 	public void updateStatus() {
 		String s = new String(
 				"(US: " + this.getSimulationPanel().getSimulationPilot().getUltraSensorValue()
@@ -552,10 +535,6 @@ public class SilverSurferGUI {
 				+ ", RM: " + informationBuffer.getRightMotorMoving() + " " + informationBuffer.getRightMotorSpeed()
 				+ ", B: " + informationBuffer.getBusy() + ")");
 		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Output " + s));
-
-		if(robotConnected){
-			((SimulatorCommunicator)prevCommunicator).getSim().updateArc(this.getSimulationPanel().getSimulationPilot().getUltraSensorValue());
-		}
 	}
 
 	private static void redirectSystemStreams() {

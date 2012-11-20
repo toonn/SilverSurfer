@@ -7,8 +7,8 @@ import java.awt.Polygon;
 //als de driehoek naar boven wijst (alpha = 270 graden) , staat A links tov C en B rechts.
 public class Triangle extends Polygon {
 	
-	private final int length = 15; //lengte van de tophoek tot loodrecht op basisas
-	private final double topAngle = 40; //graden van de tophoek
+	private final int length = 20; //lengte van de tophoek tot loodrecht op basisas
+	private final double topAngle = 45; //graden van de tophoek
 	private double gravityCenterX;
 	private double gravityCenterY;
 	private double alpha = 0; // Hoeveel je gedraaid bent ten opzichte van de X-as

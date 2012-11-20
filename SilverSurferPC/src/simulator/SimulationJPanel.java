@@ -42,7 +42,8 @@ public class SimulationJPanel extends JPanel {
 	private boolean isUpdated = false;
 	
 	private Arc2D sonarArc = new Arc2D.Double();
-
+	private Ellipse2D undergroundCircle = new Ellipse2D.Double(); 
+	
 	private Vector<Shape> shapes = new Vector<Shape>();
 
 	/**
@@ -137,8 +138,7 @@ public class SimulationJPanel extends JPanel {
 	
 	public void updateArc(double robotX, double robotY, double robotAngle, double USDistance){
 		double correctedUSDistance = USDistance;
-		if (simulationPilot.isRealRobot())
-			correctedUSDistance = correctedUSDistance-5.5;
+		correctedUSDistance = correctedUSDistance-5.5;
 		double arcUpperLeftX = robotX-correctedUSDistance;
 		double arcUpperLeftY = robotY-correctedUSDistance;
 		double arcStart = 360 - robotAngle - 15;
@@ -151,23 +151,45 @@ public class SimulationJPanel extends JPanel {
 	public void setUpdated(boolean isUpdated){
 		this.isUpdated = isUpdated;
 	}
+	
+	public void updateUndergroundCircle(double robotX, double robotY, double LSValue)
+	{
+		double diam = 7;
+		undergroundCircle = new Ellipse2D.Double(robotX - (diam/2), robotY - (diam/2), diam, diam); 
+	}
 
 	@Override
 	protected void paintComponent(Graphics graph) {
 		paintPathComponent(graph);
 		paintWallComponent(graph);
+		paintUndergroundComponent(graph);
 		paintBeamComponent(graph);
 		paintGridComponent(graph);
-
 	}
 
+	/**
+	 * The arc is painted light blue when the measurement is not to be trusted (>250).
+	 * Otherwise, it is painted in a darker blue.
+	 */
 	private void paintBeamComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
-		if(simulationPilot != null && simulationPilot.isRealRobot())
+		
+		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX(),
+								     this.getSimulationPilot().getUltrasonicSensorPositionY(),
+								     this.getSimulationPilot().getAlpha(),
+									 this.getSimulationPilot().getUltraSensorValue());
+		if(simulationPilot != null)
 		{
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
                     0.4f));
-			g.setColor(new Color(12,24,244));
+			if(this.getSimulationPilot().getUltraSensorValue() > 200)
+			{
+				g.setColor(new Color(12,168,244));
+			}
+			else
+			{
+				g.setColor(new Color(12,24,244));
+			}
 			g.fill(sonarArc);
 		}
 	}
@@ -241,6 +263,26 @@ public class SimulationJPanel extends JPanel {
 			setOtherTriangleVisible();
 			setUpdated(false);
 		}
+	}
+	
+	/**
+	 * Draws a dot in the color of the underground
+	 */
+	private void paintUndergroundComponent(Graphics graph)
+	{
+		Graphics2D g = (Graphics2D) graph;
+
+		this.updateUndergroundCircle(this.getSimulationPilot().getLightsensorPositionX(),
+								     this.getSimulationPilot().getLightsensorPositionY(), 
+									 this.getSimulationPilot().getLightSensorValue());
+		if(this.getSimulationPilot().getLightSensorValue() < 45)
+			((Graphics2D) graph).setColor(Color.black);
+		if(this.getSimulationPilot().getLightSensorValue() > 53)
+			((Graphics2D) graph).setColor(Color.white);
+		else
+			((Graphics2D) graph).setColor(new Color(252,221,138));
+
+		((Graphics2D) graph).fill(undergroundCircle);
 	}
 
 	public void setRobotLocation(double x, double y, double degrees){

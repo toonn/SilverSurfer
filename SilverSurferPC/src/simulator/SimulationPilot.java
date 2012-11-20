@@ -105,6 +105,38 @@ public class SimulationPilot {
 	 public int getStartPositionRelativeY() {
 		 return this.getMapGraph().getStartingTileCoordinates()[1];
 	 }
+	 
+	 /**
+	  * The lightsensor is not attached on the middle point of the robot, but more in front of that point.
+	  * This value gives the x-coordinate of the lightsensor.
+	  */
+	 public double getLightsensorPositionX() {
+		 return (this.getCurrentPositionAbsoluteX() + 5*Math.cos(Math.toRadians(this.getAlpha())));
+	 }
+
+	 /**
+	  * The lightsensor is not attached on the middle point of the robot, but more in front of that point.
+	  * This value gives they -coordinate of the lightsensor.
+	  */
+	 public double getLightsensorPositionY() {
+		 return (this.getCurrentPositionAbsoluteY() + 5*Math.sin(Math.toRadians(this.getAlpha())));
+	 }
+	 
+	 /**
+	  * The ultrasonic sensor is not attached on the middle point of the robot, but a little behind that point.
+	  * This value gives the x-coordinate of the ultrasonic sensor.
+	  */
+	 public double getUltrasonicSensorPositionX() {
+		 return (this.getCurrentPositionAbsoluteX() - 2*Math.cos(Math.toRadians(this.getAlpha())));
+	 }
+
+	 /**
+	  * The ultrasonic sensor is not attached on the middle point of the robot, but a little behind that point.
+	  * This value gives the y-coordinate of the ultrasonic sensor.
+	  */
+	 public double getUltrasonicSensorPositionY() {
+		 return (this.getCurrentPositionAbsoluteY() - 2*Math.sin(Math.toRadians(this.getAlpha())));
+	 }
 
 	 public double getAlpha() {
 		 return alpha;
@@ -433,10 +465,7 @@ public class SimulationPilot {
 	 }
 
 	 /**
-	  * Returns a number from a normal districution that represents a lightsensor
-	  * value.
-	  * 
-	  * nog niet af!! dit is slechts een schets van hoe de methode moet worden.
+	  * Returns a number from a normal districution that represents a lightsensor value.
 	  */
 	 public int getLightSensorValue() {
 		 if (this.isRealRobot()) {
@@ -450,21 +479,21 @@ public class SimulationPilot {
 
 			 // check on which sort of underground your are standing
 			 // and adjust the mean and standardDeviation accordingly
-			 if (onEmptyTile(getCurrentPositionAbsoluteX(),
-					 getCurrentPositionAbsoluteY())) {
+			 if (onEmptyTile(getLightsensorPositionX(),
+					 getLightsensorPositionY())) {
 				 mean = SimulationSensorData.getMEmptyPanelLS();
 				 standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
-			 } else if (onWhiteLine(getCurrentPositionAbsoluteX(),
-					 getCurrentPositionAbsoluteY())) {
+			 } else if (onWhiteLine(getLightsensorPositionX(),
+					 getLightsensorPositionY())) {
 				 mean = SimulationSensorData.getMWhiteLineLS();
 				 standardDeviation = SimulationSensorData.getSDWhiteLineLS();
-			 } else if (onBarcodeTile(getCurrentPositionAbsoluteX(),
-					 getCurrentPositionAbsoluteY())) {
+			 } else if (onBarcodeTile(getLightsensorPositionX(),
+					 getLightsensorPositionY())) {
 				 int color = this
 				 .getMapGraph()
 				 .getContentCurrentTile()
-				 .getColorValue(getCurrentPositionAbsoluteX() % 40,
-						 getCurrentPositionAbsoluteY() % 40);
+				 .getColorValue(getLightsensorPositionX() % 40,
+						 getLightsensorPositionY() % 40);
 				 mean = SimulationSensorData.getMBarcodeTileLS(color);
 				 standardDeviation = SimulationSensorData
 				 .getSDBarcodeTileLS(color);
@@ -524,12 +553,13 @@ public class SimulationPilot {
 	 private double calculateDistanceToWall()
 	 {
 		 // current temporary position; to check whether there are walls in the direction the robot is facing
-		 double xTemp = this.getCurrentPositionAbsoluteX();
-		 double yTemp = this.getCurrentPositionAbsoluteY();
+		 double xTemp = this.getUltrasonicSensorPositionX();
+		 double yTemp = this.getUltrasonicSensorPositionY();
 		 // keep the last temporary position, so you can compare with the current temporary position
-		 double xTempPrev = this.getCurrentPositionAbsoluteX();
-		 double yTempPrev = this.getCurrentPositionAbsoluteY();
+		 double xTempPrev = this.getUltrasonicSensorPositionX();
+		 double yTempPrev = this.getUltrasonicSensorPositionY();
 
+		 // there is no map loaded, so the sensor will detect no walls en returns the maximum value.
 		 if(this.getMapGraph() == null)
 		 {
 			 return 250;
@@ -544,44 +574,12 @@ public class SimulationPilot {
 				 xTempPrev = xTemp;
 				 yTempPrev = yTemp;
 				 
-				 xTemp = (double) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
-				 yTemp = (double) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+				 xTemp = (double) (this.getUltrasonicSensorPositionX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+				 yTemp = (double) (this.getUltrasonicSensorPositionY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 				 i++;
 			 }
 
-			 Orientation oriTemp = null;
-			 
-			 // you have crossed a horizontal border
-			 if(Math.abs(yTempPrev%40 - yTemp%40) > 5)
-			 {
-				 if(yTempPrev%40 < 20)
-				 {
-					 oriTemp = Orientation.NORTH;
-				 }
-				 //if(xTempPrev%40 < 20)
-				 else
-				 {
-					 oriTemp = Orientation.SOUTH;
-				 }
-			 }
-			// you have crossed a vertical border
-			 else if(Math.abs(xTempPrev%40 - xTemp%40) > 5)
-			 {
-				 if(xTempPrev%40 > 20) 
-				 {
-					 oriTemp = Orientation.EAST;
-				 }
-				 //if(xTempPrev%40 < 20)
-				 else
-				 {
-					 oriTemp = Orientation.WEST;
-				 }
-			 }
-			 else
-			 {
-				 // no orientation is calculated!
-				 return 0;
-			 }
+			 Orientation oriTemp = Orientation.defineBorderCrossed(xTemp, yTemp, xTempPrev, yTempPrev);
 			 
 			 // the edge you have found, does not contain a wall, you can look right over it.
 			 // change the current tile to the next tile en move a few steps foreward (with the temporary coordinates).
@@ -593,14 +591,14 @@ public class SimulationPilot {
 					 xTempPrev = xTemp;
 					 yTempPrev = yTemp;
 
-					 xTemp = (double) (this.getCurrentPositionAbsoluteX() + i* Math.cos(Math.toRadians(this.getAlpha())));
-					 yTemp = (double) (this.getCurrentPositionAbsoluteY() + i* Math.sin(Math.toRadians(this.getAlpha())));
+					 xTemp = (double) (this.getUltrasonicSensorPositionX() + i* Math.cos(Math.toRadians(this.getAlpha())));
+					 yTemp = (double) (this.getUltrasonicSensorPositionY() + i* Math.sin(Math.toRadians(this.getAlpha())));
 					 i++;
 				 }
 			 }
 			 else
 			 {
-				 return Math.sqrt(Math.pow(xTemp-this.getCurrentPositionAbsoluteX(), 2) + Math.pow(yTemp-this.getCurrentPositionAbsoluteY(), 2));
+				 return Math.sqrt(Math.pow(xTemp-this.getUltrasonicSensorPositionX(), 2) + Math.pow(yTemp-this.getUltrasonicSensorPositionY(), 2));
 			 }
 		 }
 		 
