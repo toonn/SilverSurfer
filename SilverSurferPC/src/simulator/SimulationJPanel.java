@@ -40,10 +40,10 @@ public class SimulationJPanel extends JPanel {
 	 * is true als de coordinaten van de driehoek die niet afgebeeld wordt, berekend zijn.
 	 */
 	private boolean isUpdated = false;
-	
+
 	private Arc2D sonarArc = new Arc2D.Double();
 	private Ellipse2D undergroundCircle = new Ellipse2D.Double(); 
-	
+
 	private Vector<Shape> shapes = new Vector<Shape>();
 
 	/**
@@ -135,7 +135,7 @@ public class SimulationJPanel extends JPanel {
 	public boolean waitingTriangleIsUpdated(){
 		return isUpdated;
 	}
-	
+
 	public void updateArc(double robotX, double robotY, double robotAngle, double USDistance){
 		double correctedUSDistance = USDistance;
 		correctedUSDistance = correctedUSDistance-5.5;
@@ -151,16 +151,21 @@ public class SimulationJPanel extends JPanel {
 	public void setUpdated(boolean isUpdated){
 		this.isUpdated = isUpdated;
 	}
-	
+
 	public void updateUndergroundCircle(double robotX, double robotY, double LSValue)
 	{
 		double diam = 7;
 		undergroundCircle = new Ellipse2D.Double(robotX - (diam/2), robotY - (diam/2), diam, diam); 
 	}
 
+	/**
+	 * Methode die alle paint methodes samenvoegd en uitvoert in het JPanel
+	 */
 	@Override
 	protected void paintComponent(Graphics graph) {
+
 		paintPathComponent(graph);
+		//		paintGridComponent(graph);
 		paintWallComponent(graph);
 		paintUndergroundComponent(graph);
 		paintBeamComponent(graph);
@@ -171,17 +176,18 @@ public class SimulationJPanel extends JPanel {
 	 * The arc is painted light blue when the measurement is not to be trusted (>250).
 	 * Otherwise, it is painted in a darker blue.
 	 */
+
 	private void paintBeamComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
-		
+
 		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX(),
-								     this.getSimulationPilot().getUltrasonicSensorPositionY(),
-								     this.getSimulationPilot().getAlpha(),
-									 this.getSimulationPilot().getUltraSensorValue());
+				this.getSimulationPilot().getUltrasonicSensorPositionY(),
+				this.getSimulationPilot().getAlpha(),
+				this.getSimulationPilot().getUltraSensorValue());
 		if(simulationPilot != null)
 		{
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                    0.4f));
+					0.4f));
 			if(this.getSimulationPilot().getUltraSensorValue() > 200)
 			{
 				g.setColor(new Color(12,168,244));
@@ -194,7 +200,10 @@ public class SimulationJPanel extends JPanel {
 		}
 	}
 
-
+	/**
+	 * tekent de muren op het JPanel paneel
+	 * @param graph
+	 */
 	private void paintWallComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
 		((Graphics2D) graph).setColor(Color.BLACK);
@@ -206,7 +215,10 @@ public class SimulationJPanel extends JPanel {
 		}
 	}
 
-
+	/**
+	 * Tekent het grid (rooster) op de achtergrond van de mapping
+	 * @param graph
+	 */
 	private void paintGridComponent(Graphics graph) {
 		Graphics2D g = (Graphics2D) graph;
 
@@ -223,35 +235,58 @@ public class SimulationJPanel extends JPanel {
 			}
 	}
 
-
-	private void paintPathComponent(Graphics graph) {
+	/**
+	 * Tekent het pad van de robot en de robot zelf met daarachter het grid.
+	 * @param graph
+	 */
+	private void paintPathComponent(Graphics graph){
 		super.paintComponent(graph);
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
 
+
+		((Graphics2D) graph).setColor(Color.red);
+
+		if(isUpdated){
+			setOtherTriangleVisible();
+			setUpdated(false);
+		}
+
+		Graphics2D g = (Graphics2D) graph;
+
+		int count = 50;
+		int size = 40;
+
+		((Graphics2D) graph).setColor(Color.lightGray);
+
+		for( int i = 0; i < count; i ++)
+			for( int j = 0; j < count; j++)
+			{
+				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
+				g.draw(grid);
+			}
+
+
 		((Graphics2D) graph).setColor(Color.red);
 		for(Shape s : shapesx)
+
 		{
+
 			int x;
 			int y;
 
 			if(s instanceof Triangle)
-			{
-				if(s.equals(getVisibleTriangle()))
-				{
-					((Graphics2D) graph).fill(s);
-				}
-				x = (int) ((Triangle) s).getGravityCenterX();
-				y = (int) ((Triangle) s).getGravityCenterY();
+			{	if(s.equals(getVisibleTriangle()))
+				((Graphics2D) graph).fill(s);
+			x = (int) ((Triangle) s).getGravityCenterX();
+			y = (int) ((Triangle) s).getGravityCenterY();
 
-				if(simulationPilot!= null)
-				{
-					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
-				}
-				else
-				{
-					getSSG().updateCoordinates("Simulator (" + x + " , " + y + ")");
-				}
+
+			if(simulationPilot!= null)
+				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y )+ " , " + simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
+			else
+				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y) + ")");
+
 			}
 			else
 			{	
@@ -259,12 +294,8 @@ public class SimulationJPanel extends JPanel {
 			}
 		}
 
-		if(isUpdated){
-			setOtherTriangleVisible();
-			setUpdated(false);
-		}
 	}
-	
+
 	/**
 	 * Draws a dot in the color of the underground
 	 */
@@ -273,8 +304,8 @@ public class SimulationJPanel extends JPanel {
 		Graphics2D g = (Graphics2D) graph;
 
 		this.updateUndergroundCircle(this.getSimulationPilot().getLightsensorPositionX(),
-								     this.getSimulationPilot().getLightsensorPositionY(), 
-									 this.getSimulationPilot().getLightSensorValue());
+				this.getSimulationPilot().getLightsensorPositionY(), 
+				this.getSimulationPilot().getLightSensorValue());
 		if(this.getSimulationPilot().getLightSensorValue() < 45)
 			((Graphics2D) graph).setColor(Color.black);
 		if(this.getSimulationPilot().getLightSensorValue() > 53)
@@ -284,6 +315,48 @@ public class SimulationJPanel extends JPanel {
 
 		((Graphics2D) graph).fill(undergroundCircle);
 	}
+
+
+	//	private void paintPathComponent(Graphics graph) {
+	//		super.paintComponent(graph);
+	//		Vector<Shape> shapesx = new Vector<Shape>();
+	//		shapesx.addAll(shapes);
+	//
+	//		((Graphics2D) graph).setColor(Color.red);
+	//		for(Shape s : shapesx)
+	//		{
+	//			int x;
+	//			int y;
+	//
+	//			if(s instanceof Triangle)
+	//			{
+	//				if(s.equals(getVisibleTriangle()))
+	//				{
+	//					((Graphics2D) graph).fill(s);
+	//				}
+	//				x = (int) ((Triangle) s).getGravityCenterX();
+	//				y = (int) ((Triangle) s).getGravityCenterY();
+	//
+	//				if(simulationPilot!= null)
+	//				{
+	//					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
+	//				}
+	//				else
+	//				{
+	//					getSSG().updateCoordinates("Simulator (" + x + " , " + y + ")");
+	//				}
+	//			}
+	//			else
+	//			{	
+	//				((Graphics2D) graph).fill(s);
+	//			}
+	//		}
+	//
+	//		if(isUpdated){
+	//			setOtherTriangleVisible();
+	//			setUpdated(false);
+	//		}
+	//	}
 
 	public void setRobotLocation(double x, double y, double degrees){
 		this.addCircle(x*1, y*1, degrees);
@@ -301,7 +374,7 @@ public class SimulationJPanel extends JPanel {
 		shapes.add(triangle);
 		shapes.add(triangletwo);
 	}
-	
+
 	/**
 	 * Deletes the former path of the robot and all the walls that have been explored as yet.
 	 */
@@ -321,7 +394,7 @@ public class SimulationJPanel extends JPanel {
 	public SimulationPilot getSimulationPilot() {
 		return this.simulationPilot;
 	}
-	
+
 	public void setSimulationPilot(SimulationPilot simulationPilot) {
 		this.simulationPilot = simulationPilot;
 	}
@@ -345,18 +418,18 @@ public class SimulationJPanel extends JPanel {
 	public void addWall(Orientation orientation, double x, double y)
 	{	
 		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
-		
-//		double XOther = point.getX() + Orientation.getOtherPointLine(orientation)[0];
-//		double YOther =	point.getY() + Orientation.getOtherPointLine(orientation)[1];
-//		
-//		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, x, y) > 21 ){
-//			return;
-//		}
-		
-//		if(point.distance((double) x, (double) y) > 40){
-//			return;
-//		}
-		
+
+		//		double XOther = point.getX() + Orientation.getOtherPointLine(orientation)[0];
+		//		double YOther =	point.getY() + Orientation.getOtherPointLine(orientation)[1];
+		//		
+		//		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, x, y) > 21 ){
+		//			return;
+		//		}
+
+		//		if(point.distance((double) x, (double) y) > 40){
+		//			return;
+		//		}
+
 		Wall wall;
 		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
 			wall = new Wall(State.HORIZONTAL, (double) point.getX(), (double) point.getY());
@@ -383,7 +456,7 @@ public class SimulationJPanel extends JPanel {
 	{
 		simulationPilot.checkForObstructions();
 	}
-	
+
 	public BufferedImage getVerticalWallImage() {
 		return verticalWallImage;
 	}
