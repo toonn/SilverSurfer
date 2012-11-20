@@ -208,23 +208,12 @@ Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoere
 % == veelhoek == %
 \subsection{Het rijden van een veelhoek} % 3 ?
 \label{ssec:algoVeelH}
-De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is. Enkele parameters zijn van belang:
-
-\begin{itemize}
-\item \textit{aantal keer dat de stappen moeten worden uitgevoerd, amtOfAngles:} aantal hoeken van de veelhoek.
-\item \textit{afstand per stap, lengthInCM:} zijde van de veelhoek.
-\item \textit{aantal graden per stap, angle:} 360 gedeeld door het aantal hoeken van de veelhoek.
-\end{itemize}
-
-Om een stap uit te voeren wordt een commando gestuurd naar de \textit{CommandToUnit}. Dit is een integer bestaande uit twee delen. De eenheden staan voor het soort commando. De tientallen en de honderdtallen geven aan hoeveel centimeter de robot vooruit moet bewegen of hoeveel graden hij moet draaien.
+De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is. 
 
 \lstset{frame=single, language=Java, caption=Veelhoek algoritme (pseudocode),
     	label=code:algoVeelH, numbers=left, numberstyle=\footnotesize,
 		basicstyle=\sffamily, numbersep=5pt}
 \begin{lstlisting}
-AmtOfAngles
-LengthInCM
-
 Angle = (360.0/amtOfAngles)*100
 Voor i van 0 tot amtOfAngles
 	Beweeg lengthInCM vooruit
@@ -235,28 +224,35 @@ Voor i van 0 tot amtOfAngles
 % == witte lijn == %
 \subsection{Het rechtzetten op een witte lijn} % 3 ?
 \label{ssec:algoWitteL}
-
-De robot en de simulator kunnen zich loodrecht ori\"enteren op een witte lijn.
-Het algoritme kan gebruikt worden wanneer de robot vlak bij een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten passeren). Het idee achter het algoritme (in pseudocode)
+Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren.
+Onderstaand algoritme kan gebruikt worden wanneer de robot vlakbij een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten passeren):
 
 \lstset{frame=single, caption=Witte Lijn algoritme (pseudocode),
 		label=code:algoWitteL, numbers=left, numberstyle=\footnotesize,
 		basicstyle=\sffamily, numbersep=5pt}
 \begin{lstlisting}
 AngleTurned = 0
-WheelAngle = 5
 
-Draai naar rechts (wielen draaien WheelAngle graden).
-Als op witte lijn: naar volgende stap.
-Anders: naar vorige stap.
-
-Draai naar links (wielen draaien WheelAngle graden)
-	en verhoog AngleTurned met WheelAngle.
-Als op witte lijn: naar volgende stap.
-Anders: naar vorige stap.
-
+Draai naar rechts tot witte lijn.
+Draai naar links tot witte lijn EN verhoog AngleTurned.
 Draai AngleTurned/2 naar rechts.
 \end{lstlisting}
+
+% IETS OVER TESTRESULTATEN + NAUWKEURIGHEID
+
+Alternatief is het mogelijk te corrigeren op de muren, maar dan moet de robot zicht bevinden op een tegel die muren aan beide kanten bevat.
+
+
+% == kortste pad == %
+\subsection{Het vinden van het kortste pad} % 3 ?
+\label{ssec:algoKortsteP}
+Alvorens de robot het kortste pad tussen twee punten bepaalt, dient het hele doolhof gekend te zijn. Dit verkennen doet de robot autonoom. Elke tegel die de robot reeds passeerde, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht.
+% HOE GEMARKEERD? MSS BETER EEN LIJST VAN NOG NIET BEKEKEN TEGELS?
+Bij elke tegel onthoudt de robot alle uitwegen. Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden.
+Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof de 'finish'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.
+% NOG NIET GENOEG UITLEG OVER HET ALGORITME ZELF
+
+Het kortste pad algoritme maakt gebruik van een graf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme gebruikt de Manhattanafstand als heuristiek en de afgelegde afstand als kost.
 
 % == SOFTWARE == %
 \section{Software} % 3 ?
