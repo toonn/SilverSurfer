@@ -1,27 +1,19 @@
 package mapping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Tile{
 	
-	private int xCoordinate;
-	private int yCoordinate;
+	private int xCoordinate = -1000;
+	private int yCoordinate = -1000;
 	private TileContent content;
 	private boolean marking = false;
 	private int manhattanValue;
 	
-	public Tile(int x, int y){
-		setxCoordinate(x);
-		setyCoordinate(y);
+	public Tile(){
 		populateEdges();
 	}
-	/**
-	 * Returns the x-coordinate of this tile, relative to the starting-tile.
-	 * So; starting Tile.coordinates == (0,0),
-	 * the tile just north of the starting tile is: (0,1)
-	 * and the tile west of that one is: (-1,1).
-	 * @return
-	 */
 	
 	public int getManhattanValue(){
 		return manhattanValue;
@@ -30,10 +22,7 @@ public class Tile{
 	public void setManhattanValue(int manhattanValue){
 		this.manhattanValue = manhattanValue;
 	}
-	
-	public int getxCoordinate() {
-		return xCoordinate;
-	}
+
 	
 	public void setMarking (boolean marking){
 		this.marking = true;
@@ -44,16 +33,19 @@ public class Tile{
 		return marking;
 	}
 	
+	/**
+	 * return -1000 if this tile is not yet set on a mapgraph
+	 */
+	public int getxCoordinate() {
+		return xCoordinate;
+	}
+	
 	public void setxCoordinate(int xCoordinate) {
 		this.xCoordinate = xCoordinate;
 	}
 	
 	/**
-	 * Returns the y-coordinate of this tile, relative to the starting-tile.
-	 * So; starting Tile.coordinates == (0,0),
-	 * the tile just north of the starting tile is: (0,1)
-	 * and the tile west of that one is: (-1,1).
-	 * @return
+	 * return -1000 if this tile is not yet set on a mapgraph
 	 */
 	public int getyCoordinate() {
 		return yCoordinate;
@@ -61,7 +53,7 @@ public class Tile{
 	public void setyCoordinate(int yCoordinate) {
 		this.yCoordinate = yCoordinate;
 	}
-	
+
 
 	/**
 	 * Returns the content of this tile. Might be a barcode or null.
@@ -355,6 +347,28 @@ public class Tile{
 			else
 				return false;
 		}
+		
+		
+		
+		/**
+		 * geeft een arraylist weer met neighbourtiles enkel die waar geen muur tussen staat!
+		 * de orientation horende bij de index is als volgt:
+		 * 0: north
+		 * 1: east
+		 * 2: south
+		 * 3: west
+		 * als er zich geen tile bevindt in die orientation, wordt er een null in de arraylist opgeslagen.
+		 */
+		public ArrayList getReachableNeighbours(){
+			ArrayList neighbours = new ArrayList(4);
+			for(Orientation orientation: Orientation.values()){
+				if(this.getEdge(orientation).getObstruction()==null){
+				neighbours.add(this.getEdge(orientation).getNeighbour(this));}
+				else neighbours.add(null);
+			}
+			
+			return neighbours;
+		}
 	
 	/**
 	 * Set the borders in each direction for this square.
@@ -373,28 +387,6 @@ public class Tile{
 					edge.setNumberPairDirections(orientation.getNumberOrientation()%3);
 		}
 	}
-	
-//	@Override
-//	public Object clone(){
-//		try { 
-//			Tile tile = (Tile) super.clone();
-//			
-//			System.out.println(this.getEdge(Orientation.NORTH).isPassable());
-//			for(Orientation ori : Orientation.values()){
-//				System.out.println("dit");
-//				System.out.println(this.getEdge(Orientation.NORTH).isPassable());
-//			if(this.getEdge(ori).getObstruction() != null){
-//				tile.getEdge(ori).setObstruction(Obstruction.WALL);
-//			}
-//			else{System.out.println("else");
-//				System.out.println(this.getEdge(Orientation.NORTH).isPassable());}
-//			}
-//			return tile;
-//		} catch (CloneNotSupportedException e) {
-//			return null;
-//		}
-//	}
-
 
 	@Override
 	public String toString() {

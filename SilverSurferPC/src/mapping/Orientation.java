@@ -11,13 +11,6 @@ public enum Orientation {
 		}
 		
 		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] north = {-1, 0};
-			return north;
-		}
-		
-		@Override
 		public final int[] getOtherPointLine()
 		{
 			int[] north = {40,0};
@@ -56,15 +49,7 @@ public enum Orientation {
 			int[] east = {1, 0};
 			return east;
 
-		}
-		
-		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] east = {0, 1};
-			return east;
-		}
-		
+		}	
 		
 		@Override
 		public final int[] getOtherPointLine()
@@ -103,13 +88,6 @@ public enum Orientation {
 		public final int[] getArrayToFindNeighbourAbsolute()
 		{
 			int[] south = {0, 1};
-			return south;
-		}
-		
-		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] south = {1, 0};
 			return south;
 		}
 		
@@ -154,13 +132,6 @@ public enum Orientation {
 		}
 		
 		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] west = {0,-1};
-			return west;
-		}
-		
-		@Override
 		public final int[] getOtherPointLine()
 		{
 			int[] west = {0,40};
@@ -201,20 +172,6 @@ public enum Orientation {
 	 */
 	public int[] getArrayToFindNeighbourAbsolute()
 	{
-		// This line will never be reached, each valid direction has a return statement.
-		return new int[0];
-	}
-	
-	/**
-	 * This methode returns an array containing a relative x- and y-coordinate for the given orientation.
-	 * The implementation is orientation specific and is typed above.
-	 * 
-	 * er is dus een verschil met getArrayToFindNeighbourAbsoltue die hier onder staat
-	 * ook weer door het verschil in coordinatensysteem zie uitleg simulationpilot bovenaan
-	 */
-	public int[] getArrayToFindNeighbourRelative()
-	{
-		// implementation is orientation dependent
 		// This line will never be reached, each valid direction has a return statement.
 		return new int[0];
 	}

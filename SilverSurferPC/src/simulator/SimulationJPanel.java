@@ -419,17 +419,6 @@ public class SimulationJPanel extends JPanel {
 	{	
 		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
 
-		//		double XOther = point.getX() + Orientation.getOtherPointLine(orientation)[0];
-		//		double YOther =	point.getY() + Orientation.getOtherPointLine(orientation)[1];
-		//		
-		//		if(Line2D.ptSegDist(point.getX(), point.getY(), XOther, YOther, x, y) > 21 ){
-		//			return;
-		//		}
-
-		//		if(point.distance((double) x, (double) y) > 40){
-		//			return;
-		//		}
-
 		Wall wall;
 		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
 			wall = new Wall(State.HORIZONTAL, (double) point.getX(), (double) point.getY());

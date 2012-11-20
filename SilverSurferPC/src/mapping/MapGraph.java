@@ -1,30 +1,19 @@
 package mapping;
 
-
-/**
- * startingTileCoordinates en currentTileCoordinates krijgen een x en een y zoals men een 
- * matrix leest dus [00 01][10 11] (Het relatieve coordinatenstelsel
- * terwijl de tile-Objecten zich in het werkelijk coordinatensysteem bevinden , 
- * de coordinaten van deze tiles komen overeen met [00 10][01 11]
- * 
- * Elke methode in deze klasse is aangepast zodat je het relatieve coordinatensysteem kan gebruiken
- * 
- * ook nog eens uitgelegd in pilot want was vergeten dat het hier al stond, maar miss voor als het
- * niet duidelijk is, snap je het hiermee wel dus laat ik het hier ook maar staan :)
- *
- */
+import java.io.File;
+import java.util.*;
 
 public class MapGraph {
 
 	private int[] startingTileCoordinates = new int[2];
 	private int[] currentTileCoordinates = new int[2];
-	private Tile[][] tiles = new Tile[0][0];
+	private Set<Tile> tiles = new HashSet<Tile>();
 
+	
 	/**
 	 * Creates a new Map
 	 */
-	public MapGraph(int lengthx, int lengthy){
-		tiles = new Tile[lengthx][lengthy];
+	public MapGraph(){
 		setStartingTileCoordinates(0,0);
 		setCurrentTileCoordinates(0,0);
 	}
@@ -33,17 +22,28 @@ public class MapGraph {
 	 * Creates a new Map with the tile with defined coordinates as coordinates as starting Tile.
 	 * @param start
 	 */
-	public MapGraph(int x, int y, int lengthx, int lengthy){
-		tiles = new Tile[lengthx][lengthy];
+	public MapGraph(int x, int y){
 		setStartingTileCoordinates(x, y);
 		setCurrentTileCoordinates(x, y);
 		
 	}
+	
+	public Set<Tile> getTiles(){
+		return tiles;
+	}
+	
 	/**
 	 * Returns the Tile on which this map was started.
 	 */
 	public Tile getStartingTile() {
-		return tiles[getStartingTileCoordinates()[0]][getStartingTileCoordinates()[1]];
+		for (Tile tile : tiles) {
+			if (tile.getxCoordinate() == getStartingTileCoordinates()[0]
+					&& tile.getyCoordinate() == getStartingTileCoordinates()[1]) {
+				return tile;
+			}
+		}
+		// gebeurt nooit
+		throw new IllegalStateException("bij getStartingTile in MapGraph");
 	}
 	
 
@@ -61,7 +61,14 @@ public class MapGraph {
 	 * Returns the tile the simulator or robot is currently on.
 	 */
 	public Tile getCurrentTile() {
-		return tiles[getCurrentTileCoordinates()[0]][getCurrentTileCoordinates()[1]];
+		for (Tile tile : tiles) {
+			if (tile.getxCoordinate() == getCurrentTileCoordinates()[0]
+					&& tile.getyCoordinate() == getCurrentTileCoordinates()[1]) {
+				return tile;
+			}
+		}
+		// gebeurt nooit
+		throw new IllegalStateException("bij getStartingTile in MapGraph");
 	}
 	public int[] getCurrentTileCoordinates() {
 		return currentTileCoordinates;
@@ -117,46 +124,88 @@ public class MapGraph {
 	}
 	
 	
-	public Tile[][] getTiles() {
-		return tiles;
+	public Tile getTileWithCoordinates(int xCoordinate, int yCoordinate) {
+		for (Tile tile : tiles) {
+			if (tile.getxCoordinate() == xCoordinate
+					&& tile.getyCoordinate() == yCoordinate) {
+				return tile;
+			}
+		}
+		// als er op deze coordinaten nog geen tile staat
+		return null;
 	}
-	
-	public Tile getTileXY(int x, int y){
-		return tiles[x][y];
-	}
+
 	
 	public void setTileXY(int x, int y, Tile tile){
-		tile.setxCoordinate(y);
-		tile.setyCoordinate(x);
+		tile.setxCoordinate(x);
+		tile.setyCoordinate(y);
 		
-		for (int i = 0; i < tiles.length; i++){
+		for (Tile mapTile: tiles){
 			int[] ar = null;
-	//		Edge edge;
 			Orientation orientation;
-			for (int j = 0; j < tiles[i].length; j++){
-				if(tiles[i][j]!=null && tile.areNeighbours(tiles[i][j])){
+				if(mapTile!=null && tile.areNeighbours(mapTile)){
 					ar = new int[2];
-					ar[0] = tile.getxCoordinate()-tiles[i][j].getxCoordinate();
-					ar[1] = tile.getyCoordinate()-tiles[i][j].getyCoordinate();
+					ar[0] = mapTile.getxCoordinate()-tile.getxCoordinate();
+					ar[1] = mapTile.getyCoordinate()-tile.getyCoordinate();
 					
 					orientation = Orientation.getOrientationOfArray(ar);
 					
-				tiles[i][j].replaceEdge(orientation,tile.getEdge(orientation.getOppositeOrientation()));
+					tile.replaceEdge(orientation,mapTile.getEdge(orientation.getOppositeOrientation()));
 				}
-			}
+			
 	}
-		if(tiles[x][y]!=(null)){
+		if(getTileWithCoordinates(x, y)!=(null)){
 			removeTile(x,y);
 		}
 		else {
-			tiles[x][y] = tile;
+			tiles.add(tile);
 		
 		}
 	}
 
 	public void removeTile(int x, int y) {
-		getTileXY(x,y).terminate();
-		tiles[x][y] = null;
+		getTileWithCoordinates(x,y).terminate();
+		tiles.remove(getTileWithCoordinates(x,y));
+	}
+	
+//	
+//	public static void main(String[] args) {
+//		MapGraph map = new MapGraph();
+//		Tile tile1 = new Tile();
+//		Tile tile2 = new Tile();
+//		Tile tile3 = new Tile();
+//		tile1.getEdge(Orientation.NORTH).setObstruction(Obstruction.WALL);
+//		map.setTileXY(0, 2, tile1);
+//		map.setTileXY(0, 1, tile2);
+//		map.setTileXY(1, 2, tile3);
+//		tile3.getEdge(Orientation.WEST).setObstruction(Obstruction.WALL);
+//		
+//		System.out.println(tile1.getReachableNeighbours().get(0)==null);
+//		System.out.println(tile1.getReachableNeighbours().get(1)== null);
+//		System.out.println(tile1.getReachableNeighbours().get(2) == (null));
+//		System.out.println(tile1.getReachableNeighbours().get(3) == (null));
+//		
+//		System.out.println(tile1.getEdge(Orientation.EAST).isPassable());
+//		System.out.println(tile1.getEdge(Orientation.EAST).equals(tile3.getEdge(Orientation.WEST)));
+//		System.out.println(tile1.getEdge(Orientation.NORTH).equals(tile2.getEdge(Orientation.SOUTH)));
+//		
+//	}
+	
+	public static void main(String[] args) {
+		Tile tile = new Tile() ;
+		System.out.println(tile.getxCoordinate());
+		System.out.println(tile.getyCoordinate());
+		MapReader map = new MapReader();
+		MapGraph graph = MapReader.createMapFromFile(new File("resources/maze_maps/example_map.txt"), 0, 0);
+		for(int j = 0; j <6 ; j++){
+			for(int i = 0; i<4;i++){
+				System.out.println(j + "en" + i);
+				for(Orientation orientation: Orientation.values())
+				System.out.println(!graph.getTileWithCoordinates(j, i).getEdge(orientation).isPassable());
+			}
+		}
+		
 		
 	}
+	
 }

@@ -13,8 +13,7 @@ public class MapReader {
 
         // Fill a graph with the information in infoMatrix.
         MapGraph map = null;
-        map = new MapGraph(relCoX, relCoY, infoMatrix.length,
-                infoMatrix[0].length);
+        map = new MapGraph(relCoX, relCoY);
         // This prints out the information row by row
         for (int i = 0; i < infoMatrix.length; i++) {
             for (int j = 0; j < infoMatrix[i].length; j++) {
@@ -24,7 +23,7 @@ public class MapReader {
 
                 // Create the desired tile form first
                 // connect it to the graph in a right way later!
-                tileIJ = new Tile(j, i);
+                tileIJ = new Tile();
 
                 if (seperatedInfoIJ[0].equals("Cross")) {
                     createCrossFromTile(tileIJ);
@@ -57,7 +56,7 @@ public class MapReader {
                     tileIJ.setContent(new Barcode(Integer
                             .valueOf(seperatedInfoIJ[2])));
 
-                map.setTileXY(i, j, tileIJ);
+                map.setTileXY(j, i, tileIJ);
             }
         }
         return map;

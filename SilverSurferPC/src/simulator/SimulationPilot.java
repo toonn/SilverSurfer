@@ -1,21 +1,3 @@
-/**
- * ff algemene uitleg over het coordinatenstelsel en dingen waar je best rekening meehoudt:
- * het veld tiles[][] in mapGraph stelt dus een matrix voor met tiles die dus ook 
- * zo genummerd worden dus dit betekent tiles[0][1] is het vakje op rij 0 kolom 1
- * dit is anders als in het coordinatenstelsel van de panel omdat hier x horizontaal is 
- * en y verticaal en dus 0,1 het vakje voorstelt in de 2de rij en 1ste kolom.
- * deze coordinaten zijn opgeslagen in de tile zelf. dus als ge getx oproept van tile krijgt
- * ge de coordinaten in het echte assenstelsel, en als ge tiles[][].getcurrentXposition
- * oproept, krijgt ge de x coordinaat waarmee die in de matrix staat. deze 2 coordinaten zijn dus
- * eigenlijk gewoon het omgekeerde van elkaar.
- * 
- * de stand van de robot in het echte coordinatenstelsel staat vast, als ge dus een locatie
- * ingeeft waarop de robot moet starten in de map, verplaatst ge deze map dus eig ten opzichte
- * van uw robot en niet de robot ten opzichte van de map
- * dit is belangrijk om het bereik te weten! het echte coordinatenstelsel gaat niet negatief
- * dus miss moeten we de robot verder positioneren zodat de map groter kan zijn, das natuurlijk
- * ook rekeninghoudend met de pech da ze de robot laten vertrekken van rechtsvanonder
- */
 
 package simulator;
 
@@ -53,11 +35,6 @@ public class SimulationPilot {
 	 */
 	private final double detectionDistanceUltrasonicSensorRobot = 20;
 
-	private int howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
-	private Orientation previousDirection = null;
-	private int currentTileCoordinateXPreviousCheck = -1;
-	private int currentTileCoordinateYPreviousCheck = -1;
-
 	public SimulationPilot() {
 		SSG.getSimulationPanel().setRobotLocation(
 				this.getCurrentPositionAbsoluteX(),
@@ -87,9 +64,6 @@ public class SimulationPilot {
 		this.currentPositionAbsoluteY = y;
 	}
 
-	/**
-	 * de relatieve coordinaat is dus de coordinaat in de matrix!
-	 */
 	 public int getCurrentPositionRelativeX() {
 		return this.getMapGraph().getCurrentTileCoordinates()[0];
 	 }
@@ -262,15 +236,6 @@ public class SimulationPilot {
 					 }
 
 					 this.travelToNextTileIfNeeded(xOld, yOld);
-
-					 // dit checkt of hij dicht genoeg bij een edge is om te
-					 // checken of er een muur staat
-					 if (ExtMath.calculateDistanceFromPointToEdge(xOld, yOld,
-							 getAlpha()) < detectionDistanceUltrasonicSensorRobot) {
-						 if (checkForObstructions()) {
-							 addWall();
-						 }
-					 }
 				 }
 
 				 SSG.getSimulationPanel().setRobotLocation(xOld, yOld,
@@ -357,10 +322,6 @@ public class SimulationPilot {
 			 return;
 	 }
 
-	 /**
-	  * deze wordt opgeroepen in travel en rotate,
-	  * 
-	  */
 	 public boolean checkForObstructions() {
 		 Orientation currentOrientation = Orientation.calculateOrientation(
 				 this.getCurrentPositionAbsoluteX(),
@@ -396,32 +357,16 @@ public class SimulationPilot {
 				 this.getCurrentPositionAbsoluteX(),
 				 this.getCurrentPositionAbsoluteY(), this.getAlpha());
 
-		 if (!(getCurrentPositionRelativeX() == currentTileCoordinateXPreviousCheck
-				 && getCurrentPositionRelativeY() == currentTileCoordinateYPreviousCheck && previousDirection == currentOrientation)) {
-			 howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
-			 currentTileCoordinateXPreviousCheck = getCurrentPositionRelativeX();
-			 currentTileCoordinateYPreviousCheck = getCurrentPositionRelativeY();
-			 previousDirection = currentOrientation;
-			 return;
-		 }
-
-		 else if (howManyTimesCheckedOnSameCurrentTileInSameDirection != 4) {
-			 howManyTimesCheckedOnSameCurrentTileInSameDirection++;
-			 return;
-		 }
-
-		 else if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL) {
+		 if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL) {
 			 SSG.getSimulationPanel().addWall(currentOrientation,
 					 getCurrentPositionAbsoluteX(),
 					 getCurrentPositionAbsoluteY());
-			 howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
 		 } else {
 			 // roept addwhiteline op, deze methode verwijdert de muur terug uit
 			 // het panel
 			 SSG.getSimulationPanel().addWhiteLine(currentOrientation,
 					 getCurrentPositionAbsoluteX(),
 					 getCurrentPositionAbsoluteY());
-			 howManyTimesCheckedOnSameCurrentTileInSameDirection = 0;
 		 }
 	 }
 
@@ -433,18 +378,6 @@ public class SimulationPilot {
 				 this.getCurrentPositionAbsoluteY(), this.getAlpha());
 
 		 this.getSSG().updateStatus();
-
-		 // weer een checkForObstructions
-		 if (mapGraph != null) {
-			 if (ExtMath.calculateDistanceFromPointToEdge(
-					 getCurrentPositionAbsoluteX(),
-					 getCurrentPositionAbsoluteY(),
-					 ExtMath.addDegree(this.getAlpha(), alpha)) < detectionDistanceUltrasonicSensorRobot) {
-				 if (checkForObstructions()) {
-					 addWall();
-				 }
-			 }
-		 }
 	 }
 
 	 public void clear() {
@@ -773,8 +706,8 @@ public class SimulationPilot {
 			 int[] array = new int[2];
 			 // d en c wisselen om door de echte naar relatieve coordinatensysteem
 			 // transformatie
-			 array[0] = getStartPositionRelativeX() + d;
-			 array[1] = getStartPositionRelativeY() + c;
+			 array[0] = getStartPositionRelativeX() + c;
+			 array[1] = getStartPositionRelativeY() + d;
 			 return array;
 		 }
 

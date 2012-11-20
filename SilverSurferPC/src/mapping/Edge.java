@@ -55,6 +55,7 @@ public class Edge {
 	public Tile getTile2() {
 		return tile2;
 	}
+
 	
 	
 	/**
@@ -307,5 +308,6 @@ public class Edge {
 			t2 =  "T2:(" + getTile2().getxCoordinate() + getTile2().getyCoordinate()+")";
 		return t1 + " " + t2 + " Obstr:"+obstr;
 	}
+
 
 }

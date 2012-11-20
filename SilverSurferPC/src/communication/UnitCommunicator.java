@@ -2,6 +2,9 @@ package communication;
 
 import java.io.IOException;
 
+import mapping.Orientation;
+import mapping.Tile;
+
 import commands.Command;
 
 public class UnitCommunicator {
@@ -60,6 +63,22 @@ public class UnitCommunicator {
 	public void setStatusInfo(StatusInfoBuffer statusInfo) {
 		this.statusInfo = statusInfo;
 	}
+	
+	public void goToNextTile(Orientation orientation, Tile previousTile) throws IOException{
+		double currentAngle = getStatusInfo().getAngle();
+		int angleToRotate = (int)(((double) orientation.getRightAngle() - currentAngle)*10);
+		sendCommandToUnit(angleToRotate*10 + Command.AUTOMATIC_TURN_ANGLE);
+		sendCommandToUnit(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
+		int xCoordinate = orientation.getArrayToFindNeighbourAbsolute()[0] + previousTile.getxCoordinate();
+		int yCoordinate = orientation.getArrayToFindNeighbourAbsolute()[1] + previousTile.getyCoordinate();
+		setNewTileInMap(xCoordinate, yCoordinate);
+	}
+	
+	//TODO
+	public void setNewTileInMap(int xCoordinate, int yCoordinate){
+		
+	}
+
 	
 	public String getConsoleTag() {
 		return "";
