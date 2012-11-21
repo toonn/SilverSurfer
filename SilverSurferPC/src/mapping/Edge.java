@@ -287,6 +287,18 @@ public class Edge {
 		this.obstruction = obstruction;
 	}
 	
+//	/**
+//	 * Returns the other tile on this edge, the one that isn't 't'.
+//	 */
+//	public Tile getOtherTile(Tile t){
+//		if (t.equals(getTile1()))
+//			return getTile2();
+//		else if (t.equals(getTile2()))
+//			return getTile1();
+//		else return null;
+//
+//	}
+//	
 	/**
 	 * Checks if this edge should be able to be ridden over.
 	 * @return true if there is no wall or nothingness on the edge.

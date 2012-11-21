@@ -162,6 +162,7 @@ public class SimulationPilot {
 		 this.startPositionAbsoluteX = getCurrentPositionAbsoluteX();
 		 this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
 		 this.getSSG().getSimulationPanel().clearTotal();
+		 this.getSSG().getSimulationPanel().setTile(this.getMapGraph().getCurrentTileCoordinates()[0], this.getMapGraph().getCurrentTileCoordinates()[1]);
 	 }
 
 	 public SilverSurferGUI getSSG() {
@@ -198,7 +199,7 @@ public class SimulationPilot {
 	  * currentPositionAbsolute dit gebeurt in setCurrentTileCoordinates
 	  */
 	 private double getEdgeMarge() {
-		 return (double) 1;
+		 return (double) 1.2;
 	 }
 
 	 public void travel(double distance) {
@@ -220,7 +221,7 @@ public class SimulationPilot {
 
 				 if (mapGraph != null) {
 
-					 if (onEdge(xOld, yOld) && checkForObstructions()) {
+					 if (onEdge(xOld, yOld) && checkForObstruction()) {
 						 // deze if wordt uitgevoerd wanneer er een wall in de
 						 // weg staat
 						 this.setCurrentPositionAbsoluteX((double) (this
@@ -313,32 +314,61 @@ public class SimulationPilot {
 	  * currenttileCoordinates aan
 	  */
 	 private void travelToNextTileIfNeeded(double xOld, double yOld) {
-		 if ((xOld % 40) > 40 - this.getEdgeMarge()
-				 || (xOld % 40) < this.getEdgeMarge()
-				 || (yOld % 40) > 40 - this.getEdgeMarge()
-				 || (yOld % 40) < this.getEdgeMarge()) {
+		 if (onEdge(xOld,yOld)) {
+			 
+			 System.out.println("travelToNextTileIfNeeded");
+			 System.out.println(xOld + " en " + yOld);
+			 System.out.println(setAbsoluteToRelative(xOld, yOld)[0]);
+			 System.out.println(setAbsoluteToRelative(xOld, yOld)[1]);
+			 
 			 setCurrentTileCoordinates(mapGraph, xOld, yOld);
+			
+			 //TODO
+			 if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(mapGraph.getCurrentTileCoordinates()[0], mapGraph.getCurrentTileCoordinates()[1])==null)
+			 SSG.getSimulationPanel().setTile(mapGraph.getCurrentTileCoordinates()[0], mapGraph.getCurrentTileCoordinates()[1]);
 		 } else
 			 return;
 	 }
+	 
+	public void checkForObstructions(){
+		for(int i = 0; i < 4; i++){
+			if(checkForObstruction()){
+				addWall();
+			}
+			else{
+				removeWall();
+			}
+			rotate(90);
+			try {
+				//TODO gelijk gesteld worden aan tijd da de robot erover doet
+				 Thread.sleep(1000);
+			 } catch (InterruptedException e) {
+			 }
+		}
+	}
 
-	 public boolean checkForObstructions() {
+	 public boolean checkForObstruction() {
 		 Orientation currentOrientation = Orientation.calculateOrientation(
 				 this.getCurrentPositionAbsoluteX(),
 				 this.getCurrentPositionAbsoluteY(), this.getAlpha());
 
-		 Point2D point = ExtMath.calculateWallPoint(currentOrientation,
-				 getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-
-		 double XOther = point.getX()
-		 + currentOrientation.getOtherPointLine()[0];
-		 double YOther = point.getY()
-		 + currentOrientation.getOtherPointLine()[1];
-
-		 Double distance = Line2D.ptSegDist(point.getX(), point.getY(), XOther,
-				 YOther, getCurrentPositionAbsoluteX(),
-				 getCurrentPositionAbsoluteY());
-		 if (distance > 21) {
+//		 //afstand robot tot edge berekenen om te zien of hij er dicht genoeg bij staat als de 
+//		 //echte robot om de muur als echt te kunnen detecteren
+//		 Point2D point = ExtMath.calculateWallPoint(currentOrientation,
+//				 getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
+//
+//		 double XOther = point.getX()
+//		 + currentOrientation.getOtherPointLine()[0];
+//		 double YOther = point.getY()
+//		 + currentOrientation.getOtherPointLine()[1];
+//
+//		 Double distance = Line2D.ptSegDist(point.getX(), point.getY(), XOther,
+//				 YOther, getCurrentPositionAbsoluteX(),
+//				 getCurrentPositionAbsoluteY());
+		 
+		 Double distance = calculateDistanceToWall();
+		 
+		 if (distance > 32) {
 			 return false;
 		 }
 
@@ -352,22 +382,28 @@ public class SimulationPilot {
 	 }
 
 	 public void addWall() {
-
 		 Orientation currentOrientation = Orientation.calculateOrientation(
 				 this.getCurrentPositionAbsoluteX(),
 				 this.getCurrentPositionAbsoluteY(), this.getAlpha());
 
-		 if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL) {
 			 SSG.getSimulationPanel().addWall(currentOrientation,
 					 getCurrentPositionAbsoluteX(),
 					 getCurrentPositionAbsoluteY());
-		 } else {
-			 // roept addwhiteline op, deze methode verwijdert de muur terug uit
-			 // het panel
-			 SSG.getSimulationPanel().addWhiteLine(currentOrientation,
-					 getCurrentPositionAbsoluteX(),
-					 getCurrentPositionAbsoluteY());
-		 }
+			 SSG.getSimulationPanel().setWallOnTile(getCurrentPositionRelativeX(), getCurrentPositionRelativeY(), currentOrientation);
+	 }
+	 
+	 public void removeWall(){
+	
+		 Orientation currentOrientation = Orientation.calculateOrientation(
+				 this.getCurrentPositionAbsoluteX(),
+				 this.getCurrentPositionAbsoluteY(), this.getAlpha());
+		 
+		 // roept addwhiteline op, deze methode verwijdert de muur terug uit
+		 // het panel
+		 SSG.getSimulationPanel().addWhiteLine(currentOrientation,
+				 getCurrentPositionAbsoluteX(),
+				 getCurrentPositionAbsoluteY());
+		 SSG.getSimulationPanel().removeWallFromTile(getCurrentPositionRelativeX(), getCurrentPositionRelativeY(), currentOrientation);
 	 }
 
 	 public void rotate(double alpha) {
@@ -704,8 +740,6 @@ public class SimulationPilot {
 			 d = (int) Math.floor(b / 40);
 
 			 int[] array = new int[2];
-			 // d en c wisselen om door de echte naar relatieve coordinatensysteem
-			 // transformatie
 			 array[0] = getStartPositionRelativeX() + c;
 			 array[1] = getStartPositionRelativeY() + d;
 			 return array;

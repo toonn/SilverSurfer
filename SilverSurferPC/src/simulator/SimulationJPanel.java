@@ -20,6 +20,7 @@ public class SimulationJPanel extends JPanel {
 
 	private SilverSurferGUI SSG;
 	private SimulationPilot simulationPilot;
+	private MapGraph mapGraphConstructed;
 
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
@@ -55,6 +56,8 @@ public class SimulationJPanel extends JPanel {
 
 	public SimulationJPanel()
 	{
+		mapGraphConstructed = new MapGraph();
+		
 		try
 		{
 			verticalWallImage = ImageIO.read(new File("resources/wallImages/verticalwall2.png"));
@@ -399,6 +402,10 @@ public class SimulationJPanel extends JPanel {
 		this.simulationPilot = simulationPilot;
 	}
 
+	public MapGraph getMapGraphConstructed() {
+		return this.mapGraphConstructed;
+	}
+	
 	/**
 	 * verwijdert de muur als er een muur staat,
 	 * als er geen muur staat, return
@@ -438,12 +445,22 @@ public class SimulationJPanel extends JPanel {
 		walls.remove(point);
 	}
 
-	//TODO dit snap ik niet goed wat die doet want wordt nergens anders opgeroepen buiten 
-	//de mouseclickthread, ik denk dat nele ze hier gezet heeft, maar dat is niet de methode
-	//die gebruikt wordt! miss werkt het als de juiste methode in die mouseclickthread staat!
-	public void checkForObstructions()
-	{
-		simulationPilot.checkForObstructions();
+	public void setTile(int x, int y){
+		getMapGraphConstructed().setTileXY(x, y, new Tile());
+	}
+	
+	public void setWallOnTile(int x, int y, Orientation orientation){
+		if(getMapGraphConstructed().getTileWithCoordinates(x, y) == null)
+			throw new IllegalArgumentException("in simulationPanel bij methode SetWallOnTile " +
+					"zijn coordinaten meegegeven die de mapgraph niet bevat");
+		getMapGraphConstructed().getTileWithCoordinates(x, y).getEdge(orientation).setObstruction(Obstruction.WALL);
+	}
+	
+	public void removeWallFromTile(int x, int y, Orientation orientation){
+		if(getMapGraphConstructed().getTileWithCoordinates(x, y) == null)
+			throw new IllegalArgumentException("in simulationPanel bij methode removeWallFromTile " +
+					"zijn coordinaten meegegeven die de mapgraph niet bevat");
+		getMapGraphConstructed().getTileWithCoordinates(x, y).getEdge(orientation).setObstruction(null);
 	}
 
 	public BufferedImage getVerticalWallImage() {
