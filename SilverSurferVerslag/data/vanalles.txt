@@ -1,0 +1,7 @@
+draai 4x90 graden en meet de afwijking op het totaal gedraaid aantal graden.
+
+4
+3
+4
+4
+5

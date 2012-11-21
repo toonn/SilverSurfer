@@ -16,6 +16,7 @@ public class StatusInfoBuffer {
 	private int rightMotorSpeed;
 	private boolean busy;
 	private int barcode;
+	private double angle;
 
 	private SilverSurferGUI SSG;
 	/**
@@ -364,4 +365,13 @@ public class StatusInfoBuffer {
 		this.barcode = barcode;
 		SSG.executeBarcode();
 	}
+	
+	public double getAngle() {
+		return angle;
+	}
+	
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+	
 }

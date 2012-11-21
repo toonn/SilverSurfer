@@ -1,0 +1,10 @@
+rij 10 maal 10cm rechtdoor en meet de afwijking naar links
+
+1.8
+2.3
+2.1
+1.7
+1.9
+2.2
+2.3
+1.8

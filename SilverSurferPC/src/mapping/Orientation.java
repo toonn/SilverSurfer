@@ -11,13 +11,6 @@ public enum Orientation {
 		}
 		
 		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] north = {-1, 0};
-			return north;
-		}
-		
-		@Override
 		public final int[] getOtherPointLine()
 		{
 			int[] north = {40,0};
@@ -56,15 +49,7 @@ public enum Orientation {
 			int[] east = {1, 0};
 			return east;
 
-		}
-		
-		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] east = {0, 1};
-			return east;
-		}
-		
+		}	
 		
 		@Override
 		public final int[] getOtherPointLine()
@@ -103,13 +88,6 @@ public enum Orientation {
 		public final int[] getArrayToFindNeighbourAbsolute()
 		{
 			int[] south = {0, 1};
-			return south;
-		}
-		
-		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] south = {1, 0};
 			return south;
 		}
 		
@@ -154,13 +132,6 @@ public enum Orientation {
 		}
 		
 		@Override
-		public final int[] getArrayToFindNeighbourRelative()
-		{
-			int[] west = {0,-1};
-			return west;
-		}
-		
-		@Override
 		public final int[] getOtherPointLine()
 		{
 			int[] west = {0,40};
@@ -201,20 +172,6 @@ public enum Orientation {
 	 */
 	public int[] getArrayToFindNeighbourAbsolute()
 	{
-		// This line will never be reached, each valid direction has a return statement.
-		return new int[0];
-	}
-	
-	/**
-	 * This methode returns an array containing a relative x- and y-coordinate for the given orientation.
-	 * The implementation is orientation specific and is typed above.
-	 * 
-	 * er is dus een verschil met getArrayToFindNeighbourAbsoltue die hier onder staat
-	 * ook weer door het verschil in coordinatensysteem zie uitleg simulationpilot bovenaan
-	 */
-	public int[] getArrayToFindNeighbourRelative()
-	{
-		// implementation is orientation dependent
 		// This line will never be reached, each valid direction has a return statement.
 		return new int[0];
 	}
@@ -292,48 +249,70 @@ public enum Orientation {
 	}
 
 	/**
-	 * Hier wordt de richting van de edge die ge eerst snijdt (dus NORTH edge, SOUTH edge,...)
-	 * berekend adhv uw coordinaten waar de robot zich bevindt en hoek waaronder die staat.
-	 * bij dit soort methodes is kans op tel of afrondingsfouten groot!!
-	 * TODO normaal wel in orde maar zou kunnen dat het toch soms foute resultaten geeft
+	 * Calculates the orientation of the edge you will cross first while moving in the direction alpha, starting from x,y.
 	 */
 	public static Orientation calculateOrientation(double x, double y, double alpha)
 	{
+		// current temporary position; to check whether there are walls in the direction the robot is facing
 		double xTemp = x;
 		double yTemp = y;
+		// keep the last temporary position, so you can compare with the current temporary position
+		double xTempPrev = x;
+		double yTempPrev = y;
+
 		int i = 1;
 
-		while(!(((xTemp%40) > 40-getMaxRoundingError() || (xTemp%40) < getMaxRoundingError())
-				|| ((yTemp%40) > 40-getMaxRoundingError() || (yTemp%40) < getMaxRoundingError())))
+		while(!(Math.abs(xTempPrev%40 - xTemp%40) > 5) && !(Math.abs(yTempPrev%40 - yTemp%40) > 5))
 		{
+			xTempPrev = xTemp;
+			yTempPrev = yTemp;
+
 			xTemp = (double) (x + i* Math.cos(Math.toRadians(alpha)));
 			yTemp = (double) (y + i* Math.sin(Math.toRadians(alpha)));
 			i++;
 		}
 
-		if((yTemp%40) > 40-getMaxRoundingError() || (yTemp%40) < getMaxRoundingError())
+		return defineBorderCrossed(xTemp, yTemp, xTempPrev, yTempPrev);
+	}
+
+	/**
+	 * @param xTemp
+	 * @param yTemp
+	 * @param xTempPrev
+	 * @param yTempPrev
+	 * @return
+	 */
+	public static Orientation defineBorderCrossed(double xTemp, double yTemp,
+			double xTempPrev, double yTempPrev) {
+		Orientation oriTemp = null;
+
+		// you have crossed a horizontal border
+		if(Math.abs(yTempPrev%40 - yTemp%40) > 5)
 		{
-			if(alpha <= 180)
+			if(yTempPrev%40 < 20)
 			{
-				return SOUTH;
+				oriTemp = Orientation.NORTH;
 			}
+			//if(xTempPrev%40 < 20)
 			else
 			{
-				return NORTH;
+				oriTemp = Orientation.SOUTH;
 			}
 		}
-		//if((yTemp%40) > 40-this.getMaxRoundingError() || (yTemp%40) < this.getMaxRoundingError())
-		else
+		// you have crossed a vertical border
+		else if(Math.abs(xTempPrev%40 - xTemp%40) > 5)
 		{
-			if(alpha >= 270 || alpha < 90)
+			if(xTempPrev%40 > 20) 
 			{
-				return EAST;
+				oriTemp = Orientation.EAST;
 			}
+			//if(xTempPrev%40 < 20)
 			else
 			{
-				return WEST;
+				oriTemp = Orientation.WEST;
 			}
 		}
+		return oriTemp;
 	}
 
 	/**

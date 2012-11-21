@@ -106,10 +106,10 @@ public class SongThread extends Thread {
 		double[] a;
 		
 		for (int i = 0; i < pinkFrequencies.length; i++) {
-			N = (int) (StdAudio.SAMPLE_RATE*pinkDurations[i]/1000);
+			N = (int) (Audio.SAMPLE_RATE*pinkDurations[i]/1000);
 	        a = new double[N+1];
 	        for (int j = 0; j <= N; j++)
-	        	StdAudio.play(Math.sin(2 * Math.PI * pinkFrequencies[i] * j/ StdAudio.SAMPLE_RATE));
+	        	Audio.play(Math.sin(2 * Math.PI * pinkFrequencies[i] * j/ Audio.SAMPLE_RATE));
 		}
 
 	}

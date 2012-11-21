@@ -21,7 +21,6 @@
 \usepackage [dutch] {babel}
 \usepackage{graphicx}
 \usepackage{amsmath}
-\usepackage{fullpage}
 \usepackage{listings}
 \usepackage{subcaption}
 
@@ -115,7 +114,7 @@ Een alternatieve opstelling bestaat erin de NXT plat te leggen met ernaast de tw
 
 
 % == calibratie == %
-\subsection{Calibratie van de motoren} % 3 ?
+\subsection{Calibratie van de motoren} % 3 MEETWAARDEN + BOXPLOT
 \label{ssec:calibM}
 De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de twee wielen. De aansturing gebeurt door te bepalen hoeveel graden de wielen moeten draaien. Beide wielen kunnen onafhankelijk ingesteld worden. De robot kan \'e\'en cm vooruit bewegen (beide wielen draaien x aantal graden in dezelfde richting) en rond zijn as (beide wielen draaien y aantal graden in tegengestelde richting). De resultaten van de calibratie worden weergegeven in tabel \ref{tab:resultCalibM}. Het bepalen van parameters x en y gebeurt als volgt:
 
@@ -138,7 +137,7 @@ De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de t
 
 
 
-\subsubsection{E\'en cm vooruit bewegen: bepalen van x} % 3 ?
+\subsubsection{E\'en cm vooruit bewegen: bepalen van x} % 3 GEEN MEETWAARDEN VAN HET AANPASPROCES + BOXPLOT
 \label{ssec:calibMx}
 Een schatting voor x via de diameter van het wiel, waarbij x voor het aantal graden staat en de diameter in centimeter:
 
@@ -147,15 +146,19 @@ x_{0} \approx \frac{360}{\pi \cdot diameter}
 \end{equation*}
 
 De parameter x kan verder bepaald worden via tests.
-De robot rijdt naast een lintmeter 100 keer \'e\'en cm af. De wielen draaien met andere woorden 100 keer x graden. De totale afwijking (in centimeter) op deze volledige meter is de som van alle afwijkingen op \'e\'en centimeter. De afwijking op \'e\'en centimeter is voor elke centimeter gelijk. Een betere schatting van x wordt als volgt gegeven:
+De robot rijdt naast een lintmeter tien keer tien cm af. De wielen draaien met andere woorden tien keer $10 \cdot x$ graden. De totale afwijking (in centimeter) op deze volledige meter is de som van alle afwijkingen op tien centimeter. Wanneer in \'e\'en keer \'e\'en meter wordt gereden is de totale afwijking kleiner.\\
+Uit de test blijkt dat de robot een afwijking naar links heeft bij het rechtdoor rijden.
 
-\begin{equation*}
-x_{1} \approx \frac{360}{\pi \cdot diameter_{wiel}} \cdot \left(1-\frac{afwijking_{totaal}}{100}\right)
-\end{equation*}
+%boxplot motoren
+\begin{figure}[tbp]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
+    \caption{Boxplot meetwaarden motoren}
+    \label{fig:boxMot}
+\end{center}
+\end{figure}
 
-Door dit steeds te herhalen, wordt een steeds betere waarde voor x gevonden. De diameter en de afwijking zijn ook slechts benaderingen van de werkelijke waarden. 
-
-\subsubsection{Volledig rond de as draaien: bepalen van y} % niet in orde demo2! + meetwaarden!
+\subsubsection{Volledig rond de as draaien: bepalen van y} % 3 GEEN MEETWAARDEN VAN HET AANPASPROCES + BOXPLOT
 \label{ssec:calibMy}
 
 Een schatting voor y via de diameter van het wiel, met y in aantal graden en de as (afstand tussen beide wielen) en de diameter in centimeter:
@@ -164,56 +167,38 @@ Een schatting voor y via de diameter van het wiel, met y in aantal graden en de 
 y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 \end{equation*}
 
-Om de robot om zijn as te laten draaien, bewegen de beide wielen in tegengestelde richting. De robot wordt naast een lijn geplaatst. De parameter wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkwam.
+Om de robot om zijn as te laten draaien, bewegen de beide wielen in tegengestelde richting. De robot wordt naast een lijn geplaatst. De parameter wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
 
-\subsection{Calibratie van de lichtsensor} % niet in orde demo2! + meetwaarden!
+\subsection{Calibratie van de lichtsensor} % 3 BOXPLOT UPDATEN
 \label{ssec:calibLS}
-De lichtsensor meet verschillende waarden onder verschillende omstandigheden
-Verschillende waarden werden opgemeten met de lichtsensor in verschillende lichtomstandigheden.\\
-meetwaarden en grafieken toevoegen: bvb grijskaart (dat zijn standaardkleuren) toevoegen en waarden van de sensor in verschillenden lichtsituaties
+De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe meer dit licht geabsorbeerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.\\
+De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht (VL - veel licht), in de schaduw (WL - weinig licht), terwijl de robot rijdt (R - rijdend) en terwijl hij stilstaat (NR - niet rijdend). Dit voor alle soorten ondergrond: een paneel, een witte lijn of een zwarte lijn. De resultaten van deze metingen laten toe de lichtsensorwaarden de interpreteren en te simuleren. Een boxplot wordt weergegeven in figuur \ref{fig:boxLicht}. Deze toont dat het gemiddelde weinig afhangt van de omstandigheden. De afwijking wordt echter sterk bepaald door het feit of de robot rijdt of stilstaat.
 
-%resultaten meetwaarden
-\begin{table}[hb]
+%boxplot lichtsensor
+\begin{figure}[tbp]
 \begin{center}
-\begin{tabular}{ r || c | c | c | c | c | c | c | c}
-max & 56 & 55 & 56 & 55 & 55 & 50 & 50 & 50 \\ \hline
-$Q_{0,75}$ & 56 & 55 & 55 & 55 & 50 & 49 & 50 & 50 \\ \hline
-mediaan & 55 & 55 & 55 & 55 & 49 & 49 & 49 & 50 \\ \hline
-$Q_{0,25}$ & 55 & 55 & 55 & 55 & 49 & 49 & 49 & 50 \\ \hline
-min & 49 & 55 & 49 & 55 & 47 & 49 & 47 & 50
-\end{tabular}
-\caption{Resultaten}
-\label{tab:result}
+    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
+    \caption{Boxplot meetwaarden lichtsensor}
+    \label{fig:boxLicht}
 \end{center}
-\end{table}
+\end{figure}
 
-\subsection{Calibratie van de ultrasone sensor} % niet in orde demo2! + meetwaarden!
+\subsection{Calibratie van de ultrasone sensor} % 3 TE WEINIG TESTS + BOXPLOTS
 \label{ssec:calibUS}
-Verschillende afstanden werden opgemeten voor de ultrasone sensor.\\
-meetwaarden en grafieken toevoegen
+Een ultrasone sensor zendt ultrasone geluidsgolven uit. De golven weerkaatsen op een object dat zich binnen het bereik bevindt. Bij ontvangst van zijn eigen geluidsgolven, weet de robot dat er een object in de buurt is.\\
+In het kader van een doolhof, kan een robot muren tegenkomen als objecten. Maar ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om een onderscheid te maken tussen de paaltjes en de muren, dient de meetwaarde pas ge\"iterpreteerd worden wanneer de sensor aangeeft dat hij zich op 20 cm van een object bevindt. In dat geval kan het object veilig als muur geïnterpreteerd worden. Deze veiligheidsmarge werd vastgelegd op basis van testen.\\
+% WELKE TESTEN?? MEETRESULTATEN!!!
+De afwijking van de ultrasone sensor wordt gemeten door de robot op 30 cm van een muur te zetten en de bekomen meetwaarden te interpreteren. De robot staat in eerste instantie loodrecht ten opzichte van de muur en vervolgens met een afwijking van 20\degree van deze loodrecht stand. Een boxplot van de meetwaarden wordt weergegeven in figuur \ref{fig:boxUltra}.
+% OOK VOOR ANDERE AFSTANDEN METEN!!!
 
-\begin{table}[hb]
+%boxplot lichtsensor
+\begin{figure}[tbp]
 \begin{center}
-    \begin{tabular}{  l || c | c  }
-     & rechts & scheef  \\ \hline \hline
-     32 & 32 & 32 \\
-     32 & 32 & 33 \\
-	    & 31 & 32 \\
-	 32 & 32 & 32 \\
-	 32 & 33 & 32 \\
-	 33 & 32 & 32 \\
-	 33 & 32 & 33 \\ \hline
-     27 & 28 & 29 \\
-     27 & 28 & 29 \\
-     27 & 28 & 29 \\
-     27 & 30 & 29 \\
-     28 & 27 & 28 \\
-     28 & 27 & 29 \\
-    \end{tabular}
-    \caption{Resultaten calibratie van de ultrasone sensor}
-    \label{tab:resultCaliUltra}
+    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
+    \caption{Boxplot meetwaarden ultrasone sensor}
+    \label{fig:boxUltra}
 \end{center}
-\end{table}
+\end{figure}
 
 % == ALGORITMES == %
 \section{Algoritmes} % 3 ?
@@ -223,23 +208,12 @@ Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoere
 % == veelhoek == %
 \subsection{Het rijden van een veelhoek} % 3 ?
 \label{ssec:algoVeelH}
-De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is. Enkele parameters zijn van belang:
-
-\begin{itemize}
-\item \textit{aantal keer dat de stappen moeten worden uitgevoerd, amtOfAngles:} aantal hoeken van de veelhoek.
-\item \textit{afstand per stap, lengthInCM:} zijde van de veelhoek.
-\item \textit{aantal graden per stap, angle:} 360 gedeeld door het aantal hoeken van de veelhoek.
-\end{itemize}
-
-Om een stap uit te voeren wordt een commando gestuurd naar de \textit{CommandToUnit}. Dit is een integer bestaande uit twee delen. De eenheden staan voor het soort commando. De tientallen en de honderdtallen geven aan hoeveel centimeter de robot vooruit moet bewegen of hoeveel graden hij moet draaien.
+De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is. 
 
 \lstset{frame=single, language=Java, caption=Veelhoek algoritme (pseudocode),
     	label=code:algoVeelH, numbers=left, numberstyle=\footnotesize,
 		basicstyle=\sffamily, numbersep=5pt}
 \begin{lstlisting}
-AmtOfAngles
-LengthInCM
-
 Angle = (360.0/amtOfAngles)*100
 Voor i van 0 tot amtOfAngles
 	Beweeg lengthInCM vooruit
@@ -250,28 +224,35 @@ Voor i van 0 tot amtOfAngles
 % == witte lijn == %
 \subsection{Het rechtzetten op een witte lijn} % 3 ?
 \label{ssec:algoWitteL}
-
-De robot en de simulator kunnen zich loodrecht ori\"enteren op een witte lijn.
-Het algoritme kan gebruikt worden wanneer de robot vlak bij een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten passeren). Het idee achter het algoritme (in pseudocode)
+Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren.
+Onderstaand algoritme kan gebruikt worden wanneer de robot vlakbij een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten passeren):
 
 \lstset{frame=single, caption=Witte Lijn algoritme (pseudocode),
 		label=code:algoWitteL, numbers=left, numberstyle=\footnotesize,
 		basicstyle=\sffamily, numbersep=5pt}
 \begin{lstlisting}
 AngleTurned = 0
-WheelAngle = 5
 
-Draai naar rechts (wielen draaien WheelAngle graden).
-Als op witte lijn: naar volgende stap.
-Anders: naar vorige stap.
-
-Draai naar links (wielen draaien WheelAngle graden)
-	en verhoog AngleTurned met WheelAngle.
-Als op witte lijn: naar volgende stap.
-Anders: naar vorige stap.
-
+Draai naar rechts tot witte lijn.
+Draai naar links tot witte lijn EN verhoog AngleTurned.
 Draai AngleTurned/2 naar rechts.
 \end{lstlisting}
+
+% IETS OVER TESTRESULTATEN + NAUWKEURIGHEID
+
+Alternatief is het mogelijk te corrigeren op de muren, maar dan moet de robot zicht bevinden op een tegel die muren aan beide kanten bevat.
+
+
+% == kortste pad == %
+\subsection{Het vinden van het kortste pad} % 3 ?
+\label{ssec:algoKortsteP}
+Alvorens de robot het kortste pad tussen twee punten bepaalt, dient het hele doolhof gekend te zijn. Dit verkennen doet de robot autonoom. Elke tegel die de robot reeds passeerde, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht.
+% HOE GEMARKEERD? MSS BETER EEN LIJST VAN NOG NIET BEKEKEN TEGELS?
+Bij elke tegel onthoudt de robot alle uitwegen. Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden.
+Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof de 'finish'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.
+% NOG NIET GENOEG UITLEG OVER HET ALGORITME ZELF
+
+Het kortste pad algoritme maakt gebruik van een graf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme gebruikt de Manhattanafstand als heuristiek en de afgelegde afstand als kost.
 
 % == SOFTWARE == %
 \section{Software} % 3 ?

@@ -1,7 +1,46 @@
 package algoritmeMaze;
 
-public class ExploreCompleteMaze {
+import gui.SilverSurferGUI;
 
+import java.awt.Shape;
+import java.io.IOException;
+import java.util.Vector;
+
+import commands.Command;
+
+import mapping.MapGraph;
+import mapping.Orientation;
+import mapping.Tile;
+
+public class ExploreCompleteMaze {
+	
+	private Vector<Tile> allTiles = new Vector<Tile>();
+	private Vector<Tile> queu = new Vector<Tile>();
+	private SilverSurferGUI gui;
+	
+	public ExploreCompleteMaze(SilverSurferGUI gui){
+		this.gui = gui;
+	}
+	
+	public void algorithm(Tile startTile) throws IOException{
+		
+		allTiles.add(startTile);
+		
+		for(Object neighbourTile: startTile.getReachableNeighbours()){
+			if(neighbourTile != null && !(((Tile) neighbourTile).isMarked())){
+				queu.add((Tile) neighbourTile);}
+		}
+		startTile.setMarking(true);
+		if(queu.isEmpty()){
+			return;
+		}
+		Tile nextTile = queu.lastElement();
+		ShortestPad shortestPath = new ShortestPad(gui, startTile, nextTile, allTiles);
+		shortestPath.goShortestPath();
+		algorithm(nextTile);
+		
+	}
+	
 }
  
 
@@ -9,7 +48,7 @@ public class ExploreCompleteMaze {
 /**
  * Hallo dit is the pseudocode van de completness van de maze:
  * 
- * Vakje houdt bij of het niet, wel of twee gemarkeerd (boolean) is en de coordinaten.
+ * Vakje houdt bij of het niet, wel gemarkeerd (boolean) is en de coordinaten.
  * Gebruik van Tile in maping en Enumeratie voor marking (noemt Marking in package mapping).
  * 
  * 
@@ -27,3 +66,4 @@ public class ExploreCompleteMaze {
  *  
  *  bij resultaat een geluidje geven om te zeggen dat het aan het kortste pad algoritme begint.
  */
+
