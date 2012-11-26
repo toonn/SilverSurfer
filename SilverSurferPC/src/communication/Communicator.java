@@ -95,7 +95,6 @@ public class Communicator {
 			if(robotConnected) {
 				dos.writeInt(command);
 				dos.flush();
-				System.out.println(command);
 			}
 			if(command == Command.FORWARD_PRESSED) {
 				if(!buzy) {

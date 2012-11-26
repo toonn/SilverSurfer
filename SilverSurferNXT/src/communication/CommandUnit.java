@@ -192,7 +192,7 @@ public class CommandUnit {
                     break;
                 }
             } catch (Exception e) {
-            	System.out.println("Error in CommandUnit.main(String[] args)!" + e.getMessage());
+            	System.out.println("Error in CommandUnit.main(String[] args)!");
             }
         }
 

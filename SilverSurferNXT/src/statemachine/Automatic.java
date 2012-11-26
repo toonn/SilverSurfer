@@ -76,12 +76,12 @@ public class Automatic extends State {
     	
     	turnAngle(179); //90 graden
     	firstUSRead = ultrasonicSensor.getDistance();
-    	if (firstUSRead < 32) {
+    	if (firstUSRead < 29) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*20.8));
         	turnAngle(-179);
         	turnAngle(-179);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 32)
+    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 29)
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*20.8));
     		turnAngle(179);
     		return true;
@@ -90,7 +90,7 @@ public class Automatic extends State {
         	turnAngle(-179);
     		turnAngle(-179);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 32) {
+    		if (secondUSRead < 29) {
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*20.8));
         		turnAngle(179);
     			return true;

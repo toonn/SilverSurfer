@@ -78,7 +78,7 @@ public class ShortestPad {
 			ar[0] = ((Tile) tilesPath.get(i+1)).getxCoordinate() - ((Tile) tilesPath.get(i)).getxCoordinate();
 			ar[1] = ((Tile) tilesPath.get(i+1)).getyCoordinate() - ((Tile) tilesPath.get(i)).getyCoordinate();
 			Orientation orientation = Orientation.getOrientationOfArray(ar);
-			gui.getUnitCommunicator().goToNextTile(orientation);
+			gui.getCommunicator().goToNextTile(orientation);
 		}
 	}
 	
