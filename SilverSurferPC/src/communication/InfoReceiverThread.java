@@ -73,6 +73,7 @@ public class InfoReceiverThread extends Thread {
 					System.out.println("Testing: " + a.substring(7).trim());
 			} catch (Exception e) {
 				System.out.println("Error in InfoReceiverThread.run()!");
+				e.printStackTrace();
 			}
 		}
 	}

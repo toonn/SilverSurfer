@@ -171,6 +171,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 	public void updateUndergroundCircle(double robotX, double robotY, double LSValue)
 	{
+		
 		double diam = 7;
 		undergroundCircle = new Ellipse2D.Double(robotX - (diam/2), robotY - (diam/2), diam, diam); 
 	}

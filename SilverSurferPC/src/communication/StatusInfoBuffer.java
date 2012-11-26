@@ -9,7 +9,6 @@ import gui.SilverSurferGUI;
 
 public class StatusInfoBuffer {
 
-	private SimulationJPanel panel;
 	private int lightSensorInfo;
 	private int ultraSensorInfo;
 	private boolean touchSensor1Info;
@@ -425,7 +424,7 @@ public class StatusInfoBuffer {
 	public void setCoordinatesAbsolute(double[] coordinates){
 		coordinatesAbsolute[0] = coordinates[0];
 		coordinatesAbsolute[1] = coordinates[1];
-		panel.setRobotLocation(coordinates[0], coordinates[1], getAngle());
+		SSG.getSimulationPanel().setRobotLocation(coordinates[0], coordinates[1], getAngle());
 		
 	}
 	
