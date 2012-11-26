@@ -18,6 +18,9 @@ public class ExtMath {
 		if(a+b > 360){
 			return (a+b-360);
 		}
+		if(a+b < 0){
+			return (a+b+360);
+		}
 		return a+b;
 	}
 	

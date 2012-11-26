@@ -468,7 +468,6 @@ public class SimulationPilot {
 		 startPositionAbsoluteX = 220;
 		 startPositionAbsoluteY = 220;
 		 alpha = 270;
-		 speed = 10;
 		 
 	 }
 
