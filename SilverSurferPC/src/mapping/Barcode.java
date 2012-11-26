@@ -33,20 +33,47 @@ public class Barcode extends TileContent{
 	/**
 	 * Gives the color of the barcode on the given x-y-coordinate
 
-	 * @param x relative to the tile!
+	 * @param x relative to the tile! (0,0 is upper-left corner)
 	 * @param y relative to the tile!
+	 * @param direction the orientation the barcode is being crossed over
+	 * (North = from south to North, East = from West to East.
+	 * We simplify the 'mirroring' by stating North = South and West = East
 	 * @return	0, when standing on a black part of the barcode
 	 * 			1, when standing on a white part of the barcode
 	 * 			something else, when standing next to the barcode but on the same tile (brown underground)
 	 */
-	public int getColorValue(double x, double y)
+	public int getColorValue(double x, double y, Orientation direction)
 	{
-		// to be implemented!
-		return 0;
+		if (direction == Orientation.NORTH || direction == Orientation.SOUTH){
+			System.out.println("getColorvalue()NORTH SOUTH" + x + " x " +y+ " y");
+
+			if(y < 12) return 2; //TODO COLORVALUE ONDERGROND
+			else if( 12<= y && y<14) return Character.getNumericValue(toString().charAt(0));
+			else if( 14<= y && y<16) return Character.getNumericValue(toString().charAt(1));
+			else if( 16<= y && y<18) return Character.getNumericValue(toString().charAt(2));
+			else if( 18<= y && y<20) return Character.getNumericValue(toString().charAt(3));
+			else if( 20<= y && y<22) return Character.getNumericValue(toString().charAt(4));
+			else if( 22<= y && y<24) return Character.getNumericValue(toString().charAt(5));
+			else if( 24<= y && y<26) return Character.getNumericValue(toString().charAt(6));
+			else if( 26<= y && y<28) return Character.getNumericValue(toString().charAt(7));
+			else return 52; // y > 28
+		}
+		else {
+			if(x < 12) return 2; //TODO COLORVALUE ONDERGROND
+			else if( 12<= x && x<14) return Character.getNumericValue(toString().charAt(0));
+			else if( 14<= x && x<16) return Character.getNumericValue(toString().charAt(1));
+			else if( 16<= x && x<18) return Character.getNumericValue(toString().charAt(2));
+			else if( 18<= x && x<20) return Character.getNumericValue(toString().charAt(3));
+			else if( 20<= x && x<22) return Character.getNumericValue(toString().charAt(4));
+			else if( 22<= x && x<24) return Character.getNumericValue(toString().charAt(5));
+			else if( 24<= x && x<26) return Character.getNumericValue(toString().charAt(6));
+			else if( 26<= x && x<28) return Character.getNumericValue(toString().charAt(7));
+			else return 52;
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "Barcode-value: " + getValue();
+		return 1+Integer.toBinaryString(getValue())+1;
 	}
 }

@@ -509,16 +509,17 @@ public class SimulationPilot {
 				 standardDeviation = SimulationSensorData.getSDWhiteLineLS();
 			 } else if (onBarcodeTile(getLightsensorPositionX(),
 					 getLightsensorPositionY())) {
-				 int color = this
-				 .getMapGraph()
-				 .getContentCurrentTile()
+				 System.out.println("onBarcode Simulationpilot line 512");
+				 int color = ((Barcode)this.getMapGraph().getContentCurrentTile())
 				 .getColorValue(getLightsensorPositionX() % 40,
-						 getLightsensorPositionY() % 40);
+						 getLightsensorPositionY() % 40, Orientation.calculateOrientation(
+								 getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
+								 getAlpha()));
 				 mean = SimulationSensorData.getMBarcodeTileLS(color);
 				 standardDeviation = SimulationSensorData
 				 .getSDBarcodeTileLS(color);
 			 }
-
+			 
 			 return (int) Math.round(mean
 					 + (random.nextGaussian() * standardDeviation));
 		 }
