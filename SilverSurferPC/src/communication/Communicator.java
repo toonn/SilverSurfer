@@ -149,17 +149,11 @@ public class Communicator {
 				amount = amount - 1;
 			}
 		}
-		else if(command%100 == Command.AUTOMATIC_TURN_ANGLE || Math.abs(command%100) == 100 - Command.AUTOMATIC_TURN_ANGLE) {
+		else if(command%100 == Command.AUTOMATIC_TURN_ANGLE) {
 			double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
-			if(amount < 0){
-				while (amount<0){
-					simulationPilot.rotate(-1);
-					amount = amount + 1;
-				}
-			}
-			else{while(amount > 0) {
+			while(amount > 0) {
 				simulationPilot.rotate(1);
-				amount = amount - 1;}
+				amount = amount - 1;
 			}
 		}
 		else if(command%100 == -91) {
