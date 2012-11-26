@@ -31,9 +31,10 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	/**
 	 * 2 driehoeken die elkaar afwisselen om afgebeeld te worden
 	 * de ene wordt afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden
+	 * neem Triangle(220,220,270) ipv (0,0,0) om lelijke dot op 0,0 te voorkomen.
 	 */
-	private Triangle triangle1 = new Triangle(0,0,0);
-	private Triangle triangle2 = new Triangle(0,0,0);
+	private Triangle triangle1 = new Triangle(220,220,270);
+	private Triangle triangle2 = new Triangle(220,220,270);
 	/**
 	 * geeft het getal van de driehoek die afgebeeld wordt
 	 */
