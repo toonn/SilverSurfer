@@ -1,37 +1,39 @@
 package communication;
 
+import commands.Command;
+
 import gui.SilverSurferGUI;
 
 public class BarDecoder {
 
 	private SilverSurferGUI SSG;
-	private UnitCommunicator unitCommunicator;
+	private Communicator communicator;
 	
-	public BarDecoder(SilverSurferGUI SSG, UnitCommunicator unitCommunicator) {
+	public BarDecoder(SilverSurferGUI SSG, Communicator communicator) {
 		this.SSG = SSG;
-		this.unitCommunicator = unitCommunicator;
+		this.communicator = communicator;
 	}
 	
 	public void decode(int value) {
 		try {
 			switch(value) {
 				case(5):
-					unitCommunicator.moveTurn(-360, 0);
+					communicator.moveTurn(0, -360, 0);
 					break;
 				case(40):
-					unitCommunicator.moveTurn(-360, 0);
+					communicator.moveTurn(0, -360, 0);
 					break;
 				case(9):
-					unitCommunicator.moveTurn(360, 0);
+					communicator.moveTurn(0, 360, 0);
 					break;
 				case(36):
-					unitCommunicator.moveTurn(360, 0);
+					communicator.moveTurn(0, 360, 0);
 					break;
 				case(15):
-					unitCommunicator.playSong();
+					communicator.sendCommand(Command.PLAY_SONG);
 					break;
 				case(60):
-					unitCommunicator.playSong();
+					communicator.sendCommand(Command.PLAY_SONG);
 					break;
 				case(19):
 					Thread.sleep(5000);
@@ -61,7 +63,7 @@ public class BarDecoder {
 					break;
 			}
 		} catch(Exception e) {
-			
+			System.out.println("Error in BarDecoder.decode()!");
 		}
 	}
 }

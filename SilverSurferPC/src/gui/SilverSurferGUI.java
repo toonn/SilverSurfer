@@ -13,17 +13,15 @@ public class SilverSurferGUI {
 
 	private static JFrame frame;
 	private static SimulationJPanel simulationPanel;
-	private static StatusInfoBuffer informationBuffer;
+	private static StatusInfoBuffer statusInfoBuffer;
+	private static BarDecoder barDecoder;
 
-	private static UnitCommunicator unitCommunicator;
-	private static UnitCommunicator prevCommunicator;
+	private static Communicator communicator;
 
 	private static JButton bluetoothConnect;
 	private static JLabel bluetoothStatus;
-	private static ImageIcon bluetoothNotConnectedIcon = new ImageIcon(
-			"resources/bluetooth_icons/bluetooth_no_connection.png");
-	private static ImageIcon bluetoothConnectedIcon = new ImageIcon(
-	"resources/bluetooth_icons/bluetooth_connected.png");
+	private static ImageIcon bluetoothNotConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_no_connection.png");
+	private static ImageIcon bluetoothConnectedIcon = new ImageIcon("resources/bluetooth_icons/bluetooth_connected.png");
 
 	private static JSpinner polygonEdgeLength;
 	private static JSlider polygonangles;
@@ -34,22 +32,14 @@ public class SilverSurferGUI {
 	private static JButton downarrow;
 	private static JButton leftarrow;
 	private static JButton rightarrow;
-	private static ImageIcon uparrowicon = new ImageIcon(
-			"resources/round_grey_arrows/arrow-up.png");
-	private static ImageIcon uparrowpressedicon = new ImageIcon(
-	"resources/round_grey_arrows/arrow-up-pressed.png");
-	private static ImageIcon leftarrowicon = new ImageIcon(
-	"resources/round_grey_arrows/arrow-left.png");
-	private static ImageIcon leftarrowpressedicon = new ImageIcon(
-	"resources/round_grey_arrows/arrow-left-pressed.png");
-	private static ImageIcon downarrowicon = new ImageIcon(
-	"resources/round_grey_arrows/arrow-down.png");
-	private static ImageIcon downarrowpressedicon = new ImageIcon(
-	"resources/round_grey_arrows/arrow-down-pressed.png");
-	private static ImageIcon rightarrowicon = new ImageIcon(
-	"resources/round_grey_arrows/arrow-right.png");
-	private static ImageIcon rightarrowpressedicon = new ImageIcon(
-	"resources/round_grey_arrows/arrow-right-pressed.png");
+	private static ImageIcon uparrowicon = new ImageIcon("resources/round_grey_arrows/arrow-up.png");
+	private static ImageIcon uparrowpressedicon = new ImageIcon("resources/round_grey_arrows/arrow-up-pressed.png");
+	private static ImageIcon leftarrowicon = new ImageIcon("resources/round_grey_arrows/arrow-left.png");
+	private static ImageIcon leftarrowpressedicon = new ImageIcon("resources/round_grey_arrows/arrow-left-pressed.png");
+	private static ImageIcon downarrowicon = new ImageIcon("resources/round_grey_arrows/arrow-down.png");
+	private static ImageIcon downarrowpressedicon = new ImageIcon("resources/round_grey_arrows/arrow-down-pressed.png");
+	private static ImageIcon rightarrowicon = new ImageIcon("resources/round_grey_arrows/arrow-right.png");
+	private static ImageIcon rightarrowpressedicon = new ImageIcon("resources/round_grey_arrows/arrow-right-pressed.png");
 
 	private static JLabel speedLabel;
 	private static JSlider speedvalues;
@@ -74,11 +64,9 @@ public class SilverSurferGUI {
 	private static JPanel mappingPanel;
 	private static JPanel consolePanel;
 
-	private static boolean robotConnected = false;
-
 	private void createAndShowGUI() {
-		informationBuffer = new StatusInfoBuffer();
-		informationBuffer.setSSG(this);
+		statusInfoBuffer = new StatusInfoBuffer();
+		statusInfoBuffer.setSSG(this);
 
 		frame = new JFrame("Silver Surfer Command Center");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,48 +90,34 @@ public class SilverSurferGUI {
 
 		GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
 		frame.getContentPane().setLayout(frameLayout);
-		frameLayout.setHorizontalGroup(frameLayout
-				.createSequentialGroup()
-				.addGroup(
-						frameLayout
-						.createParallelGroup(
-								GroupLayout.Alignment.CENTER)
-								.addComponent(bluetoothPanel)
-								.addComponent(polygonPanel)
-								.addComponent(arrowPanel)
-								.addComponent(speedPanel)
-								.addComponent(clearPanel))
-								.addGroup(
-										frameLayout
-										.createParallelGroup(
-												GroupLayout.Alignment.CENTER)
-												.addComponent(mappingPanel)
-												.addComponent(consolePanel))
-												.addGroup(
-														frameLayout
-														.createParallelGroup(
-																GroupLayout.Alignment.CENTER)
-																.addComponent(directionPanel)
-																.addComponent(lookAroundPanel)
-																.addComponent(alignPanel)));
-		frameLayout.setVerticalGroup(frameLayout
-				.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addGroup(
-						frameLayout.createSequentialGroup()
+		frameLayout.setHorizontalGroup(frameLayout.createSequentialGroup()
+				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(bluetoothPanel)
 						.addComponent(polygonPanel)
 						.addComponent(arrowPanel)
 						.addComponent(speedPanel)
 						.addComponent(clearPanel))
-						.addGroup(
-								frameLayout.createSequentialGroup()
-								.addComponent(mappingPanel)
-								.addComponent(consolePanel))
-								.addGroup(
-										frameLayout.createSequentialGroup()
-										.addComponent(directionPanel)
-										.addComponent(lookAroundPanel)
-										.addComponent(alignPanel)));
+				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(mappingPanel)
+						.addComponent(consolePanel))
+				.addGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(directionPanel)
+						.addComponent(lookAroundPanel)
+						.addComponent(alignPanel)));
+		frameLayout.setVerticalGroup(frameLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(frameLayout.createSequentialGroup()
+						.addComponent(bluetoothPanel)
+						.addComponent(polygonPanel)
+						.addComponent(arrowPanel)
+						.addComponent(speedPanel)
+						.addComponent(clearPanel))
+				.addGroup(frameLayout.createSequentialGroup()
+						.addComponent(mappingPanel)
+						.addComponent(consolePanel))
+				.addGroup(frameLayout.createSequentialGroup()
+						.addComponent(directionPanel)
+						.addComponent(lookAroundPanel)
+						.addComponent(alignPanel)));
 		frameLayout.linkSize(SwingConstants.HORIZONTAL, polygonPanel, speedPanel);
 		frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
 		frameLayout.linkSize(SwingConstants.VERTICAL, polygonPanel, consolePanel);
@@ -153,17 +127,13 @@ public class SilverSurferGUI {
 		frame.setSize(1000, 800);
 		frame.setVisible(true);
 
-		unitCommunicator = new SimulatorCommunicator(informationBuffer);
-		try {
-			unitCommunicator.openUnitConnection();
-			System.out.println("[CONNECTION] Entered simulator mode.");
-		} catch (IOException e) {
-			System.out.println("[CONNECTION] Oops! Something went wrong initializing!");
-		}
-		getSimulationPanel().setSimulationPilot(((SimulatorCommunicator) unitCommunicator).getSim());
+		communicator = new Communicator(statusInfoBuffer);
+		System.out.println("[CONNECTION] Entered simulator mode.");
+
+		getSimulationPanel().setSimulationPilot(communicator.getSimulationPilot());
 		addListeners();
+		barDecoder = new BarDecoder(this, communicator);
 		simulationPanel.requestFocusInWindow();
-		unitCommunicator.setSpeed(speedvalues.getValue());
 
 		updateStatus();
 	}
@@ -182,20 +152,18 @@ public class SilverSurferGUI {
 		bluetoothStatus = new JLabel(bluetoothNotConnectedIcon);
 
 		JPanel bluetoothPanel = new JPanel();
-		bluetoothPanel.setBorder(BorderFactory.createTitledBorder(
-				createBorder(), "Bluetooth"));
+		bluetoothPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Bluetooth"));
 		bluetoothPanel.setOpaque(false);
 
 		GroupLayout bluetoothlayout = new GroupLayout(bluetoothPanel);
 		bluetoothPanel.setLayout(bluetoothlayout);
 		bluetoothlayout.setAutoCreateGaps(true);
 		bluetoothlayout.setAutoCreateContainerGaps(true);
-		bluetoothlayout.setHorizontalGroup(bluetoothlayout
-				.createSequentialGroup().addComponent(bluetoothConnect)
+		bluetoothlayout.setHorizontalGroup(bluetoothlayout.createSequentialGroup().addComponent(bluetoothConnect)
 				.addComponent(bluetoothStatus));
-		bluetoothlayout.setVerticalGroup(bluetoothlayout
-				.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(bluetoothConnect).addComponent(bluetoothStatus));
+		bluetoothlayout.setVerticalGroup(bluetoothlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(bluetoothConnect)
+				.addComponent(bluetoothStatus));
 
 		return bluetoothPanel;
 	}
@@ -211,11 +179,9 @@ public class SilverSurferGUI {
 		polygonangles.setPaintLabels(true);
 		polygonangles.setOpaque(false);
 
-		JLabel polygonEdgeLengthLabel = new JLabel("Edge Length (centimeters)",
-				JLabel.CENTER);
+		JLabel polygonEdgeLengthLabel = new JLabel("Edge Length (centimeters)", JLabel.CENTER);
 
-		SpinnerNumberModel polygonEdgeLengthModel = new SpinnerNumberModel(10,
-				0, 1000, 1);
+		SpinnerNumberModel polygonEdgeLengthModel = new SpinnerNumberModel(10, 0, 1000, 1);
 		polygonEdgeLength = new JSpinner(polygonEdgeLengthModel);
 
 		resetpolygonButton = new JButton("Reset");
@@ -223,48 +189,34 @@ public class SilverSurferGUI {
 		polygondraw = new JButton("Execute polygon");
 
 		JPanel polygonPanel = new JPanel();
-		polygonPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				"Polygon"));
+		polygonPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Polygon"));
 		polygonPanel.setOpaque(false);
 
 		GroupLayout polygonlayout = new GroupLayout(polygonPanel);
 		polygonPanel.setLayout(polygonlayout);
 		polygonlayout.setAutoCreateGaps(true);
 		polygonlayout.setAutoCreateContainerGaps(true);
-		polygonlayout.setHorizontalGroup(polygonlayout
-				.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addGroup(
-						polygonlayout
-						.createParallelGroup(
-								GroupLayout.Alignment.CENTER)
-								.addComponent(polygonAnglesLabel)
-								.addComponent(polygonangles))
-								.addGroup(
-										polygonlayout
-										.createParallelGroup(
-												GroupLayout.Alignment.CENTER)
-												.addComponent(polygonEdgeLengthLabel)
-												.addComponent(polygonEdgeLength))
-												.addGroup(
-														polygonlayout.createSequentialGroup()
-														.addComponent(resetpolygonButton)
-														.addComponent(polygondraw)));
-		polygonlayout.setVerticalGroup(polygonlayout
-				.createSequentialGroup()
-				.addGroup(
-						polygonlayout.createSequentialGroup()
+		polygonlayout.setHorizontalGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(polygonAnglesLabel)
 						.addComponent(polygonangles))
-						.addGroup(
-								polygonlayout.createSequentialGroup()
-								.addComponent(polygonEdgeLengthLabel)
-								.addComponent(polygonEdgeLength))
-								.addGroup(
-										polygonlayout
-										.createParallelGroup(
-												GroupLayout.Alignment.CENTER)
-												.addComponent(resetpolygonButton)
-												.addComponent(polygondraw)));
+				.addGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(polygonEdgeLengthLabel)
+						.addComponent(polygonEdgeLength))
+				.addGroup(polygonlayout.createSequentialGroup()
+						.addComponent(resetpolygonButton)
+						.addComponent(polygondraw)));
+		polygonlayout.setVerticalGroup(polygonlayout.createSequentialGroup()
+				.addGroup(polygonlayout.createSequentialGroup()
+						.addComponent(polygonAnglesLabel)
+						.addComponent(polygonangles))
+				.addGroup(polygonlayout.createSequentialGroup()
+						.addComponent(polygonEdgeLengthLabel)
+						.addComponent(polygonEdgeLength))
+				.addGroup(polygonlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(resetpolygonButton)
+						.addComponent(polygondraw)));
+		
 		polygonPanel.hide();
 
 		return polygonPanel;
@@ -288,30 +240,25 @@ public class SilverSurferGUI {
 		rightarrow.setContentAreaFilled(false);
 
 		JPanel arrowPanel = new JPanel();
-		arrowPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				"GUI control"));
+		arrowPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "GUI control"));
 		arrowPanel.setOpaque(false);
 
 		GroupLayout arrowlayout = new GroupLayout(arrowPanel);
 		arrowPanel.setLayout(arrowlayout);
 		arrowlayout.setAutoCreateGaps(true);
 		arrowlayout.setAutoCreateContainerGaps(true);
-		arrowlayout.setHorizontalGroup(arrowlayout
-				.createSequentialGroup()
+		arrowlayout.setHorizontalGroup(arrowlayout.createSequentialGroup()
 				.addComponent(leftarrow)
-				.addGroup(
-						arrowlayout
-						.createParallelGroup(
-								GroupLayout.Alignment.CENTER)
-								.addComponent(uparrow).addComponent(downarrow))
-								.addComponent(rightarrow));
-		arrowlayout.setVerticalGroup(arrowlayout
-				.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(uparrow)
+						.addComponent(downarrow))
+				.addComponent(rightarrow));
+		arrowlayout.setVerticalGroup(arrowlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addComponent(leftarrow)
-				.addGroup(
-						arrowlayout.createSequentialGroup()
-						.addComponent(uparrow).addComponent(downarrow))
-						.addComponent(rightarrow));
+				.addGroup(arrowlayout.createSequentialGroup()
+						.addComponent(uparrow)
+						.addComponent(downarrow))
+				.addComponent(rightarrow));
 		
 		arrowPanel.hide();
 
@@ -334,32 +281,25 @@ public class SilverSurferGUI {
 		speedButton = new JButton("Change speed");
 
 		JPanel speedPanel = new JPanel();
-		speedPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				"Speed"));
+		speedPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Speed"));
 		speedPanel.setOpaque(false);
 
 		GroupLayout speedlayout = new GroupLayout(speedPanel);
 		speedPanel.setLayout(speedlayout);
 		speedlayout.setAutoCreateGaps(true);
 		speedlayout.setAutoCreateContainerGaps(true);
-		speedlayout.setHorizontalGroup(speedlayout
-				.createParallelGroup(GroupLayout.Alignment.CENTER)
+		speedlayout.setHorizontalGroup(speedlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addComponent(speedLabel)
 				.addComponent(speedvalues)
-				.addGroup(
-						speedlayout.createSequentialGroup()
+				.addGroup(speedlayout.createSequentialGroup()
 						.addComponent(resetspeedButton)
 						.addComponent(speedButton)));
-		speedlayout.setVerticalGroup(speedlayout
-				.createSequentialGroup()
+		speedlayout.setVerticalGroup(speedlayout.createSequentialGroup()
 				.addComponent(speedLabel)
 				.addComponent(speedvalues)
-				.addGroup(
-						speedlayout
-						.createParallelGroup(
-								GroupLayout.Alignment.CENTER)
-								.addComponent(resetspeedButton)
-								.addComponent(speedButton)));
+				.addGroup(speedlayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(resetspeedButton)
+						.addComponent(speedButton)));
 
 		return speedPanel;
 	}
@@ -368,8 +308,7 @@ public class SilverSurferGUI {
 		clearButton = new JButton("Clear screen");
 
 		JPanel clearPanel = new JPanel();
-		clearPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				"Clear screen"));
+		clearPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Clear screen"));
 		clearPanel.setOpaque(false);
 
 		GroupLayout clearlayout = new GroupLayout(clearPanel);
@@ -390,7 +329,7 @@ public class SilverSurferGUI {
 		SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0, 1080, 1);
 		angle = new JSpinner(angleModel);
 
-		turnLeftButton = new JButton("Turn left"); // "\u00b0" is de escape sequence voor het graden symbool
+		turnLeftButton = new JButton("Turn left");
 		turnRightButton = new JButton("Turn right");
 
 		JLabel lengthLabel = new JLabel("Length (centimeters)", JLabel.CENTER);
@@ -401,8 +340,7 @@ public class SilverSurferGUI {
 		moveButton = new JButton("Move");
 
 		JPanel directionPanel = new JPanel();
-		directionPanel.setBorder(BorderFactory.createTitledBorder(
-				createBorder(), "Turn and Move"));
+		directionPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Turn and Move"));
 		directionPanel.setOpaque(false);
 
 		GroupLayout directionLayout = new GroupLayout(directionPanel);
@@ -415,18 +353,18 @@ public class SilverSurferGUI {
 				.addGroup(directionLayout.createSequentialGroup()
 						.addComponent(turnLeftButton)
 						.addComponent(turnRightButton))
-						.addComponent(lengthLabel)
-						.addComponent(length)
-						.addComponent(moveButton));
+				.addComponent(lengthLabel)
+				.addComponent(length)
+				.addComponent(moveButton));
 		directionLayout.setVerticalGroup(directionLayout.createSequentialGroup()
 				.addComponent(angleLabel)
 				.addComponent(angle)
 				.addGroup(directionLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(turnLeftButton)
 						.addComponent(turnRightButton))
-						.addComponent(lengthLabel)
-						.addComponent(length)
-						.addComponent(moveButton));
+				.addComponent(lengthLabel)
+				.addComponent(length)
+				.addComponent(moveButton));
 
 		return directionPanel;
 	}
@@ -435,18 +373,17 @@ public class SilverSurferGUI {
 		lookAroundButton = new JButton("Look Around");
 
 		JPanel lookAroundPanel = new JPanel();
-		lookAroundPanel.setBorder(BorderFactory.createTitledBorder(
-				createBorder(), "Look for obstructions"));
+		lookAroundPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Look for obstructions"));
 		lookAroundPanel.setOpaque(false);
 
 		GroupLayout lookAroundLayout = new GroupLayout(lookAroundPanel);
 		lookAroundPanel.setLayout(lookAroundLayout);
 		lookAroundLayout.setAutoCreateGaps(true);
 		lookAroundLayout.setAutoCreateContainerGaps(true);
-		lookAroundLayout.setHorizontalGroup(lookAroundLayout
-				.createSequentialGroup().addComponent(lookAroundButton));
-		lookAroundLayout.setVerticalGroup(lookAroundLayout
-				.createSequentialGroup().addComponent(lookAroundButton));
+		lookAroundLayout.setHorizontalGroup(lookAroundLayout.createSequentialGroup()
+				.addComponent(lookAroundButton));
+		lookAroundLayout.setVerticalGroup(lookAroundLayout.createSequentialGroup()
+				.addComponent(lookAroundButton));
 
 		return lookAroundPanel;
 	}
@@ -459,8 +396,7 @@ public class SilverSurferGUI {
 		simulationPanel.setBorder(createBorder());
 
 		mappingPanel = new JPanel();
-		mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				"Simulator"));
+		mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
 		mappingPanel.setOpaque(false);
 
 		GroupLayout mappingLayout = new GroupLayout(mappingPanel);
@@ -476,8 +412,7 @@ public class SilverSurferGUI {
 	}
 
 	public void updateCoordinates(String s) {
-		mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				s));
+		mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
 	}
 
 	private JPanel consolePanel() {
@@ -489,8 +424,7 @@ public class SilverSurferGUI {
 		scrollPane.setBorder(createBorder());
 
 		consolePanel = new JPanel();
-		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				"Output"));
+		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Output"));
 		consolePanel.setOpaque(false);
 
 		GroupLayout consolelayout = new GroupLayout(consolePanel);
@@ -510,8 +444,7 @@ public class SilverSurferGUI {
 		alignWall = new JButton("Align on walls");
 
 		JPanel alignPanel = new JPanel();
-		alignPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-				"Align"));
+		alignPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Align"));
 		alignPanel.setOpaque(false);
 
 		GroupLayout alignLayout = new GroupLayout(alignPanel);
@@ -530,13 +463,13 @@ public class SilverSurferGUI {
 
 	public void updateStatus() {
 		String s = new String(
-				"(US: " + this.getSimulationPanel().getSimulationPilot().getUltraSensorValue()
-				+ ", LS: " + this.getSimulationPanel().getSimulationPilot().getLightSensorValue()
-				+ ", TS1: " + this.getSimulationPanel().getSimulationPilot().getTouchSensor1Value()
-				+ ", TS2: " + this.getSimulationPanel().getSimulationPilot().getTouchSensor2Value()
-				+ ", LM: " + informationBuffer.getLeftMotorMoving() + " " + informationBuffer.getLeftMotorSpeed()
-				+ ", RM: " + informationBuffer.getRightMotorMoving() + " " + informationBuffer.getRightMotorSpeed()
-				+ ", B: " + informationBuffer.getBusy() + ")");
+				"(US: " + this.getSimulationPanel().getSimulationPilot().getUltraSensorValue() + 
+				", LS: " + this.getSimulationPanel().getSimulationPilot().getLightSensorValue() + 
+				", TS1: " + this.getSimulationPanel().getSimulationPilot().getTouchSensor1Value() + 
+				", TS2: " + this.getSimulationPanel().getSimulationPilot().getTouchSensor2Value() + 
+				", LM: " + statusInfoBuffer.getLeftMotorMoving() + " " + statusInfoBuffer.getLeftMotorSpeed() + 
+				", RM: " + statusInfoBuffer.getRightMotorMoving() + " " + statusInfoBuffer.getRightMotorSpeed() + 
+				", B: " + statusInfoBuffer.getBusy() + ")");
 		consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),"Output " + s));
 	}
 
@@ -561,52 +494,40 @@ public class SilverSurferGUI {
 		System.setErr(new PrintStream(out, true));
 	}
 
+	protected static void connectBluetooth() {
+		try {
+			communicator.setRobotConnected(true);
+			communicator.getSimulationPilot().setRealRobot(true);
+			System.out.println("[CONNECTION] Connection established.");
+			bluetoothConnect.setText("Disconnect");
+			bluetoothStatus.setIcon(bluetoothConnectedIcon);
+			speedvalues.setValue(2);
+			speedLabel.setText("Current Speed Level: 2");
+			System.out.println(communicator.getConsoleTag() + " Current Speed Level: 2.");
+			simulationPanel.requestFocusInWindow();				
+		} catch(Exception e) {
+			System.out.println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
+			simulationPanel.requestFocusInWindow();		
+		}
+	}
+	
 	protected static void disconnectBluetooth() {
 		try {
-			unitCommunicator.sendCommandToUnit(16);
-			unitCommunicator.closeUnitConnection();
-			unitCommunicator = prevCommunicator;
-			((SimulatorCommunicator)unitCommunicator).getSim().setRealRobot(false);
+			communicator.setRobotConnected(false);
+			communicator.getSimulationPilot().setRealRobot(true);
+			System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
 			bluetoothConnect.setText("Connect");
 			bluetoothStatus.setIcon(bluetoothNotConnectedIcon);
-			System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
 			speedvalues.setValue(2);
-			unitCommunicator.setSpeed(speedvalues.getValue());
 			speedLabel.setText("Current Speed Level: 2");
-			System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: 2.");
-			simulationPanel.requestFocusInWindow();
-			robotConnected = false;
-		} catch (Exception e) {
-			robotConnected = true;
-			System.out
-			.println("[CONNECTION] Oops! Something went wrong disconnecting!");
-			simulationPanel.requestFocusInWindow();
+			System.out.println(communicator.getConsoleTag() + " Current Speed Level: 2.");
+			simulationPanel.requestFocusInWindow();				
+		} catch(Exception e) {
+			System.out.println("[CONNECTION] Oops! Something went wrong disconnecting!");
+			simulationPanel.requestFocusInWindow();		
 		}
 	}
 
-	protected static void connectBluetooth() {
-		prevCommunicator = unitCommunicator;
-		try {
-			((SimulatorCommunicator)prevCommunicator).getSim().setRealRobot(true);
-			robotConnected = true;
-			unitCommunicator = new RobotCommunicator(informationBuffer);
-			unitCommunicator.openUnitConnection();
-			bluetoothConnect.setText("Disconnect");
-			bluetoothStatus.setIcon(bluetoothConnectedIcon);
-			System.out.println("[CONNECTION] Connection established.");
-			speedvalues.setValue(2);
-			unitCommunicator.setSpeed(speedvalues.getValue());
-			prevCommunicator.setSpeed(speedvalues.getValue());
-			speedLabel.setText("Current Speed Level: 2");
-			System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: 2.");
-			simulationPanel.requestFocusInWindow();
-		} catch (IOException e) {
-			unitCommunicator = prevCommunicator;
-			robotConnected = false;
-			System.out.println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
-			simulationPanel.requestFocusInWindow();
-		}
-	}
 
 	private void addListeners() {
 		bluetoothConnect.addMouseListener(new MouseListener() {
@@ -679,16 +600,10 @@ public class SilverSurferGUI {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				MoveTurnThread MTT = new MoveTurnThread("MTT");
-				MTT.setUnitCommunicator(unitCommunicator);
-				MTT.setAngles(-1*Integer.parseInt(angle.getValue().toString()));
+				MTT.setCommunicator(communicator);
 				MTT.setLength(0);
-				if (robotConnected) {
-					MoveTurnThread MMT1 = new MoveTurnThread("MTT1");
-					MMT1.setUnitCommunicator(prevCommunicator);
-					MMT1.setAngles(-1*Integer.parseInt(angle.getValue().toString()));
-					MMT1.setLength(0);
-					MMT1.start();
-				}
+				MTT.setAngles(-1*Integer.parseInt(angle.getValue().toString()));
+				MTT.setAmtOfAngles(0);
 				MTT.start();
 				simulationPanel.requestFocusInWindow();
 			}
@@ -713,16 +628,10 @@ public class SilverSurferGUI {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				MoveTurnThread MTT = new MoveTurnThread("MTT");
-				MTT.setUnitCommunicator(unitCommunicator);
-				MTT.setAngles(Integer.parseInt(angle.getValue().toString()));
+				MTT.setCommunicator(communicator);
 				MTT.setLength(0);
-				if (robotConnected) {
-					MoveTurnThread MMT1 = new MoveTurnThread("MTT1");
-					MMT1.setUnitCommunicator(prevCommunicator);
-					MMT1.setAngles(Integer.parseInt(angle.getValue().toString()));
-					MMT1.setLength(0);
-					MMT1.start();
-				}
+				MTT.setAngles(Integer.parseInt(angle.getValue().toString()));
+				MTT.setAmtOfAngles(0);
 				MTT.start();
 				simulationPanel.requestFocusInWindow();
 			}
@@ -747,16 +656,10 @@ public class SilverSurferGUI {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				MoveTurnThread MTT = new MoveTurnThread("MTT");
-				MTT.setUnitCommunicator(unitCommunicator);
-				MTT.setAngles(0);
+				MTT.setCommunicator(communicator);
 				MTT.setLength(Integer.parseInt(length.getValue().toString()));
-				if (robotConnected) {
-					MoveTurnThread MTT1 = new MoveTurnThread("MTT1");
-					MTT1.setUnitCommunicator(prevCommunicator);
-					MTT1.setAngles(0);
-					MTT1.setLength(Integer.parseInt(length.getValue().toString()));
-					MTT1.start();
-				}
+				MTT.setAngles(0);
+				MTT.setAmtOfAngles(0);
 				MTT.start();
 				simulationPanel.requestFocusInWindow();
 			}
@@ -780,18 +683,12 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				PolygonDrawThread PDT = new PolygonDrawThread("PDT");
-				PDT.setUnitCommunicator(unitCommunicator);
-				PDT.setAngles((int) polygonangles.getValue());
-				PDT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
-				PDT.start();
-				if (robotConnected) {
-					PolygonDrawThread PDT1 = new PolygonDrawThread("PDT1");
-					PDT1.setUnitCommunicator(prevCommunicator);
-					PDT1.setAngles((int) polygonangles.getValue());
-					PDT1.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
-					PDT1.start();
-				}
+				MoveTurnThread MTT = new MoveTurnThread("MTT");
+				MTT.setCommunicator(communicator);
+				MTT.setLength(Integer.parseInt(polygonEdgeLength.getValue().toString()));
+				MTT.setAngles(0);
+				MTT.setAmtOfAngles((int) polygonangles.getValue());
+				MTT.start();
 				simulationPanel.requestFocusInWindow();
 			}
 		});
@@ -800,38 +697,18 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				try {
-					MCT.setQuit(true);
-					unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
-					if (robotConnected)
-						prevCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
-					uparrow.setIcon(uparrowicon);
-					simulationPanel.requestFocusInWindow();
-				} catch (IOException e) {
-
-				}
+				MCT.setQuit(true);
+				communicator.sendCommand(Command.FORWARD_RELEASED);
+				uparrow.setIcon(uparrowicon);
+				simulationPanel.requestFocusInWindow();
 			}
 
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				MCT = new MouseClickThread("MCT");
-				if (unitCommunicator instanceof SimulatorCommunicator) {
-					MCT.setUnitCommunicator(unitCommunicator);
-					MCT.setCommand(Command.FORWARD_PRESSED);
-					MCT.setSpeed(unitCommunicator.getSpeed());
-					MCT.start();
-				} 
-				else if (unitCommunicator instanceof RobotCommunicator) {
-					try {
-						unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
-						MCT.setUnitCommunicator(prevCommunicator);
-						MCT.setCommand(Command.FORWARD_PRESSED);
-						MCT.setSpeed(prevCommunicator.getSpeed());
-						MCT.start();
-					} catch (IOException e) {
-
-					}
-				}
+				MCT.setCommunicator(communicator);
+				MCT.setCommand(Command.FORWARD_PRESSED);
+				MCT.start();
 				uparrow.setIcon(uparrowpressedicon);
 			}
 
@@ -852,38 +729,18 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				try {
-					MCT.setQuit(true);
-					unitCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
-					if (robotConnected)
-						prevCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
-					downarrow.setIcon(downarrowicon);
-					simulationPanel.requestFocusInWindow();
-				} catch (IOException e) {
-
-				}
+				MCT.setQuit(true);
+				communicator.sendCommand(Command.BACKWARD_RELEASED);
+				downarrow.setIcon(downarrowicon);
+				simulationPanel.requestFocusInWindow();
 			}
 
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				MCT = new MouseClickThread("MCT");
-				if (unitCommunicator instanceof SimulatorCommunicator) {
-					MCT.setUnitCommunicator(unitCommunicator);
-					MCT.setCommand(Command.BACKWARD_PRESSED);
-					MCT.setSpeed(unitCommunicator.getSpeed());
-					MCT.start();
-				}
-				else if (unitCommunicator instanceof RobotCommunicator) {
-					try {
-						unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
-						MCT.setUnitCommunicator(prevCommunicator);
-						MCT.setCommand(Command.BACKWARD_PRESSED);
-						MCT.setSpeed(prevCommunicator.getSpeed());
-						MCT.start();
-					} catch (IOException e) {
-
-					}
-				}
+				MCT.setCommunicator(communicator);
+				MCT.setCommand(Command.BACKWARD_PRESSED);
+				MCT.start();
 				downarrow.setIcon(downarrowpressedicon);
 			}
 
@@ -904,38 +761,18 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				try {
-					MCT.setQuit(true);
-					unitCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
-					if (robotConnected)
-						prevCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
-					leftarrow.setIcon(leftarrowicon);
-					simulationPanel.requestFocusInWindow();
-				} catch (IOException e) {
-
-				}
+				MCT.setQuit(true);
+				communicator.sendCommand(Command.LEFT_RELEASED);
+				leftarrow.setIcon(leftarrowicon);
+				simulationPanel.requestFocusInWindow();
 			}
 
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				MCT = new MouseClickThread("MCT");
-				if (unitCommunicator instanceof SimulatorCommunicator) {
-					MCT.setUnitCommunicator(unitCommunicator);
-					MCT.setCommand(Command.LEFT_PRESSED);
-					MCT.setSpeed(unitCommunicator.getSpeed());
-					MCT.start();
-				}
-				else if (unitCommunicator instanceof RobotCommunicator) {
-					try {
-						unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
-						MCT.setUnitCommunicator(prevCommunicator);
-						MCT.setCommand(Command.LEFT_PRESSED);
-						MCT.setSpeed(prevCommunicator.getSpeed());
-						MCT.start();
-					} catch (IOException e) {
-
-					}
-				}
+				MCT.setCommunicator(communicator);
+				MCT.setCommand(Command.LEFT_PRESSED);
+				MCT.start();
 				leftarrow.setIcon(leftarrowpressedicon);
 			}
 
@@ -956,38 +793,18 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				try {
-					MCT.setQuit(true);
-					unitCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
-					if (robotConnected)
-						prevCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
-					rightarrow.setIcon(rightarrowicon);
-					simulationPanel.requestFocusInWindow();
-				} catch (IOException e) {
-
-				}
+				MCT.setQuit(true);
+				communicator.sendCommand(Command.RIGHT_RELEASED);
+				rightarrow.setIcon(rightarrowicon);
+				simulationPanel.requestFocusInWindow();
 			}
 
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				MCT = new MouseClickThread("MCT");
-				if (unitCommunicator instanceof SimulatorCommunicator) {
-					MCT.setUnitCommunicator(unitCommunicator);
-					MCT.setCommand(Command.RIGHT_PRESSED);
-					MCT.setSpeed(unitCommunicator.getSpeed());
-					MCT.start();
-				}
-				else if (unitCommunicator instanceof RobotCommunicator) {
-					try {
-						unitCommunicator.sendCommandToUnit(Command.RIGHT_PRESSED);
-						MCT.setUnitCommunicator(prevCommunicator);
-						MCT.setCommand(Command.RIGHT_PRESSED);
-						MCT.setSpeed(prevCommunicator.getSpeed());
-						MCT.start();
-					} catch (IOException e) {
-
-					}
-				}
+				MCT.setCommunicator(communicator);
+				MCT.setCommand(Command.RIGHT_PRESSED);
+				MCT.start();
 				rightarrow.setIcon(rightarrowpressedicon);
 			}
 
@@ -1023,11 +840,9 @@ public class SilverSurferGUI {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				speedvalues.setValue(2);
-				unitCommunicator.setSpeed(speedvalues.getValue());
-				if (robotConnected)
-					prevCommunicator.setSpeed(speedvalues.getValue());
+				communicator.setSpeed(2);
 				speedLabel.setText("Current Speed Level: 2");
-				System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: 2.");
+				System.out.println(communicator.getConsoleTag() + " Current Speed Level: 2.");
 				simulationPanel.requestFocusInWindow();
 			}
 		});
@@ -1050,7 +865,9 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				changeSpeed(speedvalues.getValue());
+				communicator.setSpeed(speedvalues.getValue());
+		        speedLabel.setText("Current Speed Level: " + speedvalues.getValue());
+		        System.out.println(communicator.getConsoleTag() + " Current Speed Level: " + speedvalues.getValue() + ".");
 				simulationPanel.requestFocusInWindow();
 			}
 		});
@@ -1097,17 +914,14 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println(unitCommunicator.getConsoleTag() + " Aligning on white line.");
-				AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
-				AWL.setUnitCommunicator(unitCommunicator);
-				AWL.setCommand(Command.ALIGN_PERPENDICULAR);
-				if (robotConnected) {
-					AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
-					AWL1.setUnitCommunicator(prevCommunicator);
-					AWL1.setCommand(Command.ALIGN_PERPENDICULAR);
-					AWL1.start();
-				}
-				AWL.start();
+				System.out.println(communicator.getConsoleTag() + " Aligning on white line.");
+				MoveTurnThread MTT = new MoveTurnThread("MTT");
+				MTT.setCommunicator(communicator);
+				MTT.setLength(0);
+				MTT.setAngles(0);
+				MTT.setAmtOfAngles(0);
+				MTT.setCommand(Command.ALIGN_PERPENDICULAR);
+				MTT.start();
 				simulationPanel.requestFocusInWindow();
 			}
 		});
@@ -1130,17 +944,14 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println(unitCommunicator.getConsoleTag() + " Aligning on walls.");
-				AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
-				AWL.setUnitCommunicator(unitCommunicator);
-				AWL.setCommand(Command.ALIGN_WALL);
-				if (robotConnected) {
-					AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
-					AWL1.setUnitCommunicator(prevCommunicator);
-					AWL1.setCommand(Command.ALIGN_WALL);
-					AWL1.start();
-				}
-				AWL.start();
+				System.out.println(communicator.getConsoleTag() + " Aligning on walls.");
+				MoveTurnThread MTT = new MoveTurnThread("MTT");
+				MTT.setCommunicator(communicator);
+				MTT.setLength(0);
+				MTT.setAngles(0);
+				MTT.setAmtOfAngles(0);
+				MTT.setCommand(Command.ALIGN_WALL);
+				MTT.start();
 				simulationPanel.requestFocusInWindow();
 			}
 		});
@@ -1163,17 +974,14 @@ public class SilverSurferGUI {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println(unitCommunicator.getConsoleTag() + " Looking around for obstructions.");
-				AllignOnWhiteLineThread AWL = new AllignOnWhiteLineThread("AWL");
-				AWL.setUnitCommunicator(unitCommunicator);
-				AWL.setCommand(Command.LOOK_AROUND);
-				if (robotConnected) {
-					AllignOnWhiteLineThread AWL1 = new AllignOnWhiteLineThread("AWL1");
-					AWL1.setUnitCommunicator(prevCommunicator);
-					AWL1.setCommand(Command.LOOK_AROUND);
-					AWL1.start();
-				}
-				AWL.start();
+				System.out.println(communicator.getConsoleTag() + " Looking around for obstructions.");
+				MoveTurnThread MTT = new MoveTurnThread("MTT");
+				MTT.setCommunicator(communicator);
+				MTT.setLength(0);
+				MTT.setAngles(0);
+				MTT.setAmtOfAngles(0);
+				MTT.setCommand(Command.LOOK_AROUND);
+				MTT.start();
 				simulationPanel.requestFocusInWindow();
 			}
 		});
@@ -1193,165 +1001,101 @@ public class SilverSurferGUI {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				try {
-					if (e.getKeyCode() == KeyEvent.VK_UP) {
-						if (!runningD) {
-							MCTU.setQuit(true);
-							runningU = false;
-							unitCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
-							if (robotConnected)
-								prevCommunicator.sendCommandToUnit(Command.FORWARD_RELEASED);
-							uparrow.setIcon(uparrowicon);
-						}
-					} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-						if (!runningU) {
-							MCTD.setQuit(true);
-							runningD = false;
-							unitCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
-							if (robotConnected)
-								prevCommunicator.sendCommandToUnit(Command.BACKWARD_RELEASED);
-							downarrow.setIcon(downarrowicon);
-						}
-					} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-						if (!runningR) {
-							MCTL.setQuit(true);
-							runningL = false;
-							unitCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
-							if (robotConnected)
-								prevCommunicator.sendCommandToUnit(Command.LEFT_RELEASED);
-							leftarrow.setIcon(leftarrowicon);
-						}
-					} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-						if (!runningL) {
-							MCTR.setQuit(true);
-							runningR = false;
-							unitCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
-							if (robotConnected)
-								prevCommunicator.sendCommandToUnit(Command.RIGHT_RELEASED);
-							rightarrow.setIcon(rightarrowicon);
-						}
+				if (e.getKeyCode() == KeyEvent.VK_UP) {
+					if (!runningD) {
+						MCTU.setQuit(true);
+						runningU = false;
+						communicator.sendCommand(Command.FORWARD_RELEASED);
+						uparrow.setIcon(uparrowicon);
 					}
-				} catch (IOException ex) {
-
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					if (!runningU) {
+						MCTD.setQuit(true);
+						runningD = false;
+						communicator.sendCommand(Command.BACKWARD_RELEASED);
+						downarrow.setIcon(downarrowicon);
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+					if (!runningR) {
+						MCTL.setQuit(true);
+						runningL = false;
+						communicator.sendCommand(Command.LEFT_RELEASED);
+						leftarrow.setIcon(leftarrowicon);
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (!runningL) {
+						MCTR.setQuit(true);
+						runningR = false;
+						communicator.sendCommand(Command.RIGHT_RELEASED);
+						rightarrow.setIcon(rightarrowicon);
+					}
 				}
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				try {
-					if (e.getKeyCode() == KeyEvent.VK_UP) {
-						if (!runningD) {
-							if (!runningU && unitCommunicator instanceof SimulatorCommunicator) {
-								MCTU = new MouseClickThread("MCTU");
-								MCTU.setUnitCommunicator(unitCommunicator);
-								MCTU.setCommand(Command.FORWARD_PRESSED);
-								MCTU.setSpeed(unitCommunicator.getSpeed());
-								MCTU.start();
-							}
-							else if (!runningU && unitCommunicator instanceof RobotCommunicator) {
-								unitCommunicator.sendCommandToUnit(Command.FORWARD_PRESSED);
-								MCTU = new MouseClickThread("MCTU");
-								MCTU.setUnitCommunicator(prevCommunicator);
-								MCTU.setCommand(Command.FORWARD_PRESSED);
-								MCTU.setSpeed(prevCommunicator.getSpeed());
-								MCTU.start();
-							}
-							runningU = true;
-							uparrow.setIcon(uparrowpressedicon);
-						}
-					} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-						if (!runningU) {
-							if (!runningD && unitCommunicator instanceof SimulatorCommunicator) {
-								MCTD = new MouseClickThread("MCTD");
-								MCTD.setUnitCommunicator(unitCommunicator);
-								MCTD.setCommand(Command.BACKWARD_PRESSED);
-								MCTD.setSpeed(unitCommunicator.getSpeed());
-								MCTD.start();
-							} else if (!runningD && unitCommunicator instanceof RobotCommunicator) {
-								unitCommunicator.sendCommandToUnit(Command.BACKWARD_PRESSED);
-								MCTD = new MouseClickThread("MCTD");
-								MCTD.setUnitCommunicator(prevCommunicator);
-								MCTD.setCommand(Command.BACKWARD_PRESSED);
-								MCTD.setSpeed(prevCommunicator.getSpeed());
-								MCTD.start();
-							}
-							runningD = true;
-							downarrow.setIcon(downarrowpressedicon);
-						}
-					} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-						if (!runningR) {
-							if (!runningL && unitCommunicator instanceof SimulatorCommunicator) {
-								MCTL = new MouseClickThread("MCTL");
-								MCTL.setUnitCommunicator(unitCommunicator);
-								MCTL.setCommand(Command.LEFT_PRESSED);
-								MCTL.setSpeed(unitCommunicator.getSpeed());
-								MCTL.start();
-							} else if (!runningL && unitCommunicator instanceof RobotCommunicator) {
-								unitCommunicator.sendCommandToUnit(Command.LEFT_PRESSED);
-								MCTL = new MouseClickThread("MCTL");
-								MCTL.setUnitCommunicator(prevCommunicator);
-								MCTL.setCommand(Command.LEFT_PRESSED);
-								MCTL.setSpeed(prevCommunicator.getSpeed());
-								MCTL.start();
-							}
-							runningL = true;
-							leftarrow.setIcon(leftarrowpressedicon);
-						}
-					} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-						if (!runningL) {
-							if (!runningR && unitCommunicator instanceof SimulatorCommunicator) {
-								MCTR = new MouseClickThread("MCTR");
-								MCTR.setUnitCommunicator(unitCommunicator);
-								MCTR.setCommand(Command.RIGHT_PRESSED);
-								MCTR.setSpeed(unitCommunicator.getSpeed());
-								MCTR.start();
-							} else if (!runningR && unitCommunicator instanceof RobotCommunicator) {
-								unitCommunicator .sendCommandToUnit(Command.RIGHT_PRESSED);
-								MCTR = new MouseClickThread("MCTR");
-								MCTR.setUnitCommunicator(prevCommunicator);
-								MCTR.setCommand(Command.RIGHT_PRESSED);
-								MCTR.setSpeed(prevCommunicator.getSpeed());
-								MCTR.start();
-							}
-							runningR = true;
-							rightarrow.setIcon(rightarrowpressedicon);
-						}
+				if (e.getKeyCode() == KeyEvent.VK_UP) {
+					if (!runningD && !runningU) {
+						MCTU = new MouseClickThread("MCTU");
+						MCTU.setCommunicator(communicator);
+						MCTU.setCommand(Command.FORWARD_PRESSED);
+						MCTU.start();
+						runningU = true;
+						uparrow.setIcon(uparrowpressedicon);
 					}
-				}
-				catch (IOException ex) {
-
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					if (!runningU && !runningD) {
+						MCTD = new MouseClickThread("MCTD");
+						MCTD.setCommunicator(communicator);
+						MCTD.setCommand(Command.BACKWARD_PRESSED);
+						MCTD.start();
+						runningD = true;
+						downarrow.setIcon(downarrowpressedicon);
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+					if (!runningR && !runningL) {
+						MCTL = new MouseClickThread("MCTL");
+						MCTL.setCommunicator(communicator);
+						MCTL.setCommand(Command.LEFT_PRESSED);
+						MCTL.start();
+						runningL = true;
+						leftarrow.setIcon(leftarrowpressedicon);
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (!runningL && !runningR) {
+						MCTR = new MouseClickThread("MCTR");
+						MCTR.setCommunicator(communicator);
+						MCTR.setCommand(Command.RIGHT_PRESSED);
+						MCTR.start();
+						runningR = true;
+						rightarrow.setIcon(rightarrowpressedicon);
+					}
 				}
 			}
 		});
 	}
 	
-	public void changeSpeed(int value) {
-		unitCommunicator.setSpeed(value);
-        if (robotConnected)
-            prevCommunicator.setSpeed(value);
-        speedLabel.setText("Current Speed Level: " + value);
-        System.out.println(unitCommunicator.getConsoleTag() + " Current Speed Level: " + value + ".");
-	}
-
 	private static javax.swing.border.Border createBorder() {
 		return BorderFactory.createEtchedBorder(1);
 	}
 
-	public static UnitCommunicator getUnitCommunicator() {
-		return unitCommunicator;
-	}
-
-	public static UnitCommunicator getPrevCommunicator() {
-		return prevCommunicator;
+	public Communicator getCommunicator() {
+		return communicator;
 	}
 
 	public static StatusInfoBuffer getInformationBuffer() {
-		return informationBuffer;
+		return statusInfoBuffer;
 	}    
 	
     public void executeBarcode() {
-    	BarDecoder barDecoder = new BarDecoder(this, unitCommunicator);
-    	barDecoder.decode(informationBuffer.getBarcode());
+    	barDecoder.decode(statusInfoBuffer.getBarcode());
+    }
+    
+    public void changeSpeed(int value) {
+    	speedvalues.setValue(value);
+		communicator.setSpeed(value);
+        speedLabel.setText("Current Speed Level: " + value);
+        System.out.println(communicator.getConsoleTag() + " Current Speed Level: " + value + ".");
     }
 
 	public static void main(String[] args) {

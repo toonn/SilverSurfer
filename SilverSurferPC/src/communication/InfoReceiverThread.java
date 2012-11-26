@@ -6,11 +6,66 @@ public class InfoReceiverThread extends Thread {
 	
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
+	private StatusInfoBuffer statusInfoBuffer;
 	private boolean quit = false;
-	private StatusInfoBuffer infoBuffer;
 	
-	public InfoReceiverThread(StatusInfoBuffer infoBuffer) {
-		this.infoBuffer = infoBuffer;
+	public InfoReceiverThread(StatusInfoBuffer statusInfoBuffer) {
+		this.statusInfoBuffer = statusInfoBuffer;
+	}
+	
+	@Override
+	public void run() {
+		byte[] b = new byte[500];
+
+		while(!quit) {
+			try {
+				b = new byte[500];
+				dis.read(b);
+				String a = new String(b);
+				if(a.startsWith("[LS]"))
+					statusInfoBuffer.addLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
+				else if(a.startsWith("[US]"))
+					statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
+				else if(a.startsWith("[TS1]"))
+					statusInfoBuffer.addTouchSensor1Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[TS2]"))
+					statusInfoBuffer.addTouchSensor2Info(Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[LM]")) {
+					if(a.substring(5).startsWith("true")) {
+						statusInfoBuffer.setLeftMotorMoving(true);
+						statusInfoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(10).trim()));
+					}
+					else if(a.substring(5).startsWith("false")) {
+						statusInfoBuffer.setLeftMotorMoving(false);
+						statusInfoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(11).trim()));
+					}
+				}
+				else if(a.startsWith("[RM]")) {
+					if(a.substring(5).startsWith("true")) {
+						statusInfoBuffer.setRightMotorMoving(true);
+						statusInfoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(10).trim()));
+					}
+					else if(a.substring(5).startsWith("false")) {
+						statusInfoBuffer.setRightMotorMoving(false);
+						statusInfoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
+					}
+				}
+				else if(a.startsWith("[B]"))
+					statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
+				else if(a.startsWith("[RAL]"))
+					System.out.println("Align on white line: " + a.substring(6).trim());
+				else if(a.startsWith("[RAW]"))
+					System.out.println("Align on walls: " + Boolean.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[RLA]"))
+					System.out.println("Look around: " + a.substring(6).trim());
+				else if(a.startsWith("[BC]"))
+					statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
+				else if(a.startsWith("[TEST]"))
+					System.out.println("Testing: " + a.substring(7).trim());
+			} catch (Exception e) {
+				System.out.println("Error in InfoReceiverThread.run()!");
+			}
+		}
 	}
 	
 	public DataInputStream getDis() {
@@ -31,57 +86,5 @@ public class InfoReceiverThread extends Thread {
 	
 	public void setQuit(boolean quit) {
 		this.quit = quit;
-	}
-	
-	public void run() {
-		byte[] b = new byte[500];
-
-		while(!quit) {
-			try {
-				b = new byte[500];
-				dis.read(b);
-				String a = new String(b);
-				if(a.startsWith("[LS]"))
-					infoBuffer.addLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
-				else if(a.startsWith("[US]"))
-					infoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
-				else if(a.startsWith("[TS1]"))
-					infoBuffer.addTouchSensor1Info(Boolean.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[TS2]"))
-					infoBuffer.addTouchSensor2Info(Boolean.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[LM]")) {
-					if(a.substring(5).startsWith("true")) {
-						infoBuffer.setLeftMotorMoving(true);
-						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(10).trim()));
-					}
-					else if(a.substring(5).startsWith("false")) {
-						infoBuffer.setLeftMotorMoving(false);
-						infoBuffer.setLeftMotorSpeed(Integer.parseInt(a.substring(11).trim()));
-					}
-				}
-				else if(a.startsWith("[RM]")) {
-					if(a.substring(5).startsWith("true")) {
-						infoBuffer.setRightMotorMoving(true);
-						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(10).trim()));
-					}
-					else if(a.substring(5).startsWith("false")) {
-						infoBuffer.setRightMotorMoving(false);
-						infoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
-					}
-				}
-				else if(a.startsWith("[B]"))
-					infoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
-				else if(a.startsWith("[RAL]"))
-					System.out.println("Align on white line: " + a.substring(6).trim());
-				else if(a.startsWith("[RAW]"))
-					System.out.println("Align on walls: " + Boolean.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[RLA]"))
-					System.out.println("Look around: " + a.substring(6).trim());
-				else if(a.startsWith("[BC]"))
-					infoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
-			} catch (IOException e) {
-
-			}
-		}
 	}
 }

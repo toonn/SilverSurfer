@@ -2,34 +2,40 @@ package gui;
 
 import communication.*;
 
-import java.io.IOException;
-
 public class MoveTurnThread extends Thread {
 	
-	private UnitCommunicator unitCommunicator;
-	private int angles;
+	private Communicator communicator;
 	private int length;
-
+	private int angles;
+	private int amtOfAngles;
+	private int command;
+	
 	public MoveTurnThread(String str) {
 		super(str);
 	}
 	
-	
+	@Override
 	public void run() {
-		//System.out.println(unitCommunicator.getConsoleTag() + " Turning 90 degrees");
-		try {
-			unitCommunicator.moveTurn(angles, length);
-		} catch (IOException e) {
-			System.out.println(unitCommunicator.getConsoleTag() + "Oops! Failed to execute the turning.");
-		}
+		if(length == 0 && angles == 0 && amtOfAngles == 0)
+			communicator.sendCommand(command);
+		else
+			communicator.moveTurn(length, angles, amtOfAngles);
 	}
 	
-	public UnitCommunicator getUnitCommunicator() {
-		return unitCommunicator;
+	public Communicator getCommunicator() {
+		return communicator;
 	}
 	
-	public void setUnitCommunicator(UnitCommunicator unitCommunicator) {
-		this.unitCommunicator = unitCommunicator;
+	public void setCommunicator(Communicator communicator) {
+		this.communicator = communicator;
+	}
+	
+	public int getLength() {
+		return length;
+	}
+	
+	public void setLength(int length) {
+		this.length = length;
 	}
 	
 	public int getAngles() {
@@ -40,11 +46,19 @@ public class MoveTurnThread extends Thread {
 		this.angles = angles;
 	}
 	
-	public int getLength() {
-		return length;
+	public int getAmtOfAngles() {
+		return amtOfAngles;
 	}
 	
-	public void setLength(int length) {
-		this.length = length;
+	public void setAmtOfAngles(int amtOfAngles) {
+		this.amtOfAngles = amtOfAngles;
+	}
+
+	public int getCommand() {
+		return command;
+	}
+
+	public void setCommand(int command) {
+		this.command = command;
 	}
 }

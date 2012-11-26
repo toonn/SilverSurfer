@@ -1,45 +1,35 @@
 package gui;
 
-import java.io.IOException;
-
 import communication.*;
 
 public class MouseClickThread extends Thread {
 	
-	private UnitCommunicator unitCommunicator;
+	private Communicator communicator;
 	private int command;
-	private int speed = 30;
 	private boolean quit = false;
 
 	public MouseClickThread(String str) {
 		super(str);
 	}
 	
+	@Override
 	public void run() {
-//		System.err.println("MouseClickThread.run()");
 		while(!quit) {
+			communicator.sendCommand(command);
 			try {
-//				System.err.println("about to try to send command by unitComm "+unitCommunicator);
-				unitCommunicator.sendCommandToUnit(command);
-//				System.err.println("command " + command + " uitgevoerd" );
-				Thread.sleep(speed);
-//				System.err.println("just slept "+speed);
-			} catch (IOException e) {
-//				System.err.println("Error in mouseClickThread: "+e.getClass());
-				e.printStackTrace();
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
-//				System.err.println("Error in mocuseClickThread: "+e.getClass());
-				e.printStackTrace();
+
 			}
 		}
 	}
 	
-	public UnitCommunicator getUnitCommunicator() {
-		return unitCommunicator;
+	public Communicator getCommunicator() {
+		return communicator;
 	}
 	
-	public void setUnitCommunicator(UnitCommunicator unitCommunicator) {
-		this.unitCommunicator = unitCommunicator;
+	public void setCommunicator(Communicator communicator) {
+		this.communicator = communicator;
 	}
 	
 	public void setCommand(int command) {
@@ -48,16 +38,5 @@ public class MouseClickThread extends Thread {
 	
 	public void setQuit(boolean quit) {
 		this.quit = quit;
-	}
-	
-	public void setSpeed(int speed) {
-		if(speed == 1)
-			this.speed = 40;
-		else if(speed == 2)
-			this.speed = 30;
-		else if(speed == 3)
-			this.speed = 20;
-		else
-			this.speed = 10;
 	}
 }

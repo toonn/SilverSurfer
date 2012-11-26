@@ -65,8 +65,7 @@ public class GUIMenuBar extends JMenuBar {
                 int xCo = Integer.valueOf(xcoord.getValue().toString());
                 int yCo = Integer.valueOf(ycoord.getValue().toString());
 
-                ((SimulatorCommunicator) SilverSurferGUI.getUnitCommunicator())
-                        .getSim().setMapFile(mapFile, xCo, yCo);
+                gui.getCommunicator().getSimulationPilot().setMapFile(mapFile, xCo, yCo);
 
                 System.out.println("[I/O] Map succesfully loaded!");
             }
@@ -79,8 +78,7 @@ public class GUIMenuBar extends JMenuBar {
 
         deleteMapItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ((SimulatorCommunicator) SilverSurferGUI.getUnitCommunicator())
-                        .getSim().setMapGraph(null);
+                gui.getCommunicator().getSimulationPilot().setMapGraph(null);
 
                 JPanel messagePanel = new JPanel();
                 JLabel x = new JLabel("Map succesfully deleted!");

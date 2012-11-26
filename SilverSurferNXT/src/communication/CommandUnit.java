@@ -10,6 +10,9 @@ import lejos.nxt.comm.*;
 
 public class CommandUnit {
 
+	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
+	private static final double ANGLE_COEF = 716; //Amount of degrees needed for a 360 degree turn.
+	private static final double ANGLE_COEF_POLYGON = 708; //Amount of degrees needed for a 360 degree turn in a polygon.
     public State currentState;
     public static int NORMAL_SPEED = 180;
     private NXTConnection pcConnection;
@@ -21,8 +24,6 @@ public class CommandUnit {
     private TouchSensor touchSensor1;
     private TouchSensor touchSensor2;
     private boolean busy = false;
-    private boolean resultAlignOnWalls = false;
-    private String resultLookAround;
     private SensorThread ST;
 
     public CommandUnit() {
@@ -30,8 +31,6 @@ public class CommandUnit {
         lightSensor = new LightSensor(SensorPort.S2, false);
         touchSensor1 = new TouchSensor(SensorPort.S3);
         touchSensor2 = new TouchSensor(SensorPort.S4);
-        SongThread s = new SongThread();
-        s.start();
 
         currentState = new Waiting();
         System.out.println("Waiting...");
@@ -94,10 +93,8 @@ public class CommandUnit {
         sendStringToUnit("[LS] " + lightSensor.getLightValue());
         sendStringToUnit("[TS1] " + touchSensor1.isPressed());
         sendStringToUnit("[TS2] " + touchSensor2.isPressed());
-        sendStringToUnit("[LM] " + Motor.B.isMoving() + " "
-                + Motor.B.getSpeed());
-        sendStringToUnit("[RM] " + Motor.A.isMoving() + " "
-                + Motor.A.getSpeed());
+        sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
+        sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
         sendStringToUnit("[B] " + busy);
     }
 
@@ -153,17 +150,14 @@ public class CommandUnit {
                 case (Command.ALIGN_PERPENDICULAR):
                     Automatic alignPerp = new Automatic();
                     CU.setCurrentState(alignPerp);
-                    alignPerp.alignOnWhiteLine(CU.lightSensor, CU,
-                            CU.lightSensor.getLightValue() + 4);
+                    alignPerp.alignOnWhiteLine(CU.lightSensor, CU, CU.lightSensor.getLightValue() + 4);
                     CU.sendStringToUnit("[RAL] Done");
                     CU.setCurrentState(new Waiting());
                     break;
                 case (Command.ALIGN_WALL):
                     Automatic alignWall = new Automatic();
                     CU.setCurrentState(alignWall);
-                    CU.resultAlignOnWalls = alignWall
-                            .alignOnWall(CU.ultrasonicSensor);
-                    CU.sendStringToUnit("[RAW] " + CU.resultAlignOnWalls);
+                    CU.sendStringToUnit("[RAW] " + alignWall.alignOnWall(CU.ultrasonicSensor));
                     CU.setCurrentState(new Waiting());
                     break;
                 case (Command.CLOSE_CONNECTION):
@@ -174,9 +168,7 @@ public class CommandUnit {
                 case (Command.LOOK_AROUND):
                     Automatic lookAround = new Automatic();
                     CU.setCurrentState(lookAround);
-                    CU.resultLookAround = lookAround
-                            .lookAround(CU.ultrasonicSensor);
-                    CU.sendStringToUnit("[RLA] " + CU.resultLookAround);
+                    CU.sendStringToUnit("[RLA] " + lookAround.lookAround(CU.ultrasonicSensor));
                     CU.setCurrentState(new Waiting());
                     break;
                 case (Command.PLAY_SONG):
@@ -184,29 +176,23 @@ public class CommandUnit {
     				ST.start();
     				break;
                 default:
-                    if (input % 10 == 8) {
+                    if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
                         Automatic auto = new Automatic();
                         CU.setCurrentState(auto);
-                        int result = auto.moveForward((int) (input-Command.AUTOMATIC_MOVE_FORWARD)/100, CU.lightSensor, CU.ultrasonicSensor);
+                        int result = auto.moveForward((int)Math.round(LENGTH_COEF*(input-Command.AUTOMATIC_MOVE_FORWARD)/100), CU.lightSensor, CU.ultrasonicSensor);
     	    			if(result != 0)
     	    				CU.sendStringToUnit("[BC] " + result);
                         CU.setCurrentState(new Waiting());
-                    } else if (input % 10 == 9) {
+                    } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -91)) && input != Command.AUTOMATIC_TURN_ANGLE) {
                         Automatic auto = new Automatic();
                         CU.setCurrentState(auto);
-                        auto.turnAngle((input - Command.AUTOMATIC_TURN_ANGLE) / 100);
-                        CU.setCurrentState(new Waiting());
-                    } else if (input % 100 == -91) {
-                        Automatic auto = new Automatic();
-                        CU.setCurrentState(auto);
-                        auto.turnAngle((input - Command.AUTOMATIC_TURN_ANGLE) / 100);
+                        auto.turnAngle((int)Math.round(ANGLE_COEF*(input-Command.AUTOMATIC_TURN_ANGLE)/100/360));
                         CU.setCurrentState(new Waiting());
                     }
                     break;
                 }
-            } catch (EOFException e) {
-                System.out.println("End of file!");
-                break;
+            } catch (Exception e) {
+            	System.out.println("Error in CommandUnit.main(String[] args)!" + e.getMessage());
             }
         }
 

@@ -1,4 +1,4 @@
-package statemachine;
+package communication;
 
 import lejos.nxt.Sound;
 
@@ -37,21 +37,20 @@ public class SongThread extends Thread {
     private final int HOGE_SI = 988;
     private final int SI_KRUIS = 415;
 
-    // private int[] hedwigFrequencies =
-    // {HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,
-    // HIGHRESHARP,HIGHMI,HIGHFA,HIGHMI,HIGHRESHARP,HIGHMI,REST,SI,REST,
-    // HIGHMI,HIGHMI,SI,
-    // HIGHMI,REST,MI,MI,SOL,SI,HIGHRESHARP,REST,HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,
-    // HIGHRESHARP,HIGHMI,HIGHSOL,HIGHFA,HIGHMI,HIGHFA,REST,SOLSHARP,REST,HIGHFA,HIGHMI,
-    // HIGHRESHARP,HIGHMI,REST,SOL,SI,REST,LA,LA};
-    //
-    // private int[] hedwigDurations =
-    // {quarter,quarter,quarter,quarter,quarter,quarter,quarter,quarter,
-    // quarter,quarter,quarter,sixteenth,dottedEighth,sixteenth,dottedEighth,quarter,quarter,quarter,
-    // sixteenth,dottedEighth,quarter,quarter,quarter,quarter,sixteenth,sixteenth,quarter,quarter,
-    // quarter,quarter,quarter,quarter,quarter,eighth,quarter,quarter,quarter,sixteenth,dottedEighth,
-    // sixteenth,dottedEighth,quarter,quarter,quarter,sixteenth,dottedEighth,quarter,sixteenth,
-    // sixteenth,sixteenth,quarter};
+    /*
+    private int[] hedwigFrequencies = {HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,
+    		HIGHRESHARP,HIGHMI,HIGHFA,HIGHMI,HIGHRESHARP,HIGHMI,REST,SI,REST,
+    		HIGHMI,HIGHMI,SI,
+    		HIGHMI,REST,MI,MI,SOL,SI,HIGHRESHARP,REST,HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,HIGHMI,
+    		HIGHRESHARP,HIGHMI,HIGHSOL,HIGHFA,HIGHMI,HIGHFA,REST,SOLSHARP,REST,HIGHFA,HIGHMI,
+    		HIGHRESHARP,HIGHMI,REST,SOL,SI,REST,LA,LA};
+    private int[] hedwigDurations = {quarter,quarter,quarter,quarter,quarter,quarter,quarter,quarter,
+    		quarter,quarter,quarter,sixteenth,dottedEighth,sixteenth,dottedEighth,quarter,quarter,quarter,
+    		sixteenth,dottedEighth,quarter,quarter,quarter,quarter,sixteenth,sixteenth,quarter,quarter,
+    		quarter,quarter,quarter,quarter,quarter,eighth,quarter,quarter,quarter,sixteenth,dottedEighth,
+    		sixteenth,dottedEighth,quarter,quarter,quarter,sixteenth,dottedEighth,quarter,sixteenth,
+    		sixteenth,sixteenth,quarter};
+    */
 
     private int[] pinkFrequencies = { SI_KRUIS, HOGE_DO_KRUIS, RUST,
             HOGE_RE_KRUIS, HOGE_MI, RUST, SI_KRUIS, HOGE_DO_KRUIS, RUST,
@@ -102,11 +101,8 @@ public class SongThread extends Thread {
             try {
                 Thread.sleep(pinkDurations[i]);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+
             }
         }
-
     }
-
 }

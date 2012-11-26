@@ -1,30 +1,31 @@
 package communication;
 
 public class SensorThread extends Thread {
-	
-	private boolean quit = false;
+
 	private CommandUnit CU;
+	private boolean quit = false;
 
 	public SensorThread(String str) {
 		super(str);
 	}
 
+	@Override
 	public void run() {
-		try {
-			while(!quit) {
-					CU.updateStatus();
-					Thread.sleep(100);
+		while(!quit) {
+			CU.updateStatus();
+			try {
+				Thread.sleep(100);
+			} catch (Exception e) {
+				System.out.println("Error in SensorThread.run()!");
 			}
-		} catch(Exception e) {
-			
 		}
-	}
-	
-	public void setQuit(boolean quit) {
-		this.quit = quit;
 	}
 	
 	public void setCommandUnit(CommandUnit CU) {
 		this.CU = CU;
+	}
+	
+	public void setQuit(boolean quit) {
+		this.quit = quit;
 	}
 }
