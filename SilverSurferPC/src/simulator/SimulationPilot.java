@@ -457,6 +457,20 @@ public class SimulationPilot {
 	 public void clear() {
 		 this.getSSG().getSimulationPanel().clear();
 	 }
+	 
+	 /**
+	  * Resets the currentPositionAbsolute's and the startPositionAbsolute's to 220.
+	  * Resets alpha to 270, speed to 10;
+	  */
+	 public void reset(){
+		 currentPositionAbsoluteX = 220;
+		 currentPositionAbsoluteY = 220;
+		 startPositionAbsoluteX = 220;
+		 startPositionAbsoluteY = 220;
+		 alpha = 270;
+		 speed = 10;
+		 
+	 }
 
 	 public void updateArc(int distance) {
 		 getSSG().getSimulationPanel().updateArc(getCurrentPositionAbsoluteX(),

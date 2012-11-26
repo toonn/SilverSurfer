@@ -392,4 +392,9 @@ public class StatusInfoBuffer {
 		yCoordinateRelative = y;
 	}
 	
+	public void resetBuffer() {
+		xCoordinateRelative = 0;
+		yCoordinateRelative = 0;
+		angle = 0;
+	}
 }

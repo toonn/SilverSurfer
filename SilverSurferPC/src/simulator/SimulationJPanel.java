@@ -21,7 +21,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	private SilverSurferGUI SSG;
 	private SimulationPilot simulationPilot;
 	private MapGraph mapGraphConstructed;
-	private Thread currentTh;
+//	private Thread currentTh;
 
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
@@ -76,9 +76,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		shapes.add(triangle1);
 		shapes.add(triangle2);
 		
-		if (currentTh == null) {
-			currentTh = new Thread(this);
-			currentTh.start();}
 	}
 	
 	public void run() {
@@ -362,6 +359,21 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		walls.clear();
 	}
 
+	/**
+	 * Deletes the constructed mapGraph and sets up a new one.
+	 * Also calls clearTotal() and resets the triangles. (angle 270);
+	 */
+	public void resetMap(){
+		getSimulationPilot().reset();
+		SSG.getInformationBuffer().resetBuffer();
+		triangle1 = new Triangle(220, 220, 270);
+		triangle2 = new Triangle(220, 220, 270);
+		mapGraphConstructed = new MapGraph();
+		clearTotal();
+
+	}
+	
+	
 	public void setSSG(SilverSurferGUI SSG) {
 		this.SSG = SSG;
 	}

@@ -9,6 +9,8 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.apache.bcel.generic.GETSTATIC;
+
 public class SilverSurferGUI {
 
     private static JFrame frame;
@@ -571,6 +573,7 @@ public class SilverSurferGUI {
     protected static void connectBluetooth() {
         try {
             communicator.setRobotConnected(true);
+            simulationPanel.resetMap();
             communicator.getSimulationPilot().setRealRobot(true);
             System.out.println("[CONNECTION] Connection established.");
             bluetoothConnect.setText("Disconnect");
@@ -590,6 +593,7 @@ public class SilverSurferGUI {
     protected static void disconnectBluetooth() {
         try {
             communicator.setRobotConnected(false);
+            simulationPanel.resetMap();
             communicator.getSimulationPilot().setRealRobot(true);
             System.out
                     .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
