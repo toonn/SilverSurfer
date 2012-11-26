@@ -509,7 +509,6 @@ public class SimulationPilot {
 				 standardDeviation = SimulationSensorData.getSDWhiteLineLS();
 			 } else if (onBarcodeTile(getLightsensorPositionX(),
 					 getLightsensorPositionY())) {
-				 System.out.println("onBarcode Simulationpilot line 512");
 				 int color = ((Barcode)this.getMapGraph().getContentCurrentTile())
 				 .getColorValue(getLightsensorPositionX() % 40,
 						 getLightsensorPositionY() % 40, Orientation.calculateOrientation(
