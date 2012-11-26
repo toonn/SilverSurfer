@@ -54,7 +54,13 @@ public class Automatic extends State {
 
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
-
+		
+		try {
+			Thread.sleep(300);
+		} catch(Exception e) {
+			
+		}
+		
 		WLT.setQuit(true);
 
 		while(lightSensor.getLightValue() < treshold)
@@ -76,12 +82,12 @@ public class Automatic extends State {
     	
     	turnAngle(179); //90 graden
     	firstUSRead = ultrasonicSensor.getDistance();
-    	if (firstUSRead < 29) {
+    	if (firstUSRead < 30) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*20.8));
         	turnAngle(-179);
         	turnAngle(-179);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 29)
+    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 30)
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*20.8));
     		turnAngle(179);
     		return true;
@@ -90,7 +96,7 @@ public class Automatic extends State {
         	turnAngle(-179);
     		turnAngle(-179);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 29) {
+    		if (secondUSRead < 30) {
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*20.8));
         		turnAngle(179);
     			return true;
@@ -107,16 +113,16 @@ public class Automatic extends State {
     	String left = "no wall";
     	String right = "no wall";
     	
-    	if(ultrasonicSensor.getDistance() < 32)
+    	if(ultrasonicSensor.getDistance() < 30)
     		front = "wall";
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 32)
+    	if(ultrasonicSensor.getDistance() < 30)
     		right = "wall";
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 32)
+    	if(ultrasonicSensor.getDistance() < 30)
     		back = "wall";
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 32)
+    	if(ultrasonicSensor.getDistance() < 30)
     		left = "wall";
     	turnAngle(-179);
     	turnAngle(-179);

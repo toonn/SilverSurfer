@@ -21,7 +21,7 @@ public class MazeExplorer {
 	
 	public MazeExplorer(SilverSurferGUI gui){
 		this.gui = gui;
-		startTile = gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(gui.getInformationBuffer().getXCoordinateRelative(), gui.getInformationBuffer().getYCoordinateRelative());
+		startTile = gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)gui.getInformationBuffer().getXCoordinateRelative(), (int)gui.getInformationBuffer().getYCoordinateRelative());
 	}
 	
 	/**

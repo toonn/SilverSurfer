@@ -25,6 +25,9 @@ public class CommandUnit {
     private TouchSensor touchSensor2;
     private boolean busy = false;
     private SensorThread ST;
+    private double x = 220;
+    private double y = 220;
+    private double angle = 270;
 
     public CommandUnit() {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
@@ -87,6 +90,15 @@ public class CommandUnit {
         else
             NORMAL_SPEED = 360;
     }
+    
+    public void updateCoordinates(double length, double angle) {
+    	if(angle == 0) {
+    		x = x + length*Math.cos(Math.toRadians(this.angle));
+    		y = y - length*Math.sin(Math.toRadians(this.angle));
+    	}    		
+    	else 
+    		this.angle = (this.angle + angle)%360;
+    }
 
     public void updateStatus() {
         sendStringToUnit("[US] " + ultrasonicSensor.getDistance());
@@ -96,6 +108,9 @@ public class CommandUnit {
         sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
         sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
         sendStringToUnit("[B] " + busy);
+        sendStringToUnit("[X] " + x);
+        sendStringToUnit("[Y] " + y);
+        sendStringToUnit("[ANG] " + angle);
     }
 
     public static void main(String[] args) throws IOException {
@@ -150,6 +165,7 @@ public class CommandUnit {
                 case (Command.ALIGN_PERPENDICULAR):
                     Automatic alignPerp = new Automatic();
                     CU.setCurrentState(alignPerp);
+                    CU.updateCoordinates(15, 0);
                     alignPerp.alignOnWhiteLine(CU.lightSensor, CU, CU.lightSensor.getLightValue() + 4);
                     CU.sendStringToUnit("[RAL] Done");
                     CU.setCurrentState(new Waiting());
@@ -179,6 +195,7 @@ public class CommandUnit {
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
                         Automatic auto = new Automatic();
                         CU.setCurrentState(auto);
+                        CU.updateCoordinates((input-Command.AUTOMATIC_MOVE_FORWARD)/100, 0);
                         int result = auto.moveForward((int)Math.round(LENGTH_COEF*(input-Command.AUTOMATIC_MOVE_FORWARD)/100), CU.lightSensor, CU.ultrasonicSensor);
     	    			if(result != 0)
     	    				CU.sendStringToUnit("[BC] " + result);
@@ -186,6 +203,7 @@ public class CommandUnit {
                     } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -91)) && input != Command.AUTOMATIC_TURN_ANGLE) {
                         Automatic auto = new Automatic();
                         CU.setCurrentState(auto);
+                        CU.updateCoordinates(0, (input-Command.AUTOMATIC_TURN_ANGLE)/100);
                         auto.turnAngle((int)Math.round(ANGLE_COEF*(input-Command.AUTOMATIC_TURN_ANGLE)/100/360));
                         CU.setCurrentState(new Waiting());
                     }

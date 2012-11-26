@@ -17,8 +17,8 @@ public class StatusInfoBuffer {
 	private boolean busy;
 	private int barcode;
 	private double angle;
-	private int xCoordinateRelative;
-	private int yCoordinateRelative;
+	private double xCoordinateRelative;
+	private double yCoordinateRelative;
 
 	private SilverSurferGUI SSG;
 	/**
@@ -374,22 +374,25 @@ public class StatusInfoBuffer {
 	
 	public void setAngle(double angle) {
 		this.angle = angle;
+		SSG.updateStatus();
 	}
 	
-	public int getXCoordinateRelative(){
+	public double getXCoordinateRelative(){
 		return xCoordinateRelative;
 	}
 	
-	public void setXCoordinateRelative(int x){
+	public void setXCoordinateRelative(double x){
 		xCoordinateRelative = x;
+		SSG.updateStatus();
 	}
 	
-	public int getYCoordinateRelative(){
+	public double getYCoordinateRelative(){
 		return yCoordinateRelative;
 	}
 	
-	public void setYCoordinateRelative(int y){
+	public void setYCoordinateRelative(double y){
 		yCoordinateRelative = y;
+		SSG.updateStatus();
 	}
 	
 }

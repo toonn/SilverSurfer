@@ -74,6 +74,11 @@ public class SilverSurferGUI {
     private static JPanel mappingPanel;
     private static JPanel consolePanel;
     private static Console console;
+    
+    private static JLabel outputLabel1;
+    private static JLabel outputLabel2;
+    private static JLabel outputLabel3;
+    private static JLabel outputLabel4;
 
     private void createAndShowGUI() {
         statusInfoBuffer = new StatusInfoBuffer();
@@ -94,6 +99,10 @@ public class SilverSurferGUI {
         JPanel lookAroundPanel = lookAroundPanel();
         JPanel mappingPanel = mappingPanel();
         JPanel consolePanel = consolePanel();
+        outputLabel1 = new JLabel("", JLabel.CENTER);
+        outputLabel2 = new JLabel("", JLabel.CENTER);
+        outputLabel3 = new JLabel("", JLabel.CENTER);
+        outputLabel4 = new JLabel("", JLabel.CENTER);
 
         redirectSystemStreams();
 
@@ -112,7 +121,11 @@ public class SilverSurferGUI {
                                 .addComponent(polygonPanel)
                                 .addComponent(arrowPanel)
                                 .addComponent(speedPanel)
-                                .addComponent(clearPanel))
+                                .addComponent(clearPanel)
+                                .addComponent(outputLabel1)
+                                .addComponent(outputLabel2)
+                                .addComponent(outputLabel3)
+                                .addComponent(outputLabel4))
                 .addGroup(
                         frameLayout
                                 .createParallelGroup(
@@ -134,7 +147,11 @@ public class SilverSurferGUI {
                                 .addComponent(polygonPanel)
                                 .addComponent(arrowPanel)
                                 .addComponent(speedPanel)
-                                .addComponent(clearPanel))
+                                .addComponent(clearPanel)
+                                .addComponent(outputLabel1)
+                                .addComponent(outputLabel2)
+                                .addComponent(outputLabel3)
+                                .addComponent(outputLabel4))
                 .addGroup(
                         frameLayout.createSequentialGroup()
                                 .addComponent(mappingPanel)
@@ -395,7 +412,7 @@ public class SilverSurferGUI {
 
         JLabel lengthLabel = new JLabel("Length (centimeters)", JLabel.CENTER);
 
-        SpinnerNumberModel lenghtModel = new SpinnerNumberModel(26, 0, 1000, 1);
+        SpinnerNumberModel lenghtModel = new SpinnerNumberModel(25, 0, 1000, 1);
         length = new JSpinner(lenghtModel);
 
         moveButton = new JButton("Move");
@@ -526,25 +543,42 @@ public class SilverSurferGUI {
     }
 
     public void updateStatus() {
-        // String s = new String("(US: "
-        // + this.getSimulationPanel().getSimulationPilot()
-        // .getUltraSensorValue()
-        // + ", LS: "
-        // + this.getSimulationPanel().getSimulationPilot()
-        // .getLightSensorValue()
-        // + ", TS1: "
-        // + this.getSimulationPanel().getSimulationPilot()
-        // .getTouchSensor1Value()
-        // + ", TS2: "
-        // + this.getSimulationPanel().getSimulationPilot()
-        // .getTouchSensor2Value() + ", LM: "
-        // + statusInfoBuffer.getLeftMotorMoving() + " "
-        // + statusInfoBuffer.getLeftMotorSpeed() + ", RM: "
-        // + statusInfoBuffer.getRightMotorMoving() + " "
-        // + statusInfoBuffer.getRightMotorSpeed() + ", B: "
-        // + statusInfoBuffer.getBusy() + ")");
-        // consolePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-        // "Output " + s));
+        String s = new String("(US: "
+        + this.getSimulationPanel().getSimulationPilot()
+        .getUltraSensorValue()
+        + "LS: "
+        + this.getSimulationPanel().getSimulationPilot()
+        .getLightSensorValue()
+        + ", TS1: "
+        + this.getSimulationPanel().getSimulationPilot()
+        .getTouchSensor1Value()
+        + ", TS2: "
+        + this.getSimulationPanel().getSimulationPilot()
+        .getTouchSensor2Value() + ", LM: "
+        + statusInfoBuffer.getLeftMotorMoving() + " "
+        + statusInfoBuffer.getLeftMotorSpeed() + ", RM: "
+        + statusInfoBuffer.getRightMotorMoving() + " "
+        + statusInfoBuffer.getRightMotorSpeed() + ", B: "
+        + statusInfoBuffer.getBusy() + ")");
+        outputLabel1.setText("US: "
+                + this.getSimulationPanel().getSimulationPilot()
+                .getUltraSensorValue()
+                + ", LS: "
+                + this.getSimulationPanel().getSimulationPilot()
+                .getLightSensorValue());
+        outputLabel2.setText("TS1: "
+                + this.getSimulationPanel().getSimulationPilot()
+                .getTouchSensor1Value()
+                + ", TS2: "
+                + this.getSimulationPanel().getSimulationPilot()
+                .getTouchSensor2Value());
+        outputLabel3.setText("LM: "
+                + statusInfoBuffer.getLeftMotorMoving() + " "
+                + statusInfoBuffer.getLeftMotorSpeed() + ", RM: "
+                + statusInfoBuffer.getRightMotorMoving() + " "
+                + statusInfoBuffer.getRightMotorSpeed());
+        outputLabel4.setText("B: " + statusInfoBuffer.getBusy() + ", X: " + statusInfoBuffer.getXCoordinateRelative()
+        		+ ", Y: " + statusInfoBuffer.getYCoordinateRelative() + ", Angle: " + statusInfoBuffer.getAngle());
     }
 
     private static void redirectSystemStreams() {
@@ -632,7 +666,6 @@ public class SilverSurferGUI {
                 else if (bluetoothConnect.getText() == "Disconnect")
                     disconnectBluetooth();
             }
-
         });
         resetpolygonButton.addMouseListener(new MouseListener() {
             @Override

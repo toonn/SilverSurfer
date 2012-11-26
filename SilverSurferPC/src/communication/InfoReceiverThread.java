@@ -52,6 +52,12 @@ public class InfoReceiverThread extends Thread {
 				}
 				else if(a.startsWith("[B]"))
 					statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
+				else if(a.startsWith("[X]"))
+					statusInfoBuffer.setXCoordinateRelative(Double.valueOf(a.substring(4).trim()));
+				else if(a.startsWith("[Y]"))
+					statusInfoBuffer.setYCoordinateRelative(Double.valueOf(a.substring(4).trim()));
+				else if(a.startsWith("[ANG]"))
+					statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[RAL]"))
 					System.out.println("Align on white line: " + a.substring(6).trim());
 				else if(a.startsWith("[RAW]"))
