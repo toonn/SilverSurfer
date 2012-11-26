@@ -1,0 +1,32 @@
+# Calibratiedata voor de lichtsensor
+# Wit voor de lijnen, Paneel voor de bruine ondergrond
+# WL = weinig licht, VL = Veel licht
+# R = rijdend, NR = niet rijdend
+#      4 Wit      |    4 Paneel
+#  2 WL  |  2 VL  |  2 WL  |  2 VL
+# R | NR | R | NR | R | NR | R | NR
+# van boven naar onder Max, Q_0.75, median, Q_0.25, Min
+#56	55	56	55	55	50	50	50
+#56	55	55	55	50	49	50	50
+#55	55	55	55	49	49	49	50
+#55	55	55	55	49	49	49	50
+#49	55	49	55	47	49	47	50
+
+#1	55	49	56	56
+#2	55	55	55	55
+#3	55	49	56	55
+#4	55	55	55	55
+#5	49	49	55	50
+#6	49	49	50	49
+#7	49	49	50	50
+#8	50	50	50	50
+
+1 	49	55	55	56	56 WitWLR
+5	55	55	55	55	55 WitWLNR
+9	49	55	55	55	56 WitVLR
+13	55	55	55	55	55 WitVLNR
+17	47	49	49	50	55 PaneelWLR
+21	49	49	49	49	50 PaneelWLNR
+25	47	49	49	50	50 PaneelVLR
+29	50	50	50	50	50 PaneelVLNR
+
