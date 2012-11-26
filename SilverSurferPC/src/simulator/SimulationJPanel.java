@@ -16,11 +16,12 @@ import javax.swing.*;
 
 import mapping.*;
 
-public class SimulationJPanel extends JPanel {
+public class SimulationJPanel extends JPanel implements Runnable {
 
 	private SilverSurferGUI SSG;
 	private SimulationPilot simulationPilot;
 	private MapGraph mapGraphConstructed;
+	private Thread currentTh;
 
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
@@ -56,6 +57,8 @@ public class SimulationJPanel extends JPanel {
 
 	public SimulationJPanel()
 	{
+		
+		
 		mapGraphConstructed = new MapGraph();
 		
 		try
@@ -72,7 +75,20 @@ public class SimulationJPanel extends JPanel {
 
 		shapes.add(triangle1);
 		shapes.add(triangle2);
+		
+		if (currentTh == null) {
+			currentTh = new Thread(this);
+			currentTh.start();}
 	}
+	
+	public void run() {
+		while(true) {
+		try {
+		Thread.sleep(1000);
+		} catch(InterruptedException ee) {}
+		this.repaint();
+		}
+		}
 
 	public void addCircle(double x, double y, double degrees) {
 		// remove the last triangle and draw little circles to indicate the path
@@ -166,13 +182,13 @@ public class SimulationJPanel extends JPanel {
 	 */
 	@Override
 	protected void paintComponent(Graphics graph) {
-
+		
 		paintPathComponent(graph);
 		//		paintGridComponent(graph);
 		paintWallComponent(graph);
 		paintUndergroundComponent(graph);
 		paintBeamComponent(graph);
-		paintGridComponent(graph);
+//		paintGridComponent(graph);
 	}
 
 	/**
@@ -296,6 +312,7 @@ public class SimulationJPanel extends JPanel {
 				((Graphics2D) graph).fill(s);
 			}
 		}
+		
 
 	}
 
@@ -317,49 +334,8 @@ public class SimulationJPanel extends JPanel {
 			((Graphics2D) graph).setColor(new Color(252,221,138));
 
 		((Graphics2D) graph).fill(undergroundCircle);
+		
 	}
-
-
-	//	private void paintPathComponent(Graphics graph) {
-	//		super.paintComponent(graph);
-	//		Vector<Shape> shapesx = new Vector<Shape>();
-	//		shapesx.addAll(shapes);
-	//
-	//		((Graphics2D) graph).setColor(Color.red);
-	//		for(Shape s : shapesx)
-	//		{
-	//			int x;
-	//			int y;
-	//
-	//			if(s instanceof Triangle)
-	//			{
-	//				if(s.equals(getVisibleTriangle()))
-	//				{
-	//					((Graphics2D) graph).fill(s);
-	//				}
-	//				x = (int) ((Triangle) s).getGravityCenterX();
-	//				y = (int) ((Triangle) s).getGravityCenterY();
-	//
-	//				if(simulationPilot!= null)
-	//				{
-	//					getSSG().updateCoordinates("Simulator (" + x + " , " + y + " , " + (int) simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
-	//				}
-	//				else
-	//				{
-	//					getSSG().updateCoordinates("Simulator (" + x + " , " + y + ")");
-	//				}
-	//			}
-	//			else
-	//			{	
-	//				((Graphics2D) graph).fill(s);
-	//			}
-	//		}
-	//
-	//		if(isUpdated){
-	//			setOtherTriangleVisible();
-	//			setUpdated(false);
-	//		}
-	//	}
 
 	public void setRobotLocation(double x, double y, double degrees){
 		this.addCircle(x*1, y*1, degrees);
@@ -452,7 +428,8 @@ public class SimulationJPanel extends JPanel {
 	public void setWallOnTile(int x, int y, Orientation orientation){
 		if(getMapGraphConstructed().getTileWithCoordinates(x, y) == null)
 			throw new IllegalArgumentException("in simulationPanel bij methode SetWallOnTile " +
-					"zijn coordinaten meegegeven die de mapgraph niet bevat");
+					"zijn coordinaten meegegeven die de mapgraph niet bevat nl" +
+					x + " en " +y);
 		getMapGraphConstructed().getTileWithCoordinates(x, y).getEdge(orientation).setObstruction(Obstruction.WALL);
 	}
 	

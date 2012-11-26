@@ -10,7 +10,6 @@ package simulator;
 
 import java.awt.geom.Point2D;
 import java.util.Random;
-
 import mapping.Orientation;
 
 public class ExtMath {
@@ -32,28 +31,6 @@ public class ExtMath {
 	public static double cosineRuleAngle(double a, double b, double c){
 		
 		return (double) Math.toDegrees((double) Math.acos((- a*a + b*b + c*c)/(2*b*c)));
-	}
-	
-	/**
-	 * dit is de methode die telkens de afstand berekent van de robot tot de edge
-	 * in de richting waarin hij gekeerd is
-	 * als de afstand klein genoeg is worden 'de sensoren' ingeschakeld en wordt
-	 * de checkObstruction methode opgeroepen
-	 * dus dit wordt opgeroepen in de iftest van rotate en double voor checkForobstructions
-	 * wordt opgeroepen
-	 */
-	public static double calculateDistanceFromPointToEdge(double x, double y, double alpha){
-		int i =1;
-		double xEdge = x;
-		double yEdge = y;
-		while (!(xEdge%40<4 || yEdge%40 <4)) {
-			xEdge = (double) (x + i* Math.cos(Math.toRadians(alpha)));
-			yEdge = (double) (y + i* Math.sin(Math.toRadians(alpha)));
-			i++;}
-		Point2D xy = new Point2D.Double(x, y);
-		Point2D xyEdge = new Point2D.Double(xEdge, yEdge);
-		return xy.distance(xyEdge);
-
 	}
 	
 	/**
@@ -87,14 +64,5 @@ public class ExtMath {
 		Point2D point = new Point2D.Double(xCoordinate, yCoordinate);
 		return point;
 	}
-	
-	public static void main(String[] args) {
-		Random generator = new Random();
-		double a = (double) Math.abs(generator.nextGaussian())*100;
-		double b = (double) Math.abs(generator.nextGaussian())*100;
-		System.out.println(a);
-		System.out.println(Math.round(a/90) * 90);
-	}
-	
 	
 }

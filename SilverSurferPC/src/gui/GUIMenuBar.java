@@ -6,96 +6,38 @@ import java.io.*;
 
 import javax.swing.*;
 
+import mazeAlgorithm.ExploreThread;
+import mazeAlgorithm.MazeExplorer;
+
+
 import communication.*;
 import communication.StatusInfoBuffer.*;
 
 public class GUIMenuBar extends JMenuBar {
 
     private SilverSurferGUI gui;
+    
+    private JMenu fileMenu;
+    private JMenu blueToothMenu;
+    private JMenu mapMenu;
 
     public GUIMenuBar(SilverSurferGUI gui) {
         setGui(gui);
         this.add(getFileMenu());
         this.add(getBlueToothMenu());
+        this.add(getMapMenu());
         setBackground(new Color(221, 230, 231));
     }
 
     private JMenu getFileMenu() {
 
-        JMenu menu = new JMenu("File");
-        menu.setMnemonic('F');
+        fileMenu = new JMenu("File");
+        fileMenu.setMnemonic('F');
 
-        JMenuItem loadMapItem = new JMenuItem("Load map...");
-        loadMapItem.setMnemonic('M');
-        menu.add(loadMapItem);
-
-        loadMapItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Prompt for a File
-                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
-                        .getFrame(), "Select file:", FileDialog.LOAD);
-
-                // Display the dialog and wait for the user's response
-                prompt.show();
-
-                File mapFile = new File(prompt.getDirectory()
-                        + prompt.getFile()); // Load and display selection
-                prompt.dispose(); // Get rid of the dialog box
-
-                JPanel messagePanel = new JPanel();
-                SpinnerNumberModel xModel = new SpinnerNumberModel(1, 0, 1000,
-                        1);
-                SpinnerNumberModel yModel = new SpinnerNumberModel(1, 0, 1000,
-                        1);
-                JLabel x = new JLabel("x:");
-                JLabel y = new JLabel("y:");
-
-                JSpinner xcoord = new JSpinner(xModel);
-                JSpinner ycoord = new JSpinner(yModel);
-                messagePanel.add(x);
-                messagePanel.add(xcoord);
-                messagePanel.add(y);
-                messagePanel.add(ycoord);
-
-                // Populate your panel components here.
-                JOptionPane.showMessageDialog(getGui().getFrame(),
-                        messagePanel, "Enter relative starting coordinates:",
-                        JOptionPane.OK_OPTION);
-
-                int xCo = Integer.valueOf(xcoord.getValue().toString());
-                int yCo = Integer.valueOf(ycoord.getValue().toString());
-
-                gui.getCommunicator().getSimulationPilot().setMapFile(mapFile, xCo, yCo);
-
-                System.out.println("[I/O] Map succesfully loaded!");
-            }
-
-        });
-
-        JMenuItem deleteMapItem = new JMenuItem("Delete map");
-        deleteMapItem.setMnemonic('D');
-        menu.add(deleteMapItem);
-
-        deleteMapItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                gui.getCommunicator().getSimulationPilot().setMapGraph(null);
-
-                JPanel messagePanel = new JPanel();
-                JLabel x = new JLabel("Map succesfully deleted!");
-                messagePanel.add(x);
-
-                // Populate your panel components here.
-                JOptionPane.showMessageDialog(getGui().getFrame(),
-                        messagePanel, "Map deleted:", JOptionPane.OK_OPTION);
-
-                System.out.println("[I/O] Map succesfully deleted!");
-            }
-
-        });
-
+      
         JMenuItem exportLSItem = new JMenuItem("Export Lightsensor data");
         exportLSItem.setMnemonic('L');
-        menu.add(exportLSItem);
+        fileMenu.add(exportLSItem);
 
         exportLSItem.addActionListener(new ActionListener() {
 
@@ -150,7 +92,7 @@ public class GUIMenuBar extends JMenuBar {
 
         JMenuItem exportUSItem = new JMenuItem("Export Ultrasonicsensor data");
         exportUSItem.setMnemonic('U');
-        menu.add(exportUSItem);
+        fileMenu.add(exportUSItem);
 
         exportUSItem.addActionListener(new ActionListener() {
 
@@ -205,7 +147,7 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         JMenuItem exportTS1Item = new JMenuItem("Export Touchsensor1 data");
-        menu.add(exportTS1Item);
+        fileMenu.add(exportTS1Item);
         exportTS1Item.setMnemonic('1');
 
         exportTS1Item.addActionListener(new ActionListener() {
@@ -260,7 +202,7 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         JMenuItem exportTS2Item = new JMenuItem("Export Touchsensor2 data");
-        menu.add(exportTS2Item);
+        fileMenu.add(exportTS2Item);
         exportTS2Item.setMnemonic('2');
 
         exportTS2Item.addActionListener(new ActionListener() {
@@ -314,21 +256,21 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        return menu;
+        return fileMenu;
     }
 
     private JMenu getBlueToothMenu() {
 
-        JMenu bluetoothMenu = new JMenu("Bluetooth");
-        bluetoothMenu.setMnemonic('B');
+        blueToothMenu = new JMenu("Bluetooth");
+        blueToothMenu.setMnemonic('B');
 
         JMenuItem connectItem = new JMenuItem("Connect...");
         connectItem.setMnemonic('C');
-        bluetoothMenu.add(connectItem);
+        blueToothMenu.add(connectItem);
 
         JMenuItem disconnectItem = new JMenuItem("Disconnect...");
         disconnectItem.setMnemonic('D');
-        bluetoothMenu.add(disconnectItem);
+        blueToothMenu.add(disconnectItem);
 
         connectItem.addActionListener(new ActionListener() {
 
@@ -348,10 +290,103 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        return bluetoothMenu;
+        return blueToothMenu;
 
     }
 
+    private JMenu getMapMenu(){
+    	
+    	mapMenu = new JMenu("Map");
+        mapMenu.setMnemonic('M');
+        
+        JMenuItem loadMapItem = new JMenuItem("Load map...");
+        loadMapItem.setMnemonic('M');
+        mapMenu.add(loadMapItem);
+
+        loadMapItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Prompt for a File
+                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
+                        .getFrame(), "Select file:", FileDialog.LOAD);
+
+                // Display the dialog and wait for the user's response
+                prompt.show();
+
+                File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
+                prompt.dispose(); // Get rid of the dialog box
+
+                JPanel messagePanel = new JPanel();
+                SpinnerNumberModel xModel = new SpinnerNumberModel(0, 0, 1000,
+                        1);
+                SpinnerNumberModel yModel = new SpinnerNumberModel(0, 0, 1000,
+                        1);
+                JLabel x = new JLabel("x:");
+                JLabel y = new JLabel("y:");
+
+                JSpinner xcoord = new JSpinner(xModel);
+                JSpinner ycoord = new JSpinner(yModel);
+                messagePanel.add(x);
+                messagePanel.add(xcoord);
+                messagePanel.add(y);
+                messagePanel.add(ycoord);
+
+                // Populate your panel components here.
+                JOptionPane.showMessageDialog(getGui().getFrame(),
+                        messagePanel, "Enter relative starting coordinates:",
+                        JOptionPane.OK_OPTION);
+
+                int xCo = Integer.valueOf(xcoord.getValue().toString());
+                int yCo = Integer.valueOf(ycoord.getValue().toString());
+
+                gui.getCommunicator().getSimulationPilot().setMapFile(mapFile, xCo, yCo);
+
+                System.out.println("[I/O] Map succesfully loaded!");
+                
+            }
+
+        });
+
+        JMenuItem deleteMapItem = new JMenuItem("Delete map");
+        deleteMapItem.setMnemonic('D');
+        mapMenu.add(deleteMapItem);
+        
+        deleteMapItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                (gui.getCommunicator())
+                        .getSimulationPilot().setMapGraph(null);
+
+                JPanel messagePanel = new JPanel();
+                JLabel x = new JLabel("Map succesfully deleted!");
+                messagePanel.add(x);
+
+                // Populate your panel components here.
+                JOptionPane.showMessageDialog(getGui().getFrame(),
+                        messagePanel, "Map deleted:", JOptionPane.OK_OPTION);
+
+                System.out.println("[I/O] Map succesfully deleted!");
+                
+            }
+
+        });
+        
+        JMenuItem exploreItem = new JMenuItem("Explore...");
+        exploreItem.setMnemonic('E');
+        mapMenu.add(exploreItem);
+
+        exploreItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				 MazeExplorer exp = new MazeExplorer(gui);
+				 ExploreThread explorer = new ExploreThread(exp);
+				 explorer.start();
+			}
+		});
+        
+        return mapMenu;
+
+    }
     /**
      * Set the SilverSurferGUI this menubar should operate on.
      */

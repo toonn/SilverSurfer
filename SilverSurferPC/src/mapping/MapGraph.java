@@ -78,6 +78,19 @@ public class MapGraph {
 		currentTileCoordinates[0] = x;
 		currentTileCoordinates[1] = y;
 	}
+	
+	
+	
+	public Tile getTileWithCoordinates(int xCoordinate, int yCoordinate) {
+		for (Tile tile : tiles) {
+			if (tile.getxCoordinate() == xCoordinate
+					&& tile.getyCoordinate() == yCoordinate) {
+				return tile;
+			}
+		}
+		// als er op deze coordinaten nog geen tile staat
+		return null;
+	}
 
 	public void addContentToCurrentTile(TileContent code){
 		getCurrentTile().setContent(code);
@@ -85,20 +98,6 @@ public class MapGraph {
 	public TileContent getContentCurrentTile(){
 		return getCurrentTile().getContent();
 	}
-
-	/**
-	 * Checks if the edge at this side is passable.
-	 */
-	public boolean canMoveTo(Orientation orientation)
-	{	
-		return getCurrentTile().getEdge(orientation).isPassable();
-	}
-	
-//	public void moveToNextTile(Orientation orientation){
-//			if(this.canMoveTo(orientation)){
-//				setCurrentTileCoordinates(getCurrentTileCoordinates()[0] + Orientation.getArrayToFindNeighbourRelative(orientation)[0], 
-//						getCurrentTileCoordinates()[1] + Orientation.getArrayToFindNeighbourRelative(orientation)[1]);}
-//		} 
 
 	/**
 	 * Adds a given obstruction to the edge on the given orientation of the current tile.
@@ -122,19 +121,6 @@ public class MapGraph {
 	{
 		return getCurrentTile().getEdge(orientation).getObstruction();
 	}
-	
-	
-	public Tile getTileWithCoordinates(int xCoordinate, int yCoordinate) {
-		for (Tile tile : tiles) {
-			if (tile.getxCoordinate() == xCoordinate
-					&& tile.getyCoordinate() == yCoordinate) {
-				return tile;
-			}
-		}
-		// als er op deze coordinaten nog geen tile staat
-		return null;
-	}
-
 	
 	public void setTileXY(int x, int y, Tile tile){
 		tile.setxCoordinate(x);
@@ -168,44 +154,13 @@ public class MapGraph {
 		tiles.remove(getTileWithCoordinates(x,y));
 	}
 	
-//	
-//	public static void main(String[] args) {
-//		MapGraph map = new MapGraph();
-//		Tile tile1 = new Tile();
-//		Tile tile2 = new Tile();
-//		Tile tile3 = new Tile();
-//		tile1.getEdge(Orientation.NORTH).setObstruction(Obstruction.WALL);
-//		map.setTileXY(0, 2, tile1);
-//		map.setTileXY(0, 1, tile2);
-//		map.setTileXY(1, 2, tile3);
-//		tile3.getEdge(Orientation.WEST).setObstruction(Obstruction.WALL);
-//		
-//		System.out.println(tile1.getReachableNeighbours().get(0)==null);
-//		System.out.println(tile1.getReachableNeighbours().get(1)== null);
-//		System.out.println(tile1.getReachableNeighbours().get(2) == (null));
-//		System.out.println(tile1.getReachableNeighbours().get(3) == (null));
-//		
-//		System.out.println(tile1.getEdge(Orientation.EAST).isPassable());
-//		System.out.println(tile1.getEdge(Orientation.EAST).equals(tile3.getEdge(Orientation.WEST)));
-//		System.out.println(tile1.getEdge(Orientation.NORTH).equals(tile2.getEdge(Orientation.SOUTH)));
-//		
-//	}
-	
-	public static void main(String[] args) {
-		Tile tile = new Tile() ;
-		System.out.println(tile.getxCoordinate());
-		System.out.println(tile.getyCoordinate());
-		MapReader map = new MapReader();
-		MapGraph graph = MapReader.createMapFromFile(new File("resources/maze_maps/example_map.txt"), 0, 0);
-		for(int j = 0; j <6 ; j++){
-			for(int i = 0; i<4;i++){
-				System.out.println(j + "en" + i);
-				for(Orientation orientation: Orientation.values())
-				System.out.println(!graph.getTileWithCoordinates(j, i).getEdge(orientation).isPassable());
-			}
+	@Override
+	public String toString() {
+		String s = "MapGraph content:";
+		for (Tile t : tiles) {
+			s+= "\n+" + t.toString();
 		}
-		
-		
+		return s;
 	}
 	
 }
