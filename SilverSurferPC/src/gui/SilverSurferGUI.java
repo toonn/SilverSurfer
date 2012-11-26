@@ -545,23 +545,6 @@ public class SilverSurferGUI {
     }
 
     public void updateStatus() {
-        String s = new String("(US: "
-        + this.getSimulationPanel().getSimulationPilot()
-        .getUltraSensorValue()
-        + "LS: "
-        + this.getSimulationPanel().getSimulationPilot()
-        .getLightSensorValue()
-        + ", TS1: "
-        + this.getSimulationPanel().getSimulationPilot()
-        .getTouchSensor1Value()
-        + ", TS2: "
-        + this.getSimulationPanel().getSimulationPilot()
-        .getTouchSensor2Value() + ", LM: "
-        + statusInfoBuffer.getLeftMotorMoving() + " "
-        + statusInfoBuffer.getLeftMotorSpeed() + ", RM: "
-        + statusInfoBuffer.getRightMotorMoving() + " "
-        + statusInfoBuffer.getRightMotorSpeed() + ", B: "
-        + statusInfoBuffer.getBusy() + ")");
         outputLabel1.setText("US: "
                 + this.getSimulationPanel().getSimulationPilot()
                 .getUltraSensorValue()
@@ -579,8 +562,8 @@ public class SilverSurferGUI {
                 + statusInfoBuffer.getLeftMotorSpeed() + ", RM: "
                 + statusInfoBuffer.getRightMotorMoving() + " "
                 + statusInfoBuffer.getRightMotorSpeed());
-        outputLabel4.setText("B: " + statusInfoBuffer.getBusy() + ", X: " + statusInfoBuffer.getXCoordinateRelative()
-        		+ ", Y: " + statusInfoBuffer.getYCoordinateRelative() + ", Angle: " + statusInfoBuffer.getAngle());
+        outputLabel4.setText("B: " + statusInfoBuffer.getBusy() + ", X: " + statusInfoBuffer.getCoordinatesAbsolute()[0]
+        		+ ", Y: " + statusInfoBuffer.getCoordinatesAbsolute()[1] + ", Angle: " + statusInfoBuffer.getAngle());
     }
 
     private static void redirectSystemStreams() {

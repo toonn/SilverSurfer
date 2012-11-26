@@ -426,7 +426,7 @@ public class StatusInfoBuffer {
 		coordinatesAbsolute[0] = coordinates[0];
 		coordinatesAbsolute[1] = coordinates[1];
 		panel.setRobotLocation(coordinates[0], coordinates[1], getAngle());
-		
+		SSG.updateStatus();		
 	}
 	
 	private void setCurrentTileCoordinatesRelative(double xOld, double yOld) {
