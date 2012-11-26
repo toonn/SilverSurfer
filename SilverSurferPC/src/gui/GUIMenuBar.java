@@ -6,6 +6,7 @@ import java.io.*;
 
 import javax.swing.*;
 
+import mapping.MapGraph;
 import mazeAlgorithm.ExploreThread;
 import mazeAlgorithm.MazeExplorer;
 
@@ -305,6 +306,9 @@ public class GUIMenuBar extends JMenuBar {
 
         loadMapItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	// reset the current map.
+            	gui.getSimulationPanel().resetMap();
+            	
                 // Prompt for a File
                 FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
                         .getFrame(), "Select file:", FileDialog.LOAD);
@@ -353,8 +357,11 @@ public class GUIMenuBar extends JMenuBar {
         
         deleteMapItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	// reset the current map.
+            	gui.getSimulationPanel().resetMap();
+            	
                 (gui.getCommunicator())
-                        .getSimulationPilot().setMapGraph(null);
+                        .getSimulationPilot().setMapGraph(new MapGraph());
 
                 JPanel messagePanel = new JPanel();
                 JLabel x = new JLabel("Map succesfully deleted!");

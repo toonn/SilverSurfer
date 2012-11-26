@@ -2,10 +2,14 @@ package communication;
 
 import java.awt.Toolkit;
 
+import mapping.MapGraph;
+
+import simulator.SimulationJPanel;
 import gui.SilverSurferGUI;
 
 public class StatusInfoBuffer {
 
+	private SimulationJPanel panel;
 	private int lightSensorInfo;
 	private int ultraSensorInfo;
 	private boolean touchSensor1Info;
@@ -17,8 +21,13 @@ public class StatusInfoBuffer {
 	private boolean busy;
 	private int barcode;
 	private double angle;
-	private double xCoordinateRelative;
-	private double yCoordinateRelative;
+	private double[] coordinatesAbsolute = new double[2];
+	private int xCoordinateRelative;
+	private int yCoordinateRelative;
+	private double startPositionAbsoluteX;
+	private double startPositionAbsoluteY;
+	private int startPositionRelativeX;
+	private int startPostitionRelativeY;
 
 	private SilverSurferGUI SSG;
 	/**
@@ -377,22 +386,85 @@ public class StatusInfoBuffer {
 		SSG.updateStatus();
 	}
 	
-	public double getXCoordinateRelative(){
+	public void setStartPositionAbsoluteX(double startPositionAbsoluteX){
+		this.startPositionAbsoluteX = startPositionAbsoluteX;
+	}
+	
+	public void setStartPositionAbsoluteY(double startPositionAbsoluteY){
+		this.startPositionAbsoluteY = startPositionAbsoluteY;
+	}
+	
+	public void setStartPositionRelativeX(int startPositionAbsoluteX){
+		this.startPositionRelativeX = startPositionRelativeX;
+	}
+	
+	public void setStartPositionRelativeY(int startPositionAbsoluteY){
+		this.startPositionAbsoluteY = startPositionAbsoluteY;
+	}
+	
+	public int getXCoordinateRelative(){
 		return xCoordinateRelative;
 	}
 	
-	public void setXCoordinateRelative(double x){
+	public void setXCoordinateRelative(int x){
 		xCoordinateRelative = x;
-		SSG.updateStatus();
 	}
 	
 	public double getYCoordinateRelative(){
 		return yCoordinateRelative;
 	}
 	
-	public void setYCoordinateRelative(double y){
+	public void setYCoordinateRelative(int y){
 		yCoordinateRelative = y;
-		SSG.updateStatus();
+	}
+
+	public double[] getCoordinatesAbsolute(){
+		return coordinatesAbsolute;
 	}
 	
+	public void setCoordinatesAbsolute(double[] coordinates){
+		coordinatesAbsolute[0] = coordinates[0];
+		coordinatesAbsolute[1] = coordinates[1];
+		panel.setRobotLocation(coordinates[0], coordinates[1], getAngle());
+		
+	}
+	
+	private void setCurrentTileCoordinatesRelative(double xOld, double yOld) {
+		 int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
+		 setXCoordinateRelative(relativePosition[0]);
+		 setYCoordinateRelative(relativePosition[1]);
+	 }
+	
+	 /**
+	  * Deze methode zet de coordinaten van het echte systeem om in de
+	  * coordinaten van de matrix
+	  */
+	 private int[] setAbsoluteToRelative(double x, double y) {
+		 double a = x - setToMultipleOf40(startPositionAbsoluteX);
+		 double b = y - setToMultipleOf40(startPositionAbsoluteY);
+		 int c;
+		 int d;
+		 c = (int) Math.floor(a / 40);
+		 d = (int) Math.floor(b / 40);
+
+		 int[] array = new int[2];
+		 array[0] = getStartPositionRelativeX() + c;
+		 array[1] = getStartPositionRelativeX() + d;
+		 return array;
+	 }
+	 
+	 private int getStartPositionRelativeX() {
+		return startPositionRelativeX;
+	}
+
+	private int setToMultipleOf40(double a) {
+		 return (int) (Math.floor(a / 40) * 40);
+	 }
+
+	public void resetBuffer() {
+		xCoordinateRelative = 0;
+		yCoordinateRelative = 0;
+		angle = 0;
+	}
 }
+

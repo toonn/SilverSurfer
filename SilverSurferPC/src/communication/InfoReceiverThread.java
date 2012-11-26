@@ -8,6 +8,7 @@ public class InfoReceiverThread extends Thread {
 	private static DataOutputStream dos;
 	private StatusInfoBuffer statusInfoBuffer;
 	private boolean quit = false;
+	private double[] coordinates = new double[2];
 	
 	public InfoReceiverThread(StatusInfoBuffer statusInfoBuffer) {
 		this.statusInfoBuffer = statusInfoBuffer;
@@ -53,9 +54,11 @@ public class InfoReceiverThread extends Thread {
 				else if(a.startsWith("[B]"))
 					statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
 				else if(a.startsWith("[X]"))
-					statusInfoBuffer.setXCoordinateRelative(Double.valueOf(a.substring(4).trim()));
-				else if(a.startsWith("[Y]"))
-					statusInfoBuffer.setYCoordinateRelative(Double.valueOf(a.substring(4).trim()));
+					coordinates[0] = Double.valueOf(a.substring(4).trim());
+				else if(a.startsWith("[Y]")) {
+					coordinates[1] = Double.valueOf(a.substring(4).trim());
+					statusInfoBuffer.setCoordinatesAbsolute(coordinates);
+				}
 				else if(a.startsWith("[ANG]"))
 					statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[RAL]"))
