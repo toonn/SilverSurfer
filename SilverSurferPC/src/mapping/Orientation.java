@@ -4,16 +4,9 @@ public enum Orientation {
 	NORTH
 	{
 		@Override
-		public final int[] getArrayToFindNeighbourAbsolute()
+		public final int[] getArrayToFindNeighbourRelative()
 		{
 			int[] north = {0, -1};
-			return north;
-		}
-		
-		@Override
-		public final int[] getOtherPointLine()
-		{
-			int[] north = {40,0};
 			return north;
 		}
 		
@@ -44,19 +37,12 @@ public enum Orientation {
 	EAST
 	{
 		@Override
-		public final int[] getArrayToFindNeighbourAbsolute()
+		public final int[] getArrayToFindNeighbourRelative()
 		{
 			int[] east = {1, 0};
 			return east;
 
 		}	
-		
-		@Override
-		public final int[] getOtherPointLine()
-		{
-			int[] east = {0,40};
-			return east;
-		}
 		
 		@Override
 		public final Orientation getOppositeOrientation()
@@ -85,16 +71,9 @@ public enum Orientation {
 	SOUTH
 	{
 		@Override
-		public final int[] getArrayToFindNeighbourAbsolute()
+		public final int[] getArrayToFindNeighbourRelative()
 		{
 			int[] south = {0, 1};
-			return south;
-		}
-		
-		@Override
-		public final int[] getOtherPointLine()
-		{
-			int[] south = {40,0};
 			return south;
 		}
 		
@@ -125,16 +104,9 @@ public enum Orientation {
 	WEST
 	{
 		@Override
-		public final int[] getArrayToFindNeighbourAbsolute()
+		public final int[] getArrayToFindNeighbourRelative()
 		{
 			int[] west = {-1, 0};
-			return west;
-		}
-		
-		@Override
-		public final int[] getOtherPointLine()
-		{
-			int[] west = {0,40};
 			return west;
 		}
 		
@@ -170,15 +142,8 @@ public enum Orientation {
 	 * er is dus een verschil met getArrayToFindNeighbourRelative die hier onder staat
 	 * ook weer door het verschil in coordinatensysteem zie uitleg simulationpilot bovenaan
 	 */
-	public int[] getArrayToFindNeighbourAbsolute()
+	public int[] getArrayToFindNeighbourRelative()
 	{
-		// This line will never be reached, each valid direction has a return statement.
-		return new int[0];
-	}
-	
-	public int[] getOtherPointLine()
-	{
-		// implementation is orientation dependent
 		// This line will never be reached, each valid direction has a return statement.
 		return new int[0];
 	}
@@ -240,12 +205,6 @@ public enum Orientation {
 	{
 		// implementation is orientation dependent
 		return -1;
-	}
-
-	private static double getMaxRoundingError()
-	{
-		// implementation is orientation dependent
-		return (double) 0.4;
 	}
 
 	/**

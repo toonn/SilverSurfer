@@ -149,11 +149,17 @@ public class Communicator {
 				amount = amount - 1;
 			}
 		}
-		else if(command%100 == Command.AUTOMATIC_TURN_ANGLE) {
+		else if(command%100 == Command.AUTOMATIC_TURN_ANGLE || Math.abs(command%100) == 100 - Command.AUTOMATIC_TURN_ANGLE) {
 			double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
-			while(amount > 0) {
+			if(amount < 0){
+				while (amount<0){
+					simulationPilot.rotate(-1);
+					amount = amount + 1;
+				}
+			}
+			else{while(amount > 0) {
 				simulationPilot.rotate(1);
-				amount = amount - 1;
+				amount = amount - 1;}
 			}
 		}
 		else if(command%100 == -91) {
@@ -225,17 +231,13 @@ public class Communicator {
 		return (double) 2.74;
 	}
 	
-	public void goToNextTile(Orientation orientation, Tile previousTile) throws IOException{
+	public void goToNextTile(Orientation orientation) throws IOException{
 		double currentAngle = getStatusInfoBuffer().getAngle();
+		System.out.println(currentAngle);
 		int angleToRotate = (int)(((double) orientation.getRightAngle() - currentAngle)*10);
-		sendCommand(angleToRotate*10 + Command.AUTOMATIC_TURN_ANGLE);
-		sendCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
-		int xCoordinate = orientation.getArrayToFindNeighbourAbsolute()[0] + previousTile.getxCoordinate();
-		int yCoordinate = orientation.getArrayToFindNeighbourAbsolute()[1] + previousTile.getyCoordinate();
-		setNewTileInMap(xCoordinate, yCoordinate);
+		System.out.println(angleToRotate);
+		executeCommand(angleToRotate*10 + Command.AUTOMATIC_TURN_ANGLE);
+		executeCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
 	}
-	
-	public void setNewTileInMap(int xCoordinate, int yCoordinate) {
-		
-	}
+
 }

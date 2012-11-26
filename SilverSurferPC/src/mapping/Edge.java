@@ -175,64 +175,6 @@ public class Edge {
 	}
 	
 	/**
-	 * Check whether the square stored in square1 references this border as one of its borders.
-	 * 
-	 * @return	True if and only if the square stored in square1 references this border as 
-	 * 			one of its borders.
-	 */
-	private boolean doesTile1ReferenceThisEdge(){
-		for(Orientation orientation : Orientation.values()){
-			if(ExtMath.isNumberDirectionEven(orientation) && 
-					orientation.getNumberOrientation()%3 == getNumberPairDirections() ){
-				if(getTile1().getEdge(orientation) == this)
-					return true;}
-			}
-		return false;}
-	
-	
-	/**
-	 * Check whether the square stored in square1 references this border as one of its borders.
-	 * 
-	 * @return	True if and only if the square stored in square1 references this border as 
-	 * 			one of its borders.
-	 */
-	private boolean doesTile2ReferenceThisEdge(){
-		for(Orientation orientation : Orientation.values()){
-			if(!ExtMath.isNumberDirectionEven(orientation)&& 
-					orientation.getNumberOrientation()%3 == getNumberPairDirections()){
-				if(getTile2().getEdge(orientation) == this)
-					return true;}
-			}
-		return false;}
-
-	/**
-	 * Check whether this border has proper squares attached to it.
-	 * 
-	 * @return	True if and only if this border does not reference an effective square, or 
-	 * 			if a square referenced by this border in turn references this border as 
-	 * 			the border to which it is attached.
-	 * 			| result ==
-	 * 			|	( ( (getSquare1() == null) || 
-	 *			|       (doesSquare1ReferenceThisBorder()) )
-	 *			|			&&
-	 *			| 	  ( (getSquare2() == null)||
-	 *			|   	(doesSquare2ReferenceThisBorder()) ) )
-	 * 			
-	 */
-	public boolean hasProperTiles(){
-		
-		return( 
-			( (getTile1() == null) || 
-				(doesTile1ReferenceThisEdge()) )
-							&&
-				 ( (getTile2() == null)||
-				 (doesTile2ReferenceThisEdge()) ) );
-	}
-	
-	
-
-	
-	/**
 	 * Set the square attached to this border to the given square and store it at the right field.
 	 * 		If the border is located in the north, east or ceiling of the given square,
 	 * 		that square is stored in square1.
@@ -260,22 +202,6 @@ public class Edge {
 		else{this.setTile2(tile);}
 	}
 	
-
-//	@Override
-//	public Object clone(){
-//		try { 
-//			Border border = (Border) super.clone();
-//			if(getWall() == null){
-//				border.setWall(null);
-//			}
-//			else{border.setWall((Wall) getWall().clone());}
-//			
-//			return border;
-//		} catch (CloneNotSupportedException e) {
-//			return null;
-//		}
-//	}
-	
 	/**
 	 * Gets the obstruction that is between the two Tiles of this edge.
 	 * might be 'null'.
@@ -287,18 +213,6 @@ public class Edge {
 		this.obstruction = obstruction;
 	}
 	
-//	/**
-//	 * Returns the other tile on this edge, the one that isn't 't'.
-//	 */
-//	public Tile getOtherTile(Tile t){
-//		if (t.equals(getTile1()))
-//			return getTile2();
-//		else if (t.equals(getTile2()))
-//			return getTile1();
-//		else return null;
-//
-//	}
-//	
 	/**
 	 * Checks if this edge should be able to be ridden over.
 	 * @return true if there is no wall or nothingness on the edge.

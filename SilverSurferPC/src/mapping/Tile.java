@@ -8,29 +8,13 @@ public class Tile{
 	private int xCoordinate = -1000;
 	private int yCoordinate = -1000;
 	private TileContent content;
-	private boolean marking = false;
+	private boolean isMarkedExploreMaze = false;
+	private boolean isMarkedShortestPath = false;
 	private int manhattanValue;
+	private int cost = -1;
 	
 	public Tile(){
 		populateEdges();
-	}
-	
-	public int getManhattanValue(){
-		return manhattanValue;
-	}
-	
-	public void setManhattanValue(int manhattanValue){
-		this.manhattanValue = manhattanValue;
-	}
-
-	
-	public void setMarking (boolean marking){
-		this.marking = true;
-
-	}
-	
-	public boolean isMarked(){
-		return marking;
 	}
 	
 	/**
@@ -207,58 +191,6 @@ public class Tile{
 			}
 			return false;
 			}
-
-		
-		/**
-		 * Check whether the border in the given direction is not effective or if it
-		 * reference this square as one of its squares.
-		 * 
-		 * @param 	direction
-		 * 			The direction of the border to check.
-		 * @return	True if and only if the border in the given direction is not effective or if 
-		 * 			it references this square as one of its squares.
-		 * 			| result == 
-		 * 			| ( (getBorder(direction).getSquare1() == null || getBorder(direction).getSquare1() == this) ||
-		 * 			| (getBorder(direction).getSquare2() == null || getBorder(direction).getSquare2() == this) )
-		 */
-		public boolean doesTheBorderReferenceThisSquareOrIsNotEffective(Orientation orientation){
-				if(ExtMath.isNumberDirectionEven(orientation)){
-					if(getEdge(orientation).getTile1() == null || getEdge(orientation).getTile1() == this)
-						return true;}
-				else{if(getEdge(orientation).getTile2() == null || getEdge(orientation).getTile2() == this)
-					return true;}
-			return false;
-			}
-		
-		/**
-		 * Check whether this square has proper borders attached to it.
-		 * 
-		 * @return 	True if and only if this square can have the borders to which it is attached
-		 * 			as its borders, and either those borders are not attached to a square or 
-		 * 			those borders references this square as one of its squares, and if 
-		 * 			this square has at least one border that contains a wall and if
-		 * 			this square does not have more then 3 borders that contain a wall with a door and if
-		 * 			the border in the floor does not contain a wall with a door.
-		 * 			| result ==
-		 * 			|  ( for each direction in borders.keySet() :
-		 * 			|  		canHaveAsBorder(getBorder(direction)) &&
-		 * 			|    for each direction in borders.keySet() :
-		 * 			|  		doesTheBorderReferenceThisSquareOrIsNotEffective(direction) &&
-		 * 			|    (getNumberWalls() >= 1) &&
-		 * 			|    (getNumberDoors() <= 3) &&
-		 * 			|    hasNoDoorInFloor() )
-		 */
-		public boolean hasProperBorders(){ 
-			for(Orientation orientation: Orientation.values()){
-				if(!canHaveAsEdge(getEdge(orientation)))
-					return false; 
-						}
-			for(Orientation direction: Orientation.values()){
-				if(! (doesTheBorderReferenceThisSquareOrIsNotEffective(direction)) )
-					return false;			
-						}
-			return true; 
-		}	
 		
 		/**
 		 * Replace the border in the given direction with the given border.
@@ -317,12 +249,12 @@ public class Tile{
 		}
 		
 		/**
-		 * Map collecting references to borders associated with the 6 directions of this
-		 * square.
+		 * Map collecting references to edges associated with the 4 directions of this
+		 * tile.
 		 * 
-		 * @invar 	Each square contains 6 borders. 
-		 * 			| for each direction in borders.keySet():
-		 *        	| getBorder(direction) != null
+		 * @invar 	Each square contains 4 edges. 
+		 * 			| for each direction in edges.keySet():
+		 *        	| getEdge(direction) != null
 		 */
 		private HashMap<Orientation, Edge> edges =  new HashMap<Orientation, Edge>();
 	
@@ -346,9 +278,7 @@ public class Tile{
 				return true;
 			else
 				return false;
-		}
-		
-		
+		}		
 		
 		/**
 		 * geeft een arraylist weer met neighbourtiles enkel die waar geen muur tussen staat!
@@ -362,8 +292,9 @@ public class Tile{
 		public ArrayList getReachableNeighbours(){
 			ArrayList neighbours = new ArrayList(4);
 			for(Orientation orientation: Orientation.values()){
-				if(this.getEdge(orientation).getObstruction()==null){
-				neighbours.add(this.getEdge(orientation).getNeighbour(this));}
+				if(this.getEdge(orientation).getObstruction() == null){
+					neighbours.add(this.getEdge(orientation).getNeighbour(this));
+				}
 				else neighbours.add(null);
 			}
 			
@@ -387,6 +318,73 @@ public class Tile{
 					edge.setNumberPairDirections(orientation.getNumberOrientation()%3);
 		}
 	}
+	
+//velden aangemaakt voor gebruik van algoritmes
+	
+	/**
+	 * 
+	 * @return de heuristiek
+	 */
+	public int getManhattanValue(){
+		return manhattanValue;
+	}
+	
+	public void setManhattanValue(int manhattanValue){
+		this.manhattanValue = manhattanValue;
+	}
+	
+	/**
+	 * Geeft true als hij al gebruikt is in het ExploreMaze-algoritme.
+	 */
+	public boolean isMarkedExploreMaze(){
+		return isMarkedExploreMaze;
+	}
+	
+	
+	public void setMarkingExploreMaze (boolean marking){
+		this.isMarkedExploreMaze = marking;
+
+	}
+	
+	
+	/**
+	 * Geeft true als hij al gebruikt is in het shortestPath-algoritme.
+	 */
+	public boolean isMarkedShortestPath(){
+		return isMarkedShortestPath;
+	}
+	
+	public void setMarkingShortestPath (boolean marking){
+		this.isMarkedShortestPath = marking;
+
+	}
+	
+	public int getCost(){
+		return cost;
+	}
+	
+	/**
+	 * Deze zet de kost terug op zijn initiele waarde. De tile bevat normaal steeds deze waarde
+	 * behalve als ze betrokken is bij een shortestPath algoritme. Dit houdt ook in dat ze maar
+	 * in 1 shortestPath-algoritme tegelijkertijd kan gebruikt worden.
+	 * Op het einde van het shortestPath algoritme wordt deze methode steeds opgeroepen op elke
+	 * tile die erin betrokken was.
+	 */
+	public void setCostBackToInitiatedValue(){
+		this.cost = -1;
+	}
+	
+	/**
+	 * Hierin wordt de kost gezet, deze is afhankelijk van het shortestPath algoritme.
+	 * De kost wordt enkel gezet, als deze kleiner is dan de kost die er nu al staat of
+	 * als ze nog op -1 staat (initiele waarde).
+	 */
+	public void setCost(int cost){
+		if(this.cost == -1 || this.cost > cost){
+			this.cost = cost;
+		}
+	}
+
 
 	@Override
 	public String toString() {

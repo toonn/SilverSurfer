@@ -1,4 +1,4 @@
-package algoritmeMaze;
+/*package algoritmeMaze;
 
 import gui.SilverSurferGUI;
 
@@ -123,4 +123,4 @@ public class ShortestPad {
 	 * wordt het algoritme te ingewikkeld.
 	 * 
 	 */
-}
+/*}*/
