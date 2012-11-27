@@ -40,7 +40,7 @@
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
 \label{ssec:abstr} % 3 ?
-De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauwkeurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en enkele klassen die de werking van de robot simuleren (simulator).\\
+De gehele opdracht bestaat uit verschillende demo's waarbij een robot verschillende opdrachten moet kunnen uitvoeren. De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauwkeurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en enkele klassen die de werking van de robot simuleren (simulator).\\
 De sensoren worden voor demo 2 wel geïnstalleerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
 De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zicht hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn).
 
@@ -427,6 +427,45 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 \item \textit{\ref{ssec:GUI} GUI:} enkele nieuwe functionaliteiten.
 \item \textit{\ref{ssec:simulator} Simulator:} grid en triangle, virtuele doolhof.
 \end{itemize}
+
+
+% == DEMO 2 == %
+\section{Demo 2} % 3 ?
+\label{Asec:demo2}
+De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-
+keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software
+bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat
+uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en
+enkele klassen die de werking van de robot simuleren (simulator).
+
+% == resulaten D2== %
+\subsection{ResultatenD2} % 3 ?
+\label{Assec:result2}
+
+
+% == conclusies D2== %
+\subsection{ConclusiesD2} % 3 ?
+\label{Assec:conc2}
+
+
+% == aanpassingen D2== %
+\subsection{Oplijsting aanpassingen verslagD2} % 3 ?
+\label{Assec:aanp2}
+Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
+
+% overzicht aangepaste secties D2
+\begin{itemize}
+
+\item \textit{\ref{ssec:abstr} Abstract:} aangepast.
+\item \textit{ Het rijden van een veelhoek:} er uitgehaald.
+\item \textit{\ref{ssec:algoWitteL} Het rechtzetten op een witte lijn:} aangepast.
+\item \textit{\ref{ssec:algoOnderzDoolhof} Algoritme onderzoeken doolhof:} nieuwe sectie.
+\item \textit{\ref{ssec:AlgoKortsteP} Algoritme Kortste pad:} nieuwe sectie.
+\item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en mapping-package.
+\item \textit{\ref{ssec:GUI} GUI:} aangepast.
+\item \textit{\ref{ssec:simulator} Simulator:} aangepast.
+\end{itemize}
+
 
 \newpage
 \bibliographystyle{siam}
