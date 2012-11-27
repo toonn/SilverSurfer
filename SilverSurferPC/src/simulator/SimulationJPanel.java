@@ -33,8 +33,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * de ene wordt afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden
 	 * neem Triangle(220,220,270) ipv (0,0,0) om lelijke dot op 0,0 te voorkomen.
 	 */
-	private Triangle triangle1 = new Triangle(220,214.5,270);
-	private Triangle triangle2 = new Triangle(220,214.5,270);
+	private Triangle triangle1 = new Triangle(220,220,270);
+	private Triangle triangle2 = new Triangle(220,220,270);
 	/**
 	 * geeft het getal van de driehoek die afgebeeld wordt
 	 */
@@ -58,8 +58,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 	public SimulationJPanel()
 	{
-		
-		
 		mapGraphConstructed = new MapGraph();
 		
 		try
@@ -205,7 +203,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		{
 			((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
 					0.4f));
-			if(this.getSimulationPilot().getUltraSensorValue() > 200)
+			if(this.getSimulationPilot().getUltraSensorValue() > 200 || this.getSimulationPilot().getUltraSensorValue() < 20)
 			{
 				graph.setColor(new Color(12,168,244));
 			}

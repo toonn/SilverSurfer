@@ -745,7 +745,7 @@ public class SimulationPilot {
 		Tile tileTemp = this.getMapGraph().getCurrentTile();
 		int i = 1;
 
-		while(i < 120)
+		while(i < 148)
 		{
 			while(!(Math.abs(xTempPrev%40 - xTemp%40) > 5) && !(Math.abs(yTempPrev%40 - yTemp%40) > 5))
 			{
