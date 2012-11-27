@@ -1,8 +1,12 @@
 package mazeAlgorithm;
 
 import gui.SilverSurferGUI;
+
+import java.util.ArrayList;
 import java.util.Vector;
 import communication.Communicator;
+import mapping.ExtMath;
+import mapping.Orientation;
 import mapping.Tile;
 
 public class MazeExplorer {
@@ -30,6 +34,9 @@ public class MazeExplorer {
 	public void startExploringMaze(){
 		allTiles.add(startTile);
 		algorithm(startTile);
+		for(Object tile: allTiles){
+			((Tile) tile).setMarkingExploreMaze(false);
+		}
 	}
 	
 	/**
@@ -40,7 +47,37 @@ public class MazeExplorer {
 		//kijkt eerst of er muren zijn, deze methode zet ook al tiles waar er zowiezo liggen
 		//(dus waar geen muur staat),
 		//zodat deze al in de map zitten en de robot er naartoe kan gaan
-		gui.getCommunicator().getSimulationPilot().checkForObstructions();
+		Orientation currentOrientation = gui.getCommunicator().getSimulationPilot().getCurrentOrientation();
+		int number = currentOrientation.getNumberArray();
+		int numberVariable = number;
+		int[] whichTilesAllreadyBeen = new int[4];
+		for(int i = 0; i < 4 ; i++){
+			ArrayList array = currentTile.getAllNeighbours();
+			if(array.get(numberVariable) != null && (((Tile) array.get(numberVariable)).isMarkedExploreMaze())){
+				whichTilesAllreadyBeen[numberVariable] = 0;}
+			else {whichTilesAllreadyBeen[numberVariable] = 1;}
+			numberVariable = numberVariable + 1;
+			if(numberVariable == 4){
+				numberVariable = 0;
+			}
+		}
+		
+		numberVariable = number;
+		
+		for(int i = 0; i < 4 ; i++){
+			currentOrientation = gui.getCommunicator().getSimulationPilot().getCurrentOrientation();
+			if(whichTilesAllreadyBeen[numberVariable] == 0){}
+			else{
+				double angle = (numberVariable - currentOrientation.getNumberArray()) * 90;
+				angle = ExtMath.getSmallestAngle(angle);
+				gui.getCommunicator().getSimulationPilot().rotate(angle);
+				gui.getCommunicator().getSimulationPilot().checkForObstructionAndSetTile();
+			}
+			numberVariable = numberVariable + 1;
+			if(numberVariable == 4){
+				numberVariable = 0;
+			}
+		}
 	
 		//voegt buurtiles van de currentTile toe aan de queu, enkel als deze nog niet begaan
 		//zijn (niet gemarkeerd) 
@@ -57,10 +94,26 @@ public class MazeExplorer {
 		if(queu.isEmpty()){
 			return;
 		}
-		//zet de nextTile
-		Tile nextTile = queu.lastElement();
-		//voegt nextTile toe aan allTiles
-		allTiles.add(nextTile);
+		Tile nextTile;
+		currentOrientation = gui.getCommunicator().getSimulationPilot().getCurrentOrientation();
+		
+		if(currentTile.getEdge(currentOrientation).isPassable() && currentTile.getEdge(currentOrientation).getNeighbour(currentTile) != null && 
+				 queu.contains(currentTile.getEdge(currentOrientation).getNeighbour(currentTile))){
+			nextTile = currentTile.getEdge(currentOrientation).getNeighbour(currentTile);
+		}
+		else if(currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).isPassable() && currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile) != null && queu.contains(currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile))){
+			nextTile = currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile);}
+		else if(currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).isPassable() && currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile) != null
+				 && queu.contains(currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile))){
+			nextTile = currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile);
+		}
+		else if(currentTile.getEdge(currentOrientation.getOppositeOrientation()).isPassable() && currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile) != null && queu.contains(currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile))){
+			nextTile = currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile);
+		}
+		else{
+			nextTile = queu.lastElement();
+		}
+			allTiles.add(nextTile);
 		//verwijdert alle nextTiles uit de queu. De reden waarom deze meermaals in de queu 
 		//voorkomen is omdat het voordeliger is om de laatste versie te pakken omdat deze
 		//het dichts bij de currentTile ligt, zodat de robot niet voor elke nextTile massa's

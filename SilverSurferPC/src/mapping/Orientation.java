@@ -33,6 +33,13 @@ public enum Orientation {
 		{
 			return 0;
 		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 0;
+		}
+		
 	},
 	EAST
 	{
@@ -67,6 +74,12 @@ public enum Orientation {
 		{
 			return 4;
 		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 1;
+		}
 	},
 	SOUTH
 	{
@@ -100,6 +113,12 @@ public enum Orientation {
 		{
 			return 3;
 		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 2;
+		}
 	},
 	WEST
 	{
@@ -132,6 +151,12 @@ public enum Orientation {
 		public final int getNumberOrientation()
 		{
 			return 1;
+		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 3;
 		}
 	};
 
@@ -205,6 +230,13 @@ public enum Orientation {
 	{
 		// implementation is orientation dependent
 		return -1;
+	}
+	
+	public int getNumberArray(){
+		
+		//implementation is orientation dependent
+		return -1;
+		
 	}
 
 	/**
@@ -302,4 +334,5 @@ public enum Orientation {
 		else
 			return WEST;
 	}
+	
 }
