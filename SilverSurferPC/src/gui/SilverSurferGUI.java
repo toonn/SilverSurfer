@@ -108,6 +108,7 @@ public class SilverSurferGUI {
 
         //redirectSystemStreams();
 
+
         GUIMenuBar bar = new GUIMenuBar(this);
         frame.setJMenuBar(bar);
 
