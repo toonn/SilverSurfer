@@ -33,8 +33,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * de ene wordt afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden
 	 * neem Triangle(220,220,270) ipv (0,0,0) om lelijke dot op 0,0 te voorkomen.
 	 */
-	private Triangle triangle1 = new Triangle(220,220,270);
-	private Triangle triangle2 = new Triangle(220,220,270);
+	private Triangle triangle1 = new Triangle(220,214.5,270);
+	private Triangle triangle2 = new Triangle(220,214.5,270);
 	/**
 	 * geeft het getal van de driehoek die afgebeeld wordt
 	 */
@@ -96,7 +96,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			double oldY = this.getVisibleTriangle().getGravityCenterY();
 
 			// add a bigger circle where the robot starts
-			if(shapes.size()<=3)
+			if(shapes.size()<3)
 			{
 				double diam = 5;
 				Shape bigCircle = new Ellipse2D.Double(oldX - (diam/2), oldY - (diam/2), diam, diam); 

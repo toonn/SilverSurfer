@@ -7,8 +7,8 @@ import java.awt.Polygon;
 //als de driehoek naar boven wijst (alpha = 270 graden) , staat A links tov C en B rechts.
 public class Triangle extends Polygon {
 	
-	private final int length = 20; //lengte van de tophoek tot loodrecht op basisas
-	private final double topAngle = 45; //graden van de tophoek
+	private final int length = 22; //lengte van de tophoek tot loodrecht op basisas
+	private final double topAngle = 42; //graden van de tophoek
 	private double gravityCenterX;
 	private double gravityCenterY;
 	private double alpha = 0; // Hoeveel je gedraaid bent ten opzichte van de X-as
@@ -20,7 +20,7 @@ public class Triangle extends Polygon {
 		this.alpha = alpha;
 		
 		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
-		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.getArrowCenterX(), (int) this.getArrowCenterY());
 		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
 		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
 	}
@@ -41,7 +41,7 @@ public class Triangle extends Polygon {
 		this.gravityCenterX = gravityCenterX;
 		reset();
 		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
-		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.getArrowCenterX(), (int) this.getArrowCenterY());
 		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
 		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
 		
@@ -50,15 +50,23 @@ public class Triangle extends Polygon {
 	public double getGravityCenterY() {
 		return gravityCenterY;
 	}
-	
+
 	public void setGravityCenterY(double gravityCenterY){
 		this.gravityCenterY = gravityCenterY;
 		
 		reset();
 		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
-		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.getArrowCenterX(), (int) this.getArrowCenterY());
 		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
 		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
+	}
+
+	public double getArrowCenterX() {
+		return this.getGravityCenterX() - 5.5*Math.cos(Math.toRadians(this.getAlpha()));
+	}
+	
+	public double getArrowCenterY(){
+		return this.getGravityCenterY() - 5.5*Math.sin(Math.toRadians(this.getAlpha()));
 	}
 
 	public double getAlpha() {
@@ -70,10 +78,10 @@ public class Triangle extends Polygon {
 		
 		reset();
 		this.addPoint((int) this.calculateXCoordinateA(), (int) this.calculateYCoordinateA());
-		this.addPoint((int) this.getGravityCenterX(), (int) this.getGravityCenterY());
+		this.addPoint((int) this.getArrowCenterX(), (int) this.getArrowCenterY());
 		this.addPoint((int) this.calculateXCoordinateB(), (int) this.calculateYCoordinateB());
 		this.addPoint((int) this.calculateXCoordinateC(), (int) this.calculateYCoordinateC());
-	}
+	}	
 	
 	private double calculateXCoordinateA(){
 		double hoekTenOpzichteVanXas = ExtMath.addDegree(calculateHoekBetweenZCandZA(), getAlpha());
