@@ -106,7 +106,7 @@ public class SilverSurferGUI {
         outputLabel3 = new JLabel("", JLabel.CENTER);
         outputLabel4 = new JLabel("", JLabel.CENTER);
 
-        redirectSystemStreams();
+        //redirectSystemStreams();
 
         GUIMenuBar bar = new GUIMenuBar(this);
         frame.setJMenuBar(bar);

@@ -518,7 +518,6 @@ public class SimulationPilot {
 				 standardDeviation = SimulationSensorData
 				 .getSDBarcodeTileLS(color);
 			 }
-			 
 			 return (int) Math.round(mean
 					 + (random.nextGaussian() * standardDeviation));
 		 }
