@@ -345,41 +345,41 @@ public class SimulationPilot {
 		return false;
 	}
 
-//	/**
-//	 * andere checkForObstructions dan checkForObstruction
-//	 * deze wordt gebruikt voor als de robot op de edge staat en niet door mag kunnen
-//	 * dus niet afhankelijk van of hij hem ziet of niet. Bij checkForObstruction
-//	 * wordt gecheckt of de robot een obstruction ziet.
-//	 */
-//	private boolean checkForObstructionIfOnEdge(boolean forwards){
-//
-//		if(! currentPositionAndLigtsensorPositionOnSameTile()){
-//			return false;
-//		}
-//
-//		Orientation currentOrientation = Orientation.calculateOrientation(
-//				this.getCurrentPositionAbsoluteX(),
-//				this.getCurrentPositionAbsoluteY(), this.getAlpha());
-//
-//		if(!forwards){
-//			currentOrientation = currentOrientation.getOppositeOrientation();
-//		}
-//
-//		if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL) {
-//			return true;
-//		}
-//		return false;
-//	}
-//
-//	/**
-//	 * wordt gebruikt om te checken of de juiste muur gedetecteerd wordt en niet die van 
-//	 * de volgende tile
-//	 */
-//	private boolean currentPositionAndLigtsensorPositionOnSameTile(){
-//		int[] ligth = setAbsoluteToRelative(getLightsensorPositionX(), getLightsensorPositionY());
-//		int[] current = setAbsoluteToRelative(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-//		return ligth[0] == current[0] && ligth[1] == current[1];
-//	}
+	//	/**
+	//	 * andere checkForObstructions dan checkForObstruction
+	//	 * deze wordt gebruikt voor als de robot op de edge staat en niet door mag kunnen
+	//	 * dus niet afhankelijk van of hij hem ziet of niet. Bij checkForObstruction
+	//	 * wordt gecheckt of de robot een obstruction ziet.
+	//	 */
+	//	private boolean checkForObstructionIfOnEdge(boolean forwards){
+	//
+	//		if(! currentPositionAndLigtsensorPositionOnSameTile()){
+	//			return false;
+	//		}
+	//
+	//		Orientation currentOrientation = Orientation.calculateOrientation(
+	//				this.getCurrentPositionAbsoluteX(),
+	//				this.getCurrentPositionAbsoluteY(), this.getAlpha());
+	//
+	//		if(!forwards){
+	//			currentOrientation = currentOrientation.getOppositeOrientation();
+	//		}
+	//
+	//		if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL) {
+	//			return true;
+	//		}
+	//		return false;
+	//	}
+	//
+	//	/**
+	//	 * wordt gebruikt om te checken of de juiste muur gedetecteerd wordt en niet die van 
+	//	 * de volgende tile
+	//	 */
+	//	private boolean currentPositionAndLigtsensorPositionOnSameTile(){
+	//		int[] ligth = setAbsoluteToRelative(getLightsensorPositionX(), getLightsensorPositionY());
+	//		int[] current = setAbsoluteToRelative(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
+	//		return ligth[0] == current[0] && ligth[1] == current[1];
+	//	}
 
 	public void addWall() {
 		Orientation currentOrientation = Orientation.calculateOrientation(
@@ -426,17 +426,17 @@ public class SimulationPilot {
 				{
 					// the edge you are standing on contains a wall
 					// TODO: weet niet goed hoe je dit kan checken
-//					if(!(this.getMapGraph().canMoveTo(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(),
-//							this.getCurrentPositionAbsoluteY(), ExtMath.addDegree(alphaTemp,j*30)))
-//						&& this.getMapGraph().canMoveTo(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(),
-//								this.getCurrentPositionAbsoluteY(), ExtMath.addDegree(alphaTemp,j*210)))))
-//					{
-//						this.setAlpha((double) ExtMath.addDegree(alphaOriginal,i-j));
-//						this.getSSG().updateStatus();
-//
-//						System.out.println("Er staat een muur in de weg");
-//						return;
-//					}
+					//					if(!(this.getMapGraph().canMoveTo(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(),
+					//							this.getCurrentPositionAbsoluteY(), ExtMath.addDegree(alphaTemp,j*30)))
+					//						&& this.getMapGraph().canMoveTo(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(),
+					//								this.getCurrentPositionAbsoluteY(), ExtMath.addDegree(alphaTemp,j*210)))))
+					//					{
+					//						this.setAlpha((double) ExtMath.addDegree(alphaOriginal,i-j));
+					//						this.getSSG().updateStatus();
+					//
+					//						System.out.println("Er staat een muur in de weg");
+					//						return;
+					//					}
 				}
 			}
 
@@ -454,6 +454,161 @@ public class SimulationPilot {
 			{
 			}
 		}
+	}
+
+
+	/**
+	 * checkt of de robot zich binnen de marge van een edge bevindt
+	 */
+	public boolean pointOnEdge(double x, double y) {
+		return (x % 40) > 40 - this.getEdgeMarge()
+		|| (x % 40) < this.getEdgeMarge()
+		|| (y % 40) > 40 - this.getEdgeMarge()
+		|| (y % 40) < this.getEdgeMarge();
+	}
+
+	/**
+	 * Checks whether the given point is on the edge of a tile.
+	 */
+	public Orientation pointOnWichSideOfTile(double x, double y, Orientation travelOrientation)
+	{
+		if(travelOrientation == Orientation.NORTH || travelOrientation == Orientation.SOUTH)
+		{
+			if((y % 40) > 20)
+			{
+				return Orientation.SOUTH;
+			}
+			//if((y % 40) < 20)
+			else
+			{
+				return Orientation.NORTH;
+			}
+		}
+		//if(travelOrientation == Orientation.EAST || travelOrientation == Orientation.WEST)
+		else
+		{
+			if((x % 40) > 20)
+			{
+				return Orientation.EAST;
+			}
+			//if((x % 40) < 20)
+			else
+			{
+				return Orientation.WEST;
+			}
+		}
+	}
+
+	/**
+	 * Checks whether the robot, standig on the given point, is on the edge of a tile.
+	 * The robot is interpreted as a rectangle around the given position.
+	 */
+	public boolean robotOnEdge(double x, double y, double alpha) {
+		double leftFrontX = (x - 6*Math.cos(Math.toRadians(alpha-30)));
+		double leftFrontY = (y + 6*Math.sin(Math.toRadians(alpha-30)));
+
+		double rightFrontX = (x - 6*Math.cos(Math.toRadians(alpha+30)));
+		double rightFrontY = (y + 6*Math.sin(Math.toRadians(alpha+30)));
+
+		double leftBackX = (x - 6*Math.cos(Math.toRadians(alpha-180+30)));
+		double leftBackY = (y + 6*Math.sin(Math.toRadians(alpha-180+30)));
+
+		double rightBackX = (x - 6*Math.cos(Math.toRadians(alpha-180-30)));
+		double rightBackY = (y + 6*Math.sin(Math.toRadians(alpha-180-30)));
+
+		return pointOnEdge(leftFrontX, leftFrontY) || pointOnEdge(rightFrontX, rightFrontY)
+		|| pointOnEdge(leftBackX, leftBackY) || pointOnEdge(rightBackX, rightBackY)
+		|| (Math.abs(leftFrontX%40-rightFrontX%40) > 20) || (Math.abs(leftFrontX%40-leftBackX%40) > 20)
+		|| (Math.abs(leftFrontX%40-rightBackX%40) > 20) || (Math.abs(rightFrontX%40-rightBackX%40) > 20)
+		|| (Math.abs(rightFrontX%40-leftBackX%40) > 20) || (Math.abs(rightBackX%40-leftBackX%40) > 20)
+		|| (Math.abs(leftFrontY%40-rightFrontY%40) > 20) || (Math.abs(leftFrontY%40-leftBackY%40) > 20)
+		|| (Math.abs(leftFrontY%40-rightBackY%40) > 20) || (Math.abs(rightFrontY%40-rightBackY%40) > 20)
+		|| (Math.abs(rightFrontY%40-leftBackY%40) > 20) || (Math.abs(rightBackY%40-leftBackY%40) > 20);
+	}
+
+	/**
+	 * True if the robot is on an edge and this edge is not a wall
+	 */
+	public boolean onWhiteLine(double x, double y) {
+		// System.out.println("w: " + (this.onEdge(x,y) && (this.getMapGraph()
+		// == null ||
+		// this.getMapGraph().getObstruction(Orientation.calculateOrientation(x,
+		// y, this.getAlpha())) != Obstruction.WALL)));
+		return this.pointOnEdge(x, y)
+		&& (this.getMapGraph() == null || this.getMapGraph()
+				.getObstruction(
+						Orientation.calculateOrientation(x, y,
+								this.getAlpha())) != Obstruction.WALL);
+
+	}
+
+	/**
+	 * True if the robot is not on an edge, but on a tile without a content.
+	 */
+	public boolean onEmptyTile(double x, double y) {
+		// System.out.println("e: " + (!this.onEdge(x,y) && (this.getMapGraph()
+		// == null || this.getMapGraph().getContentCurrentTile() == null)));
+		return (!this.pointOnEdge(x, y) && this.getMapGraph() == null)
+		|| (!this.pointOnEdge(x, y) && this.getMapGraph()
+				.getContentCurrentTile() == null);
+
+	}
+
+	/**
+	 * True if the robot is not on an edge, but on a tile containing a barcode.
+	 */
+	public boolean onBarcodeTile(double x, double y) {
+		if (this.getMapGraph() == null) {
+			// System.out.println("b: /");
+			return false;
+		} else {
+			// System.out.println("b: " + (!this.onEdge(x,y) &&
+			// (this.getMapGraph().getContentCurrentTile() instanceof
+			// Barcode)));
+			return !this.pointOnEdge(x, y)
+			&& (this.getMapGraph().getContentCurrentTile() instanceof Barcode);
+		}
+	}
+
+	// zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
+	// negatief
+	// maar doet normaal niet ter zake aangezien de coordinaten in het echte
+	// coordinatensysteem
+	// niet negatief kunnen zijn
+	public static int setToMultipleOf40(double a) {
+		return (int) (Math.floor(a / 40) * 40);
+	}
+
+	/**
+	 * Deze methode zet de coordinaten van het echte systeem om in de
+	 * coordinaten van de matrix
+	 */
+	public int[] setAbsoluteToRelative(double x, double y) {
+		double a = x - setToMultipleOf40(startPositionAbsoluteX);
+		double b = y - setToMultipleOf40(startPositionAbsoluteY);
+		int c;
+		int d;
+		c = (int) Math.floor(a / 40);
+		d = (int) Math.floor(b / 40);
+
+		int[] array = new int[2];
+		array[0] = getStartPositionRelativeX() + c;
+		array[1] = getStartPositionRelativeY() + d;
+		return array;
+	}
+
+	/**
+	 * zet dus de map terug op zijn juiste currenttilecoorinates berekend uit de
+	 * xOld en yOld xOld en yOld mogen eig enkel de huidige positie
+	 * voorstellen!!!!!!!!!!!!!! moeten hier ingegeven worden omdat bij de
+	 * travelmethode je de currentabsoluteposition pas terug juist zet op het
+	 * einde van de lus
+	 */
+	public void setCurrentTileCoordinates(MapGraph map, double xOld, double yOld) {
+		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
+		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
+		SSG.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
+		SSG.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
 	}
 
 	public void clear() {
@@ -511,7 +666,6 @@ public class SimulationPilot {
 				standardDeviation = SimulationSensorData.getSDWhiteLineLS();
 			} else if (onBarcodeTile(getLightsensorPositionX(),
 					getLightsensorPositionY())) {
-				System.out.println("onBarcode Simulationpilot line 512");
 				int color = ((Barcode)this.getMapGraph().getContentCurrentTile())
 				.getColorValue(getLightsensorPositionX() % 40,
 						getLightsensorPositionY() % 40, Orientation.calculateOrientation(
@@ -717,158 +871,5 @@ public class SimulationPilot {
 		//
 	}
 
-	/**
-	 * checkt of de robot zich binnen de marge van een edge bevindt
-	 */
-	public boolean pointOnEdge(double x, double y) {
-		return (x % 40) > 40 - this.getEdgeMarge()
-		|| (x % 40) < this.getEdgeMarge()
-		|| (y % 40) > 40 - this.getEdgeMarge()
-		|| (y % 40) < this.getEdgeMarge();
-	}
-	
-	/**
-	 * Checks whether the given point is on the edge of a tile.
-	 */
-	public Orientation pointOnWichSideOfTile(double x, double y, Orientation travelOrientation)
-	{
-		if(travelOrientation == Orientation.NORTH || travelOrientation == Orientation.SOUTH)
-		{
-			if((y % 40) > 20)
-			{
-				return Orientation.SOUTH;
-			}
-			//if((y % 40) < 20)
-			else
-			{
-				return Orientation.NORTH;
-			}
-		}
-		//if(travelOrientation == Orientation.EAST || travelOrientation == Orientation.WEST)
-		else
-		{
-			if((x % 40) > 20)
-			{
-				return Orientation.EAST;
-			}
-			//if((x % 40) < 20)
-			else
-			{
-				return Orientation.WEST;
-			}
-		}
-	}
-
-	/**
-	 * Checks whether the robot, standig on the given point, is on the edge of a tile.
-	 * The robot is interpreted as a rectangle around the given position.
-	 */
-	public boolean robotOnEdge(double x, double y, double alpha) {
-		double leftFrontX = (x - 6*Math.cos(Math.toRadians(alpha-30)));
-		double leftFrontY = (y + 6*Math.sin(Math.toRadians(alpha-30)));
-
-		double rightFrontX = (x - 6*Math.cos(Math.toRadians(alpha+30)));
-		double rightFrontY = (y + 6*Math.sin(Math.toRadians(alpha+30)));
-
-		double leftBackX = (x - 6*Math.cos(Math.toRadians(alpha-180+30)));
-		double leftBackY = (y + 6*Math.sin(Math.toRadians(alpha-180+30)));
-
-		double rightBackX = (x - 6*Math.cos(Math.toRadians(alpha-180-30)));
-		double rightBackY = (y + 6*Math.sin(Math.toRadians(alpha-180-30)));
-
-		return pointOnEdge(leftFrontX, leftFrontY) || pointOnEdge(rightFrontX, rightFrontY)
-		|| pointOnEdge(leftBackX, leftBackY) || pointOnEdge(rightBackX, rightBackY)
-		|| (Math.abs(leftFrontX%40-rightFrontX%40) > 20) || (Math.abs(leftFrontX%40-leftBackX%40) > 20)
-		|| (Math.abs(leftFrontX%40-rightBackX%40) > 20) || (Math.abs(rightFrontX%40-rightBackX%40) > 20)
-		|| (Math.abs(rightFrontX%40-leftBackX%40) > 20) || (Math.abs(rightBackX%40-leftBackX%40) > 20)
-		|| (Math.abs(leftFrontY%40-rightFrontY%40) > 20) || (Math.abs(leftFrontY%40-leftBackY%40) > 20)
-		|| (Math.abs(leftFrontY%40-rightBackY%40) > 20) || (Math.abs(rightFrontY%40-rightBackY%40) > 20)
-		|| (Math.abs(rightFrontY%40-leftBackY%40) > 20) || (Math.abs(rightBackY%40-leftBackY%40) > 20);
-	}
-
-	/**
-	 * True if the robot is on an edge and this edge is not a wall
-	 */
-	public boolean onWhiteLine(double x, double y) {
-		// System.out.println("w: " + (this.onEdge(x,y) && (this.getMapGraph()
-		// == null ||
-		// this.getMapGraph().getObstruction(Orientation.calculateOrientation(x,
-		// y, this.getAlpha())) != Obstruction.WALL)));
-		return this.pointOnEdge(x, y)
-		&& (this.getMapGraph() == null || this.getMapGraph()
-				.getObstruction(
-						Orientation.calculateOrientation(x, y,
-								this.getAlpha())) != Obstruction.WALL);
-
-	}
-
-	/**
-	 * True if the robot is not on an edge, but on a tile without a content.
-	 */
-	public boolean onEmptyTile(double x, double y) {
-		// System.out.println("e: " + (!this.onEdge(x,y) && (this.getMapGraph()
-		// == null || this.getMapGraph().getContentCurrentTile() == null)));
-		return (!this.pointOnEdge(x, y) && this.getMapGraph() == null)
-		|| (!this.pointOnEdge(x, y) && this.getMapGraph()
-				.getContentCurrentTile() == null);
-
-	}
-
-	/**
-	 * True if the robot is not on an edge, but on a tile containing a barcode.
-	 */
-	public boolean onBarcodeTile(double x, double y) {
-		if (this.getMapGraph() == null) {
-			// System.out.println("b: /");
-			return false;
-		} else {
-			// System.out.println("b: " + (!this.onEdge(x,y) &&
-			// (this.getMapGraph().getContentCurrentTile() instanceof
-			// Barcode)));
-			return !this.pointOnEdge(x, y)
-			&& (this.getMapGraph().getContentCurrentTile() instanceof Barcode);
-		}
-	}
-
-	// zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
-	// negatief
-	// maar doet normaal niet ter zake aangezien de coordinaten in het echte
-	// coordinatensysteem
-	// niet negatief kunnen zijn
-	public static int setToMultipleOf40(double a) {
-		return (int) (Math.floor(a / 40) * 40);
-	}
-
-	/**
-	 * Deze methode zet de coordinaten van het echte systeem om in de
-	 * coordinaten van de matrix
-	 */
-	public int[] setAbsoluteToRelative(double x, double y) {
-		double a = x - setToMultipleOf40(startPositionAbsoluteX);
-		double b = y - setToMultipleOf40(startPositionAbsoluteY);
-		int c;
-		int d;
-		c = (int) Math.floor(a / 40);
-		d = (int) Math.floor(b / 40);
-
-		int[] array = new int[2];
-		array[0] = getStartPositionRelativeX() + c;
-		array[1] = getStartPositionRelativeY() + d;
-		return array;
-	}
-
-	/**
-	 * zet dus de map terug op zijn juiste currenttilecoorinates berekend uit de
-	 * xOld en yOld xOld en yOld mogen eig enkel de huidige positie
-	 * voorstellen!!!!!!!!!!!!!! moeten hier ingegeven worden omdat bij de
-	 * travelmethode je de currentabsoluteposition pas terug juist zet op het
-	 * einde van de lus
-	 */
-	public void setCurrentTileCoordinates(MapGraph map, double xOld, double yOld) {
-		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-		SSG.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
-		SSG.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
-	}
-
 }
+

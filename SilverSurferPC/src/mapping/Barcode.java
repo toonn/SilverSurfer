@@ -45,7 +45,6 @@ public class Barcode extends TileContent{
 	public int getColorValue(double x, double y, Orientation direction)
 	{
 		if (direction == Orientation.NORTH || direction == Orientation.SOUTH){
-			System.out.println("getColorvalue()NORTH SOUTH" + x + " x " +y+ " y");
 
 			if(y < 12) return 2; //TODO COLORVALUE ONDERGROND
 			else if( 12<= y && y<14) return Character.getNumericValue(toString().charAt(0));
@@ -74,6 +73,10 @@ public class Barcode extends TileContent{
 
 	@Override
 	public String toString() {
-		return 1+Integer.toBinaryString(getValue())+1;
+		String body = Integer.toBinaryString(getValue());
+		while(body.length() < 6)
+			body = "0" + body;
+		return 0+body+0;
 	}
+	
 }
