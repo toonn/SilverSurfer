@@ -108,22 +108,13 @@ public class Automatic extends State {
     }
     
     public String lookAround(UltrasonicSensor ultrasonicSensor) {
-    	String front = "no wall";
-    	String back = "no wall";
-    	String left = "no wall";
-    	String right = "no wall";
-    	
-    	if(ultrasonicSensor.getDistance() < 30)
-    		front = "wall";
+    	int front = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 30)
-    		right = "wall";
+    	int right = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 30)
-    		back = "wall";
+    	int back = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 30)
-    		left = "wall";
+    	int left = ultrasonicSensor.getDistance();
     	turnAngle(-179);
     	turnAngle(-179);
     	turnAngle(-179);
