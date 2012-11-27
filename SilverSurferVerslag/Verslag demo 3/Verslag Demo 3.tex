@@ -53,7 +53,11 @@
 
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
+<<<<<<< HEAD
 \label{ssec:abstr} % 3 ok
+=======
+\label{ssec:abstr} % 3 ?
+>>>>>>> 012b513e084ceb15dd5546e6dd0b0183301679c4
 Het P\&O-project bestaat erin een robot autonoom een doolhof te laten verkennen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf. De robot wordt voorzien van een lichtsensor en een ultrasone sensor. Deze staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De aansturing van de robot gebeurt via bluetoothverbinding. Een Grafische User Interface (GUI) maakt deze aansturing op een gebruiksvriendelijke manier mogelijk. De GUI geeft de baan van de robot  weer. Ook een historiek van de sensorwaarden wordt weergegeven in de GUI.
 
 De robot kan zich autonoom door een doolhof voortbewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map op van de doolhof. Op elke nieuwe tegel kijkt de robot rond en geeft de gedetecteerde muren door. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish te bepalen. De finish wordt aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
@@ -86,7 +90,7 @@ Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog 
 % == BOUW == %
 \section{Bouw van de robot} % 3 ?
 \label{sec:bouw}
-LEGO Mindstorms\footnote{\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
+LEGO Mindstorms\^{1} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
 
 % == fysieke bouw == %
 \subsection{Fysieke bouw} % 3 ?
@@ -240,7 +244,8 @@ De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlic
 \subsection{Calibratie van de ultrasone sensor} % 3 TE WEINIG TESTS + BOXPLOTS
 \label{ssec:calibUS}
 Een ultrasone sensor zendt ultrasone geluidsgolven uit. De golven weerkaatsen op een object dat zich binnen het bereik bevindt. Bij ontvangst van zijn eigen geluidsgolven, weet de robot dat er een object in de buurt is.\\
-In het kader van een doolhof, kan een robot muren tegenkomen als objecten. Maar ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om een onderscheid te maken tussen de paaltjes en de muren, dient de meetwaarde pas ge\"iterpreteerd worden wanneer de sensor aangeeft dat hij zich op 20 cm van een object bevindt. In dat geval kan het object veilig als muur geïnterpreteerd worden. Deze veiligheidsmarge werd vastgelegd op basis van testen.\\
+
+In het kader van een doolhof, kan een robot muren tegenkomen als objecten. Maar ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om een onderscheid te maken tussen de paaltjes en de muren, is er een nieuwe controle ingevoerd ten opzichte van de vorige demo. Uit testen bleek dat de robot de paaltjes wel degelijk als muren beschouwde en dit in bijna alle gevallen zo was. Vooral als de robot niet volledig op het midden van de tegel stond. Nu is er ingesteld dat een muur die gedetecteerd wordt, de waarde 29 of kleiner heeft als afstand. Als de robot de waarde 30 of groter doorgestuurd krijgt van de ultrasone sensor dan hebben we te maken met een paaltje.
 % WELKE TESTEN?? MEETRESULTATEN!!!
 De afwijking van de ultrasone sensor wordt gemeten door de robot op 30 cm van een muur te zetten en de bekomen meetwaarden te interpreteren. De robot staat in eerste instantie loodrecht ten opzichte van de muur en vervolgens met een afwijking van 20\degree van deze loodrecht stand. Een boxplot van de meetwaarden wordt weergegeven in figuur \ref{fig:boxUltra}.
 % OOK VOOR ANDERE AFSTANDEN METEN!!!
@@ -327,7 +332,13 @@ De simulator kan gebruikt worden om de software op te testen zonder telkens op d
 \label{ssec:Sdesign}
 Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren 4 en 5 tonen een klassendiagram.\\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
+<<<<<<< HEAD
 Het computerproject heeft nog 4 andere packages: \textit{communication}, \textit{gui}, \textit{simulator} en \textit{mapping}. 
+=======
+
+
+Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. 
+>>>>>>> 012b513e084ceb15dd5546e6dd0b0183301679c4
 De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden. Aan deze \textit{UnitCommunicator} is een object van de subklassen \textit{RobotCommunicator} of \textit{SimulatorCommunicator}  toegekend. Zo worden de commands dynamisch naar de juiste unit gestuurd: de \textit{RobotCommunicator} communiceert met het NXT-Project, de \textit{SimulatorCommunicator} met de simulator klassen.\\
 Andere klassen van de package \textit{gui} zijn: \textit{MouseClickThread} , \textit{PolygonDrawThread}, \textit{RunForwardThread} en \textit{TurnAngleThread}. De vier Threads zorgen ervoor dat het tekenen van de baan van de robot de rest van het programma niet stillegt. \\
 Het package \textit{simulator} implementeert de functionaliteit van de simulator. \\
@@ -416,7 +427,7 @@ Voor de moveknop is er een Jslider voorzien net zoals voor de polygonDraw. Hierm
 \label{ssec:bluetooth}
 De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de klassen \textit{UnitCommunicator} en \textit{RobotCommunicator}.
 
-De leJOS-API\footnote{\textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: 'Silver' en '00:16:53:0A:04:5A'.
+De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: 'Silver' en '00:16:53:0A:04:5A'.
 
 % == robot == %
 \subsection{Robot} % 3 ?
@@ -431,10 +442,13 @@ Tot slot is er de klasse \textit{Automatic}. Deze heeft vier methoden: \textit{t
 \label{ssec:simulator}
 De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot. De GUI stuurt de simulator aan via de klassen \textit{UnitCommunicator} en \textit{SimulatorCommunicator}. Deze ontvangen de uit te voeren commando's, analyseren ze en sturen ze door naar de simulator.
 \\
-De simulator zelf bestaat uit vier klassen:
+De simulator zelf bestaat uit zeven klassen:
 
 % overzicht klassen simulator
 \begin{itemize}
+\item \textit{Wall:} tekent de muren van het doolhof.
+\item \textit{State:} wordt gebruikt om te zeggen of iets horizontaal of verticaal moet staan.
+\item \textit{SimulationSensorData}
 \item \textit{SimulationPilot:} houdt de positie en de richting van de 'robot' bij.
 \item \textit{SimulationPanel:} tekent de baan van de 'robot' in het tekenpaneel.
 \item \textit{GridDrawer:} zet het grid op.
@@ -524,14 +538,27 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 
 % overzicht aangepaste secties
 \begin{itemize}
+\item \textit{\ref{ssec:abstr} Abstract:} aangepast.
 \item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} meetresultaten toegevoegd.
-\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} meetresultaten toegevoegd.
-\item \textit{\ref{ssec:algoVeelH} Het vinden van het korste pad:} nieuwe sectie.
+\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} meetresultaten toegevoegd en aangepast.
+\item \textit{ Het rijden van een veelhoek:} er uitgehaald.
+\item \textit{\ref{ssec:algoWitteL} Het rechtzetten op een witte lijn:} aangepast.
+\item \textit{\ref{ssec:algoOnderzDoolhof} Algoritme onderzoeken doolhof:} nieuwe sectie.
+\item \textit{\ref{ssec:AlgoKortsteP} Algoritme Kortste pad:} nieuwe sectie.
+\item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en packages.
+\item \textit{\ref{ssec:GUI} GUI:} aangepast.
+\item \textit{\ref{ssec:simulator} Simulator:} toevoegingen.
 \end{itemize}
 
 \newpage
-\bibliographystyle{siam}
-\bibliography{biblio.bib}
+\section*{Referenties}
+\begin{enumerate}
+
+\item \textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+
+\item \textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+
+\end{enumerate}
 
 \end{document}
 
