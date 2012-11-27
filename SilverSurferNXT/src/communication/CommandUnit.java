@@ -28,6 +28,7 @@ public class CommandUnit {
     private double x = 220;
     private double y = 220;
     private double angle = 270;
+    private int[] lookAroundResult = new int[4];
 
     public CommandUnit() {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
@@ -91,6 +92,10 @@ public class CommandUnit {
             NORMAL_SPEED = 360;
     }
     
+    public void setLookAroundResult(int[] lookAroundResult) {
+    	this.lookAroundResult = lookAroundResult;
+    }
+    
     public void updateCoordinates(double length, double angle) {
     	if(angle == 0) {
     		x = x + length*Math.cos(Math.toRadians(this.angle));
@@ -111,6 +116,10 @@ public class CommandUnit {
         sendStringToUnit("[X] " + x);
         sendStringToUnit("[Y] " + y);
         sendStringToUnit("[ANG] " + angle);
+        sendStringToUnit("[LA0] " + lookAroundResult[0]);
+        sendStringToUnit("[LA1] " + lookAroundResult[1]);
+        sendStringToUnit("[LA2] " + lookAroundResult[2]);
+        sendStringToUnit("[LA3] " + lookAroundResult[3]);
     }
 
     public static void main(String[] args) throws IOException {
@@ -184,7 +193,7 @@ public class CommandUnit {
                 case (Command.LOOK_AROUND):
                     Automatic lookAround = new Automatic();
                     CU.setCurrentState(lookAround);
-                    CU.sendStringToUnit("[RLA] " + lookAround.lookAround(CU.ultrasonicSensor));
+                    CU.lookAroundResult = lookAround.lookAround(CU.ultrasonicSensor);
                     CU.setCurrentState(new Waiting());
                     break;
                 case (Command.PLAY_SONG):
