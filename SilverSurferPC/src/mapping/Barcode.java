@@ -3,20 +3,22 @@ package mapping;
 public class Barcode extends TileContent{
 
 	private int value;
+	private Orientation direction;
 	
 	/**
 	 * Creates a barcode with as value 'value'.
 	 */
-	public Barcode(int value){
+	public Barcode(int value,Orientation direction){
 		setValue(value);
+		setDirection(direction);
 	}
 	
 	/**
-	 * Creates a default, empty barcode. 
+	 * Creates a default, empty barcode, facing NORTH.
 	 * (value == 0).
 	 */
 	public Barcode(){
-		this(0);
+		this(0, Orientation.NORTH);
 	}
 
 	/**
@@ -31,6 +33,19 @@ public class Barcode extends TileContent{
 	}
 	
 	/**
+	 * Returns the direction this barcode is in.
+	 * (N to S or E to W)
+	 * @return
+	 */
+	public Orientation getDirection() {
+		return direction;
+	}
+	
+	public void setDirection(Orientation direction) {
+		this.direction = direction;
+	}
+	
+	/**
 	 * Gives the color of the barcode on the given x-y-coordinate
 
 	 * @param x relative to the tile! (0,0 is upper-left corner)
@@ -42,9 +57,9 @@ public class Barcode extends TileContent{
 	 * 			1, when standing on a white part of the barcode
 	 * 			something else, when standing next to the barcode but on the same tile (brown underground)
 	 */
-	public int getColorValue(double x, double y, Orientation direction)
+	public int getColorValue(double x, double y)
 	{
-		if (direction == Orientation.NORTH || direction == Orientation.SOUTH){
+		if (getDirection() == Orientation.NORTH || getDirection() == Orientation.SOUTH){
 
 			if(y < 12) return 2; //TODO COLORVALUE ONDERGROND
 			else if( 12<= y && y<14) return Character.getNumericValue(toString().charAt(0));
@@ -55,7 +70,7 @@ public class Barcode extends TileContent{
 			else if( 22<= y && y<24) return Character.getNumericValue(toString().charAt(5));
 			else if( 24<= y && y<26) return Character.getNumericValue(toString().charAt(6));
 			else if( 26<= y && y<28) return Character.getNumericValue(toString().charAt(7));
-			else return 52; // y > 28
+			else return 2; // y > 28
 		}
 		else {
 			if(x < 12) return 2; //TODO COLORVALUE ONDERGROND
@@ -67,7 +82,7 @@ public class Barcode extends TileContent{
 			else if( 22<= x && x<24) return Character.getNumericValue(toString().charAt(5));
 			else if( 24<= x && x<26) return Character.getNumericValue(toString().charAt(6));
 			else if( 26<= x && x<28) return Character.getNumericValue(toString().charAt(7));
-			else return 52;
+			else return 2;
 		}
 	}
 
