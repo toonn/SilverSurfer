@@ -402,8 +402,7 @@ public class SilverSurferGUI {
                 + statusInfoBuffer.getLeftMotorSpeed() + ", RM: "
                 + statusInfoBuffer.getRightMotorMoving() + " "
                 + statusInfoBuffer.getRightMotorSpeed());
-        outputLabel4.setText("B: " + statusInfoBuffer.getBusy() + ", X: " + statusInfoBuffer.getCoordinatesAbsolute()[0]
-        		+ ", Y: " + statusInfoBuffer.getCoordinatesAbsolute()[1] + ", Angle: " + statusInfoBuffer.getAngle());
+        outputLabel4.setText("B: " + statusInfoBuffer.getBusy());
     }
 
     protected static void connectBluetooth() {
