@@ -83,7 +83,7 @@ public class SimulationPilot {
 	 * This value gives the x-coordinate of the lightsensor.
 	 */
 	public double getLightsensorPositionX() {
-		return (this.getCurrentPositionAbsoluteX() + 5*Math.cos(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteX() + 7.5*Math.cos(Math.toRadians(this.getAlpha())));
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class SimulationPilot {
 	 * This value gives they -coordinate of the lightsensor.
 	 */
 	public double getLightsensorPositionY() {
-		return (this.getCurrentPositionAbsoluteY() + 5*Math.sin(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteY() + 7.5*Math.sin(Math.toRadians(this.getAlpha())));
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class SimulationPilot {
 	 * This value gives the x-coordinate of the ultrasonic sensor.
 	 */
 	public double getUltrasonicSensorPositionX() {
-		return (this.getCurrentPositionAbsoluteX() - 2*Math.cos(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteX() - 5.5*Math.cos(Math.toRadians(this.getAlpha())));
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class SimulationPilot {
 	 * This value gives the y-coordinate of the ultrasonic sensor.
 	 */
 	public double getUltrasonicSensorPositionY() {
-		return (this.getCurrentPositionAbsoluteY() - 2*Math.sin(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteY() - 5.5*Math.sin(Math.toRadians(this.getAlpha())));
 	}
 
 	public double getAlpha() {
@@ -139,7 +139,18 @@ public class SimulationPilot {
 		else
 			this.speed = 48;
 	}
-
+	
+	/**
+	 * Returns the center of the currentTile in absolutes.
+	 */
+	public int[] getAbsoluteCenterCurrentTile(){
+		
+		int[] coord = new int[]{0,0};
+		coord[0] =  ((Double)(getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()%40)).intValue()+20;
+		coord[1] =  ((Double)(getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()%40)).intValue()+20;
+		return coord;
+	}
+	
 	public File getMapFile() {
 		return this.mapFile;
 	}
@@ -505,17 +516,17 @@ public class SimulationPilot {
 	 * The robot is interpreted as a rectangle around the given position.
 	 */
 	public boolean robotOnEdge(double x, double y, double alpha) {
-		double leftFrontX = (x - 6*Math.cos(Math.toRadians(alpha-30)));
-		double leftFrontY = (y + 6*Math.sin(Math.toRadians(alpha-30)));
+		double leftFrontX = (x - 12*Math.cos(Math.toRadians(alpha-45)));
+		double leftFrontY = (y + 12*Math.sin(Math.toRadians(alpha-45)));
 
-		double rightFrontX = (x - 6*Math.cos(Math.toRadians(alpha+30)));
-		double rightFrontY = (y + 6*Math.sin(Math.toRadians(alpha+30)));
+		double rightFrontX = (x - 12*Math.cos(Math.toRadians(alpha+45)));
+		double rightFrontY = (y + 12*Math.sin(Math.toRadians(alpha+45)));
 
-		double leftBackX = (x - 6*Math.cos(Math.toRadians(alpha-180+30)));
-		double leftBackY = (y + 6*Math.sin(Math.toRadians(alpha-180+30)));
+		double leftBackX = (x - 13*Math.cos(Math.toRadians(alpha-180+30)));
+		double leftBackY = (y + 13*Math.sin(Math.toRadians(alpha-180+30)));
 
-		double rightBackX = (x - 6*Math.cos(Math.toRadians(alpha-180-30)));
-		double rightBackY = (y + 6*Math.sin(Math.toRadians(alpha-180-30)));
+		double rightBackX = (x - 13*Math.cos(Math.toRadians(alpha-180-30)));
+		double rightBackY = (y + 13*Math.sin(Math.toRadians(alpha-180-30)));
 
 		return pointOnEdge(leftFrontX, leftFrontY) || pointOnEdge(rightFrontX, rightFrontY)
 		|| pointOnEdge(leftBackX, leftBackY) || pointOnEdge(rightBackX, rightBackY)
@@ -743,7 +754,7 @@ public class SimulationPilot {
 		Tile tileTemp = this.getMapGraph().getCurrentTile();
 		int i = 1;
 
-		while(i < 120)
+		while(i < 148)
 		{
 			while(!(Math.abs(xTempPrev%40 - xTemp%40) > 5) && !(Math.abs(yTempPrev%40 - yTemp%40) > 5))
 			{

@@ -5,6 +5,7 @@ import gui.SilverSurferGUI;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -58,8 +59,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 	public SimulationJPanel()
 	{
-		
-		
 		mapGraphConstructed = new MapGraph();
 		
 		try
@@ -96,7 +95,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			double oldY = this.getVisibleTriangle().getGravityCenterY();
 
 			// add a bigger circle where the robot starts
-			if(shapes.size()<=3)
+			if(shapes.size()<3)
 			{
 				double diam = 5;
 				Shape bigCircle = new Ellipse2D.Double(oldX - (diam/2), oldY - (diam/2), diam, diam); 
@@ -205,7 +204,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		{
 			((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
 					0.4f));
-			if(this.getSimulationPilot().getUltraSensorValue() > 200)
+			if(this.getSimulationPilot().getUltraSensorValue() > 200 || this.getSimulationPilot().getUltraSensorValue() < 20)
 			{
 				graph.setColor(new Color(12,168,244));
 			}
@@ -256,6 +255,9 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 	private void paintPathComponent(Graphics graph){
 		super.paintComponent(graph);
+		paintBarcodeComponent(graph);
+		
+
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
 
@@ -328,6 +330,44 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 		((Graphics2D) graph).fill(undergroundCircle);
 		
+	}
+	
+	public void paintBarcodeComponent(Graphics graph) {
+		// TODO werkt nu enkel als er geen robot is aangesloten, 
+		//	moet later ook werken voor robot informatie.
+		if (!SSG.getCommunicator().getRobotConnected() && simulationPilot.getMapGraph()!= null){
+			
+			//North or South oriented barcode
+			if(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.NORTH
+				|| ((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.SOUTH){
+				for (int i = 0; i < 8; i++) {
+					//set right color
+					if(simulationPilot.getMapGraph().getContentCurrentTile().toString().charAt(i) == '0')
+						((Graphics2D)graph).setColor(Color.black);
+					else
+						((Graphics2D)graph).setColor(Color.white);
+
+					((Graphics2D)graph).fillRect(simulationPilot.getAbsoluteCenterCurrentTile()[0]-20, simulationPilot.getAbsoluteCenterCurrentTile()[1]-8+2*i, 40, 2);
+				}
+			}
+
+			
+			//east or west oriented barcode
+			else if(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.EAST
+				|| ((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.WEST){
+				for (int i = 0; i < 8; i++) {
+					//set right color
+					if(simulationPilot.getMapGraph().getContentCurrentTile().toString().charAt(i) == '0')
+						((Graphics2D)graph).setColor(Color.black);
+					else
+						((Graphics2D)graph).setColor(Color.white);
+
+					((Graphics2D)graph).fillRect(simulationPilot.getAbsoluteCenterCurrentTile()[0]-8+2*i, simulationPilot.getAbsoluteCenterCurrentTile()[1]-20, 2, 40);
+				}
+			}
+		
+		}
+
 	}
 
 	public void setRobotLocation(double x, double y, double degrees){
