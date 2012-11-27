@@ -666,12 +666,10 @@ public class SimulationPilot {
 				mean = SimulationSensorData.getMWhiteLineLS();
 				standardDeviation = SimulationSensorData.getSDWhiteLineLS();
 			} else if (onBarcodeTile(getLightsensorPositionX(),
-					getLightsensorPositionY())) {
+					getLightsensorPositionY())) { 
 				int color = ((Barcode)this.getMapGraph().getContentCurrentTile())
 				.getColorValue(getLightsensorPositionX() % 40,
-						getLightsensorPositionY() % 40, Orientation.calculateOrientation(
-								getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
-								getAlpha()));
+						getLightsensorPositionY() % 40);
 				mean = SimulationSensorData.getMBarcodeTileLS(color);
 				standardDeviation = SimulationSensorData
 				.getSDBarcodeTileLS(color);
