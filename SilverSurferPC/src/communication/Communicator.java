@@ -227,10 +227,9 @@ public class Communicator {
 	
 	public void goToNextTile(Orientation orientation) throws IOException{
 		double currentAngle = getStatusInfoBuffer().getAngle();
-		System.out.println(currentAngle);
-		int angleToRotate = (int)(((double) orientation.getRightAngle() - currentAngle)*10);
-		System.out.println(angleToRotate);
-		executeCommand(angleToRotate*10 + Command.AUTOMATIC_TURN_ANGLE);
+		int angleToRotate = (int)((double) orientation.getRightAngle() - currentAngle);
+		angleToRotate = (int) ExtMath.getSmallestAngle(angleToRotate);
+		executeCommand(angleToRotate*100 + Command.AUTOMATIC_TURN_ANGLE);
 		executeCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
 	}
 

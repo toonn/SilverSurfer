@@ -21,4 +21,16 @@ public class ExtMath {
 		return (orientation.getNumberOrientation()%2 == 0);
 	}
 
+		
+	public static double getSmallestAngle(double angle){
+		if(Math.abs(angle)<180 || Math.abs(angle)==180){}
+		else if(angle<0){
+			angle = angle + 360;
+		}
+		else
+		{ 	angle = angle -360;
+		}
+		return angle;
+	}
+
 }

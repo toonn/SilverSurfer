@@ -27,6 +27,8 @@ public class SimulationPilot {
 	private File mapFile;
 	private MapGraph mapGraph;
 	private boolean isRealRobot = false;
+	private double rotatedInTotal = 0;
+	private double travelledInTotal = 0;
 
 	/**
 	 * waarde die afhangt van de robot!
@@ -206,6 +208,8 @@ public class SimulationPilot {
 	}
 
 	public void travel(double distance) {
+		travelledInTotal = travelledInTotal + Math.abs(distance);
+		System.out.println("travelledInTotal : " + travelledInTotal);
 		double xOriginal = this.getCurrentPositionAbsoluteX();
 		double yOriginal = this.getCurrentPositionAbsoluteY();
 		double xTemp = this.getCurrentPositionAbsoluteX();
@@ -316,20 +320,6 @@ public class SimulationPilot {
 				this.getCurrentPositionAbsoluteX(),
 				this.getCurrentPositionAbsoluteY(), this.getAlpha());
 
-		//		 //afstand robot tot edge berekenen om te zien of hij er dicht genoeg bij staat als de 
-		//		 //echte robot om de muur als echt te kunnen detecteren
-		//		 Point2D point = ExtMath.calculateWallPoint(currentOrientation,
-		//				 getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-		//
-		//		 double XOther = point.getX()
-		//		 + currentOrientation.getOtherPointLine()[0];
-		//		 double YOther = point.getY()
-		//		 + currentOrientation.getOtherPointLine()[1];
-		//
-		//		 Double distance = Line2D.ptSegDist(point.getX(), point.getY(), XOther,
-		//				 YOther, getCurrentPositionAbsoluteX(),
-		//				 getCurrentPositionAbsoluteY());
-
 		Double distance = calculateDistanceToWall();
 
 		if (distance > detectionDistanceUltrasonicSensorRobot) {
@@ -343,6 +333,28 @@ public class SimulationPilot {
 		}
 
 		return false;
+	}
+	
+	public void checkForObstructionAndSetTile(){
+			if(checkForObstruction()){
+				addWall();
+			}
+			else{
+				removeWall();
+				Orientation currentOrientation = Orientation.calculateOrientation(
+						this.getCurrentPositionAbsoluteX(),
+						this.getCurrentPositionAbsoluteY(), this.getAlpha());
+				int xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
+				int yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
+				if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
+				{ SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);}
+		}
+			
+			try {
+				//TODO gelijk gesteld worden aan tijd da de robot erover doet
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
 	}
 
 	//	/**
@@ -407,6 +419,10 @@ public class SimulationPilot {
 	}
 
 	public void rotate(double alpha) {
+		
+		rotatedInTotal = rotatedInTotal + Math.abs(alpha);
+		System.out.println("rotatedInTotal : " + rotatedInTotal);
+		
 		double alphaOriginal = this.getAlpha();
 		double alphaTemp = this.getAlpha();
 
@@ -869,6 +885,10 @@ public class SimulationPilot {
 		//
 		// rotate(90);
 		//
+	}
+	
+	public Orientation getCurrentOrientation(){
+		return Orientation.calculateOrientation(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(), getAlpha());
 	}
 
 }
