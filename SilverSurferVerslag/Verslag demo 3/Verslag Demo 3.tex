@@ -207,19 +207,19 @@ De afwijking van de ultrasone sensor wordt gemeten door de robot op 30 cm van ee
 Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoeren.
 
 % == veelhoek == %
-\subsection{Het rijden van een veelhoek} % 3 ?
-\label{ssec:algoVeelH}
-De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is. 
-
-\lstset{frame=single, language=Java, caption=Veelhoek algoritme (pseudocode),
-    	label=code:algoVeelH, numbers=left, numberstyle=\footnotesize,
-		basicstyle=\sffamily, numbersep=5pt}
-\begin{lstlisting}
-Angle = (360.0/amtOfAngles)*100
-Voor i van 0 tot amtOfAngles
-	Beweeg lengthInCM vooruit
-	Draai angle
-\end{lstlisting}
+%\subsection{Het rijden van een veelhoek} % 3 ?
+%\label{ssec:algoVeelH}
+%De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van %de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, %draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de %volledige veelhoek gereden is. 
+%
+%\lstset{frame=single, language=Java, caption=Veelhoek algoritme (pseudocode),
+%   	label=code:algoVeelH, numbers=left, numberstyle=\footnotesize,
+%		basicstyle=\sffamily, numbersep=5pt}
+%\begin{lstlisting}
+%Angle = (360.0/amtOfAngles)*100
+%Voor i van 0 tot amtOfAngles
+%	Beweeg lengthInCM vooruit
+%	Draai angle
+%\end{lstlisting}
 
 
 % == witte lijn == %
@@ -239,21 +239,21 @@ Draai naar links tot witte lijn EN verhoog AngleTurned.
 Draai AngleTurned/2 naar rechts.
 \end{lstlisting}
 
-% IETS OVER TESTRESULTATEN + NAUWKEURIGHEID
+Bij demo 3 is er iets veranderd aan het algoritme. Tijdens het testen zagen we dat als er een zwarte lijn op een witte streep stond (scheiding van twee tegels die tegen elkaar worden gezet), dat de robot zich niet loodrecht kon zetten op de witte lijn. Om dit tegen te gaan is ervoor gezord dat als de robot een witte lijn detecteerd, hij er eerst helemaal overgaat en dan pas draait om zich loodrecht op de witte lijnen te plaatsen. Het resultaat was dat de robot zich veel beter recht zette op de witte lijn bij het testen.\\
 
 Alternatief is het mogelijk te corrigeren op de muren, maar dan moet de robot zicht bevinden op een tegel die muren aan beide kanten bevat.
 
 
-% == kortste pad == %
+% == onderzoeken van het doolhof == %
 \subsection{Onderzoeken van het doolhof} % 3 ?
 \label{ssec:algoOnderzDoolhof}
-Alvorens de robot het kortste pad tussen twee punten bepaalt, dient het hele doolhof gekend te zijn. Dit verkennen doet de robot autonoom. Elke tegel die de robot reeds passeerde, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht.
-% HOE GEMARKEERD? MSS BETER EEN LIJST VAN NOG NIET BEKEKEN TEGELS?
+Alvorens de robot het kortste pad tussen twee punten bepaalt, dient het hele doolhof gekend te zijn. Dit verkennen doet de robot autonoom. Elke tegel die de robot reeds passeerde, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
+
 Bij elke tegel onthoudt de robot alle uitwegen. Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden.
 Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof de 'finish'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.
-% NOG NIET GENOEG UITLEG OVER HET ALGORITME ZELF
 
-\subsection{Het vinden van het kortste pad}
+% == het kortste pad == %
+\subsection{Het vinden van het kortste pad} % ?
 \label{ssec:AlgoKortsteP}
 
 Het kortste pad algoritme maakt gebruik van een graf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme is een A* algoritme waarbij de Manhattan heuristiek en een kost wordt gebruikt.
@@ -333,7 +333,9 @@ Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek
 % == gui == %
 \subsection{GUI} % 3 ?
 \label{ssec:GUI}
-De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat.
+De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat.\\
+
+Voor visualisatie van de sensoren zijn er grafieken die de waarden weergeven. De robot zelf op de simulator heeft een blauwe straal die aangeeft of er een muur voor hem staat of niet. Daarnaast zijn er ook nog knoppen die bepaalde functies uitvoeren, zoals "turn left/right", "look around" en "Align on the white line/ walls".
 
 %figuur gui
 \begin{figure}[tbp]
