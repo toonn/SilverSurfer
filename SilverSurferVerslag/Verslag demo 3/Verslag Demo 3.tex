@@ -278,7 +278,7 @@ Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op ee
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
 
 
-Het computerproject heeft nog 4 andere packages: \textit{communication}, \textit{gui}, \textit{simulator} en \textit{mapping}. 
+Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. 
 De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden. Aan deze \textit{UnitCommunicator} is een object van de subklassen \textit{RobotCommunicator} of \textit{SimulatorCommunicator}  toegekend. Zo worden de commands dynamisch naar de juiste unit gestuurd: de \textit{RobotCommunicator} communiceert met het NXT-Project, de \textit{SimulatorCommunicator} met de simulator klassen.\\
 Andere klassen van de package \textit{gui} zijn: \textit{MouseClickThread} , \textit{PolygonDrawThread}, \textit{RunForwardThread} en \textit{TurnAngleThread}. De vier Threads zorgen ervoor dat het tekenen van de baan van de robot de rest van het programma niet stillegt. \\
 
@@ -366,10 +366,13 @@ Tot slot is er de klasse \textit{Automatic}. Deze heeft vier methoden: \textit{t
 \label{ssec:simulator}
 De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot. De GUI stuurt de simulator aan via de klassen \textit{UnitCommunicator} en \textit{SimulatorCommunicator}. Deze ontvangen de uit te voeren commando's, analyseren ze en sturen ze door naar de simulator.
 \\
-De simulator zelf bestaat uit vier klassen:
+De simulator zelf bestaat uit zeven klassen:
 
 % overzicht klassen simulator
 \begin{itemize}
+\item \textit{Wall:} tekent de muren van het doolhof.
+\item \textit{State:} wordt gebruikt om te zeggen of iets horizontaal of verticaal moet staan.
+\item \textit{SimulationSensorData}
 \item \textit{SimulationPilot:} houdt de positie en de richting van de 'robot' bij.
 \item \textit{SimulationPanel:} tekent de baan van de 'robot' in het tekenpaneel.
 \item \textit{GridDrawer:} zet het grid op.
@@ -460,7 +463,7 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 \item \textit{\ref{ssec:AlgoKortsteP} Algoritme Kortste pad:} nieuwe sectie.
 \item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en mapping-package.
 \item \textit{\ref{ssec:GUI} GUI:} aangepast.
-\item \textit{\ref{ssec:simulator} Simulator:} aangepast.
+\item \textit{\ref{ssec:simulator} Simulator:} toevoegingen.
 \end{itemize}
 
 % == DEMO 3 == %
