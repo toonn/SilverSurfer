@@ -139,7 +139,18 @@ public class SimulationPilot {
 		else
 			this.speed = 48;
 	}
-
+	
+	/**
+	 * Returns the center of the currentTile in absolutes.
+	 */
+	public int[] getAbsoluteCenterCurrentTile(){
+		
+		int[] coord = new int[]{0,0};
+		coord[0] =  ((Double)(getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()%40)).intValue()+20;
+		coord[1] =  ((Double)(getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()%40)).intValue()+20;
+		return coord;
+	}
+	
 	public File getMapFile() {
 		return this.mapFile;
 	}
@@ -666,12 +677,10 @@ public class SimulationPilot {
 				mean = SimulationSensorData.getMWhiteLineLS();
 				standardDeviation = SimulationSensorData.getSDWhiteLineLS();
 			} else if (onBarcodeTile(getLightsensorPositionX(),
-					getLightsensorPositionY())) {
+					getLightsensorPositionY())) { 
 				int color = ((Barcode)this.getMapGraph().getContentCurrentTile())
 				.getColorValue(getLightsensorPositionX() % 40,
-						getLightsensorPositionY() % 40, Orientation.calculateOrientation(
-								getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
-								getAlpha()));
+						getLightsensorPositionY() % 40);
 				mean = SimulationSensorData.getMBarcodeTileLS(color);
 				standardDeviation = SimulationSensorData
 				.getSDBarcodeTileLS(color);
