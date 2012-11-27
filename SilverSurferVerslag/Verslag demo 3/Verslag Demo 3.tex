@@ -53,11 +53,7 @@
 
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
-<<<<<<< HEAD
 \label{ssec:abstr} % 3 ok
-=======
-\label{ssec:abstr} % 3 ?
->>>>>>> 012b513e084ceb15dd5546e6dd0b0183301679c4
 Het P\&O-project bestaat erin een robot autonoom een doolhof te laten verkennen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf. De robot wordt voorzien van een lichtsensor en een ultrasone sensor. Deze staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De aansturing van de robot gebeurt via bluetoothverbinding. Een Grafische User Interface (GUI) maakt deze aansturing op een gebruiksvriendelijke manier mogelijk. De GUI geeft de baan van de robot  weer. Ook een historiek van de sensorwaarden wordt weergegeven in de GUI.
 
 De robot kan zich autonoom door een doolhof voortbewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map op van de doolhof. Op elke nieuwe tegel kijkt de robot rond en geeft de gedetecteerde muren door. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish te bepalen. De finish wordt aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
@@ -196,6 +192,42 @@ Om de robot om zijn as te laten draaien, bewegen de beide wielen in tegengesteld
 De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe meer dit licht geabsorbeerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.\\
 De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht (VL - veel licht), in de schaduw (WL - weinig licht), terwijl de robot rijdt (R - rijdend) en terwijl hij stilstaat (NR - niet rijdend). Dit voor alle soorten ondergrond: een paneel, een witte lijn of een zwarte lijn. De resultaten van deze metingen laten toe de lichtsensorwaarden de interpreteren en te simuleren. Een boxplot wordt weergegeven in figuur \ref{fig:boxLicht}. Deze toont dat het gemiddelde weinig afhangt van de omstandigheden. De afwijking wordt echter sterk bepaald door het feit of de robot rijdt of stilstaat.
 
+%resultaten lichtsensor
+\begin{table}[hb]
+\begin{center}
+    \begin{tabular}{ c | r || c | c | c | c | c | c | c | c }
+     & & WVN & WVR & WWN & WWR & PVN & PVR & PWN & PWR \\ \hline \hline
+    $Q_{0}$ & min & 53 & 49 & 55 & 49 & 49 & 47 & 49 & 47 \\ \hline
+    $Q_{0.25}$ & 1/4 & 55 & 55 & 55 & 55 & 50 & 49 & 49 & 49 \\ \hline
+    $Q_{0.5}$ & med & 55 & 55 & 55 & 55 & 50 & 49 & 49 & 49 \\ \hline
+    $Q_{0.75}$ & 3/4 & 55 & 55 & 55 & 56 & 50 & 50 & 49 & 50\\ \hline
+    $Q_{1}$ & max & 55 & 56 & 55 & 56 & 50 & 50 & 50 & 55 \\ \hline \hline
+     & gem & 54.995 & 55.0261 & 55 & 55.0645 & 49.99688 & 490.2918 & 49.1 & 49.388\\ \hline
+     & st.dev. & 0.10025 & 0.96642 & 0 & 1.025 & 0.055815 & 0.58241 & 0.30015 & 0.95622 \\
+    \end{tabular}
+    \caption{Resultaten lichtsensor, witte ondergrond en paneel ondergrond}
+    \label{tab:resultCalibM}
+\end{center}
+\end{table}
+
+%resultaten lichtsensor
+\begin{table}[hb]
+\begin{center}
+    \begin{tabular}{ c | r ||  c | c | c | c }
+     & & ZVN & ZVR & ZWN & ZWR\\ \hline \hline
+    $Q_{0}$ & min & 32 & 32 & 34 & 34 \\ \hline
+    $Q_{0.25}$ & 1/4 & 33 & 33 & 34 & 34 \\ \hline
+    $Q_{0.5}$ & med & 33 & 33 & 34 & 34 \\ \hline
+    $Q_{0.75}$ & 3/4 & 33 & 33 & 34 & 34\\ \hline
+    $Q_{1}$ & max & 34 & 34 & 34 & 34 \\ \hline \hline
+     & gem & 33.05 & 33.05 & 34 & 34 \\ \hline
+     & st.dev. & 0.27279 & 0.27279 & 0 & 0 \\
+    \end{tabular}
+    \caption{Resultaten lichtsensor, zwarte ondergrond}
+    \label{tab:resultCalibM}
+\end{center}
+\end{table}
+
 \tikzset{external/remake next}
 \begin{center}
 \begin{tikzpicture}
@@ -249,6 +281,24 @@ In het kader van een doolhof, kan een robot muren tegenkomen als objecten. Maar 
 % WELKE TESTEN?? MEETRESULTATEN!!!
 De afwijking van de ultrasone sensor wordt gemeten door de robot op 30 cm van een muur te zetten en de bekomen meetwaarden te interpreteren. De robot staat in eerste instantie loodrecht ten opzichte van de muur en vervolgens met een afwijking van 20\degree van deze loodrecht stand. Een boxplot van de meetwaarden wordt weergegeven in figuur \ref{fig:boxUltra}.
 % OOK VOOR ANDERE AFSTANDEN METEN!!!
+
+%resultaten lichtsensor
+\begin{table}[hb]
+\begin{center}
+    \begin{tabular}{ c | r || c | c | c | c | c | c | c | c | c | c | c | c }
+     & & 12.5 & 20 & 30 & 40 & 41 & 60 & 61 & eind\\ \hline \hline
+    $Q_{0}$ & min & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 147 \\ \hline
+    $Q_{0.25}$ & 1/4 & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 148 \\ \hline
+    $Q_{0.5}$ & med & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 149 \\ \hline
+    $Q_{0.75}$ & 3/4 & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 149\\ \hline
+    $Q_{1}$ & max & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 149 \\ \hline \hline
+     & gem & 16 & 20 & 30 & 40.99571 & 42 & 61 & 62 & 148.5 \\ \hline
+     & st.dev. & 0 & 0 & 0 & 0.065512 & 0 & 0 & 0 & 0.565091 \\
+    \end{tabular}
+    \caption{Resultaten ultrasone sensor}
+    \label{tab:resultCalibM}
+\end{center}
+\end{table}
 
 \tikzset{external/remake next}
 \begin{center}
