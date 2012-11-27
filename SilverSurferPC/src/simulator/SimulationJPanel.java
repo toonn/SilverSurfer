@@ -196,7 +196,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 
 	private void paintBeamComponent(Graphics graph) {
-		Graphics2D g = (Graphics2D) graph;
 
 		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX(),
 				this.getSimulationPilot().getUltrasonicSensorPositionY(),
@@ -204,17 +203,17 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				this.getSimulationPilot().getUltraSensorValue());
 		if(simulationPilot != null)
 		{
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+			((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
 					0.4f));
 			if(this.getSimulationPilot().getUltraSensorValue() > 200)
 			{
-				g.setColor(new Color(12,168,244));
+				graph.setColor(new Color(12,168,244));
 			}
 			else
 			{
-				g.setColor(new Color(12,24,244));
+				graph.setColor(new Color(12,24,244));
 			}
-			g.fill(sonarArc);
+			((Graphics2D) graph).fill(sonarArc);
 		}
 	}
 
@@ -223,13 +222,12 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * @param graph
 	 */
 	private void paintWallComponent(Graphics graph) {
-		Graphics2D g = (Graphics2D) graph;
 		((Graphics2D) graph).setColor(Color.BLACK);
 
 		for(Wall wall : walls.values()){
 			if(wall.getState() == State.VERTICAL)
-				g.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
-			else g.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
+				graph.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
+			else graph.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
 		}
 	}
 
@@ -238,7 +236,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * @param graph
 	 */
 	private void paintGridComponent(Graphics graph) {
-		Graphics2D g = (Graphics2D) graph;
 
 		int count = 50;
 		int size = 40;
@@ -249,7 +246,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			for( int j = 0; j < count; j++)
 			{
 				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
-				g.draw(grid);
+				((Graphics2D) graph).draw(grid);
 			}
 	}
 
@@ -270,7 +267,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			setUpdated(false);
 		}
 
-		Graphics2D g = (Graphics2D) graph;
 
 		int count = 50;
 		int size = 40;
@@ -281,7 +277,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			for( int j = 0; j < count; j++)
 			{
 				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
-				g.draw(grid);
+				((Graphics2D) graph).draw(grid);
 			}
 
 
@@ -318,16 +314,14 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	/**
 	 * Draws a dot in the color of the underground
 	 */
-	private void paintUndergroundComponent(Graphics graph)
-	{
-		Graphics2D g = (Graphics2D) graph;
+	private void paintUndergroundComponent(Graphics graph){
 
 		this.updateUndergroundCircle(this.getSimulationPilot().getLightsensorPositionX(),
 				this.getSimulationPilot().getLightsensorPositionY(), 
 				this.getSimulationPilot().getLightSensorValue());
 		if(this.getSimulationPilot().getLightSensorValue() < 45)
 			((Graphics2D) graph).setColor(Color.black);
-		if(this.getSimulationPilot().getLightSensorValue() > 53)
+		else if(this.getSimulationPilot().getLightSensorValue() > 53)
 			((Graphics2D) graph).setColor(Color.white);
 		else
 			((Graphics2D) graph).setColor(new Color(252,221,138));

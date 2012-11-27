@@ -311,6 +311,7 @@ public class SimulationPilot {
 	/**
 	 * checkt of de robot een obstruction ZIET
 	 */
+
 	public boolean checkForObstruction() {
 		Orientation currentOrientation = Orientation.calculateOrientation(
 				this.getCurrentPositionAbsoluteX(),
