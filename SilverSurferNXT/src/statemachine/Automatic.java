@@ -7,6 +7,7 @@ import lejos.nxt.*;
 public class Automatic extends State {
 	
 	BarcodeThread BT;
+	CommandUnit CU;
     
 	public Automatic() {
         Motor.A.setSpeed(CommandUnit.NORMAL_SPEED);
@@ -107,18 +108,19 @@ public class Automatic extends State {
     	}
     }
     
-    public String lookAround(UltrasonicSensor ultrasonicSensor) {
-    	int front = ultrasonicSensor.getDistance();
+    public int[] lookAround(UltrasonicSensor ultrasonicSensor) {
+    	int[] lookAroundResult = new int[4];
+    	lookAroundResult[0] = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	int right = ultrasonicSensor.getDistance();
+    	lookAroundResult[1] = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	int back = ultrasonicSensor.getDistance();
+    	lookAroundResult[2] = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	int left = ultrasonicSensor.getDistance();
+    	lookAroundResult[3] = ultrasonicSensor.getDistance();
     	turnAngle(-179);
     	turnAngle(-179);
     	turnAngle(-179);
-    	return "Front: " + front + ", back: " + back + ", left: " + left + ", right: " + right;
+    	return lookAroundResult;
     }
     
     public int readBarcode(LightSensor lightSensor) {
