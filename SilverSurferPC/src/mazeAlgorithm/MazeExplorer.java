@@ -4,6 +4,8 @@ import gui.SilverSurferGUI;
 
 import java.util.ArrayList;
 import java.util.Vector;
+
+import commands.Command;
 import communication.Communicator;
 import mapping.ExtMath;
 import mapping.Orientation;
@@ -70,8 +72,8 @@ public class MazeExplorer {
 			else{
 				double angle = (numberVariable - currentOrientation.getNumberArray()) * 90;
 				angle = ExtMath.getSmallestAngle(angle);
-				gui.getCommunicator().getSimulationPilot().rotate(angle);
-				gui.getCommunicator().getSimulationPilot().checkForObstructionAndSetTile();
+				gui.getCommunicator().sendCommand((int) (angle*10)*10 + Command.AUTOMATIC_TURN_ANGLE);
+				gui.getCommunicator().sendCommand(Command.checkObstructionsAndSetTile);
 			}
 			numberVariable = numberVariable + 1;
 			if(numberVariable == 4){

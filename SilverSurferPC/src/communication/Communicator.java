@@ -5,10 +5,7 @@ import commands.Command;
 import simulator.SimulationPilot;
 import mapping.*;
 
-import gui.SimulatorQueueThread;
-
 import java.io.*;
-import java.util.*;
 
 import lejos.pc.comm.*;
 
@@ -16,9 +13,6 @@ public class Communicator {
 	private StatusInfoBuffer statusInfoBuffer;
 	private SimulationPilot simulationPilot = new SimulationPilot();
 	private boolean robotConnected = false;
-	private boolean buzy = false;
-	private int previousCommand = 0;
-	private SimulatorQueueThread SQT;
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
 	private static NXTConnector connection;
@@ -28,10 +22,6 @@ public class Communicator {
 
 	public Communicator(StatusInfoBuffer statusInfoBuffer) {
 		setStatusInfoBuffer(statusInfoBuffer);
-		SQT = new SimulatorQueueThread("SQT");
-		SQT.setQueue(new LinkedList<Integer>());
-		SQT.setCommunicator(this);
-		SQT.start();
 		setSpeed(2);
 	}
 	
@@ -58,14 +48,6 @@ public class Communicator {
 			closeRobotConnection();
 		this.robotConnected = robotConnected;
 		setSpeed(2);
-	}
-	
-	public boolean getBuzy() {
-		return buzy;
-	}
-	
-	public void setBuzy(boolean buzy) {
-		this.buzy = buzy;
 	}
 	
 	public void openRobotConnection() throws Exception {	
@@ -96,72 +78,50 @@ public class Communicator {
 				dos.writeInt(command);
 				dos.flush();
 			}
-			if(command == Command.FORWARD_PRESSED) {
-				if(!buzy) {
+			if(command == Command.SLOW_SPEED)
+				simulationPilot.setSpeed(194);
+			else if(command == Command.NORMAL_SPEED)
+				simulationPilot.setSpeed(86);
+			else if(command == Command.FAST_SPEED)
+				simulationPilot.setSpeed(58);
+			else if(command == Command.VERY_FAST_SPEED)
+				simulationPilot.setSpeed(48);				
+			else if(command == Command.ALIGN_PERPENDICULAR)
+				simulationPilot.allignOnWhiteLine();
+			else if(command == Command.ALIGN_WALL)
+				simulationPilot.allignOnWalls();
+			else if(command == Command.LOOK_AROUND)
+	            simulationPilot.checkForObstructions();		
+			else if(command == Command.PLAY_SONG) {
+	    			SongThread ST = new SongThread(); 
+	    			ST.start();
+			}
+			else if(command == Command.checkObstructionsAndSetTile && !robotConnected){
+				simulationPilot.checkForObstructionAndSetTile();
+			}
+			else if(command%100 == Command.AUTOMATIC_MOVE_FORWARD) {
+				int amount = (command-Command.AUTOMATIC_MOVE_FORWARD)/100;
+				while(amount != 0) {
 					simulationPilot.travel(1);
-					this.previousCommand = command;
+					amount = amount - 1;
 				}
 			}
-			else if(command == Command.BACKWARD_PRESSED) {
-				if(!buzy) {
-					simulationPilot.travel(-1);
-					this.previousCommand = command;
+			else if(command%100 == Command.AUTOMATIC_TURN_ANGLE) {
+				double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
+				while(amount > 0) {
+					simulationPilot.rotate(1);
+					amount = amount - 1;
 				}
 			}
-			else if((command == Command.LEFT_PRESSED && previousCommand == 0) || (command == Command.RIGHT_PRESSED && previousCommand == 2)) {
-				if(!buzy)
-					simulationPilot.rotate((double) 360.0-getAngularSpeed());
+			else if(command%100 == -(100-Command.AUTOMATIC_TURN_ANGLE)) {
+				double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
+				while(amount < 0) {
+					simulationPilot.rotate(-1);
+					amount = amount + 1;
+				}
 			}
-			else if((command == Command.RIGHT_PRESSED && previousCommand == 0) || (command == Command.LEFT_PRESSED && previousCommand == 2)) {
-				if(!buzy)
-					simulationPilot.rotate(getAngularSpeed());
-			}
-			else
-				SQT.addCommand(command);
 		} catch(Exception e) {
 			System.out.println("Error in Communicator.sendCommand(int command)!");
-		}
-	}
-	
-	public void executeCommand(int command) {
-		if(command == Command.SLOW_SPEED)
-			simulationPilot.setSpeed(194);
-		else if(command == Command.NORMAL_SPEED)
-			simulationPilot.setSpeed(86);
-		else if(command == Command.FAST_SPEED)
-			simulationPilot.setSpeed(58);
-		else if(command == Command.VERY_FAST_SPEED)
-			simulationPilot.setSpeed(48);				
-		else if(command == Command.ALIGN_PERPENDICULAR)
-			simulationPilot.allignOnWhiteLine();
-		else if(command == Command.ALIGN_WALL)
-			simulationPilot.allignOnWalls();
-		else if(command == Command.LOOK_AROUND)
-            simulationPilot.checkForObstructions();		
-		else if(command == Command.PLAY_SONG) {
-    			SongThread ST = new SongThread(); 
-    			ST.start();
-		}
-		else if(command%100 == Command.AUTOMATIC_MOVE_FORWARD) {
-			int amount = (command-Command.AUTOMATIC_MOVE_FORWARD)/100;
-			while(amount != 0) {
-				simulationPilot.travel(1);
-				amount = amount - 1;
-			}
-		}
-		else if(command%100 == Command.AUTOMATIC_TURN_ANGLE) {
-			double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
-			while(amount > 0) {
-				simulationPilot.rotate(1);
-				amount = amount - 1;
-			}
-		}
-		else if(command%100 == -91) {
-			double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
-			while(amount < 0) {
-				simulationPilot.rotate(-1);
-				amount = amount + 1;
-			}
 		}
 	}
 
@@ -229,8 +189,8 @@ public class Communicator {
 		double currentAngle = getStatusInfoBuffer().getAngle();
 		int angleToRotate = (int)((double) orientation.getRightAngle() - currentAngle);
 		angleToRotate = (int) ExtMath.getSmallestAngle(angleToRotate);
-		executeCommand(angleToRotate*100 + Command.AUTOMATIC_TURN_ANGLE);
-		executeCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
+		sendCommand(angleToRotate*100 + Command.AUTOMATIC_TURN_ANGLE);
+		sendCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
 	}
 
 }

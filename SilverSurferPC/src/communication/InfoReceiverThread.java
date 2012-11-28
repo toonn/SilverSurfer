@@ -62,10 +62,6 @@ public class InfoReceiverThread extends Thread {
 				}
 				else if(a.startsWith("[ANG]"))
 					statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[RAL]"))
-					System.out.println("Align on white line: " + a.substring(6).trim());
-				else if(a.startsWith("[RAW]"))
-					System.out.println("Align on walls: " + Boolean.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[LA0]"))
 					lookAroundResult[0] = Integer.valueOf(a.substring(6).trim());
 				else if(a.startsWith("[LA1]"))
