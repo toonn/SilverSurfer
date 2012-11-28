@@ -42,16 +42,16 @@ public class BarDecoder {
 					Thread.sleep(5000);
 					break;
 				case(25):    
-					SSG.changeSpeed(1);
+					SilverSurferGUI.changeSpeed(1);
 	            	break;
 				case(38):    
-					SSG.changeSpeed(1);
+					SilverSurferGUI.changeSpeed(1);
 	            	break;
 				case(37):
-					SSG.changeSpeed(4);
+					SilverSurferGUI.changeSpeed(4);
 	            	break;
 				case(41):
-					SSG.changeSpeed(4);
+					SilverSurferGUI.changeSpeed(4);
 	            	break;
 				case(55):            
 					//TODO: finish

@@ -18,10 +18,8 @@ public class SimulatorQueueThread extends Thread {
 	public void run() {
 		while(!quit) {
 			while(!queue.isEmpty()) {
-				communicator.setBuzy(true);
 				communicator.executeCommand(queue.poll());
 			}
-			communicator.setBuzy(false);
 			try {
 				Thread.sleep(50);
 			} catch(Exception e) {

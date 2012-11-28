@@ -1,10 +1,10 @@
-package statemachine;
+/*package statemachine;
 
 import communication.*;
 
 import lejos.nxt.*;
 
-public class Automatic extends State {
+public class Automatic {
 	
 	BarcodeThread BT;
 	CommandUnit CU;
@@ -139,4 +139,4 @@ public class Automatic extends State {
     	Byte byteResult = Byte.valueOf(result, 2);
     	return Integer.valueOf(byteResult.intValue());
     }
-}
+}*/

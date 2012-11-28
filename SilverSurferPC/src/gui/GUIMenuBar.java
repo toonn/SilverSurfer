@@ -20,12 +20,16 @@ public class GUIMenuBar extends JMenuBar {
     
     private JMenu fileMenu;
     private JMenu blueToothMenu;
+    private JMenu clearScreenMenu;
+    private JMenu speedMenu;
     private JMenu mapMenu;
 
     public GUIMenuBar(SilverSurferGUI gui) {
         setGui(gui);
         this.add(getFileMenu());
         this.add(getBlueToothMenu());
+        this.add(getClearScreenMenu());
+        this.add(getSpeedMenu());
         this.add(getMapMenu());
         setBackground(new Color(221, 230, 231));
     }
@@ -287,11 +291,88 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SilverSurferGUI.disconnectBluetooth();
-
+                gui.updateStatus();
             }
         });
 
         return blueToothMenu;
+
+    }
+
+    private JMenu getClearScreenMenu() {
+
+        clearScreenMenu = new JMenu("Clear Screen");
+        clearScreenMenu.setMnemonic('C');
+
+        JMenuItem clearScreanItem = new JMenuItem("Clear Screen");
+        clearScreanItem.setMnemonic('C');
+        clearScreenMenu.add(clearScreanItem);
+
+        clearScreanItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                SilverSurferGUI.clearScreen();
+
+            }
+        });
+
+        return clearScreenMenu;
+
+    }
+
+    private JMenu getSpeedMenu() {
+
+        speedMenu = new JMenu("Change Speed");
+        speedMenu.setMnemonic('S');
+
+        JMenuItem slowSpeedItem = new JMenuItem("Slow Speed");
+        slowSpeedItem.setMnemonic('S');
+        speedMenu.add(slowSpeedItem);
+
+        JMenuItem normalSpeedItem = new JMenuItem("Normal Speed");
+        normalSpeedItem.setMnemonic('N');
+        speedMenu.add(normalSpeedItem);
+
+        JMenuItem fastSpeedItem = new JMenuItem("Fast Speed");
+        fastSpeedItem.setMnemonic('F');
+        speedMenu.add(fastSpeedItem);
+
+        JMenuItem veryFastSpeedItem = new JMenuItem("Very Fast Speed");
+        veryFastSpeedItem.setMnemonic('V');
+        speedMenu.add(veryFastSpeedItem);
+
+        slowSpeedItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	gui.changeSpeed(1);
+            }
+        });
+        normalSpeedItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	gui.changeSpeed(2);
+            }
+        });
+        fastSpeedItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	gui.changeSpeed(3);
+            }
+        });
+
+        veryFastSpeedItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	gui.changeSpeed(4);
+            }
+        });
+        
+        return speedMenu;
 
     }
 

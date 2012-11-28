@@ -16,8 +16,6 @@ public class Communicator {
 	private StatusInfoBuffer statusInfoBuffer;
 	private SimulationPilot simulationPilot = new SimulationPilot();
 	private boolean robotConnected = false;
-	private boolean buzy = false;
-	private int previousCommand = 0;
 	private SimulatorQueueThread SQT;
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
@@ -60,14 +58,6 @@ public class Communicator {
 		setSpeed(2);
 	}
 	
-	public boolean getBuzy() {
-		return buzy;
-	}
-	
-	public void setBuzy(boolean buzy) {
-		this.buzy = buzy;
-	}
-	
 	public void openRobotConnection() throws Exception {	
 		connection = new NXTConnector();
 		connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH, NXTComm.PACKET);
@@ -96,28 +86,7 @@ public class Communicator {
 				dos.writeInt(command);
 				dos.flush();
 			}
-			if(command == Command.FORWARD_PRESSED) {
-				if(!buzy) {
-					simulationPilot.travel(1);
-					this.previousCommand = command;
-				}
-			}
-			else if(command == Command.BACKWARD_PRESSED) {
-				if(!buzy) {
-					simulationPilot.travel(-1);
-					this.previousCommand = command;
-				}
-			}
-			else if((command == Command.LEFT_PRESSED && previousCommand == 0) || (command == Command.RIGHT_PRESSED && previousCommand == 2)) {
-				if(!buzy)
-					simulationPilot.rotate((double) 360.0-getAngularSpeed());
-			}
-			else if((command == Command.RIGHT_PRESSED && previousCommand == 0) || (command == Command.LEFT_PRESSED && previousCommand == 2)) {
-				if(!buzy)
-					simulationPilot.rotate(getAngularSpeed());
-			}
-			else
-				SQT.addCommand(command);
+			SQT.addCommand(command);
 		} catch(Exception e) {
 			System.out.println("Error in Communicator.sendCommand(int command)!");
 		}
@@ -156,7 +125,7 @@ public class Communicator {
 				amount = amount - 1;
 			}
 		}
-		else if(command%100 == -91) {
+		else if(command%100 == -(100-Command.AUTOMATIC_TURN_ANGLE)) {
 			double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
 			while(amount < 0) {
 				simulationPilot.rotate(-1);

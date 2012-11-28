@@ -1,10 +1,9 @@
 package communication;
 
-import statemachine.*;
+import lejos.nxt.Motor;
 
 public class WhiteLineThread extends Thread {
-
-	private CommandUnit CU;
+	
 	private boolean quit = false;
 
 	public WhiteLineThread(String str) {
@@ -18,13 +17,11 @@ public class WhiteLineThread extends Thread {
 		} catch (Exception e) {
 			
 		}
-		CU.setCurrentState(new DrivingForward());
+		Motor.A.forward();
+		Motor.B.forward();
 		while(!quit);
-		CU.setCurrentState(new Waiting());
-	}
-	
-	public void setCommandUnit(CommandUnit CU) {
-		this.CU = CU;
+        Motor.A.stop(true);
+        Motor.B.stop();
 	}
 	
 	public void setQuit(boolean quit) {
