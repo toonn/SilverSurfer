@@ -96,6 +96,9 @@ public class Communicator {
 	    			SongThread ST = new SongThread(); 
 	    			ST.start();
 			}
+			else if(command == Command.checkObstructionsAndSetTile && !robotConnected){
+				simulationPilot.checkForObstructionAndSetTile();
+			}
 			else if(command%100 == Command.AUTOMATIC_MOVE_FORWARD) {
 				int amount = (command-Command.AUTOMATIC_MOVE_FORWARD)/100;
 				while(amount != 0) {
