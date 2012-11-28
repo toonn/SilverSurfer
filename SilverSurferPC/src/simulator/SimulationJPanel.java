@@ -61,7 +61,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * A bag doesn't have any ordering, just used for iterating. 
 	 * The ordering of these 'barcodes' is specified in the seperate rectangles.
 	 */
-	//private Bag<Rectangle2D[]> barcodes = new Bag<Rectangle2D[]>();
+	private Bag<Rectangle2D[]> barcodes = new Bag<Rectangle2D[]>();
 
 	public SimulationJPanel()
 	{
@@ -375,7 +375,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		
 		
 		//teken alle rectangles van alle barcodes
-		/*for (Rectangle2D[] barcode : barcodes) 
+		for (Rectangle2D[] barcode : barcodes) 
 			for (int i = 0; i < 8; i++) {
 				if(simulationPilot.getMapGraph().getTileWithCoordinates(getSimulationPilot().setAbsoluteToRelative(barcode[i].getX(),barcode[i].getY())[0], getSimulationPilot().setAbsoluteToRelative(barcode[i].getX(),barcode[i].getY())[1]).getContent().toString().charAt(i) == '0')
 					((Graphics2D)graph).setColor(Color.black);
@@ -384,7 +384,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 					((Graphics2D)graph).fill(barcode[i]);
 
-			}*/
+			}
 			
 	}
 
@@ -483,7 +483,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld zijn.
 	 */
 	public void addBarcode(Rectangle2D[] barcode){
-		//barcodes.add(barcode);
+		barcodes.add(barcode);
 	}
 
 
