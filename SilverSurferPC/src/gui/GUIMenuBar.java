@@ -37,11 +37,11 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getFileMenu() {
 
         fileMenu = new JMenu("File");
-        fileMenu.setMnemonic('F');
+        //fileMenu.setMnemonic('F');
 
       
         JMenuItem exportLSItem = new JMenuItem("Export Lightsensor data");
-        exportLSItem.setMnemonic('L');
+        //exportLSItem.setMnemonic('L');
         fileMenu.add(exportLSItem);
 
         exportLSItem.addActionListener(new ActionListener() {
@@ -96,7 +96,7 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         JMenuItem exportUSItem = new JMenuItem("Export Ultrasonicsensor data");
-        exportUSItem.setMnemonic('U');
+        //exportUSItem.setMnemonic('U');
         fileMenu.add(exportUSItem);
 
         exportUSItem.addActionListener(new ActionListener() {
@@ -153,7 +153,7 @@ public class GUIMenuBar extends JMenuBar {
 
         JMenuItem exportTS1Item = new JMenuItem("Export Touchsensor1 data");
         fileMenu.add(exportTS1Item);
-        exportTS1Item.setMnemonic('1');
+        //exportTS1Item.setMnemonic('1');
 
         exportTS1Item.addActionListener(new ActionListener() {
 
@@ -208,7 +208,7 @@ public class GUIMenuBar extends JMenuBar {
 
         JMenuItem exportTS2Item = new JMenuItem("Export Touchsensor2 data");
         fileMenu.add(exportTS2Item);
-        exportTS2Item.setMnemonic('2');
+        //exportTS2Item.setMnemonic('2');
 
         exportTS2Item.addActionListener(new ActionListener() {
 
@@ -267,14 +267,14 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getBlueToothMenu() {
 
         blueToothMenu = new JMenu("Bluetooth");
-        blueToothMenu.setMnemonic('B');
+        //blueToothMenu.setMnemonic('B');
 
         JMenuItem connectItem = new JMenuItem("Connect...");
-        connectItem.setMnemonic('C');
+        //connectItem.setMnemonic('C');
         blueToothMenu.add(connectItem);
 
         JMenuItem disconnectItem = new JMenuItem("Disconnect...");
-        disconnectItem.setMnemonic('D');
+        //disconnectItem.setMnemonic('D');
         blueToothMenu.add(disconnectItem);
 
         connectItem.addActionListener(new ActionListener() {
@@ -302,10 +302,10 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getClearScreenMenu() {
 
         clearScreenMenu = new JMenu("Clear Screen");
-        clearScreenMenu.setMnemonic('C');
+        //clearScreenMenu.setMnemonic('C');
 
         JMenuItem clearScreanItem = new JMenuItem("Clear Screen");
-        clearScreanItem.setMnemonic('C');
+        //clearScreanItem.setMnemonic('C');
         clearScreenMenu.add(clearScreanItem);
 
         clearScreanItem.addActionListener(new ActionListener() {
@@ -324,43 +324,43 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getSpeedMenu() {
 
         speedMenu = new JMenu("Change Speed");
-        speedMenu.setMnemonic('S');
+        //speedMenu.setMnemonic('S');
 
         JMenuItem slowSpeedItem = new JMenuItem("Slow Speed");
-        slowSpeedItem.setMnemonic('S');
+        //slowSpeedItem.setMnemonic('S');
         speedMenu.add(slowSpeedItem);
 
         JMenuItem normalSpeedItem = new JMenuItem("Normal Speed");
-        normalSpeedItem.setMnemonic('N');
+        //normalSpeedItem.setMnemonic('N');
         speedMenu.add(normalSpeedItem);
 
         JMenuItem fastSpeedItem = new JMenuItem("Fast Speed");
-        fastSpeedItem.setMnemonic('F');
+        //fastSpeedItem.setMnemonic('F');
         speedMenu.add(fastSpeedItem);
 
         JMenuItem veryFastSpeedItem = new JMenuItem("Very Fast Speed");
-        veryFastSpeedItem.setMnemonic('V');
+        //veryFastSpeedItem.setMnemonic('V');
         speedMenu.add(veryFastSpeedItem);
 
         slowSpeedItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	gui.changeSpeed(1);
+            	SilverSurferGUI.changeSpeed(1);
             }
         });
         normalSpeedItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	gui.changeSpeed(2);
+            	SilverSurferGUI.changeSpeed(2);
             }
         });
         fastSpeedItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	gui.changeSpeed(3);
+            	SilverSurferGUI.changeSpeed(3);
             }
         });
 
@@ -368,7 +368,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	gui.changeSpeed(4);
+            	SilverSurferGUI.changeSpeed(4);
             }
         });
         
@@ -379,10 +379,10 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getMapMenu(){
     	
     	mapMenu = new JMenu("Map");
-        mapMenu.setMnemonic('M');
+        //mapMenu.setMnemonic('M');
         
         JMenuItem loadMapItem = new JMenuItem("Load map...");
-        loadMapItem.setMnemonic('M');
+        //loadMapItem.setMnemonic('M');
         mapMenu.add(loadMapItem);
 
         loadMapItem.addActionListener(new ActionListener() {
@@ -433,7 +433,7 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         JMenuItem deleteMapItem = new JMenuItem("Delete map");
-        deleteMapItem.setMnemonic('D');
+        //deleteMapItem.setMnemonic('D');
         mapMenu.add(deleteMapItem);
         
         deleteMapItem.addActionListener(new ActionListener() {
@@ -459,7 +459,7 @@ public class GUIMenuBar extends JMenuBar {
         });
         
         JMenuItem exploreItem = new JMenuItem("Explore...");
-        exploreItem.setMnemonic('E');
+        //exploreItem.setMnemonic('E');
         mapMenu.add(exploreItem);
 
         exploreItem.addActionListener(new ActionListener() {

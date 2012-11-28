@@ -5,12 +5,10 @@ import commands.Command;
 import gui.SilverSurferGUI;
 
 public class BarDecoder {
-
-	private SilverSurferGUI SSG;
+	
 	private Communicator communicator;
 	
-	public BarDecoder(SilverSurferGUI SSG, Communicator communicator) {
-		this.SSG = SSG;
+	public BarDecoder(Communicator communicator) {
 		this.communicator = communicator;
 	}
 	

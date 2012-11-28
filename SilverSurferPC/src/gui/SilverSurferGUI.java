@@ -45,14 +45,15 @@ public class SilverSurferGUI {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221, 230, 231));
+        
         JPanel directionPanel = directionPanel();
         JPanel otherPanel = otherPanel();
         JPanel infoPanel = infoPanel();
         JPanel mappingPanel = mappingPanel();
         JPanel consolePanel = consolePanel();
 
-        GUIMenuBar bar = new GUIMenuBar(this);
-        frame.setJMenuBar(bar);
+        GUIMenuBar menuBar = new GUIMenuBar(this);
+        frame.setJMenuBar(menuBar);
 
         GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
         frame.getContentPane().setLayout(frameLayout);
@@ -95,10 +96,9 @@ public class SilverSurferGUI {
         communicator = new Communicator(statusInfoBuffer);
         System.out.println("[CONNECTION] Entered simulator mode.");
 
-        getSimulationPanel().setSimulationPilot(
-                communicator.getSimulationPilot());
+        getSimulationPanel().setSimulationPilot(communicator.getSimulationPilot());
         addListeners();
-        barDecoder = new BarDecoder(this, communicator);
+        barDecoder = new BarDecoder(communicator);
 
         changeSpeed(2);
         updateStatus();
@@ -277,8 +277,7 @@ public class SilverSurferGUI {
     }
 
     public void updateCoordinates(String s) {
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                s));
+        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
     }
 
     private JPanel consolePanel() {
@@ -513,7 +512,6 @@ public class SilverSurferGUI {
                 MTT.start();
             }
         });
-        
     }
 
     private static javax.swing.border.Border createBorder() {
