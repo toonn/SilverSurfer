@@ -19,6 +19,7 @@ public class Communicator {
 	private static String deviceURL = "00:16:53:0A:04:5A";
 	private static String deviceName = "Silver";
 	private static InfoReceiverThread IRT;
+	private boolean buzy = false;
 
 	public Communicator(StatusInfoBuffer statusInfoBuffer) {
 		setStatusInfoBuffer(statusInfoBuffer);
@@ -72,11 +73,20 @@ public class Communicator {
 		connection.close();
 	}
 	
+	public void setBuzy(boolean buzy) {
+		this.buzy = buzy;
+	}
+	
 	public void sendCommand(int command) {
 		try {
 			if(robotConnected) {
 				dos.writeInt(command);
 				dos.flush();
+				if(command == Command.checkObstructionsAndSetTile) {
+					buzy = true;
+					while(buzy)
+						Thread.sleep(100);
+				}
 			}
 			if(command == Command.SLOW_SPEED)
 				simulationPilot.setSpeed(194);

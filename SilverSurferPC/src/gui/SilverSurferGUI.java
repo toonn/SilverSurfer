@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.apache.bcel.generic.GETSTATIC;
+
 public class SilverSurferGUI {
 
     private static JFrame frame;
@@ -305,6 +307,9 @@ public class SilverSurferGUI {
             communicator.setRobotConnected(true);
             simulationPanel.resetMap();
             communicator.getSimulationPilot().setRealRobot(true);
+            simulationPanel.setTile(0, 0);
+    		statusInfoBuffer.setXCoordinateRelative(0);
+    		statusInfoBuffer.setYCoordinateRelative(0);
             System.out.println("[CONNECTION] Connection established.");
             changeSpeed(2);
         } catch (Exception e) {

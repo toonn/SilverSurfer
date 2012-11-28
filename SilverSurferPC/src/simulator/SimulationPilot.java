@@ -33,7 +33,7 @@ public class SimulationPilot {
 	/**
 	 * waarde die afhangt van de robot!
 	 */
-	private final double detectionDistanceUltrasonicSensorRobot = 32;
+	private final double detectionDistanceUltrasonicSensorRobot = 30;
 
 	public SimulationPilot() {
 		SSG.getSimulationPanel().setRobotLocation(
@@ -65,18 +65,26 @@ public class SimulationPilot {
 	}
 
 	public int getCurrentPositionRelativeX() {
+		if(isRealRobot())
+			return SSG.getInformationBuffer().getXCoordinateRelative();
 		return this.getMapGraph().getCurrentTileCoordinates()[0];
 	}
 
 	public int getCurrentPositionRelativeY() {
+		if(isRealRobot())
+			return SSG.getInformationBuffer().getYCoordinateRelative();
 		return this.getMapGraph().getCurrentTileCoordinates()[1];
 	}
 
 	public int getStartPositionRelativeX() {
+		if(isRealRobot())
+			return 0;
 		return this.getMapGraph().getStartingTileCoordinates()[0];
 	}
 
 	public int getStartPositionRelativeY() {
+		if(isRealRobot())
+			return 0;
 		return this.getMapGraph().getStartingTileCoordinates()[1];
 	}
 
@@ -219,8 +227,8 @@ public class SimulationPilot {
 	}
 
 	public void travel(double distance) {
-		travelledInTotal = travelledInTotal + Math.abs(distance);
-		System.out.println("travelledInTotal : " + travelledInTotal);
+		//travelledInTotal = travelledInTotal + Math.abs(distance);
+		//System.out.println("travelledInTotal : " + travelledInTotal);
 		double xOriginal = this.getCurrentPositionAbsoluteX();
 		double yOriginal = this.getCurrentPositionAbsoluteY();
 		double xTemp = this.getCurrentPositionAbsoluteX();
@@ -264,8 +272,7 @@ public class SimulationPilot {
 						this.travelToNextTileIfNeeded(xTemp, yTemp, travelOrientation);
 					}
 				}
-			}
-
+			}			
 			SSG.getSimulationPanel().setRobotLocation(xTemp, yTemp,
 					this.getAlpha());
 			this.setCurrentPositionAbsoluteX(xTemp);
@@ -275,7 +282,6 @@ public class SimulationPilot {
 			} catch (InterruptedException e) {
 			}
 		}
-
 		this.getSSG().updateStatus();
 	}
 
@@ -350,8 +356,19 @@ public class SimulationPilot {
 				Orientation currentOrientation = Orientation.calculateOrientation(
 						this.getCurrentPositionAbsoluteX(),
 						this.getCurrentPositionAbsoluteY(), this.getAlpha());
-				int xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
-				int yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
+				int xCoordinate;
+				int yCoordinate;
+				if(isRealRobot) {
+					xCoordinate = SSG.getInformationBuffer().getXCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[0];
+					yCoordinate = SSG.getInformationBuffer().getYCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[1];
+					System.out.println("xcor y cor om tile te setten: " + xCoordinate + " " + yCoordinate);
+					System.out.println("xcor ycor current" + SSG.getInformationBuffer().getXCoordinateRelative() + " " + SSG.getInformationBuffer().getYCoordinateRelative());
+					System.out.println("xcorycor adding: " +currentOrientation.getArrayToFindNeighbourRelative()[0] + " " + currentOrientation.getArrayToFindNeighbourRelative()[1]);
+				}
+				else {
+					xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
+					yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
+				}
 				if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
 				{ SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);}
 		}
@@ -426,8 +443,8 @@ public class SimulationPilot {
 
 	public void rotate(double alpha) {
 		
-		rotatedInTotal = rotatedInTotal + Math.abs(alpha);
-		System.out.println("rotatedInTotal : " + rotatedInTotal);
+		//rotatedInTotal = rotatedInTotal + Math.abs(alpha);
+		//System.out.println("rotatedInTotal : " + rotatedInTotal);
 		
 		double alphaOriginal = this.getAlpha();
 		double alphaTemp = this.getAlpha();
@@ -608,6 +625,7 @@ public class SimulationPilot {
 	public int[] setAbsoluteToRelative(double x, double y) {
 		double a = x - setToMultipleOf40(startPositionAbsoluteX);
 		double b = y - setToMultipleOf40(startPositionAbsoluteY);
+		System.out.println("startposition absoluut: "+ startPositionAbsoluteX + " " + startPositionAbsoluteY);
 		int c;
 		int d;
 		c = (int) Math.floor(a / 40);
@@ -616,6 +634,7 @@ public class SimulationPilot {
 		int[] array = new int[2];
 		array[0] = getStartPositionRelativeX() + c;
 		array[1] = getStartPositionRelativeY() + d;
+		System.out.println("uiteindelijk resultaat van tile; " + array[0] + " "+ array[1]);
 		return array;
 	}
 
@@ -631,6 +650,14 @@ public class SimulationPilot {
 		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
 		SSG.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
 		SSG.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
+	}
+	
+	public void setCurrentTileCoordinatesRobot(double xOld, double yOld) {
+		System.out.println("currentpositionrobot: " + xOld + " "+ yOld);
+		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
+		SSG.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
+		SSG.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
+		System.out.println("afterrobot: " + SSG.getInformationBuffer().getXCoordinateRelative() + " " + SSG.getInformationBuffer().getYCoordinateRelative());
 	}
 
 	public void clear() {

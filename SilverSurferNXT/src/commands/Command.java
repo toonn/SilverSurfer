@@ -13,4 +13,5 @@ public class Command {
 	public static final int ALIGN_WALL = 8;
 	public static final int LOOK_AROUND = 9;
 	public static final int PLAY_SONG = 10;
+	public static final int checkObstructionsAndSetTile = 11;
 }

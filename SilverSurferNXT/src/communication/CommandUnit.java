@@ -99,6 +99,9 @@ public class CommandUnit {
     				SongThread ST = new SongThread();
     				ST.start();
     				break;
+                case (Command.checkObstructionsAndSetTile):
+                    CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
+                	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
                         CU.updateCoordinates((input-Command.AUTOMATIC_MOVE_FORWARD)/100, 0);

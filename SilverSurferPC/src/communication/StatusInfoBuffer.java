@@ -409,7 +409,7 @@ public class StatusInfoBuffer {
 		xCoordinateRelative = x;
 	}
 	
-	public double getYCoordinateRelative(){
+	public int getYCoordinateRelative(){
 		return yCoordinateRelative;
 	}
 	
