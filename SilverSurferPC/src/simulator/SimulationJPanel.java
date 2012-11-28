@@ -343,33 +343,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		
 		if (!SSG.getCommunicator().getRobotConnected() && simulationPilot.getMapGraph()!= null && getSimulationPilot().getLightSensorValue() <45){
 			
-			//North or South oriented barcode
-			if(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.NORTH
-				|| ((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.SOUTH){
-				
-				Rectangle2D[] barcode = new Rectangle2D[8];
-				
-				for (int i = 0; i < 8; i++)
-					barcode[i] = new Rectangle(simulationPilot.getAbsoluteCenterCurrentTile()[0]-20, simulationPilot.getAbsoluteCenterCurrentTile()[1]-8+2*i, 40, 2);
-
+				Rectangle2D[] barcode = Barcode.createVisualBarCode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()),getSimulationPilot().getAbsoluteCenterCurrentTile()[0],getSimulationPilot().getAbsoluteCenterCurrentTile()[1]);
 				addBarcode(barcode);
-
-				
-			}
-
-			
-			//east or west oriented barcode
-			else if(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.EAST
-				|| ((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.WEST){
-				
-				Rectangle2D[] barcode = new Rectangle2D[8];
-
-				for (int i = 0; i < 8; i++)
-					barcode[i] = new Rectangle(simulationPilot.getAbsoluteCenterCurrentTile()[0]-8+2*i, simulationPilot.getAbsoluteCenterCurrentTile()[1]-20, 2, 40);
-				
-				
-				addBarcode(barcode);
-			}
 		
 		}
 		
@@ -411,6 +386,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	public void clearTotal() {
 		this.clear();
 		walls.clear();
+		barcodes = new Bag<Rectangle2D[]>();
 	}
 
 	/**

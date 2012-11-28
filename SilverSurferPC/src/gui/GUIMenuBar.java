@@ -20,16 +20,16 @@ public class GUIMenuBar extends JMenuBar {
     
     private JMenu fileMenu;
     private JMenu blueToothMenu;
-    private JMenu clearScreenMenu;
-    private JMenu speedMenu;
+    private JMenu screenMenu;
+    private JMenu robotMenu;
     private JMenu mapMenu;
 
     public GUIMenuBar(SilverSurferGUI gui) {
         setGui(gui);
         this.add(getFileMenu());
         this.add(getBlueToothMenu());
-        this.add(getClearScreenMenu());
-        this.add(getSpeedMenu());
+        this.add(getScreenMenu());
+        this.add(getRobotMenu());
         this.add(getMapMenu());
         setBackground(new Color(221, 230, 231));
     }
@@ -299,14 +299,14 @@ public class GUIMenuBar extends JMenuBar {
 
     }
 
-    private JMenu getClearScreenMenu() {
+    private JMenu getScreenMenu() {
 
-        clearScreenMenu = new JMenu("Clear Screen");
+        screenMenu = new JMenu("Screen");
         //clearScreenMenu.setMnemonic('C');
 
         JMenuItem clearScreanItem = new JMenuItem("Clear Screen");
         //clearScreanItem.setMnemonic('C');
-        clearScreenMenu.add(clearScreanItem);
+        screenMenu.add(clearScreanItem);
 
         clearScreanItem.addActionListener(new ActionListener() {
 
@@ -317,30 +317,30 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        return clearScreenMenu;
+        return screenMenu;
 
     }
 
-    private JMenu getSpeedMenu() {
+    private JMenu getRobotMenu() {
 
-        speedMenu = new JMenu("Change Speed");
+        robotMenu = new JMenu("Robot");
         //speedMenu.setMnemonic('S');
 
         JMenuItem slowSpeedItem = new JMenuItem("Slow Speed");
         //slowSpeedItem.setMnemonic('S');
-        speedMenu.add(slowSpeedItem);
+        robotMenu.add(slowSpeedItem);
 
         JMenuItem normalSpeedItem = new JMenuItem("Normal Speed");
         //normalSpeedItem.setMnemonic('N');
-        speedMenu.add(normalSpeedItem);
+        robotMenu.add(normalSpeedItem);
 
         JMenuItem fastSpeedItem = new JMenuItem("Fast Speed");
         //fastSpeedItem.setMnemonic('F');
-        speedMenu.add(fastSpeedItem);
+        robotMenu.add(fastSpeedItem);
 
         JMenuItem veryFastSpeedItem = new JMenuItem("Very Fast Speed");
         //veryFastSpeedItem.setMnemonic('V');
-        speedMenu.add(veryFastSpeedItem);
+        robotMenu.add(veryFastSpeedItem);
 
         slowSpeedItem.addActionListener(new ActionListener() {
 
@@ -372,7 +372,7 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
         
-        return speedMenu;
+        return robotMenu;
 
     }
 
