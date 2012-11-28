@@ -56,6 +56,12 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * wall
 	 */
 	private HashMap<Point2D, Wall> walls = new HashMap<Point2D, Wall>();
+	
+	/**
+	 * A bag doesn't have any ordering, just used for iterating. 
+	 * The ordering of these 'barcodes' is specified in the seperate rectangles.
+	 */
+	private Bag<Rectangle2D[]> barcodes = new Bag<Rectangle2D[]>();
 
 	public SimulationJPanel()
 	{
@@ -333,41 +339,53 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 	
 	public void paintBarcodeComponent(Graphics graph) {
-		// TODO werkt nu enkel als er geen robot is aangesloten, 
-		//	moet later ook werken voor robot informatie.
-		if (!SSG.getCommunicator().getRobotConnected() && simulationPilot.getMapGraph()!= null){
+		
+		
+		if (!SSG.getCommunicator().getRobotConnected() && simulationPilot.getMapGraph()!= null && getSimulationPilot().getLightSensorValue() <45){
 			
 			//North or South oriented barcode
 			if(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.NORTH
 				|| ((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.SOUTH){
-				for (int i = 0; i < 8; i++) {
-					//set right color
-					if(simulationPilot.getMapGraph().getContentCurrentTile().toString().charAt(i) == '0')
-						((Graphics2D)graph).setColor(Color.black);
-					else
-						((Graphics2D)graph).setColor(Color.white);
+				
+				Rectangle2D[] barcode = new Rectangle2D[8];
+				
+				for (int i = 0; i < 8; i++)
+					barcode[i] = new Rectangle(simulationPilot.getAbsoluteCenterCurrentTile()[0]-20, simulationPilot.getAbsoluteCenterCurrentTile()[1]-8+2*i, 40, 2);
 
-					((Graphics2D)graph).fillRect(simulationPilot.getAbsoluteCenterCurrentTile()[0]-20, simulationPilot.getAbsoluteCenterCurrentTile()[1]-8+2*i, 40, 2);
-				}
+				addBarcode(barcode);
+
+				
 			}
 
 			
 			//east or west oriented barcode
 			else if(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.EAST
 				|| ((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).getDirection() == Orientation.WEST){
-				for (int i = 0; i < 8; i++) {
-					//set right color
-					if(simulationPilot.getMapGraph().getContentCurrentTile().toString().charAt(i) == '0')
-						((Graphics2D)graph).setColor(Color.black);
-					else
-						((Graphics2D)graph).setColor(Color.white);
+				
+				Rectangle2D[] barcode = new Rectangle2D[8];
 
-					((Graphics2D)graph).fillRect(simulationPilot.getAbsoluteCenterCurrentTile()[0]-8+2*i, simulationPilot.getAbsoluteCenterCurrentTile()[1]-20, 2, 40);
-				}
+				for (int i = 0; i < 8; i++)
+					barcode[i] = new Rectangle(simulationPilot.getAbsoluteCenterCurrentTile()[0]-8+2*i, simulationPilot.getAbsoluteCenterCurrentTile()[1]-20, 2, 40);
+				
+				
+				addBarcode(barcode);
 			}
 		
 		}
+		
+		
+		//teken alle rectangles van alle barcodes
+		for (Rectangle2D[] barcode : barcodes) 
+			for (int i = 0; i < 8; i++) {
+				if(simulationPilot.getMapGraph().getTileWithCoordinates(getSimulationPilot().setAbsoluteToRelative(barcode[i].getX(),barcode[i].getY())[0], getSimulationPilot().setAbsoluteToRelative(barcode[i].getX(),barcode[i].getY())[1]).getContent().toString().charAt(i) == '0')
+					((Graphics2D)graph).setColor(Color.black);
+				else
+					((Graphics2D)graph).setColor(Color.white);
 
+					((Graphics2D)graph).fill(barcode[i]);
+
+			}
+			
 	}
 
 	public void setRobotLocation(double x, double y, double degrees){
@@ -458,6 +476,14 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			wall = new Wall(State.VERTICAL, (double) point.getX(), (double) point.getY());
 		}
 		setWall(point, wall);
+	}
+	
+	/**
+	 * Voegt een barcode toe aan de bag met barcodes.
+	 * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld zijn.
+	 */
+	public void addBarcode(Rectangle2D[] barcode){
+		barcodes.add(barcode);
 	}
 
 

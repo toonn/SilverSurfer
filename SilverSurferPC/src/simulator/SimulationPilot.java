@@ -332,15 +332,9 @@ public class SimulationPilot {
 				this.getCurrentPositionAbsoluteX(),
 				this.getCurrentPositionAbsoluteY(), this.getAlpha());
 
-		Double distance = calculateDistanceToWall();
+		int distance = getUltraSensorValue();
 
-		if (distance > detectionDistanceUltrasonicSensorRobot) {
-			return false;
-		}
-
-		if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL) {
-			SilverSurferGUI.getInformationBuffer().addUltraSensorInfo(
-					distance.intValue());
+		if (distance < detectionDistanceUltrasonicSensorRobot) {
 			return true;
 		}
 
