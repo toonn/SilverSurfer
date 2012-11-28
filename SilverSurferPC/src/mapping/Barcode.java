@@ -1,5 +1,8 @@
 package mapping;
 
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+
 public class Barcode extends TileContent{
 
 	private int value;
@@ -57,8 +60,7 @@ public class Barcode extends TileContent{
 	 * 			1, when standing on a white part of the barcode
 	 * 			something else, when standing next to the barcode but on the same tile (brown underground)
 	 */
-	public int getColorValue(double x, double y)
-	{
+	public int getColorValue(double x, double y){
 		if (getDirection() == Orientation.NORTH || getDirection() == Orientation.SOUTH){
 
 			if(y < 12) return 2; //TODO COLORVALUE ONDERGROND
@@ -84,6 +86,40 @@ public class Barcode extends TileContent{
 			else if( 26<= x && x<28) return Character.getNumericValue(toString().charAt(7));
 			else return 2;
 		}
+	}
+	
+	/**
+	 * Use the result of this on SimulationJPanel.addBarcode(result); 
+	 * to add the barcode to the drawing stack.
+	 * @param barcode the Barcode you want to visualise.
+	 * @param centerX: the absolute x coord of the center of the tile this barcode should be in.
+	 * @param centerY: the absolute y coord of the center of the tile this barcode should be in.
+	 * 
+	 * @pre Barcode.orientation should be specified.
+	 */
+	public static Rectangle2D[] createVisualBarCode(Barcode barcode, int centerX, int centerY){
+		
+		//North or South oriented barcode
+		if(barcode.getDirection() == Orientation.NORTH || barcode.getDirection() == Orientation.SOUTH){
+	
+			Rectangle2D[] visualBarcode = new Rectangle2D[8];
+			for (int i = 0; i < 8; i++)
+				visualBarcode[i] = new Rectangle(centerX-20, centerY-8+2*i, 40, 2);
+			
+			return visualBarcode;
+			
+		}
+		//east or west oriented barcode
+		if(barcode.getDirection() == Orientation.EAST || barcode.getDirection() == Orientation.WEST){
+			
+			Rectangle2D[] visualBarcode = new Rectangle2D[8];
+			for (int i = 0; i < 8; i++)
+				visualBarcode[i] = new Rectangle(centerX-8+2*i, centerY-20, 2, 40);
+			
+			return visualBarcode;
+		}
+		
+		return null;
 	}
 
 	@Override
