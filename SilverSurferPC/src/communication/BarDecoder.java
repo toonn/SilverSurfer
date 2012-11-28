@@ -51,6 +51,12 @@ public class BarDecoder {
 				case(41):
 					SilverSurferGUI.changeSpeed(4);
 	            	break;
+				case(13):            
+					//TODO: start
+	            	break;
+				case(44):       
+					//TODO: start
+					break;
 				case(55):            
 					//TODO: finish
 	            	break;

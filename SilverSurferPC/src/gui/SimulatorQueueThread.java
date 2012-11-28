@@ -1,4 +1,4 @@
-package gui;
+/*package gui;
 
 import communication.*;
 
@@ -47,4 +47,4 @@ public class SimulatorQueueThread extends Thread {
 	public void setQuit(boolean quit) {
 		this.quit = quit;
 	}
-}
+}*/
