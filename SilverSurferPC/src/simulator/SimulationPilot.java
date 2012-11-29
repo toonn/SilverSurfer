@@ -304,7 +304,7 @@ public class SimulationPilot {
 	 * die worden dus hier toegevoegd en niet meer wanneer je naar een volgende tile gaat.
 	 */
 	public void checkForObstructions(){
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < 3; i++){
 			if(checkForObstruction()){
 				addWall();
 			}
@@ -325,6 +325,25 @@ public class SimulationPilot {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
+		}
+		
+		if(checkForObstruction()){
+			addWall();
+		}
+		else{
+			removeWall();
+			Orientation currentOrientation = Orientation.calculateOrientation(
+					this.getCurrentPositionAbsoluteX(),
+					this.getCurrentPositionAbsoluteY(), this.getAlpha());
+			int xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
+			int yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
+			if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
+			{ SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);}
+
+		}
+		
+		for(int i = 0; i < 3; i++){
+			rotate(-90);
 		}
 
 	}
@@ -379,42 +398,6 @@ public class SimulationPilot {
 			} catch (InterruptedException e) {
 			}
 	}
-
-	//	/**
-	//	 * andere checkForObstructions dan checkForObstruction
-	//	 * deze wordt gebruikt voor als de robot op de edge staat en niet door mag kunnen
-	//	 * dus niet afhankelijk van of hij hem ziet of niet. Bij checkForObstruction
-	//	 * wordt gecheckt of de robot een obstruction ziet.
-	//	 */
-	//	private boolean checkForObstructionIfOnEdge(boolean forwards){
-	//
-	//		if(! currentPositionAndLigtsensorPositionOnSameTile()){
-	//			return false;
-	//		}
-	//
-	//		Orientation currentOrientation = Orientation.calculateOrientation(
-	//				this.getCurrentPositionAbsoluteX(),
-	//				this.getCurrentPositionAbsoluteY(), this.getAlpha());
-	//
-	//		if(!forwards){
-	//			currentOrientation = currentOrientation.getOppositeOrientation();
-	//		}
-	//
-	//		if (this.getMapGraph().getObstruction(currentOrientation) == Obstruction.WALL) {
-	//			return true;
-	//		}
-	//		return false;
-	//	}
-	//
-	//	/**
-	//	 * wordt gebruikt om te checken of de juiste muur gedetecteerd wordt en niet die van 
-	//	 * de volgende tile
-	//	 */
-	//	private boolean currentPositionAndLigtsensorPositionOnSameTile(){
-	//		int[] ligth = setAbsoluteToRelative(getLightsensorPositionX(), getLightsensorPositionY());
-	//		int[] current = setAbsoluteToRelative(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-	//		return ligth[0] == current[0] && ligth[1] == current[1];
-	//	}
 
 	public void addWall() {
 		Orientation currentOrientation = Orientation.calculateOrientation(
