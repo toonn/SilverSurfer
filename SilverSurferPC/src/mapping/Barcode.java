@@ -98,7 +98,7 @@ public class Barcode extends TileContent{
 	 * @pre Barcode.orientation should be specified.
 	 */
 	public static Rectangle2D[] createVisualBarCode(Barcode barcode, int centerX, int centerY){
-		
+		if(barcode != null){
 		//North or South oriented barcode
 		if(barcode.getDirection() == Orientation.NORTH || barcode.getDirection() == Orientation.SOUTH){
 	
@@ -117,7 +117,7 @@ public class Barcode extends TileContent{
 				visualBarcode[i] = new Rectangle(centerX-8+2*i, centerY-20, 2, 40);
 			
 			return visualBarcode;
-		}
+		}}
 		
 		return null;
 	}

@@ -833,87 +833,49 @@ public class SimulationPilot {
 				getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
 				getAlpha());
 
-		while (!pointOnEdge(getCurrentPositionAbsoluteX(),
-				getCurrentPositionAbsoluteY())) {
+		while (!pointOnEdge(getLightsensorPositionX(),
+				getLightsensorPositionY())) {
 			travel(1);
 		}
 
-		double requiredAlpha = (double) orientation.getRightAngle();
-
-		// double requiredAlpha = Math.round(getAlpha()/90) * 90;
-		while (!(getAlpha() < requiredAlpha + 1 && getAlpha() > requiredAlpha - 1)) {
-			if (getAlpha() < requiredAlpha) {
-				rotate(1);
-			} else
-				rotate(-1);
+		travel(6);
+		
+		while (!pointOnEdge(getLightsensorPositionX(),
+				getLightsensorPositionY())){
+			rotate(-1);
 		}
-		for (int i = 0; i < 6; i++)
-			travel(-1);
+		
+		rotate(90);
+		
+		int i =0;
+		
+		while(! pointOnEdge(getLightsensorPositionX(),
+				getLightsensorPositionY())){
+			rotate(1);
+			i++;
+		}
+
+		rotate(-(90+i)/2);
+		
 	}
 
+	//checkt deze afstand ook en doet hetzelfde (alleen als de afstand kleiner is dan 30 en niet tussen 22 en 24 want da zou al goe genoeg zijn), dan terug 90 graden naar rechts zodat em zoals int begin staat. Als er alleen links een muur staat, doet em dus niks rechts en dan links wat hem anders eerst rechts zou doen (dus < 30 enige voorwaarde).
 	public void allignOnWalls() {
-		//
-		// rotate(90);
-		//
-		// Orientation orientation =
-		// Orientation.calculateOrientation(getCurrentPositionAbsoluteX(),
-		// getCurrentPositionAbsoluteY(), getAlpha());
-		//
-		// if(this.getMapGraph().getObstruction(orientation) ==
-		// Obstruction.WALL){
-		//
-		// Point2D point = ExtMath.calculateWallPoint(orientation,
-		// getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
-		//
-		// double XOther = point.getX() +
-		// Orientation.getOtherPointLine(orientation)[0];
-		// double YOther = point.getY() +
-		// Orientation.getOtherPointLine(orientation)[1];
-		//
-		// double bla = Line2D.ptSegDist(point.getX(), point.getY(), XOther,
-		// YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
-		// System.out.println(bla);
-		// if(bla >= 20){
-		// travel(bla - 20);
-		// }
-		// else{
-		// for(int i = 0; i<20-bla; i++)
-		// travel(-1);
-		// }
-		//
-		// }
-		//
-		// rotate(180);
-		//
-		// orientation =
-		// Orientation.calculateOrientation(getCurrentPositionAbsoluteX(),
-		// getCurrentPositionRelativeY(), getAlpha());
-		//
-		// if(this.getMapGraph().getObstruction(orientation) ==
-		// Obstruction.WALL){
-		//
-		// Point2D point = ExtMath.calculateWallPoint(orientation,
-		// getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
-		//
-		// double XOther = point.getX() +
-		// Orientation.getOtherPointLine(orientation)[0];
-		// double YOther = point.getY() +
-		// Orientation.getOtherPointLine(orientation)[1];
-		//
-		// double bla = Line2D.ptSegDist(point.getX(), point.getY(), XOther,
-		// YOther, getCurrentPositionAbsoluteX(),getCurrentPositionAbsoluteY());
-		// if(bla >= 20){
-		// travel(bla - 20);
-		// }
-		// else{
-		// for(int i = 0; i<20-bla; i++)
-		// travel(-1);
-		// }
-		//
-		// }
-		//
-		// rotate(90);
-		//
+		rotate(90);
+		if(getUltraSensorValue() < 30 && getUltraSensorValue() > 23){
+			while(! (getUltraSensorValue() < 23)){
+			travel(1);}
+		}
+		
+		rotate(-90);
+		rotate(-90);
+		
+		if(getUltraSensorValue() < 30 && getUltraSensorValue() > 24){
+			while(! (getUltraSensorValue() < 23)){
+			travel(1);}
+		}
+		
+		rotate(90);
 	}
 	
 	public Orientation getCurrentOrientation(){
