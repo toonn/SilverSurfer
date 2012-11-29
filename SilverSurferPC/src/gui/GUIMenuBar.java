@@ -305,18 +305,55 @@ public class GUIMenuBar extends JMenuBar {
         //clearScreenMenu.setMnemonic('C');
 
         JMenuItem clearScreanItem = new JMenuItem("Clear Screen");
-        //clearScreanItem.setMnemonic('C');
         screenMenu.add(clearScreanItem);
 
         clearScreanItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
+            	gui.getSimulationPanel().removeWalls();
+            	gui.getSimulationPanel().removeBarCodes();
+            	gui.getSimulationPanel().clearPath();
                 SilverSurferGUI.clearScreen();
 
             }
         });
+        
+        JMenuItem removeWallsItem = new JMenuItem("Remove Walls");
+        screenMenu.add(removeWallsItem);
 
+        removeWallsItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                gui.getSimulationPanel().removeWalls();
+
+            }
+        });
+
+        JMenuItem removeBarcodesItem = new JMenuItem("Remove Barcodes");
+        screenMenu.add(removeBarcodesItem);
+
+        removeBarcodesItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                gui.getSimulationPanel().removeBarCodes();
+
+            }
+        });
+        
+        JMenuItem removePathItem = new JMenuItem("Clear Path");
+        screenMenu.add(removePathItem);
+
+        removePathItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                gui.getSimulationPanel().clearPath();
+
+            }
+        });
         return screenMenu;
 
     }

@@ -625,7 +625,6 @@ public class SimulationPilot {
 	public int[] setAbsoluteToRelative(double x, double y) {
 		double a = x - setToMultipleOf40(startPositionAbsoluteX);
 		double b = y - setToMultipleOf40(startPositionAbsoluteY);
-		System.out.println("startposition absoluut: "+ startPositionAbsoluteX + " " + startPositionAbsoluteY);
 		int c;
 		int d;
 		c = (int) Math.floor(a / 40);
@@ -634,7 +633,6 @@ public class SimulationPilot {
 		int[] array = new int[2];
 		array[0] = getStartPositionRelativeX() + c;
 		array[1] = getStartPositionRelativeY() + d;
-		System.out.println("uiteindelijk resultaat van tile; " + array[0] + " "+ array[1]);
 		return array;
 	}
 
@@ -661,7 +659,7 @@ public class SimulationPilot {
 	}
 
 	public void clear() {
-		this.getSSG().getSimulationPanel().clear();
+		this.getSSG().getSimulationPanel().clearPath();
 	}
 
 	/**

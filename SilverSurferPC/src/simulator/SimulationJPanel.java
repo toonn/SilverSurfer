@@ -338,7 +338,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		
 	}
 	
-	public void paintBarcodeComponent(Graphics graph) {
+	private void paintBarcodeComponent(Graphics graph) {
 		
 		
 		if (!SSG.getCommunicator().getRobotConnected() && simulationPilot.getMapGraph()!= null && getSimulationPilot().getLightSensorValue() <45){
@@ -370,7 +370,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	/**
 	 * Deletes the former path of the robot
 	 */
-	public void clear() {
+	public void clearPath() {
 
 		Shape triangle = getVisibleTriangle();
 		Shape triangletwo = getNotVisibleTriangle();
@@ -379,14 +379,27 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		shapes.add(triangle);
 		shapes.add(triangletwo);
 	}
+	
+	/**
+	 * Removes all Wall-objects this panel is keeping track of.
+	 */
+	public void removeWalls(){
+		walls.clear();
+	}
 
+	/**
+	 * Removes all Barcodes this panel is keeping track of.
+	 */
+	public void removeBarCodes() {
+		barcodes = new Bag<Rectangle2D[]>();
+	}
 	/**
 	 * Deletes the former path of the robot and all the walls that have been explored as yet.
 	 */
 	public void clearTotal() {
-		this.clear();
-		walls.clear();
-		barcodes = new Bag<Rectangle2D[]>();
+		clearPath();
+		removeWalls();
+		removeBarCodes();	
 	}
 
 	/**
