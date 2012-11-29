@@ -153,7 +153,7 @@ public class SimulationPilot {
 	/**
 	 * Returns the center of the currentTile in absolutes.
 	 */
-	public int[] getAbsoluteCenterCurrentTile(){
+	public int[] getCenterAbsoluteCurrentTile(){
 		
 		int[] coord = new int[]{0,0};
 		coord[0] =  ((Double)(getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()%40)).intValue()+20;
@@ -636,6 +636,27 @@ public class SimulationPilot {
 		return array;
 	}
 
+	/**
+     * Deze methode wordt voor het moment nog nergens gebruikt dus ook niet echt
+     * veel getest kunnen fouten inzitten geeft het middelpunt van het vak weer
+     * da overeenkomt met de coordinaten van de matrix die je moet ingeven als
+     * argumenten
+     */
+    public double[] setRelativeToAbsolute(int x, int y) {
+    	System.out.println(x);
+    	System.out.println(y);
+    	System.out.println("SimulationPilot 648");
+
+        int a = x - getStartPositionRelativeX();
+        int b = y - getStartPositionRelativeY();
+        double c = a * 40;
+        double d = b * 40;
+        double[] array = new double[2];
+        array[0] = startPositionAbsoluteX + c;
+        array[1] = startPositionAbsoluteX + d;
+        return array;
+    }
+    
 	/**
 	 * zet dus de map terug op zijn juiste currenttilecoorinates berekend uit de
 	 * xOld en yOld xOld en yOld mogen eig enkel de huidige positie

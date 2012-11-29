@@ -72,6 +72,7 @@ public class InfoReceiverThread extends Thread {
 					lookAroundResult[3] = Integer.valueOf(a.substring(6).trim());
 				else if(a.startsWith("[BC]"))
 					statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
+				
 				else if(a.startsWith("[CH]")) {
 					statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
 					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().setCurrentTileCoordinatesRobot(statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteX(), statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteY());	
