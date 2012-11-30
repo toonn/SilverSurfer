@@ -80,17 +80,32 @@ public class MazeExplorer {
 				numberVariable = 0;
 			}
 		}
+		
+		//zet het mark-veld van de currentTile op true zodat deze niet meer opnieuw in de queu
+				//terecht kan komen
+				currentTile.setMarkingExploreMaze(true);
+				
 	
 		//voegt buurtiles van de currentTile toe aan de queu, enkel als deze nog niet begaan
 		//zijn (niet gemarkeerd) 
 		for(Object neighbourTile: currentTile.getReachableNeighbours()){
 			if(neighbourTile != null && !(((Tile) neighbourTile).isMarkedExploreMaze())){
-				queu.add((Tile) neighbourTile);}
+			queu.add((Tile) neighbourTile);
+			int i = 0;
+			for(Object neighbour: ((Tile) neighbourTile).getAllNeighbours()){
+				if(neighbour != null && (((Tile) neighbour).isMarkedExploreMaze())){
+					i++;}
+			}
+			if(i == 4){
+				((Tile) neighbourTile).setMarkingExploreMaze(true);
+				while(queu.contains(neighbourTile)){
+					queu.remove(neighbourTile);
+				}
+			}
+			
+			}
+			
 		}
-		
-		//zet het mark-veld van de currentTile op true zodat deze niet meer opnieuw in de queu
-		//terecht kan komen
-		currentTile.setMarkingExploreMaze(true);
 		
 		//returnt als er geen tiles meer in de wachtrij zitten (algoritme is afgelopen)
 		if(queu.isEmpty()){
