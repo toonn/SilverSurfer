@@ -18,6 +18,9 @@ public class SilverSurferGUI {
     private static BarDecoder barDecoder;
     private static Communicator communicator;
 
+    private static JButton ZoomInButton;
+    private static JButton ZoomOutButton;
+    
     private static JSpinner angle;
     private static JButton turnLeftButton;
     private static JButton turnRightButton;
@@ -48,6 +51,7 @@ public class SilverSurferGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221, 230, 231));
         
+        JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
         JPanel otherPanel = otherPanel();
         JPanel infoPanel = infoPanel();
@@ -65,6 +69,7 @@ public class SilverSurferGUI {
                         frameLayout
                                 .createParallelGroup(
                                         GroupLayout.Alignment.CENTER)
+                                .addComponent(scalePanel)
                                 .addComponent(directionPanel)
                                 .addComponent(otherPanel)
                                 .addComponent(infoPanel))
@@ -78,6 +83,7 @@ public class SilverSurferGUI {
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addGroup(
                         frameLayout.createSequentialGroup()
+                        		.addComponent(scalePanel)
                                 .addComponent(directionPanel)
                                 .addComponent(otherPanel)
                                 .addComponent(infoPanel))
@@ -114,6 +120,28 @@ public class SilverSurferGUI {
         return simulationPanel;
     }
 
+    private JPanel scalePanel(){
+    	ZoomInButton = new JButton("Zoom in");
+    	ZoomOutButton = new JButton("Zoom out");
+    	
+    	JPanel scalePanel = new JPanel();
+    	scalePanel.setBorder(BorderFactory.createTitledBorder(
+                createBorder(), "Zoom"));
+        scalePanel.setOpaque(false);
+
+        GroupLayout scaleLayout = new GroupLayout(scalePanel);
+        scalePanel.setLayout(scaleLayout);
+        scaleLayout.setAutoCreateGaps(true);
+        scaleLayout.setAutoCreateContainerGaps(true);
+        scaleLayout.setHorizontalGroup(scaleLayout
+                .createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(ZoomInButton).addComponent(ZoomOutButton));
+        scaleLayout.setVerticalGroup(scaleLayout.createSequentialGroup()
+        		.addComponent(ZoomInButton).addComponent(ZoomOutButton));
+                                
+        return scalePanel;
+    }
+    
     private JPanel directionPanel() {
         JLabel angleLabel = new JLabel("Angle (degrees)", JLabel.CENTER);
 
@@ -345,6 +373,58 @@ public class SilverSurferGUI {
     }
 
     private void addListeners() {
+    	ZoomInButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                ZoomThread ZT = new ZoomThread("ZT");
+                ZT.setSimulationPanel(simulationPanel);
+                ZT.Zoomin(true);
+                ZT.start();
+            }
+        });
+    	
+    	ZoomOutButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                ZoomThread ZT = new ZoomThread("ZT");
+                ZT.setSimulationPanel(simulationPanel);
+                ZT.Zoomin(false);
+                ZT.start();
+            }
+        });
+    	
         turnLeftButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {

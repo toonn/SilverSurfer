@@ -37,16 +37,6 @@ public class ShortestPath {
 		this.tiles = tiles;
 		this.startTile = startTile;
 		this.endTile = endTile;
-		System.out.println("starttile: " + startTile.getxCoordinate() + " " + startTile.getyCoordinate());
-		System.out.println("endtile: " + endTile.getxCoordinate() + " " + endTile.getyCoordinate());
-		System.out.println("tilesize: " + tiles.size());
-		for(int i = 0; i < tiles.size(); i++) {
-			System.out.println("Tile " + i + ": " + tiles.get(i).getxCoordinate() + " " + tiles.get(i).getyCoordinate());
-			if(tiles.get(i).getEdge(Orientation.NORTH).getNeighbour(tiles.get(i)) != null)
-				System.out.println("neigh north: " + tiles.get(i).getEdge(Orientation.NORTH).getNeighbour(tiles.get(i)).getxCoordinate() + " " + tiles.get(i).getEdge(Orientation.NORTH).getNeighbour(tiles.get(i)).getyCoordinate());
-			if(tiles.get(i).getEdge(Orientation.EAST).getNeighbour(tiles.get(i)) != null)
-			System.out.println("neigh east: " + tiles.get(i).getEdge(Orientation.EAST).getNeighbour(tiles.get(i)).getxCoordinate() + " " + tiles.get(i).getEdge(Orientation.EAST).getNeighbour(tiles.get(i)).getyCoordinate());
-		}
 		for(Tile tile: tiles){
 			tile.setMarkingShortestPath(false);
 		}
@@ -138,7 +128,6 @@ public class ShortestPath {
 		
 		currentTile.setMarkingShortestPath(true);
 		
-		System.out.println("test: " + queu.size());
 		Tile nextTile = (Tile) queu.get(queu.size()-1);
 		while(queu.contains(nextTile)){
 		queu.remove(nextTile);}

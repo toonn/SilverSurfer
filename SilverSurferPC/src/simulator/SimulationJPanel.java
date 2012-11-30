@@ -9,6 +9,7 @@ import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -22,7 +23,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	private SilverSurferGUI SSG;
 	private SimulationPilot simulationPilot;
 	private MapGraph mapGraphConstructed;
-	private double scalingfactor = 1.5;
+	private double scalingfactor = 1;
 
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
@@ -265,8 +266,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 	private void paintPathComponent(Graphics graph){
 		super.paintComponent(graph);
-		paintBarcodeComponent(graph);
-		
+		paintBarcodeComponent(graph);		
 
 		Vector<Shape> shapesx = new Vector<Shape>();
 		shapesx.addAll(shapes);
@@ -450,7 +450,81 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 	
 	public void setScalingfactor(double scalingfactor){
+		replaceWalls(scalingfactor);
+		replaceShapes(scalingfactor);
+		getSimulationPilot().setStartPositionAbsoluteX(getSimulationPilot().getStartPositionAbsoluteX()*scalingfactor/this.getScalingfactor());
+		getSimulationPilot().setStartPositionAbsoluteY(getSimulationPilot().getStartPositionAbsoluteY()*scalingfactor/this.getScalingfactor());
 		this.scalingfactor = scalingfactor;
+	}
+	
+	private void replaceShapes(double scalingfactor){
+		for(Shape shape : shapes){
+			if(shape instanceof Triangle){
+				((Triangle) shape).setScalingfactor(scalingfactor);
+				
+				double newGravityCenterX = ((Triangle) shape).getGravityCenterX()*scalingfactor/this.getScalingfactor();
+				double newGravityCenterY = ((Triangle) shape).getGravityCenterY()*scalingfactor/this.getScalingfactor();
+				
+				((Triangle) shape).setGravityCenterX(newGravityCenterX);
+				((Triangle) shape).setGravityCenterY(newGravityCenterY);
+				
+				if(((Triangle) shape).equals(getVisibleTriangle())){
+					getSimulationPilot().setCurrentPositionAbsoluteX(newGravityCenterX);
+					getSimulationPilot().setCurrentPositionAbsoluteY(newGravityCenterY);
+				}
+				
+			}
+			
+			else{
+				double oldDiam = ((Ellipse2D.Double) shape).getHeight();
+				double OldXCoordinate = ((Ellipse2D.Double) shape).getX() + oldDiam/2;
+				double OldYCoordinate = ((Ellipse2D.Double) shape).getY() + oldDiam/2;
+				
+				double newDiam = oldDiam*scalingfactor/this.getScalingfactor();
+				double newXCoordinate = (OldXCoordinate - (newDiam/2))*scalingfactor/this.getScalingfactor();
+				double newYCoordinate = (OldYCoordinate - (newDiam/2))*scalingfactor/this.getScalingfactor();
+				
+				((Ellipse2D.Double) shape).setFrame(newXCoordinate, newYCoordinate, newDiam, newDiam);				
+			}			
+		}
+	}
+	
+	private void replaceWalls(double scalingfactor){
+		
+		Vector oldPoints = new Vector<Point2D>();
+		for(Point2D point: walls.keySet()){
+			oldPoints.add(point);
+		}
+		
+		for(Object point: oldPoints){
+			
+			Wall wall = walls.get(point);
+			
+			int whichXTile = (int) Math.round(((Point2D) point).getX()/getSizeTile());
+			int whichYTile = (int) Math.round(((Point2D) point).getY()/getSizeTile());
+			
+			double newXCoordinate = whichXTile*(40*scalingfactor);
+			double newYCoordinate = whichYTile*(40*scalingfactor);
+			
+			int newWidth = (int) Math.round((wall.getWidth()*scalingfactor/this.getScalingfactor()));
+			int newHeight = (int) Math.round((wall.getHeight()*scalingfactor/this.getScalingfactor()));
+			
+			wall.setSize(newWidth, newHeight);
+			
+			if(wall.getState()==State.HORIZONTAL){
+				newYCoordinate = newYCoordinate - (Wall.getStandardWidth() * scalingfactor)/2;
+			}
+			
+			else{
+				newXCoordinate = newXCoordinate - (Wall.getStandardWidth() * scalingfactor)/2;
+			}
+			
+			wall.setLocation((int) newXCoordinate, (int) newYCoordinate);
+			walls.remove(point);
+			walls.put(new Point2D.Double(newXCoordinate, newYCoordinate), wall);
+
+		}
+		
 	}
 	
 	/**
@@ -472,7 +546,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	public void addWall(Orientation orientation, double x, double y)
 	{	
 		Point2D point = calculateWallPoint(orientation, x, y);
-
 		Wall wall;
 		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
 			wall = new Wall(State.HORIZONTAL, (double) point.getX(), (double) point.getY(), scalingfactor);
@@ -531,22 +604,21 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * tot op een veelvoud van 40)
 	 */
 	private Point2D calculateWallPoint(Orientation orientation, double x, double y){
-		
-		double xCoordinate = (double) (Math.floor(x/getSizeTile())*getSizeTile());
-		double yCoordinate = (double) (Math.floor(y/getSizeTile())*getSizeTile());
+		double xCoordinate = (Math.floor(x/getSizeTile())*getSizeTile());
+		double yCoordinate = (Math.floor(y/getSizeTile())*getSizeTile());
 		
 		if(orientation.equals(Orientation.NORTH)){
-			yCoordinate = yCoordinate - 3 * scalingfactor/2;
+			yCoordinate = yCoordinate - (Wall.getStandardWidth() * scalingfactor)/2;
 		}
 		
 		else if(orientation.equals(Orientation.SOUTH)){
-			yCoordinate = yCoordinate + getSizeTile() - 3 * scalingfactor/2;
+			yCoordinate = yCoordinate + getSizeTile() - (Wall.getStandardWidth() * scalingfactor)/2;
 		}
 		else if(orientation.equals(Orientation.EAST)) {
-			xCoordinate = xCoordinate + getSizeTile() - 3 * scalingfactor/2;
+			xCoordinate = xCoordinate + getSizeTile() - (Wall.getStandardWidth() * scalingfactor)/2;
 		}
 		else{
-			xCoordinate = xCoordinate - 3 * scalingfactor/2;
+			xCoordinate = xCoordinate - (Wall.getStandardWidth() * scalingfactor)/2;
 		}
 		
 		Point2D point = new Point2D.Double(xCoordinate, yCoordinate);

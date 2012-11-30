@@ -61,6 +61,22 @@ public class SimulationPilot {
 	public void setCurrentPositionAbsoluteY(double y) {
 		this.currentPositionAbsoluteY = y;
 	}
+		
+	public double getStartPositionAbsoluteX(){
+		return startPositionAbsoluteX;
+	}
+	
+	public void setStartPositionAbsoluteX(double startPositionX){
+		startPositionAbsoluteX = startPositionX;
+	}
+	
+	public double getStartPositionAbsoluteY(){
+		return startPositionAbsoluteY;
+	}
+	
+	public void setStartPositionAbsoluteY(double startPositionY){
+		startPositionAbsoluteY = startPositionY;
+	}
 
 	public int getCurrentPositionRelativeX() {
 		if(isRealRobot())
@@ -233,20 +249,25 @@ public class SimulationPilot {
 		double xTemp = this.getCurrentPositionAbsoluteX();
 		double yTemp = this.getCurrentPositionAbsoluteY();
 
-		double j = 0.5;
+		double j = 1;
 		Orientation travelOrientation = Orientation.calculateOrientation(xTemp, yTemp, this.getAlpha(), sizeTile());
 
 		// if you are traveling backwards, the orientation you are facing is the opposite to the orientation you are traveling.
 		if (distance < 0)
 		{
-			j = -0.5;
+			j = -1;
 			travelOrientation = travelOrientation.getOppositeOrientation();
 		}
 
-		for (double i = j; i*j <= distance*j; i+=j)
+		double distanceToGo = distance;
+		double i = j;
+		
+		while(distanceToGo != 0)
+//		for (double i = j; i*j <= distance*j; i+=j)
 		{
-			xTemp = (double) (xOriginal + i * Math.cos(Math.toRadians(this.getAlpha())));
-			yTemp = (double) (yOriginal + i * Math.sin(Math.toRadians(this.getAlpha())));
+			
+			xTemp = (double) (xTemp + i * Math.cos(Math.toRadians(this.getAlpha())));
+			yTemp = (double) (yTemp + i * Math.sin(Math.toRadians(this.getAlpha())));
 
 			if (mapGraph != null) {
 
@@ -257,9 +278,9 @@ public class SimulationPilot {
 					// the edge you are standing on contains a wall
 					if(travelOrientation == edgeOrientation && !this.getMapGraph().getCurrentTile().getEdge(travelOrientation).isPassable())
 					{
-						this.setCurrentPositionAbsoluteX((xOriginal + (i - j)
+						this.setCurrentPositionAbsoluteX((xTemp - i
 								* Math.cos(Math.toRadians(this.getAlpha()))));
-						this.setCurrentPositionAbsoluteY((yOriginal + (i - j)
+						this.setCurrentPositionAbsoluteY((yTemp - i
 								* Math.sin(Math.toRadians(this.getAlpha()))));
 						this.getSSG().updateStatus();
 
@@ -276,11 +297,17 @@ public class SimulationPilot {
 					this.getAlpha());
 			this.setCurrentPositionAbsoluteX(xTemp);
 			this.setCurrentPositionAbsoluteY(yTemp);
+			
+			distanceToGo = distanceToGo - i;
+			if(distanceToGo<1){
+				i = distanceToGo;
+			}	
 			try {
-				Thread.sleep(speed/2);
+				Thread.sleep(speed/((int) Math.ceil(Math.abs(distance))));
 			} catch (InterruptedException e) {
 			}
 		}
+		
 		this.getSSG().updateStatus();
 	}
 
@@ -294,8 +321,6 @@ public class SimulationPilot {
 			setCurrentTileCoordinates(mapGraph, xTemp, yTemp);
 		}
 	}
-
-
 
 	/**
 	 * Bij checkForObstructions ook direct tiles toevoegen aangrenzend aan de current,
@@ -564,8 +589,7 @@ public class SimulationPilot {
 	 * True if the robot is not on an edge, but on a tile without a content.
 	 */
 	public boolean onEmptyTile(double x, double y) {
-		// System.out.println("e: " + (!this.onEdge(x,y) && (this.getMapGraph()
-		// == null || this.getMapGraph().getContentCurrentTile() == null)));
+
 		return (!this.pointOnEdge(x, y) && this.getMapGraph() == null)
 		|| (!this.pointOnEdge(x, y) && this.getMapGraph()
 				.getContentCurrentTile() == null);
@@ -604,6 +628,7 @@ public class SimulationPilot {
 	public int[] setAbsoluteToRelative(double x, double y) {
 		double a = x - setToMultipleOfTileSize(startPositionAbsoluteX);
 		double b = y - setToMultipleOfTileSize(startPositionAbsoluteY);
+		
 		int c;
 		int d;
 		c = (int) Math.floor(a / sizeTile());
@@ -612,6 +637,7 @@ public class SimulationPilot {
 		int[] array = new int[2];
 		array[0] = getStartPositionRelativeX() + c;
 		array[1] = getStartPositionRelativeY() + d;
+		
 		return array;
 	}
 
@@ -868,10 +894,7 @@ public class SimulationPilot {
 	}
 
 	public static void main(String[] args) {
-		double distance = 1.5;
-		int j =1;
-		System.out.println(distance*j);
-		System.out.println(j*distance);
+		System.out.println(1f/4f);
 	}
 	
 }

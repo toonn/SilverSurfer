@@ -1,0 +1,7 @@
+4 3
+
+#testDoolhof
+DeadEnd.N	DeadEnd.N	Corner.N	Corner.E
+Straight.S.55	T.W		Cross		T.E
+Corner.W	Corner.S	Corner.W	Corner.S
+

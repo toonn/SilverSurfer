@@ -7,6 +7,7 @@ import java.awt.Polygon;
 //als de driehoek naar boven wijst (alpha = 270 graden) , staat A links tov C en B rechts.
 public class Triangle extends Polygon {
 	
+	private final int standardLength = 22;
 	private int length = 22; //lengte van de tophoek tot loodrecht op basisas
 	private final double topAngle = 42; //graden van de tophoek
 	private double gravityCenterX;
@@ -34,6 +35,11 @@ public class Triangle extends Polygon {
 	
 	public int getLength() {
 		return length;
+	}
+	
+	public void setScalingfactor(double scalingfactor){
+		this.scalingfactor = scalingfactor;
+		this.length = (int) (standardLength*scalingfactor);
 	}
 
 	public double getTopAngle() {
