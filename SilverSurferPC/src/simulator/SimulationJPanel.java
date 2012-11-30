@@ -22,7 +22,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	private SilverSurferGUI SSG;
 	private SimulationPilot simulationPilot;
 	private MapGraph mapGraphConstructed;
-//	private Thread currentTh;
+	private double scalingfactor = 1.5;
 
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
@@ -34,8 +34,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * de ene wordt afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden
 	 * neem Triangle(220,220,270) ipv (0,0,0) om lelijke dot op 0,0 te voorkomen.
 	 */
-	private Triangle triangle1 = new Triangle(220,220,270);
-	private Triangle triangle2 = new Triangle(220,220,270);
+	private Triangle triangle1 = new Triangle(5*getSizeTile() + getSizeTile()/2,5*getSizeTile() + getSizeTile()/2,270, scalingfactor);
+	private Triangle triangle2 = new Triangle(5*getSizeTile() + getSizeTile()/2,5*getSizeTile() + getSizeTile()/2,270, scalingfactor);
 	/**
 	 * geeft het getal van de driehoek die afgebeeld wordt
 	 */
@@ -103,14 +103,14 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			// add a bigger circle where the robot starts
 			if(shapes.size()<3)
 			{
-				double diam = 5;
+				double diam = scalingfactor * 5;
 				Shape bigCircle = new Ellipse2D.Double(oldX - (diam/2), oldY - (diam/2), diam, diam); 
 				shapes.add(bigCircle);
 			}
 			// add smaller red circles to indicate the path of the robot
 			else
 			{
-				double diam = 2;
+				double diam = scalingfactor * 2;
 				Shape path = new Ellipse2D.Double(x - (diam/2), y - (diam/2), diam, diam);
 				shapes.add(path); 
 			}						
@@ -177,7 +177,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	public void updateUndergroundCircle(double robotX, double robotY, double LSValue)
 	{
 		
-		double diam = 7;
+		double diam = scalingfactor * 7;
 		undergroundCircle = new Ellipse2D.Double(robotX - (diam/2), robotY - (diam/2), diam, diam); 
 	}
 
@@ -205,7 +205,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX(),
 				this.getSimulationPilot().getUltrasonicSensorPositionY(),
 				this.getSimulationPilot().getAlpha(),
-				this.getSimulationPilot().getUltraSensorValue());
+				this.getSimulationPilot().getUltraSensorValue()*getScalingfactor());
+		//TODO
 		if(simulationPilot != null)
 		{
 			((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
@@ -230,9 +231,10 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		((Graphics2D) graph).setColor(Color.BLACK);
 
 		for(Wall wall : walls.values()){
-			if(wall.getState() == State.VERTICAL)
-				graph.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
-			else graph.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
+			((Graphics2D) graph).fill(wall);
+				
+//				graph.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
+//			else graph.drawImage(getHorizontalWallImage(), wall.x, wall.y, null);
 		}
 	}
 
@@ -243,7 +245,9 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	private void paintGridComponent(Graphics graph) {
 
 		int count = 50;
-		int size = 40;
+		int size = (int) getSizeTile();
+		
+		System.out.println("size: " + size);
 
 		((Graphics2D) graph).setColor(Color.lightGray);
 
@@ -277,7 +281,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 
 		int count = 50;
-		int size = 40;
+		int size = (int) getSizeTile();
 
 		((Graphics2D) graph).setColor(Color.lightGray);
 
@@ -409,8 +413,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	public void resetMap(){
 		getSimulationPilot().reset();
 		SSG.getInformationBuffer().resetBuffer();
-		triangle1 = new Triangle(220, 220, 270);
-		triangle2 = new Triangle(220, 220, 270);
+		triangle1 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
+		triangle2 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
 		mapGraphConstructed = new MapGraph();
 		clearTotal();
 
@@ -437,13 +441,25 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		return this.mapGraphConstructed;
 	}
 	
+	public double getSizeTile(){
+		return 40*scalingfactor;
+	}
+	
+	public double getScalingfactor(){
+		return scalingfactor;
+	}
+	
+	public void setScalingfactor(double scalingfactor){
+		this.scalingfactor = scalingfactor;
+	}
+	
 	/**
 	 * verwijdert de muur als er een muur staat,
 	 * als er geen muur staat, return
 	 */
 	public void addWhiteLine(Orientation orientation, double x, double y)
 	{
-		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
+		Point2D point = calculateWallPoint(orientation, x, y);
 		if(!walls.containsKey(point))
 			return;
 		removeWallFrom(point);
@@ -455,14 +471,14 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 	public void addWall(Orientation orientation, double x, double y)
 	{	
-		Point2D point = ExtMath.calculateWallPoint(orientation, x, y);
+		Point2D point = calculateWallPoint(orientation, x, y);
 
 		Wall wall;
 		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
-			wall = new Wall(State.HORIZONTAL, (double) point.getX(), (double) point.getY());
+			wall = new Wall(State.HORIZONTAL, (double) point.getX(), (double) point.getY(), scalingfactor);
 		}
 		else{
-			wall = new Wall(State.VERTICAL, (double) point.getX(), (double) point.getY());
+			wall = new Wall(State.VERTICAL, (double) point.getX(), (double) point.getY(), scalingfactor);
 		}
 		setWall(point, wall);
 	}
@@ -502,11 +518,45 @@ public class SimulationJPanel extends JPanel implements Runnable {
 					"zijn coordinaten meegegeven die de mapgraph niet bevat");
 		getMapGraphConstructed().getTileWithCoordinates(x, y).getEdge(orientation).setObstruction(null);
 	}
+	
+	/**
+	 * Deze methode berekent afhankelijk van de orientatie en het punt dat wordt meegegeven
+	 * een punt dat wordt gebruikt om de wall te positioneren!
+	 * voor noord en west is dit dus het linkerhoekbovenpunt van het tile
+	 * voor zuid het rechterbovenhoekpunt en voor zuid het linkeronderhoekpunt
+	 * (aan wall wordt altijd het midden van de linker (als wall horizontaal ligt)
+	 * of boven(als wall rechtopstaat) breedte meegegeven
+	 * (ik heb het midden gepakt en laten meegeven waarna het in wall verwerkt wordt tot
+	 * het linkerbovenhoekpunt van de 'rectangle omdat dit makkelijk is om af te ronden
+	 * tot op een veelvoud van 40)
+	 */
+	private Point2D calculateWallPoint(Orientation orientation, double x, double y){
+		
+		double xCoordinate = (double) (Math.floor(x/getSizeTile())*getSizeTile());
+		double yCoordinate = (double) (Math.floor(y/getSizeTile())*getSizeTile());
+		
+		if(orientation.equals(Orientation.NORTH)){
+			yCoordinate = yCoordinate - 3 * scalingfactor/2;
+		}
+		
+		else if(orientation.equals(Orientation.SOUTH)){
+			yCoordinate = yCoordinate + getSizeTile() - 3 * scalingfactor/2;
+		}
+		else if(orientation.equals(Orientation.EAST)) {
+			xCoordinate = xCoordinate + getSizeTile() - 3 * scalingfactor/2;
+		}
+		else{
+			xCoordinate = xCoordinate - 3 * scalingfactor/2;
+		}
+		
+		Point2D point = new Point2D.Double(xCoordinate, yCoordinate);
+		return point;
+	}
 
-	public BufferedImage getVerticalWallImage() {
-		return verticalWallImage;
-	}
-	public BufferedImage getHorizontalWallImage() {
-		return horizontalWallImage;
-	}
+//	public BufferedImage getVerticalWallImage() {
+//		return verticalWallImage;
+//	}
+//	public BufferedImage getHorizontalWallImage() {
+//		return horizontalWallImage;
+//	}
 }

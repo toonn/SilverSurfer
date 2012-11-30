@@ -8,27 +8,25 @@ import java.util.Random;
 
 
 public class SimulationPilot {
-
+	
+	private SilverSurferGUI SSG = new SilverSurferGUI();
 	/**
 	 * verandert wanneer een nieuwe map wordt ingeladen naar de positie waar het
 	 * pijltje staat wanneer de map ingeladen wordt
 	 */
-	private double startPositionAbsoluteX = 220;
-	private double startPositionAbsoluteY = 220;
+	private double startPositionAbsoluteX = 5*sizeTile() + sizeTile()/2;
+	private double startPositionAbsoluteY = 5*sizeTile() + sizeTile()/2;
 	/**
 	 * coordinaat in het echte assenstelsel van de robot
 	 */
-	private double currentPositionAbsoluteX = 220;
-	private double currentPositionAbsoluteY = 220;
+	private double currentPositionAbsoluteX = 5*sizeTile() + sizeTile()/2;
+	private double currentPositionAbsoluteY = 5*sizeTile() + sizeTile()/2;
 
 	private double alpha = 270;
 	private int speed = 10;
-	private SilverSurferGUI SSG = new SilverSurferGUI();
 	private File mapFile;
 	private MapGraph mapGraph;
 	private boolean isRealRobot = false;
-	private double rotatedInTotal = 0;
-	private double travelledInTotal = 0;
 
 	/**
 	 * waarde die afhangt van de robot!
@@ -93,7 +91,7 @@ public class SimulationPilot {
 	 * This value gives the x-coordinate of the lightsensor.
 	 */
 	public double getLightsensorPositionX() {
-		return (this.getCurrentPositionAbsoluteX() + 7.5*Math.cos(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteX() + scalingfactor()*7.5*Math.cos(Math.toRadians(this.getAlpha())));
 	}
 
 	/**
@@ -101,7 +99,7 @@ public class SimulationPilot {
 	 * This value gives they -coordinate of the lightsensor.
 	 */
 	public double getLightsensorPositionY() {
-		return (this.getCurrentPositionAbsoluteY() + 7.5*Math.sin(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteY() + scalingfactor()*7.5*Math.sin(Math.toRadians(this.getAlpha())));
 	}
 
 	/**
@@ -109,7 +107,7 @@ public class SimulationPilot {
 	 * This value gives the x-coordinate of the ultrasonic sensor.
 	 */
 	public double getUltrasonicSensorPositionX() {
-		return (this.getCurrentPositionAbsoluteX() - 5.5*Math.cos(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteX() - scalingfactor()*5.5*Math.cos(Math.toRadians(this.getAlpha())));
 	}
 
 	/**
@@ -117,7 +115,7 @@ public class SimulationPilot {
 	 * This value gives the y-coordinate of the ultrasonic sensor.
 	 */
 	public double getUltrasonicSensorPositionY() {
-		return (this.getCurrentPositionAbsoluteY() - 5.5*Math.sin(Math.toRadians(this.getAlpha())));
+		return (this.getCurrentPositionAbsoluteY() - scalingfactor()*5.5*Math.sin(Math.toRadians(this.getAlpha())));
 	}
 
 	public double getAlpha() {
@@ -156,8 +154,8 @@ public class SimulationPilot {
 	public int[] getAbsoluteCenterCurrentTile(){
 		
 		int[] coord = new int[]{0,0};
-		coord[0] =  ((Double)(getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()%40)).intValue()+20;
-		coord[1] =  ((Double)(getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()%40)).intValue()+20;
+		coord[0] =  (int) (((Double)(getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()%sizeTile())).intValue()+sizeTile()/2);
+		coord[1] =  (int) (((Double)(getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()%sizeTile())).intValue()+sizeTile()/2);
 		return coord;
 	}
 	
@@ -223,10 +221,11 @@ public class SimulationPilot {
 	 * currentPositionAbsolute dit gebeurt in setCurrentTileCoordinates
 	 */
 	private double getEdgeMarge() {
-		return (double) 1.2;
+		return (double) 1.2*scalingfactor();
 	}
 
 	public void travel(double distance) {
+		distance = distance*scalingfactor();
 		//travelledInTotal = travelledInTotal + Math.abs(distance);
 		//System.out.println("travelledInTotal : " + travelledInTotal);
 		double xOriginal = this.getCurrentPositionAbsoluteX();
@@ -234,17 +233,17 @@ public class SimulationPilot {
 		double xTemp = this.getCurrentPositionAbsoluteX();
 		double yTemp = this.getCurrentPositionAbsoluteY();
 
-		int j = 1;
-		Orientation travelOrientation = Orientation.calculateOrientation(xTemp, yTemp, this.getAlpha());
+		double j = 0.5;
+		Orientation travelOrientation = Orientation.calculateOrientation(xTemp, yTemp, this.getAlpha(), sizeTile());
 
 		// if you are traveling backwards, the orientation you are facing is the opposite to the orientation you are traveling.
 		if (distance < 0)
 		{
-			j = -1;
+			j = -0.5;
 			travelOrientation = travelOrientation.getOppositeOrientation();
 		}
 
-		for (int i = j; i*j <= distance*j; i+=j)
+		for (double i = j; i*j <= distance*j; i+=j)
 		{
 			xTemp = (double) (xOriginal + i * Math.cos(Math.toRadians(this.getAlpha())));
 			yTemp = (double) (yOriginal + i * Math.sin(Math.toRadians(this.getAlpha())));
@@ -278,7 +277,7 @@ public class SimulationPilot {
 			this.setCurrentPositionAbsoluteX(xTemp);
 			this.setCurrentPositionAbsoluteY(yTemp);
 			try {
-				Thread.sleep(speed);
+				Thread.sleep(speed/2);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -312,7 +311,7 @@ public class SimulationPilot {
 				removeWall();
 				Orientation currentOrientation = Orientation.calculateOrientation(
 						this.getCurrentPositionAbsoluteX(),
-						this.getCurrentPositionAbsoluteY(), this.getAlpha());
+						this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
 				int xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
 				int yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
 				if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
@@ -334,7 +333,7 @@ public class SimulationPilot {
 			removeWall();
 			Orientation currentOrientation = Orientation.calculateOrientation(
 					this.getCurrentPositionAbsoluteX(),
-					this.getCurrentPositionAbsoluteY(), this.getAlpha());
+					this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
 			int xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
 			int yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
 			if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
@@ -355,7 +354,7 @@ public class SimulationPilot {
 	public boolean checkForObstruction() {
 		Orientation currentOrientation = Orientation.calculateOrientation(
 				this.getCurrentPositionAbsoluteX(),
-				this.getCurrentPositionAbsoluteY(), this.getAlpha());
+				this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
 
 		int distance = getUltraSensorValue();
 
@@ -374,16 +373,13 @@ public class SimulationPilot {
 				removeWall();
 				Orientation currentOrientation = Orientation.calculateOrientation(
 						this.getCurrentPositionAbsoluteX(),
-						this.getCurrentPositionAbsoluteY(), this.getAlpha());
+						this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
 				int xCoordinate;
 				int yCoordinate;
 				if(isRealRobot) {
 					xCoordinate = SSG.getInformationBuffer().getXCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[0];
 					yCoordinate = SSG.getInformationBuffer().getYCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[1];
-					System.out.println("xcor y cor om tile te setten: " + xCoordinate + " " + yCoordinate);
-					System.out.println("xcor ycor current" + SSG.getInformationBuffer().getXCoordinateRelative() + " " + SSG.getInformationBuffer().getYCoordinateRelative());
-					System.out.println("xcorycor adding: " +currentOrientation.getArrayToFindNeighbourRelative()[0] + " " + currentOrientation.getArrayToFindNeighbourRelative()[1]);
-				}
+					}
 				else {
 					xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
 					yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
@@ -402,7 +398,7 @@ public class SimulationPilot {
 	public void addWall() {
 		Orientation currentOrientation = Orientation.calculateOrientation(
 				this.getCurrentPositionAbsoluteX(),
-				this.getCurrentPositionAbsoluteY(), this.getAlpha());
+				this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
 
 		SSG.getSimulationPanel().addWall(currentOrientation,
 				getCurrentPositionAbsoluteX(),
@@ -414,7 +410,7 @@ public class SimulationPilot {
 
 		Orientation currentOrientation = Orientation.calculateOrientation(
 				this.getCurrentPositionAbsoluteX(),
-				this.getCurrentPositionAbsoluteY(), this.getAlpha());
+				this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
 
 		// roept addwhiteline op, deze methode verwijdert de muur terug uit
 		// het panel
@@ -483,10 +479,10 @@ public class SimulationPilot {
 	 * checkt of de robot zich binnen de marge van een edge bevindt
 	 */
 	public boolean pointOnEdge(double x, double y) {
-		return (x % 40) > 40 - this.getEdgeMarge()
-		|| (x % 40) < this.getEdgeMarge()
-		|| (y % 40) > 40 - this.getEdgeMarge()
-		|| (y % 40) < this.getEdgeMarge();
+		return (x % getSSG().getSimulationPanel().getSizeTile()) > sizeTile() - this.getEdgeMarge()
+		|| (x % sizeTile()) < this.getEdgeMarge()
+		|| (y % sizeTile()) > sizeTile() - this.getEdgeMarge()
+		|| (y % sizeTile()) < this.getEdgeMarge();
 	}
 
 	/**
@@ -496,7 +492,7 @@ public class SimulationPilot {
 	{
 		if(travelOrientation == Orientation.NORTH || travelOrientation == Orientation.SOUTH)
 		{
-			if((y % 40) > 20)
+			if((y % sizeTile()) > sizeTile()/2)
 			{
 				return Orientation.SOUTH;
 			}
@@ -509,7 +505,7 @@ public class SimulationPilot {
 		//if(travelOrientation == Orientation.EAST || travelOrientation == Orientation.WEST)
 		else
 		{
-			if((x % 40) > 20)
+			if((x % sizeTile()) > sizeTile()/2)
 			{
 				return Orientation.EAST;
 			}
@@ -540,12 +536,12 @@ public class SimulationPilot {
 
 		return pointOnEdge(leftFrontX, leftFrontY) || pointOnEdge(rightFrontX, rightFrontY)
 		|| pointOnEdge(leftBackX, leftBackY) || pointOnEdge(rightBackX, rightBackY)
-		|| (Math.abs(leftFrontX%40-rightFrontX%40) > 20) || (Math.abs(leftFrontX%40-leftBackX%40) > 20)
-		|| (Math.abs(leftFrontX%40-rightBackX%40) > 20) || (Math.abs(rightFrontX%40-rightBackX%40) > 20)
-		|| (Math.abs(rightFrontX%40-leftBackX%40) > 20) || (Math.abs(rightBackX%40-leftBackX%40) > 20)
-		|| (Math.abs(leftFrontY%40-rightFrontY%40) > 20) || (Math.abs(leftFrontY%40-leftBackY%40) > 20)
-		|| (Math.abs(leftFrontY%40-rightBackY%40) > 20) || (Math.abs(rightFrontY%40-rightBackY%40) > 20)
-		|| (Math.abs(rightFrontY%40-leftBackY%40) > 20) || (Math.abs(rightBackY%40-leftBackY%40) > 20);
+		|| (Math.abs(leftFrontX%sizeTile()-rightFrontX%sizeTile()) > sizeTile()/2) || (Math.abs(leftFrontX%sizeTile()-leftBackX%sizeTile()) > sizeTile()/2)
+		|| (Math.abs(leftFrontX%sizeTile()-rightBackX%sizeTile()) > sizeTile()/2) || (Math.abs(rightFrontX%sizeTile()-rightBackX%sizeTile()) > sizeTile()/2)
+		|| (Math.abs(rightFrontX%sizeTile()-leftBackX%sizeTile()) > sizeTile()/2) || (Math.abs(rightBackX%sizeTile()-leftBackX%sizeTile()) > sizeTile()/2)
+		|| (Math.abs(leftFrontY%sizeTile()-rightFrontY%sizeTile()) > sizeTile()/2) || (Math.abs(leftFrontY%sizeTile()-leftBackY%sizeTile()) > sizeTile()/2)
+		|| (Math.abs(leftFrontY%sizeTile()-rightBackY%sizeTile()) > sizeTile()/2) || (Math.abs(rightFrontY%sizeTile()-rightBackY%sizeTile()) > sizeTile()/2)
+		|| (Math.abs(rightFrontY%sizeTile()-leftBackY%sizeTile()) > sizeTile()/2) || (Math.abs(rightBackY%sizeTile()-leftBackY%sizeTile()) > sizeTile()/2);
 	}
 
 	/**
@@ -560,7 +556,7 @@ public class SimulationPilot {
 		&& (this.getMapGraph() == null || this.getMapGraph()
 				.getObstruction(
 						Orientation.calculateOrientation(x, y,
-								this.getAlpha())) != Obstruction.WALL);
+								this.getAlpha(), sizeTile())) != Obstruction.WALL);
 
 	}
 
@@ -597,8 +593,8 @@ public class SimulationPilot {
 	// maar doet normaal niet ter zake aangezien de coordinaten in het echte
 	// coordinatensysteem
 	// niet negatief kunnen zijn
-	public static int setToMultipleOf40(double a) {
-		return (int) (Math.floor(a / 40) * 40);
+	public int setToMultipleOfTileSize(double a) {
+		return (int) (Math.floor(a / sizeTile()) * sizeTile());
 	}
 
 	/**
@@ -606,12 +602,12 @@ public class SimulationPilot {
 	 * coordinaten van de matrix
 	 */
 	public int[] setAbsoluteToRelative(double x, double y) {
-		double a = x - setToMultipleOf40(startPositionAbsoluteX);
-		double b = y - setToMultipleOf40(startPositionAbsoluteY);
+		double a = x - setToMultipleOfTileSize(startPositionAbsoluteX);
+		double b = y - setToMultipleOfTileSize(startPositionAbsoluteY);
 		int c;
 		int d;
-		c = (int) Math.floor(a / 40);
-		d = (int) Math.floor(b / 40);
+		c = (int) Math.floor(a / sizeTile());
+		d = (int) Math.floor(b / sizeTile());
 
 		int[] array = new int[2];
 		array[0] = getStartPositionRelativeX() + c;
@@ -634,11 +630,9 @@ public class SimulationPilot {
 	}
 	
 	public void setCurrentTileCoordinatesRobot(double xOld, double yOld) {
-		System.out.println("currentpositionrobot: " + xOld + " "+ yOld);
 		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
 		SSG.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
 		SSG.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
-		System.out.println("afterrobot: " + SSG.getInformationBuffer().getXCoordinateRelative() + " " + SSG.getInformationBuffer().getYCoordinateRelative());
 	}
 
 	public void clear() {
@@ -650,10 +644,10 @@ public class SimulationPilot {
 	 * Resets alpha to 270, speed to 10;
 	 */
 	public void reset(){
-		currentPositionAbsoluteX = 220;
-		currentPositionAbsoluteY = 220;
-		startPositionAbsoluteX = 220;
-		startPositionAbsoluteY = 220;
+		currentPositionAbsoluteX = 5*sizeTile() + sizeTile()/2;
+		currentPositionAbsoluteY = 5*sizeTile() + sizeTile()/2;
+		startPositionAbsoluteX = 5*sizeTile() + sizeTile()/2;
+		startPositionAbsoluteY = 5*sizeTile() + sizeTile()/2;
 		alpha = 270;
 
 	}
@@ -774,7 +768,7 @@ public class SimulationPilot {
 
 		while(i < 148)
 		{
-			while(!(Math.abs(xTempPrev%40 - xTemp%40) > 5) && !(Math.abs(yTempPrev%40 - yTemp%40) > 5))
+			while(!(Math.abs(xTempPrev%sizeTile() - xTemp%sizeTile()) > 5) && !(Math.abs(yTempPrev%sizeTile() - yTemp%sizeTile()) > 5))
 			{
 				xTempPrev = xTemp;
 				yTempPrev = yTemp;
@@ -784,7 +778,7 @@ public class SimulationPilot {
 				i++;
 			}
 
-			Orientation oriTemp = Orientation.defineBorderCrossed(xTemp, yTemp, xTempPrev, yTempPrev);
+			Orientation oriTemp = Orientation.defineBorderCrossed(xTemp, yTemp, xTempPrev, yTempPrev, sizeTile());
 
 			// the edge you have found, does not contain a wall, you can look right over it.
 			// change the current tile to the next tile en move a few steps foreward (with the temporary coordinates).
@@ -803,7 +797,7 @@ public class SimulationPilot {
 			}
 			else
 			{
-				return Math.sqrt(Math.pow(xTemp-this.getUltrasonicSensorPositionX(), 2) + Math.pow(yTemp-this.getUltrasonicSensorPositionY(), 2));
+				return Math.sqrt(Math.pow(xTemp-this.getUltrasonicSensorPositionX(), 2) + Math.pow(yTemp-this.getUltrasonicSensorPositionY(), 2))/scalingfactor();
 			}
 		}
 
@@ -814,7 +808,7 @@ public class SimulationPilot {
 	public void allignOnWhiteLine() {
 		Orientation orientation = Orientation.calculateOrientation(
 				getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
-				getAlpha());
+				getAlpha(), sizeTile());
 
 		while (!pointOnEdge(getLightsensorPositionX(),
 				getLightsensorPositionY())) {
@@ -862,8 +856,23 @@ public class SimulationPilot {
 	}
 	
 	public Orientation getCurrentOrientation(){
-		return Orientation.calculateOrientation(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(), getAlpha());
+		return Orientation.calculateOrientation(getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
+	}
+	
+	public double sizeTile(){
+		return getSSG().getSimulationPanel().getSizeTile();
+	}
+	
+	public double scalingfactor(){
+		return getSSG().getSimulationPanel().getScalingfactor();
 	}
 
+	public static void main(String[] args) {
+		double distance = 1.5;
+		int j =1;
+		System.out.println(distance*j);
+		System.out.println(j*distance);
+	}
+	
 }
 

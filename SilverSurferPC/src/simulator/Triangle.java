@@ -7,14 +7,17 @@ import java.awt.Polygon;
 //als de driehoek naar boven wijst (alpha = 270 graden) , staat A links tov C en B rechts.
 public class Triangle extends Polygon {
 	
-	private final int length = 22; //lengte van de tophoek tot loodrecht op basisas
+	private int length = 22; //lengte van de tophoek tot loodrecht op basisas
 	private final double topAngle = 42; //graden van de tophoek
 	private double gravityCenterX;
 	private double gravityCenterY;
 	private double alpha = 0; // Hoeveel je gedraaid bent ten opzichte van de X-as
-
-	Triangle(double x, double y, double alpha){
+	private double scalingfactor;
+	
+	Triangle(double x, double y, double alpha, double scalingfactor){
 		super();
+		this.scalingfactor = scalingfactor;
+		this.length = (int) (this.length*this.scalingfactor);
 		this.gravityCenterX = x;
 		this.gravityCenterY = y;
 		this.alpha = alpha;
@@ -61,11 +64,11 @@ public class Triangle extends Polygon {
 	}
 
 	public double getArrowCenterX() {
-		return this.getGravityCenterX() - 5.5*Math.cos(Math.toRadians(this.getAlpha()));
+		return this.getGravityCenterX() - scalingfactor*5.5*Math.cos(Math.toRadians(this.getAlpha()));
 	}
 	
 	public double getArrowCenterY(){
-		return this.getGravityCenterY() - 5.5*Math.sin(Math.toRadians(this.getAlpha()));
+		return this.getGravityCenterY() - scalingfactor*5.5*Math.sin(Math.toRadians(this.getAlpha()));
 	}
 
 	public double getAlpha() {

@@ -25,10 +25,10 @@ public class Wall extends Rectangle {
      * rechthoek te initialiseren de linkerbovenhoek meegeven dus dat wordt -1
      * voor x en -1 voor y als je 5 hebt wordt dit -2 enzovoort
      */
-    private static final int standardWidth = 3;
-    private static final int standardLength = 40;
+    private static int standardWidth = 3;
+    private static int standardLength = 40;
 
-    public Wall(State state, double xPosition, double yPosition) {
+    public Wall(State state, double xPosition, double yPosition, double scalingfactor) {
         super(standardWidth, standardLength);
         this.state = state;
         this.xPosition = xPosition;
@@ -37,12 +37,15 @@ public class Wall extends Rectangle {
         double y;
         if (state == State.HORIZONTAL) {
 
-            setSize(standardLength, standardWidth);
+            setSize((int) (standardLength * scalingfactor), (int) (standardWidth * scalingfactor));
 
             x = xPosition;
-            y = yPosition - 1;
+            y = yPosition - (standardWidth * scalingfactor)/2;
         } else {
-            x = xPosition - 1;
+        	setSize((int) (standardWidth * scalingfactor), (int) (standardLength * scalingfactor));
+
+        	
+            x = xPosition - (standardWidth * scalingfactor)/2;
             y = yPosition;
         }
         setLocation((int) x, (int) y);
