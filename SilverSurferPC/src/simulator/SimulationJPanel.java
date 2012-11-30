@@ -15,6 +15,9 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import datastructures.Bag;
+import datastructures.Tuple;
+
 
 import mapping.*;
 
@@ -60,9 +63,9 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	
 	/**
 	 * A bag doesn't have any ordering, just used for iterating. 
-	 * The ordering of these 'barcodes' is specified in the seperate rectangles.
+	 * The placing of these 'barcodes' is specified in the seperate rectangles.
 	 */
-	private Bag<Rectangle2D[]> barcodes = new Bag<Rectangle2D[]>();
+	private Bag<Tuple<String, Rectangle2D[]>> barcodes = new Bag<Tuple<String, Rectangle2D[]>>();
 
 	public SimulationJPanel()
 	{
@@ -247,8 +250,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 		int count = 50;
 		int size = (int) getSizeTile();
-		
-		System.out.println("size: " + size);
 
 		((Graphics2D) graph).setColor(Color.lightGray);
 
@@ -347,23 +348,27 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		
 		if (!SSG.getCommunicator().getRobotConnected() && simulationPilot.getMapGraph()!= null && getSimulationPilot().getLightSensorValue() <45){
 			
-				Rectangle2D[] barcode = Barcode.createVisualBarCode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()),getSimulationPilot().getAbsoluteCenterCurrentTile()[0],getSimulationPilot().getAbsoluteCenterCurrentTile()[1]);
-				addBarcode(barcode);
+				Rectangle2D[] barcode = Barcode.createVisualBarCode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()),getSimulationPilot().getCenterAbsoluteCurrentTile()[0],getSimulationPilot().getCenterAbsoluteCurrentTile()[1]);
+				getMapGraphConstructed().getCurrentTile().setContent(simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent());
+				addBarcode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).toString(), barcode);
 		
 		}
 		
 		
 		//teken alle rectangles van alle barcodes
-		for (Rectangle2D[] barcode : barcodes) 
+		for (Tuple t : barcodes) {
+			String rep = (String) t.getItem1();
+			Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
 			for (int i = 0; i < 8; i++) {
-				if(simulationPilot.getMapGraph().getTileWithCoordinates(getSimulationPilot().setAbsoluteToRelative(barcode[i].getX(),barcode[i].getY())[0], getSimulationPilot().setAbsoluteToRelative(barcode[i].getX(),barcode[i].getY())[1]).getContent().toString().charAt(i) == '0')
+				if(rep.charAt(i) == '0')
 					((Graphics2D)graph).setColor(Color.black);
 				else
 					((Graphics2D)graph).setColor(Color.white);
 
-					((Graphics2D)graph).fill(barcode[i]);
+					((Graphics2D)graph).fill(bc[i]);
 
 			}
+		}
 			
 	}
 
@@ -395,7 +400,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * Removes all Barcodes this panel is keeping track of.
 	 */
 	public void removeBarCodes() {
-		barcodes = new Bag<Rectangle2D[]>();
+		barcodes = new Bag<Tuple<String, Rectangle2D[]>>();
 	}
 	/**
 	 * Deletes the former path of the robot and all the walls that have been explored as yet.
@@ -560,8 +565,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * Voegt een barcode toe aan de bag met barcodes.
 	 * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld zijn.
 	 */
-	public void addBarcode(Rectangle2D[] barcode){
-		barcodes.add(barcode);
+	public void addBarcode(String stringRepr,  Rectangle2D[] visual){
+		barcodes.add(new Tuple<String, Rectangle2D[]>(stringRepr, visual));
 	}
 
 

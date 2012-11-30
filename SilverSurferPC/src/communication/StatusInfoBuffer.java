@@ -1,7 +1,9 @@
 package communication;
 
 import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
 
+import mapping.Barcode;
 import mapping.MapGraph;
 
 import simulator.SimulationJPanel;
@@ -372,8 +374,14 @@ public class StatusInfoBuffer {
 	}
 	
 	public void setBarcode(int barcode) {
+		Barcode scanned = new Barcode(barcode, SSG.getSimulationPanel().getSimulationPilot().getCurrentOrientation());
+		int[] center = SSG.getSimulationPanel().getSimulationPilot().getCenterAbsoluteCurrentTile();
+		SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTile().setContent(scanned);
+		Rectangle2D[] visualBarcode = Barcode.createVisualBarCode(scanned, center[0],center[1]);
+		SSG.getSimulationPanel().addBarcode(scanned.toString(), visualBarcode);
 		this.barcode = barcode;
 		SSG.executeBarcode();
+		System.out.println("geweest SIB line 384");
 	}
 	
 	public double getAngle() {
