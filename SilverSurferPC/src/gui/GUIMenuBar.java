@@ -304,6 +304,30 @@ public class GUIMenuBar extends JMenuBar {
         screenMenu = new JMenu("Screen");
         //clearScreenMenu.setMnemonic('C');
 
+        JMenuItem zoomInItem = new JMenuItem("Zoom In");
+        screenMenu.add(zoomInItem);
+        
+        zoomInItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				gui.zoomIn();
+				
+			}
+		});
+        
+        JMenuItem zoomOutItem = new JMenuItem("Zoom Out");
+        screenMenu.add(zoomOutItem);
+        
+        zoomOutItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				gui.zoomOut();
+				
+			}
+		});
+        
         JMenuItem clearScreanItem = new JMenuItem("Clear Screen");
         screenMenu.add(clearScreanItem);
 

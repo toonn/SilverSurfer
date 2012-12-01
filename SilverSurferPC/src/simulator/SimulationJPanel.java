@@ -184,6 +184,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		double diam = scalingfactor * 7;
 		undergroundCircle = new Ellipse2D.Double(robotX - (diam/2), robotY - (diam/2), diam, diam); 
 	}
+	
+	
 
 	/**
 	 * Methode die alle paint methodes samenvoegd en uitvoert in het JPanel
@@ -455,14 +457,30 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 	
 	public void setScalingfactor(double scalingfactor){
-		replaceWalls(scalingfactor);
-		replaceShapes(scalingfactor);
+		scaleWalls(scalingfactor);
+		scaleShapes(scalingfactor);
+		//scaleBarcodes(scalingfactor);
 		getSimulationPilot().setStartPositionAbsoluteX(getSimulationPilot().getStartPositionAbsoluteX()*scalingfactor/this.getScalingfactor());
 		getSimulationPilot().setStartPositionAbsoluteY(getSimulationPilot().getStartPositionAbsoluteY()*scalingfactor/this.getScalingfactor());
 		this.scalingfactor = scalingfactor;
 	}
 	
-	private void replaceShapes(double scalingfactor){
+	/**
+	 * Updates the width/height/coordinates of the barcodes.
+	 */
+	private void scaleBarcodes(double scalingfactor) {
+		//TODO update coordinates
+		for (Tuple t : barcodes) {
+			String rep = (String) t.getItem1();
+			Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
+			for (int i = 0; i < 8; i++){
+				bc[i] = new Rectangle((int)(bc[i].getX()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getY()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getWidth()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getHeight()*scalingfactor/this.getScalingfactor()));	
+			}
+		}
+
+	}
+	
+	private void scaleShapes(double scalingfactor){
 		for(Shape shape : shapes){
 			if(shape instanceof Triangle){
 				((Triangle) shape).setScalingfactor(scalingfactor);
@@ -494,7 +512,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		}
 	}
 	
-	private void replaceWalls(double scalingfactor){
+	private void scaleWalls(double scalingfactor){
 		
 		Vector oldPoints = new Vector<Point2D>();
 		for(Point2D point: walls.keySet()){

@@ -372,6 +372,26 @@ public class SilverSurferGUI {
                 + " Current Speed Level: " + value + ".");
     }
 
+    /**
+     * Zooms in the SimulationJPanel.
+     */
+    public void zoomIn() {
+		ZoomThread ZT = new ZoomThread("ZT");
+        ZT.setSimulationPanel(simulationPanel);
+        ZT.Zoomin(true);
+        ZT.start();
+	}
+    
+    /**
+     * Zooms out the SimulationJPanel.
+     */
+    public void zoomOut() {
+		ZoomThread ZT = new ZoomThread("ZT");
+        ZT.setSimulationPanel(simulationPanel);
+        ZT.Zoomin(false);
+        ZT.start();
+	}
+    
     private void addListeners() {
     	ZoomInButton.addMouseListener(new MouseListener() {
             @Override
@@ -392,11 +412,10 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                ZoomThread ZT = new ZoomThread("ZT");
-                ZT.setSimulationPanel(simulationPanel);
-                ZT.Zoomin(true);
-                ZT.start();
+                zoomIn();
             }
+
+			
         });
     	
     	ZoomOutButton.addMouseListener(new MouseListener() {
@@ -418,11 +437,10 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                ZoomThread ZT = new ZoomThread("ZT");
-                ZT.setSimulationPanel(simulationPanel);
-                ZT.Zoomin(false);
-                ZT.start();
+                zoomOut();
             }
+
+			
         });
     	
         turnLeftButton.addMouseListener(new MouseListener() {
