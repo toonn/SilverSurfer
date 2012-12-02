@@ -615,6 +615,40 @@ public class SilverSurferGUI {
                 MTT.start();
             }
         });
+        simulationPanel.addKeyListener(new KeyListener() {
+			shiftThread ST = new shiftThread("ST");
+
+			@Override
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_UP) {
+					ST.setShift(-1);
+					ST.setHorizontal(false);
+					ST.start();
+					}
+				else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+					ST.setShift(1);
+					ST.setHorizontal(false);
+					ST.start();
+				}
+				else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
+					ST.setShift(-1);
+					ST.setHorizontal(true);
+					ST.start();
+				}
+				else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+					ST.setShift(1);
+					ST.setHorizontal(true);
+					ST.start();
+					}
+				}
+		});
     }
 
     private static javax.swing.border.Border createBorder() {
