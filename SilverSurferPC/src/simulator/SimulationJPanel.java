@@ -27,6 +27,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	private SimulationPilot simulationPilot;
 	private MapGraph mapGraphConstructed;
 	private double scalingfactor = 1;
+	private int shiftToTheRight = 0;
+	private int shiftDown = 0;
 
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
@@ -208,8 +210,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 	private void paintBeamComponent(Graphics graph) {
 
-		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX(),
-				this.getSimulationPilot().getUltrasonicSensorPositionY(),
+		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX() - getShiftToTheRight(),
+				this.getSimulationPilot().getUltrasonicSensorPositionY() - getShiftDown(),
 				this.getSimulationPilot().getAlpha(),
 				this.getSimulationPilot().getUltraSensorValue()*getScalingfactor());
 		//TODO
@@ -291,7 +293,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		for( int i = 0; i < count; i ++)
 			for( int j = 0; j < count; j++)
 			{
-				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
+				Rectangle grid = new Rectangle( i * size - getShiftToTheRight(),j * size - getShiftDown(), size, size);	
 				((Graphics2D) graph).draw(grid);
 			}
 
@@ -331,8 +333,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 	private void paintUndergroundComponent(Graphics graph){
 
-		this.updateUndergroundCircle(this.getSimulationPilot().getLightsensorPositionX(),
-				this.getSimulationPilot().getLightsensorPositionY(), 
+		this.updateUndergroundCircle(this.getSimulationPilot().getLightsensorPositionX() - getShiftToTheRight(),
+				this.getSimulationPilot().getLightsensorPositionY() - getShiftDown(), 
 				this.getSimulationPilot().getLightSensorValue());
 		if(this.getSimulationPilot().getLightSensorValue() < 45)
 			((Graphics2D) graph).setColor(Color.black);
@@ -375,6 +377,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 
 	public void setRobotLocation(double x, double y, double degrees){
+		x = x - this.getShiftToTheRight();
+		y = y - this.getShiftDown();
 		this.addCircle(x*1, y*1, degrees);
 	}
 
@@ -459,12 +463,13 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	public void setScalingfactor(double scalingfactor){
 		scaleWalls(scalingfactor);
 		scaleShapes(scalingfactor);
-		//scaleBarcodes(scalingfactor);
+		scaleBarcodes(scalingfactor);
 		getSimulationPilot().setStartPositionAbsoluteX(getSimulationPilot().getStartPositionAbsoluteX()*scalingfactor/this.getScalingfactor());
 		getSimulationPilot().setStartPositionAbsoluteY(getSimulationPilot().getStartPositionAbsoluteY()*scalingfactor/this.getScalingfactor());
 		this.scalingfactor = scalingfactor;
 	}
 	
+
 	/**
 	 * Updates the width/height/coordinates of the barcodes.
 	 */
@@ -550,17 +555,100 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		
 	}
 	
-	/**
-	 * verwijdert de muur als er een muur staat,
-	 * als er geen muur staat, return
-	 */
-	public void addWhiteLine(Orientation orientation, double x, double y)
-	{
-		Point2D point = calculateWallPoint(orientation, x, y);
-		if(!walls.containsKey(point))
-			return;
-		removeWallFrom(point);
+	public int getShiftToTheRight(){
+		return shiftToTheRight;
 	}
+	
+	public void setShiftToTheRigth(int shiftRight){
+		this.shiftToTheRight = this.shiftToTheRight + shiftRight;
+		shiftWalls(true, shiftRight);
+		shiftShapes(true, shiftRight);
+	}
+	
+	public int getShiftDown(){
+		return shiftDown;
+	}
+	
+	public void setShiftDown(int shiftDown){
+		this.shiftDown = shiftDown;
+		shiftWalls(false, shiftDown);
+		shiftShapes(false, shiftDown );
+	}
+
+	private void shiftWalls(boolean shiftHorizontal, int shift) {
+		Vector oldPoints = new Vector<Point2D>();
+		for(Point2D point: walls.keySet()){
+			oldPoints.add(point);
+		}
+		
+		for(Object point: oldPoints){
+			
+			Wall wall = walls.get(point);
+			
+			double newXCoordinate = ((Point2D.Double) point).getX();
+			double newYCoordinate = ((Point2D.Double) point).getY();
+			
+			if(shiftHorizontal){
+			newXCoordinate = wall.getX()-shift;
+			}
+			else{
+				newYCoordinate = wall.getY()-shift;
+			}
+			wall.setLocation((int) newXCoordinate, (int) wall.getY());
+			
+			walls.remove(point);
+			walls.put(new Point2D.Double(newXCoordinate, newYCoordinate), wall);
+
+		}
+	}
+	
+	private void shiftShapes(boolean shiftHorizontal, int shift) {
+		for(Shape shape : shapes){
+			if(shape instanceof Triangle){	
+				
+				double newGravityCenterX = ((Triangle) shape).getGravityCenterX();
+				double newGravityCenterY = ((Triangle) shape).getGravityCenterY();
+				
+				if(shiftHorizontal){
+					newGravityCenterX = newGravityCenterX-shift;
+					}
+					else{
+					newGravityCenterY = newGravityCenterY-shift;
+					}
+				
+				((Triangle) shape).setGravityCenterX(newGravityCenterX);
+				((Triangle) shape).setGravityCenterY(newGravityCenterY);
+
+				}
+			
+			else{
+				double diam = ((Ellipse2D.Double) shape).getHeight();
+				double newXCoordinate = ((Ellipse2D.Double) shape).getX();
+				double newYCoordinate = ((Ellipse2D.Double) shape).getY();
+				
+				if(shiftHorizontal){
+					newXCoordinate = newXCoordinate-shift;
+					}
+					else{
+					newYCoordinate = newYCoordinate-shift;
+					}
+				
+				((Ellipse2D.Double) shape).setFrame(newXCoordinate, newYCoordinate, diam, diam);				
+			}			
+		}
+	}
+//	
+//	/**
+//	 * verwijdert de muur als er een muur staat,
+//	 * als er geen muur staat, return
+//	 */
+//	public void addWhiteLine(Orientation orientation, double x, double y)
+//	{
+//		Point2D point = calculateWallPoint(orientation, x, y);
+//		if(!walls.containsKey(point))
+//			return;
+//		removeWallFrom(point);
+//	}
 
 	/**
 	 * voegt een muur bij aan hashmap
@@ -569,6 +657,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	public void addWall(Orientation orientation, double x, double y)
 	{	
 		Point2D point = calculateWallPoint(orientation, x, y);
+		point.setLocation(point.getX()-getShiftToTheRight() , point.getY()-getShiftDown() );
 		Wall wall;
 		if(orientation.equals(Orientation.NORTH) || orientation.equals(Orientation.SOUTH)){
 			wall = new Wall(State.HORIZONTAL, (double) point.getX(), (double) point.getY(), scalingfactor);

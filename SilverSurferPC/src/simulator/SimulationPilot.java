@@ -333,7 +333,7 @@ public class SimulationPilot {
 				addWall();
 			}
 			else{
-				removeWall();
+				//removeWall();
 				Orientation currentOrientation = Orientation.calculateOrientation(
 						this.getCurrentPositionAbsoluteX(),
 						this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
@@ -355,7 +355,7 @@ public class SimulationPilot {
 			addWall();
 		}
 		else{
-			removeWall();
+			//removeWall();
 			Orientation currentOrientation = Orientation.calculateOrientation(
 					this.getCurrentPositionAbsoluteX(),
 					this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
@@ -395,7 +395,7 @@ public class SimulationPilot {
 				addWall();
 			}
 			else{
-				removeWall();
+				//removeWall();
 				Orientation currentOrientation = Orientation.calculateOrientation(
 						this.getCurrentPositionAbsoluteX(),
 						this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
@@ -431,19 +431,19 @@ public class SimulationPilot {
 		SSG.getSimulationPanel().setWallOnTile(getCurrentPositionRelativeX(), getCurrentPositionRelativeY(), currentOrientation);
 	}
 
-	public void removeWall(){
-
-		Orientation currentOrientation = Orientation.calculateOrientation(
-				this.getCurrentPositionAbsoluteX(),
-				this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
-
-		// roept addwhiteline op, deze methode verwijdert de muur terug uit
-		// het panel
-		SSG.getSimulationPanel().addWhiteLine(currentOrientation,
-				getCurrentPositionAbsoluteX(),
-				getCurrentPositionAbsoluteY());
-		SSG.getSimulationPanel().removeWallFromTile(getCurrentPositionRelativeX(), getCurrentPositionRelativeY(), currentOrientation);
-	}
+//	public void removeWall(){
+//
+//		Orientation currentOrientation = Orientation.calculateOrientation(
+//				this.getCurrentPositionAbsoluteX(),
+//				this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
+//
+//		// roept addwhiteline op, deze methode verwijdert de muur terug uit
+//		// het panel
+//		SSG.getSimulationPanel().addWhiteLine(currentOrientation,
+//				getCurrentPositionAbsoluteX(),
+//				getCurrentPositionAbsoluteY());
+//		SSG.getSimulationPanel().removeWallFromTile(getCurrentPositionRelativeX(), getCurrentPositionRelativeY(), currentOrientation);
+//	}
 
 	public void rotate(double alpha) {
 		
