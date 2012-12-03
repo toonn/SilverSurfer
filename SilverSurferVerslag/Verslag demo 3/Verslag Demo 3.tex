@@ -333,7 +333,7 @@ Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoere
 \subsection{Het rechtzetten op een witte lijn} % 3 ?
 \label{ssec:algoWitteL}
 Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren.
-Onderstaand algoritme kan gebruikt worden wanneer de robot vlakbij een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten passeren):
+Onderstaand algoritme kan gebruikt worden wanneer de robot vlakbij een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten detecteren):
 
 \lstset{frame=single, caption=Witte Lijn algoritme (pseudocode),
 		label=code:algoWitteL, numbers=left, numberstyle=\footnotesize,
@@ -363,13 +363,13 @@ Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof de 'fi
 \subsection{Het vinden van het kortste pad} % ?
 \label{ssec:AlgoKortsteP}
 
-Het kortste pad algoritme maakt gebruik van een graf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme is een A* algoritme waarbij de Manhattan heuristiek en een kost wordt gebruikt.
-De heuristiek is de verwachte afstand tot de "finishTile" en is een onderschatting, er wordt dus geen rekening gehouden met muren. De "finishTile" krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristiek waarde gekregen hebben.
+Het kortste pad algoritme maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
+De heuristiek is de verwachte afstand tot de "finishTile" en is een onderschatting, er wordt dus geen rekening gehouden met muren. De "finishTile" krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
 De kost van een tegel is het werkelijke aantal tegels nodig om van de "startTile" tot de "finishTile" te komen.
 
-In de begin situatie zijn alle tegels ongemarkeerd en de kost van de "startTile" wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
+In de beginsituatie zijn alle tegels ongemarkeerd en de kost van de "startTile" wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
 
-Speciaal voor dit algoritme zijn dus 3 extra velden aan de klasse Tile toegevoegd, nl. een booleanveld isMarked die bijhoudt of dit vakje al “onderzocht” is of niet, een veld dat de heuristiekwaarde bijhoudt en een veld dat de kost van de tile bijhoudt.
+Speciaal voor dit algoritme zijn dus 3 extra velden aan de klasse Tile toegevoegd, nl. een booleanveld isMarked dat bijhoudt of dit vakje al “onderzocht” is, een veld dat de heuristiekwaarde bijhoudt en een veld dat de kost van de tile bijhoudt.
 
 
 % == SOFTWARE == %
