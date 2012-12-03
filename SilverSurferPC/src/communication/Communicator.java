@@ -85,11 +85,7 @@ public class Communicator {
 			if(robotConnected) {
 				dos.writeInt(command);
 				dos.flush();
-				if(command == Command.checkObstructionsAndSetTile) {
-					buzy = true;
-					while(buzy)
-						Thread.sleep(100);
-				}
+				buzy = true;
 			}
 			if(command == Command.SLOW_SPEED)
 				simulationPilot.setSpeed(194);
@@ -132,6 +128,10 @@ public class Communicator {
 					simulationPilot.rotate(-1);
 					amount = amount + 1;
 				}
+			}
+			if(robotConnected) {
+				while(buzy)
+					Thread.sleep(100);
 			}
 		} catch(Exception e) {
 			System.out.println("Error in Communicator.sendCommand(int command)!");
@@ -227,8 +227,8 @@ public class Communicator {
 		if(mustAllign){
 			tilesRidden++;
 			if(getTilesRidden() == getTilesBeforeAllign()){
-				sendCommand(7);
-				sendCommand(25*100 + Command.AUTOMATIC_MOVE_FORWARD);
+				sendCommand(Command.ALIGN_PERPENDICULAR);
+				sendCommand(24*100 + Command.AUTOMATIC_MOVE_FORWARD);
 				setTilesRidden(0);
 			}	
 		}

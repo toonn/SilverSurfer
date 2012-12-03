@@ -72,35 +72,44 @@ public class CommandUnit {
                     break;
                 case (Command.SLOW_SPEED):
                     CU.setSpeed(1);
+                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.NORMAL_SPEED):
                     CU.setSpeed(2);
+                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.FAST_SPEED):
                     CU.setSpeed(3);
+            		CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.VERY_FAST_SPEED):
                     CU.setSpeed(4);
+            		CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.ALIGN_PERPENDICULAR):
                     CU.updateCoordinates(15, 0);
                     CU.alignOnWhiteLine(CU.lightSensor.getLightValue() + 4);
                     CU.waiting();
+                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.ALIGN_WALL):
                     CU.alignOnWalls();
                     CU.waiting();
+                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.LOOK_AROUND):
                     CU.lookAround();
                     CU.waiting();
+                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.PLAY_SONG):
     				SongThread ST = new SongThread();
     				ST.start();
+                	CU.sendStringToUnit("[DON]");
     				break;
                 case (Command.checkObstructionsAndSetTile):
                     CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
+            		CU.sendStringToUnit("[DON]");
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
@@ -114,6 +123,7 @@ public class CommandUnit {
                         CU.turnAngle((int)Math.round(ANGLE_COEF*(input-Command.AUTOMATIC_TURN_ANGLE)/100/360));
                         CU.waiting();
                     }
+                	CU.sendStringToUnit("[DON]");
                     break;
                 }
             } catch (Exception e) {
@@ -131,7 +141,7 @@ public class CommandUnit {
         Motor.B.stop();
     }
 
-    public int getSpeed(int speed) {
+    public int getSpeed() {
         if (NORMAL_SPEED == 360)
             return 4;
         else if (NORMAL_SPEED == 270)
@@ -206,6 +216,8 @@ public class CommandUnit {
     }
     
     private int readBarcode() {
+    	int backupSpeed = getSpeed();
+    	setSpeed(1);
     	String result = "";
     	if(lightSensor.getLightValue() < 40) {
         	moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
@@ -218,6 +230,8 @@ public class CommandUnit {
         	}
         	moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
     	}
+    	alignOnWalls();
+    	setSpeed(backupSpeed);
     	Byte byteResult = Byte.valueOf(result, 2);
     	return Integer.valueOf(byteResult.intValue());
     }
@@ -241,13 +255,13 @@ public class CommandUnit {
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
 		
-		try {
-			Thread.sleep(300);
-		} catch(Exception e) {
-        	System.out.println("Error in CommandUnit.moveForwardWithoutBarcode(int angle)!");
-		}
-		
 		WLT.setQuit(true);
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
+		moveForwardWithoutBarcode((int)Math.round(3*LENGTH_COEF));
 
 		while(lightSensor.getLightValue() < treshold)
 			turnAngle(-3);
@@ -268,12 +282,12 @@ public class CommandUnit {
     	
     	turnAngle((int)ANGLE_COEF/4);
     	firstUSRead = ultrasonicSensor.getDistance();
-    	if (firstUSRead < 30) {
+    	if (firstUSRead < 28) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*LENGTH_COEF));
         	turnAngle(-(int)ANGLE_COEF/4);
         	turnAngle(-(int)ANGLE_COEF/4);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 30)
+    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 28)
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
     		turnAngle((int)ANGLE_COEF/4);
     	}
@@ -281,7 +295,7 @@ public class CommandUnit {
         	turnAngle(-(int)ANGLE_COEF/4);
     		turnAngle(-(int)ANGLE_COEF/4);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 30) {
+    		if (secondUSRead < 28) {
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
         		turnAngle((int)ANGLE_COEF/4);
     		}

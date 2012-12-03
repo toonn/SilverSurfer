@@ -194,7 +194,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 	@Override
 	protected void paintComponent(Graphics graph) {
-		
+
 		paintPathComponent(graph);
 		//		paintGridComponent(graph);
 		paintWallComponent(graph);

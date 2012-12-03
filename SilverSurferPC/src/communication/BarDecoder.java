@@ -39,17 +39,17 @@ public class BarDecoder {
 				case(50):
 					Thread.sleep(5000);
 					break;
-				case(25):    
+				case(25):  //25   
 					SilverSurferGUI.changeSpeed(1);
 	            	break;
-				case(38):    
+				case(38):	//38
 					SilverSurferGUI.changeSpeed(1);
 	            	break;
-				case(37):
-					SilverSurferGUI.changeSpeed(4);
+				case(37):	//37
+					SilverSurferGUI.changeSpeed(3);
 	            	break;
-				case(41):
-					SilverSurferGUI.changeSpeed(4);
+				case(41):	//41
+					SilverSurferGUI.changeSpeed(3);
 	            	break;
 				case(13):            
 					//TODO: start

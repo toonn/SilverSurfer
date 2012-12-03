@@ -31,7 +31,7 @@ public class SimulationPilot {
 	/**
 	 * waarde die afhangt van de robot!
 	 */
-	private final double detectionDistanceUltrasonicSensorRobot = 30;
+	private final double detectionDistanceUltrasonicSensorRobot = 28;
 
 	public SimulationPilot() {
 		SSG.getSimulationPanel().setRobotLocation(
@@ -303,7 +303,10 @@ public class SimulationPilot {
 				i = distanceToGo;
 			}	
 			try {
-				Thread.sleep(speed/((int) Math.ceil(Math.abs(distance))));
+				if(getSSG().getCommunicator().getRobotConnected())
+					Thread.sleep(speed/((int) Math.ceil(Math.abs(distance))));
+				else
+					Thread.sleep(10);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -344,11 +347,6 @@ public class SimulationPilot {
 
 			}
 			rotate(90);
-			try {
-				//TODO gelijk gesteld worden aan tijd da de robot erover doet
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
 		}
 		
 		if(checkForObstruction()){
@@ -412,12 +410,6 @@ public class SimulationPilot {
 				if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
 				{ SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);}
 		}
-			
-			try {
-				//TODO gelijk gesteld worden aan tijd da de robot erover doet
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
 	}
 
 	public void addWall() {
@@ -491,7 +483,10 @@ public class SimulationPilot {
 
 			try 
 			{
-				Thread.sleep(speed/5);
+				if(getSSG().getCommunicator().getRobotConnected())
+					Thread.sleep(speed/5);
+				else
+					Thread.sleep(4);
 			}
 			catch (InterruptedException e) 
 			{
@@ -853,34 +848,37 @@ public class SimulationPilot {
 	}
 
 	public void allignOnWhiteLine() {
-		Orientation orientation = Orientation.calculateOrientation(
-				getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
-				getAlpha(), sizeTile());
+		if(getSSG().getCommunicator().getRobotConnected()) {
+			Orientation orientation = Orientation.calculateOrientation(
+					getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
+					getAlpha(), sizeTile());
 
-		while (!pointOnEdge(getLightsensorPositionX(),
-				getLightsensorPositionY())) {
-			travel(1);
-		}
+			while (!pointOnEdge(getLightsensorPositionX(),
+					getLightsensorPositionY())) {
+				travel(1);	
+			}
 
-		travel(6);
+			travel(5);
 		
-		while (!pointOnEdge(getLightsensorPositionX(),
-				getLightsensorPositionY())){
-			rotate(-1);
-		}
+			while (!pointOnEdge(getLightsensorPositionX(),
+					getLightsensorPositionY())){
+				rotate(-1);
+			}
 		
-		rotate(90);
+			rotate(90);
 		
-		int i =0;
+			int i =0;
 		
-		while(! pointOnEdge(getLightsensorPositionX(),
-				getLightsensorPositionY())){
-			rotate(1);
-			i++;
-		}
+			while(! pointOnEdge(getLightsensorPositionX(),
+					getLightsensorPositionY())){
+				rotate(1);
+				i++;
+			}
 
-		rotate(-(90+i)/2);
-		
+			rotate(-(90+i)/2);
+		}
+		else
+			travel(16);
 	}
 
 	//checkt deze afstand ook en doet hetzelfde (alleen als de afstand kleiner is dan 30 en niet tussen 22 en 24 want da zou al goe genoeg zijn), dan terug 90 graden naar rechts zodat em zoals int begin staat. Als er alleen links een muur staat, doet em dus niks rechts en dan links wat hem anders eerst rechts zou doen (dus < 30 enige voorwaarde).
@@ -913,10 +911,4 @@ public class SimulationPilot {
 	public double scalingfactor(){
 		return getSSG().getSimulationPanel().getScalingfactor();
 	}
-
-	public static void main(String[] args) {
-		System.out.println(1f/4f);
-	}
-	
 }
-
