@@ -2,12 +2,12 @@ package gui;
 
 import simulator.SimulationJPanel;
 
-public class shiftThread extends Thread {
+public class ShiftThread extends Thread {
 	private SimulationJPanel simulationPanel;
 	private boolean horizontal = false;
 	private int shift = 0;
 	
-	public shiftThread(String str) {
+	public ShiftThread(String str) {
 		super(str);
 	}
 	

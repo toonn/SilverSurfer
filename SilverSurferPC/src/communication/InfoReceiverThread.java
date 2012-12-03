@@ -76,8 +76,9 @@ public class InfoReceiverThread extends Thread {
 					statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
 					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().setCurrentTileCoordinatesRobot(statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteX(), statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteY());	
 					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().checkForObstructionAndSetTile();
-					statusInfoBuffer.getSSG().getCommunicator().setBuzy(false);
 				}
+				else if(a.startsWith("[DON]"))
+					statusInfoBuffer.getSSG().getCommunicator().setBuzy(false);
 			} catch (Exception e) {
 				System.out.println("Error in InfoReceiverThread.run()!");
 				e.printStackTrace();
