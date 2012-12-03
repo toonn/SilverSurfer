@@ -381,7 +381,7 @@ De simulator kan gebruikt worden om de software op te testen zonder telkens op d
 % == software design == %
 \subsection{Software ontwerp} % 3 ?
 \label{ssec:Sdesign}
-Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren \ref{fig:klasDiaNXT} en \ref{fig:klasDiaPC} tonen een klassendiagram.\\
+Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur \ref{fig:klasDia} toont het klassendiagram.\\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
 
 
@@ -396,20 +396,12 @@ Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction
 %figuur klassendiagram PC
 \begin{figure}[tbp]
 \begin{center}
-    \includegraphics[width=0.8\textwidth]{KlassendiagramPC}
-    \caption{Klassendiagram van de software die op de PC loopt}
-    \label{fig:klasDiaPC}
+    \includegraphics[width=0.8\textwidth]{Klassendiagram}
+    \caption{Klassendiagram van het project}
+    \label{fig:klasDia}
 \end{center}
 \end{figure}
 
-%figuur klassendiagram NXT
-\begin{figure}[tbp]
-\begin{center}
-    \includegraphics[width=0.8\textwidth]{KlassendiagramNXT}
-    \caption{Klassendiagram van de software die op de robot loopt}
-	\label{fig:klasDiaNXT}
-\end{center}
-\end{figure}
 
 % == commando's == %
 \subsection{Het doorgeven van commando's} % 3 ok!
@@ -491,16 +483,15 @@ De simulator zelf bestaat uit zeven klassen:
 \begin{itemize}
 \item \textit{Wall:} tekent de muren van het doolhof.
 \item \textit{State:} wordt gebruikt om te zeggen of iets horizontaal of verticaal moet staan.
-\item \textit{SimulationSensorData}
+\item \textit{SimulationSensorData: }
 \item \textit{SimulationPilot:} houdt de positie en de richting van de 'robot' bij.
 \item \textit{SimulationPanel:} tekent de baan van de 'robot' in het tekenpaneel.
-\item \textit{GridDrawer:} zet het grid op.
 \item \textit{Triangle:} berekent de hoekpunten van de driehoek die de 'robot' voorstelt.
 \item \textit{ExtMath:} doet enkele berekeningen.
-\item \textit{Bag:$^{3}$ } een geheugen opslagplaats waar dubbels in worden opgeslagen.
+\item \textit{Bag:\cite{Bag.java} } een geheugen opslagplaats waar dubbels in worden opgeslagen.
 \end{itemize}
 
-Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De klasse \textit{GridDrawer} voegt hier een grid aan toe. De roosters hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
+Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De roosters op het achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
 Wanneer de 'robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige orientatie van de 'robot' wordt bovenaan het simulatorpaneel in de GUI weergegeven.
 
 % == BESLUIT == %
@@ -632,6 +623,10 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 
 \bibitem{leJOS}
 \textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+
+\bibitem{Bag.java}
+\textit{Bag.java}: Voor meer documentatie, zie naar http://algs4.cs.princeton.edu/13stacks. \\
+Section 1.3 of "Algorithms, 4th Edition" door Robert Sedgewick en Kevin Wayne.
 
 \end{thebibliography}
 
