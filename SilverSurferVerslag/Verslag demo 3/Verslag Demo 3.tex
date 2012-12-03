@@ -23,10 +23,6 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{subcaption}
-\usepackage{pgf,pgfplots}
-
-\usetikzlibrary{fit,calc}
-\usepgfplotslibrary{external}
 
 \begin{document}
 
@@ -43,14 +39,14 @@
 
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
-\label{ssec:abstr} % 3 ok
+\label{ssec:abstr} % 3 ?
 Het P\&O-project bestaat erin een robot autonoom een doolhof te laten verkennen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf. De robot wordt voorzien van een lichtsensor en een ultrasone sensor. Deze staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De aansturing van de robot gebeurt via bluetoothverbinding. Een Grafische User Interface (GUI) maakt deze aansturing op een gebruiksvriendelijke manier mogelijk. De GUI geeft de baan van de robot  weer. Ook een historiek van de sensorwaarden wordt weergegeven in de GUI.
 
-De robot kan zich autonoom door een doolhof voortbewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map van het doolhof op. Op elke nieuwe tegel kijkt de robot rond en geeft de gedetecteerde muren door. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar het 'checkpoint' en vervolgens naar de 'finish' te bepalen. Het checkpoint en de finish worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
+De robot kan zich autonoom door een doolhof voortbewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map op van de doolhof. Op elke nieuwe tegel kijkt de robot rond en geeft de gedetecteerde muren door. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish te bepalen. De finish wordt aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
 
 Om de afwijking op de aansturing te minimaliseren, ori\"enteert de robot zich regelmatig op een witte lijn. Zo blijft de robot steeds zo dicht mogelijk bij het midden van de tegel.
 
-Een computerprogramma simuleert de werking van de robot. Het is voor de simulator mogelijk door een virtuele doolhof te rijden en deze op gelijkaardige wijze te verkennen. De sensorwaarden worden gesimuleerd, met een afwijking om de werkelijke robot zo goed mogelijk te benaderen. Verder worden dezelfde algoritmes als voor de robot gebruikt. Dit laat toe de algoritmes te testen zonder de robot te gebruiken.
+Een computerprogramma simuleert de werking van de robot. Het is voor de simulator mogelijk door een virtuele doolhof te rijden en deze op gelijkaardige wijze te verkennen. De sensorwaarden worden gesimuleerd, met een afwijking om de werkelijke robot zo goed mogelijk te benaderen, maar verder worden dezelfde algoritmes gebruikt. Dit laat toe de algoritmes te testen zonder de robot hiervoor te gebruiken.
 
 \end{abstract}
 
@@ -68,15 +64,15 @@ Een computerprogramma simuleert de werking van de robot. Het is voor de simulato
 \newpage 
 
 % == INLEIDING == %
-\section{Inleiding} % 3 ok
+\section{Inleiding} % 3 ok!
 \label{ssec:inl}
 In het kader van het vak 'Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk volledig autonoom een doolhof kunnen verkennen.\\
-Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom door een doolhof voortbewegen en hij kan deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar de barcode met waarde 'checkpoint' en rijdt vandaar in hoge snelheid naar de barcode met waarde 'finish'.
+Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom voortbewegen. Wanneer de robot zich in een doolhof voortbeweegt, kan hij deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar zijn beginpositie en rijdt hier in hoge snelheid naartoe.
 
 % == BOUW == %
 \section{Bouw van de robot} % 3 ok
 \label{sec:bouw}
-LEGO Mindstorms\^{1} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
+LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
 
 % == fysieke bouw == %
 \subsection{Fysieke bouw} % 3 ok
@@ -166,7 +162,7 @@ Uit deze test blijkt bovendien dat de robot een afwijking naar links heeft wanne
 
 \subsubsection{Volledig rond de as draaien: bepalen van y} % 3 te weinig meetwaarden
 \label{ssec:calibMy}
-De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 180\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
+De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 360\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
 Een schatting voor $y$ via de diameter van het wiel, met $as_{robot}$ (afstand tussen beide wielen) en $diameter$ in centimeter:
 
 \begin{equation*}
@@ -174,10 +170,12 @@ y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 \end{equation*}
 
 De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ graden in tegengestelde richting te laten draaien. $y$ wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
-% ONTBREEKT: y0 + afwijking op 180°; y1 + afwijking; y2 + afwijking + ...
+% ONTBREEKT: y0 + afwijking op 360°; y1 + afwijking; y2 + afwijking + ...
 
-Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'en\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
+
+Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'e\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
 % ONTBREEKT: MEETWAARDEN VAN 1x180° ter vergelijking
+
 
 % boxplots calibratie motoren
 \begin{figure}
@@ -195,7 +193,7 @@ Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de in
         \begin{subfigure}[h]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{boxMgraden4x90}
-                \caption{Afwijking op $180 \degree$}
+                \caption{Afwijking op $360 \degree$}
         \end{subfigure}
  \caption{Boxplots calibratie motoren.}
 \label{fig:calibM}
@@ -316,19 +314,19 @@ De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde
 Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoeren.
 
 % == veelhoek == %
-\subsection{Het rijden van een veelhoek} % 3 ?
-\label{ssec:algoVeelH}
-De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is. 
-
-\lstset{frame=single, language=Java, caption=Veelhoek algoritme (pseudocode),
-    	label=code:algoVeelH, numbers=left, numberstyle=\footnotesize,
-		basicstyle=\sffamily, numbersep=5pt}
-\begin{lstlisting}
-Angle = (360.0/amtOfAngles)*100
-Voor i van 0 tot amtOfAngles
-	Beweeg lengthInCM vooruit
-	Draai angle
-\end{lstlisting}
+%\subsection{Het rijden van een veelhoek} % 3 ?
+%\label{ssec:algoVeelH}
+%De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van %de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, %draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de %volledige veelhoek gereden is. 
+%
+%\lstset{frame=single, language=Java, caption=Veelhoek algoritme (pseudocode),
+%   	label=code:algoVeelH, numbers=left, numberstyle=\footnotesize,
+%		basicstyle=\sffamily, numbersep=5pt}
+%\begin{lstlisting}
+%Angle = (360.0/amtOfAngles)*100
+%Voor i van 0 tot amtOfAngles
+%	Beweeg lengthInCM vooruit
+%	Draai angle
+%\end{lstlisting}
 
 
 % == witte lijn == %
@@ -348,21 +346,31 @@ Draai naar links tot witte lijn EN verhoog AngleTurned.
 Draai AngleTurned/2 naar rechts.
 \end{lstlisting}
 
-% IETS OVER TESTRESULTATEN + NAUWKEURIGHEID
+Bij demo 3 is er iets veranderd aan het algoritme. Tijdens het testen zagen we dat als er een zwarte lijn op een witte streep stond (scheiding van twee tegels die tegen elkaar worden gezet), dat de robot zich niet loodrecht kon zetten op de witte lijn. Om dit tegen te gaan is ervoor gezorgd dat als de robot een witte lijn detecteert, hij er eerst helemaal overgaat en dan pas draait om zich loodrecht op de witte lijnen te plaatsen. Het resultaat was dat de robot zich veel beter recht zette op de witte lijn bij het testen.\\
 
 Alternatief is het mogelijk te corrigeren op de muren, maar dan moet de robot zicht bevinden op een tegel die muren aan beide kanten bevat.
 
 
-% == kortste pad == %
-\subsection{Het vinden van het kortste pad} % 3 ?
-\label{ssec:algoKortsteP}
-Alvorens de robot het kortste pad tussen twee punten bepaalt, dient het hele doolhof gekend te zijn. Dit verkennen doet de robot autonoom. Elke tegel die de robot reeds passeerde, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht.
-% HOE GEMARKEERD? MSS BETER EEN LIJST VAN NOG NIET BEKEKEN TEGELS?
+% == onderzoeken van het doolhof == %
+\subsection{Onderzoeken van het doolhof} % 3 ?
+\label{ssec:algoOnderzDoolhof}
+Alvorens de robot het kortste pad tussen twee punten bepaalt, dient het hele doolhof gekend te zijn. Dit verkennen doet de robot autonoom. Elke tegel die de robot reeds passeerde, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
+
 Bij elke tegel onthoudt de robot alle uitwegen. Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden.
 Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof de 'finish'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.
-% NOG NIET GENOEG UITLEG OVER HET ALGORITME ZELF
 
-Het kortste pad algoritme maakt gebruik van een graf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme gebruikt de Manhattanafstand als heuristiek en de afgelegde afstand als kost.
+% == het kortste pad == %
+\subsection{Het vinden van het kortste pad} % ?
+\label{ssec:AlgoKortsteP}
+
+Het kortste pad algoritme maakt gebruik van een graf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme is een A* algoritme waarbij de Manhattan heuristiek en een kost wordt gebruikt.
+De heuristiek is de verwachte afstand tot de "finishTile" en is een onderschatting, er wordt dus geen rekening gehouden met muren. De "finishTile" krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristiek waarde gekregen hebben.
+De kost van een tegel is het werkelijke aantal tegels nodig om van de "startTile" tot de "finishTile" te komen.
+
+In de begin situatie zijn alle tegels ongemarkeerd en de kost van de "startTile" wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
+
+Speciaal voor dit algoritme zijn dus 3 extra velden aan de klasse Tile toegevoegd, nl. een booleanveld isMarked die bijhoudt of dit vakje al “onderzocht” is of niet, een veld dat de heuristiekwaarde bijhoudt en een veld dat de kost van de tile bijhoudt.
+
 
 % == SOFTWARE == %
 \section{Software} % 3 ?
@@ -373,12 +381,14 @@ De simulator kan gebruikt worden om de software op te testen zonder telkens op d
 % == software design == %
 \subsection{Software ontwerp} % 3 ?
 \label{ssec:Sdesign}
-Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren 4 en 5 tonen een klassendiagram.\\
+Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren \ref{fig:klasDiaNXT} en \ref{fig:klasDiaPC} tonen een klassendiagram.\\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
 
-Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden. Aan deze \textit{UnitCommunicator} is een object van de subklassen \textit{RobotCommunicator} of \textit{SimulatorCommunicator}  toegekend. Zo worden de commands dynamisch naar de juiste unit gestuurd: de \textit{RobotCommunicator} communiceert met het NXT-Project, de \textit{SimulatorCommunicator} met de simulator klassen.
 
+Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. 
+De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden. Aan deze \textit{UnitCommunicator} is een object van de subklassen \textit{RobotCommunicator} of \textit{SimulatorCommunicator}  toegekend. Zo worden de commands dynamisch naar de juiste unit gestuurd: de \textit{RobotCommunicator} communiceert met het NXT-Project, de \textit{SimulatorCommunicator} met de simulator klassen.\\
 Andere klassen van de package \textit{gui} zijn: \textit{MouseClickThread} , \textit{PolygonDrawThread}, \textit{RunForwardThread} en \textit{TurnAngleThread}. De vier Threads zorgen ervoor dat het tekenen van de baan van de robot de rest van het programma niet stillegt. \\
+
 Het package \textit{simulator} implementeert de functionaliteit van de simulator. \\
 Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction, Barcode, ...} die elementen uit de wereld van een robot voorstellen. Een tile stemt overeen met \'e\'en tegel van het doolhof en heeft vier edges: \'e\'en voor elke zijde. Die edges houden de twee aanliggende tegels bij en eventueel een Obstruction, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Het houdt een begin-tegel bij en en huidige-tegel. Het biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden die dynamisch kan aangevuld worden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met het doolhof dat in het bestand gedefinieerd wordt.
 
@@ -409,7 +419,8 @@ De \textit{UnitCommunicator} stuurt de bekomen integer door naar ofwel de \texti
 
 \subsubsection{De bewerking op de integers} % 3 ok!
 \label{sssec:integer}
-Integers stellen de commando's voor. In twee gevallen is echter meer informatie nodig: om de robot een bepaalde afstand te laten afleggen en om de robot een bepaald aantal graden te laten draaien. Deze afstand en dit aantal graden moet mee doorgegeven worden met de integer. De eenheden waarin de afstand en de hoek worden doorgestuurd zijn respectievelijk cm en graden.\\\\
+Integers stellen de commando's voor. In twee gevallen is echter meer informatie nodig: om de robot een bepaalde afstand te laten afleggen en om de robot een bepaald aantal graden te laten draaien. Deze afstand en dit aantal graden moet mee doorgegeven worden met de integer. De eenheden waarin de afstand en de hoek worden doorgestuurd zijn respectievelijk cm en graden.
+
 De doorgegeven integer wordt als volgt opgebouwd:
 
 \begin{itemize}
@@ -430,26 +441,9 @@ Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek
 % == gui == %
 \subsection{GUI} % 3 ?
 \label{ssec:GUI}
-De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat. In deze sectie wordt verder enkel de robot vermeld. Dezelfde functionaliteiten gelden echter ook voor de simulator.
+De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat.\\
 
-%overzicht functionaliteiten
-\begin{itemize}
-\item \textit{onderste venster:} debuginformatie van de robot.
-\item \textit{bovenste venster:} tekent de baan van de robot. In latere demo's geeft dit venster ook de doolhof weer.
-\item \textit{bluetooth connectieknop:} zet de verbinding aan of uit. Het icoontje ernaast verandert naargelang de status van de verbinding.
-\item \textit{veelhoekinstellingen:} stellen de parameters van de veelhoek in. De 'Execute'-knop doet de robot een veelhoek rijden.
-\item \textit{pijltjestoetsen:} besturen de robot manueel.
-\item \textit{snelheidsinstellingen:} hiermee kan de snelheid van de robot aangepast worden.
-\item \textit{clearknop:} wist de baan van de robot.
-\item \textit{moveknop:} rij een bepaalde afstand vooruit of achteruit.
-\item \textit{turnknop:} draai 90 graden naar rechts.
-\item \textit{menubar:} submenu 'File' biedt de mogelijkheid om een doolhof-bestand te selecteren en in te lezen. Submenu 'Bluetooth' heeft dezelfde functionaliteit als de bluetooth-knop.
-\end{itemize}
-
-Twee parameters bepalen de veelhoek die de robot rijdt: het aantal hoeken van de figuur en de lengte van de zijden.
-Een JSlider laat toe het aantal hoeken in te geven. Dit geeft de mogelijkheden overzichtelijk weer. Bovendien kan zo het bereik beperkt worden tot 30. Bij een groter aantal hoeken, streeft een veelhoek immers naar een cirkel.
-Het bereik van de lengte van de zijden is groter: van \'e\'en centimeter tot een onbeperkte grootte. Hierdoor is het een betere optie om voor JSpinner te kiezen. Met de clearknop kan men het venster weer leeg maken. Hierbij wordt de positie van de robot behouden.
-Voor de moveknop is er een Jslider voorzien net zoals voor de polygonDraw. Hiermee kan de afstand ingesteld worden dat de robot naar achter of naar voor moet rijden.
+Voor visualisatie van de sensoren zijn er grafieken die de waarden weergeven. De robot zelf op de simulator heeft een blauwe straal die aangeeft of er een muur voor hem staat of niet. Daarnaast zijn er ook nog knoppen die bepaalde functies uitvoeren, zoals "turn left/right", "look around" en "Align on the white line/ walls".
 
 %figuur gui
 \begin{figure}[tbp]
@@ -470,6 +464,67 @@ De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{c
 % == robot == %
 \subsection{Robot} % 3 ?
 \label{ssec:robot}
+Het project op de NXT-brick bestaat uit \'e\'en hoofdklasse, \'e\'en commandoklasse en enkele threadklassen. Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn 'datastreams' en start hij een \textit{sensorthread} op.
+
+De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes geven een resultaat mee aan de computer. Dit gebeurt door ze op een datastream te zetten, voorafgaand door een tag (bijvoorbeeld [US] voor ultrasonic sensor data).
+
+Enkele belangrijke methodes:
+\begin{itemize}
+\item \textit{updatecoordinates:} de robot houd zijn positie bij. bij elke beweging zullen de coordinaten worden geupdated.
+\item \textit{updateStatus:} stuur alle statusgegevens (lichtsensor, coordinaten, ...) naar de computer.
+\item \textit{main:} wacht tot de computer een commando geeft en voer dit uit.
+\end{itemize}
+
+De belangrijkste commandos zijn:
+- AlignPerpendicular (zet zich goed op de witte lijn, dit commando roept de methode alignonwhiteline in de klasse automatic op (zie onder))
+- AlignWall (zet zich goed tussen 2 muren, dit commando roept de methode alignWall in klasse automatic op (zie onder))
+- CloseConnection (sluit de connectie door de sensorthread the sluiten, de datastreams af te sluiten, de connectie te verbreken en het programma te laten eindigen)
+- lookAround (kijkt rond voor openingen/muren, roept methode lookaround in klasse automatic op)
+- playSong (maakt een songthread aan die een liedje afspeelt-
+- AutomaticMoveForward en AutomaticTurnAngle
+De laatste 2 commandos krijgen als input een invoer in cm of graden (naargelang het command), dit vermenigvuldigd met 100 en daarbij opgeteld de int van het juiste commando.
+Dit wordt terug omgezet naar de juiste invoer in cm of graden, en vervolgens naar een invoer in graden die de wielen moeten draaien om de juiste hoek of afstand af te leggen.
+Deze input wordt meegegeven aan een methode in autoamtic (zie onder).
+
+De robot heeft een state die aangeeft wat het momenteel aan het doen is.
+De mogelijkheden zijn:
+- Driving forward (naar voor rijden zolang de robot in deze state is-
+- Driving forward left (linksvoor)
+- Driving forward right (rechtsvoor)
+- Driving backward
+- Driving backward left
+- Driving backward right
+- Turn left
+- Turn right
+- Waiting (wachten tot er een nieuwe state wordt gegeven)
+- Automatic (in deze state zal de robot een bepaalde methode met bepaalde parameters uitvoeren die hij meekreeg van de main klasse, na de uitvoering zal de state terug naar waiting gaan)
+
+De klasse automatic is de meest belangrijke van de states. De gebruikte methodes hierin zijn: 
+- beweeg naar voor met barcodedetectie
+- beweeg naar voor zonder barcodedetectie
+- draai
+- zet loodrecht op witte lijn
+- zet halverwege tussen 2 muren
+- kijk rond en zoek naar muren/openingen
+- lees de barcode
+de methode "beweeg x cm naar voor met barcodedetectie" is de standaardbeweegmethode, de andere wordt alleen gebruikt bij het lezen van de barcode zelf (zie verder).
+De beweeg en draai methodes krijgen een input van x in graden die het wiel moet draaien. Deze graden worden berekent door de main klasse (zie hoger).
+De methode "zet halverwege tussen 2 muren" zal een boolean teruggeven die zegt of het gelukt is.
+De methode "lees de barcode" zal de barcode lezen door 2 cm naar voor te gaan, de lichtsensorwaarde te lezen, deze toe te voegen aan een string, en dan de volgende bar lezen.
+Het resultaat wordt teruggegeven aan de computer.
+
+Tenslotte zijn er nog enkele thread:
+- SensorThread
+- BarcodeThread
+- WhiteLineThread
+- Songthread (zie boven)
+De sensorthread zal elke 50 miliseconden alle data van zijn sensoren opslagen en deze naar de computer sturen.
+Dit gebeurt vaak genoeg voor up to date info maar niet teveel zodat we de stream niet overflowen.
+De barcodethread wordt gemaakt bij een moveforward commando, deze zal de beweging stoppen wanneer een zwarte lijn wordt gedetecteerd.
+De moveforward zal dan de methode readbarcode oproepen, die de barcode leest.
+De Whitelinethread zal naar voor bewegen tot hij wordt gestopt door de methode alignonwhiteline wanneer deze een witte lijn detecteerd.
+
+
 Een \textit{Finite State Machine} geeft de robot een concreet uitvoeringsschema. Een object van de klasse \textit{CommandUnit} houdt een currentState bij - een object van de superklasse \textit{State}. Negen subklassen verzorgen het nodige onderscheid: \textit{Waiting}, \textit{DrivingBackward}, \textit{TurnLeft}, \textit{DrivingRightForward}, …  en \'e\'en speciale toestand: de klasse \textit{Automatic}. De \textit{CommandUnit} ontvangt commando's via bluetooth. De \textit{CommandUnit} wijzigt de currentState naar een nieuw object van een \textit{State}-subklasse. De constructoren van elke subklasse passen het gedrag van de motoren aan bij de overgang naar de bepaalde state.
 Bijvoorbeeld: De robot staat stil en zijn currentState is \textit{Waiting}.
 Als de gebruiker de robot voorwaarts wil laten gaan, drukt hij de up-toets in. De \textit{CommandUnit} wijzigt de currentState van de robot naar currentState.ForwardPressed(). Dit levert een currentState van het type \textit{DrivingForward} op. De robot beweegt voorwaarts.
@@ -492,6 +547,7 @@ De simulator zelf bestaat uit zeven klassen:
 \item \textit{GridDrawer:} zet het grid op.
 \item \textit{Triangle:} berekent de hoekpunten van de driehoek die de 'robot' voorstelt.
 \item \textit{ExtMath:} doet enkele berekeningen.
+\item \textit{Bag:$^{3}$ } een geheugen opslagplaats waar dubbels in worden opgeslagen.
 \end{itemize}
 
 Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De klasse \textit{GridDrawer} voegt hier een grid aan toe. De roosters hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
@@ -508,24 +564,27 @@ De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handm
 \newpage
 \makeappendix
 
-
 % == DEMO 1 == %
-\section{Demo 1} % 3 ok
+\section{Demo 1} % 3 ?
 \label{Asec:demo1}
-De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De robot kan een willekeurige veelhoek rijden en een simulator bootst de werking van de robot na.
+De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-
+keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software
+bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat
+uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en
+enkele klassen die de werking van de robot simuleren (simulator).
 
 % == resulaten == %
-\subsection{Resultaten} % 3 ok
+\subsection{Resultaten} % 3 ?
 \label{Assec:result1}
 Bij het rijden van de veelhoek had de robot een kleine afwijking. De afwijking werd groter bij grotere veelhoeken en meerdere hoeken om wille van de geaggregeerde fout.
 
 % == conclusies == %
-\subsection{Conclusies} % 3 ok
+\subsection{Conclusies} % 3 ?
 \label{Assec:conc1}
 Calibratie moet meer getest worden. De GUI kan gebruiksvriendelijker, ook moet het scherm van de simulator herschaald worden, zodat de lijn van simulator nog wordt weergegeven als de simulator van de robot uit het scherm gaat.
 
 % == aanpassingen == %
-\subsection{Oplijsting aanpassingen verslag} % 3 ok
+\subsection{Oplijsting aanpassingen verslag} % 3 ?
 \label{Assec:aanp1}
 Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 
@@ -542,26 +601,29 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 \item \textit{\ref{ssec:simulator} Simulator:} grid en triangle, virtuele doolhof.
 \end{itemize}
 
+
 % == DEMO 2 == %
-\section{Demo 2} % 3 ok
+\section{Demo 2} % 3 ?
 \label{Asec:demo2}
-De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.
+De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
 
 De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zich hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn. Het is bovendien mogelijk de robot zich in het midden van de tegel te laten zetten.
 
-% == resulaten == %
-\subsection{Resultaten} % 3 ok
+
+% == resulaten D2== %
+\subsection{Resultaten} % 3 ?
 \label{Assec:result2}
-Het verslag voor de tweede demonstratie bevatte enkele paragrafen die tegen het einde nog snel geschreven waren. Deze paragrafen waren van mindere kwaliteit. Ook sommige afbeeldingen werden verkeerd ingevoegd.
+Het verslag voor de tweede demonstratie bevatte enkele paragrafen die tegen het einde nog snel geschreven waren. Deze paragrafen waren van mindere kwaliteit. Ook sommige afbeeldingen werden verkeerd ingevoegd.\\
 
-Op de demonstratie reed de robot de eerste tegels zoals het hoorde. Ook het witte lijnalgoritme werd goed uitgevoerd. De sensorwaarden werden weergegeven in de GUI, zodat de bestuurder, die de robot en het doolhof niet zag, zich een beeld kon vormen van het doolhof. Op een gegeven moment gaf de bestuurder de robot opdracht zich midden op een tegel te zetten. Dit algoritme maakt gebruik van de muren rond de tegel. De robot bevond zich op dat ogenblik echter op een tegel die door geen enkele muur omsloten werd. De bestuurder had dit niet eerst nagekeken. Dit had als gevolg dat de robot helemaal scheef stond, zonder dat de bestuurder dit wist.
+Op de demonstratie reed de robot de eerste tegels zoals het hoorde. Ook het witte lijnalgoritme werd goed uitgevoerd. De sensorwaarden werden weergegeven in de GUI, zodat de bestuurder, die de robot en het doolhof niet zag, zich een beeld kon vormen van het doolhof. Op een gegeven moment gaf de bestuurder de robot opdracht zich midden op een tegel te zetten. Dit algoritme maakt gebruik van de muren rond de tegel. De robot bevond zich op dat ogenblik echter op een tegel die door geen enkele muur omsloten werd. De bestuurder had dit niet eerst nagekeken. Dit had als gevolg dat de robot helemaal scheef stond, zonder dat de bestuurder dit wist.\\
 
-De sensorwaarden werden niet gesimuleerd in de simulator. De simulator maakte in zijn algoritmes rechtstreeks gebruik van de virtuele doolhof. Robot en simulator maakten met andere woorden gebruik van andere algoritmes, wat niet het doel is van een simulator.
+De sensorwaarden werden niet gesimuleerd in de simulator. De simulator maakte in zijn algoritmes rechtstreeks gebruik van de virtuele doolhof. Robot en simulator maakten met andere woorden gebruik van andere algoritmes, wat niet het doel is van een simulator.\\
 
 De simulator kon wel door een virtuele doolhof manoeuvreren. Meestal 'botste' hij tegen de muren, maar soms reed hij toch door een muur.
 
-% == conclusies == %
-\subsection{Conclusies} % 3 ok
+
+% == conclusies D2== %
+\subsection{Conclusies} % 3 ?
 \label{Assec:conc2}
 Aan het verslag zou vroeger begonnen moeten worden zodat domme fouten vermeden kunnen worden.
 
@@ -569,35 +631,59 @@ De allign-algoritmes (op een witte lijn en in het midden van een tegel) werken e
 
 De simulator dient de sensorwaarden te simuleren en zou dezelfde algoritmes moeten gebruiken als de robot. Op deze manier kunnen de algoritmes getest worden zonder steeds op de robot te wachten.
 
-% == aanpassingen == %
-\subsection{Oplijsting aanpassingen verslag} % 3 ok
+
+% == aanpassingen D2== %
+\subsection{Oplijsting aanpassingen verslag} % 3 ?
 \label{Assec:aanp2}
 Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 
-% overzicht aangepaste secties
+% overzicht aangepaste secties D2
 \begin{itemize}
+
 \item \textit{\ref{ssec:abstr} Abstract:} aangepast.
-\item \textit{\ref{ssec:calibM} Calibratie van de motoren:} boxplots toegevoegd.
-\item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} boxplots toegevoegd.
-\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} boxplots toegevoegd.
-\item \textit{ Het rijden van een veelhoek:} niet van toepassing op demo 3.
+\item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} meetresultaten toegevoegd.
+\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} meetresultaten toegevoegd en aangepast.
+\item \textit{ Het rijden van een veelhoek:} er uitgehaald.
 \item \textit{\ref{ssec:algoWitteL} Het rechtzetten op een witte lijn:} aangepast.
-\item \textit{\ref{ssec:algoOnderzDoolhof} Doolhof verkennen:} nieuwe sectie.
-\item \textit{\ref{ssec:AlgoKortsteP}Kortste pad:} nieuwe sectie.
+\item \textit{\ref{ssec:algoOnderzDoolhof} Algoritme onderzoeken doolhof:} nieuwe sectie.
+\item \textit{\ref{ssec:AlgoKortsteP} Algoritme Kortste pad:} nieuwe sectie.
 \item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en packages.
 \item \textit{\ref{ssec:GUI} GUI:} aangepast.
 \item \textit{\ref{ssec:simulator} Simulator:} toevoegingen.
 \end{itemize}
 
-\newpage
-\section*{Referenties}
-\begin{enumerate}
+% == DEMO 3 == %
+%\section{Demo 3} % 3 ?
+%\label{Asec:demo3}
 
-\item \textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+% == resulaten D3 == %
+%\subsection{Resultaten} % 3 ?
+%\label{Assec:result3}
 
-\item \textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+% == conclusies D3== %
+%\subsection{Conclusies} % 3 ?
+%\label{Assec:conc3}
 
-\end{enumerate}
+% == aanpassingen D3== %
+%\subsection{Oplijsting aanpassingen verslag} % 3 ?
+%\label{Assec:aanp3}
+%Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
+
+% overzicht aangepaste secties
+%\begin{itemize}
+%\end{itemize}
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{mindstorms}
+\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+
+\bibitem{leJOS}
+\textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+
+\end{thebibliography}
 
 \end{document}
 
