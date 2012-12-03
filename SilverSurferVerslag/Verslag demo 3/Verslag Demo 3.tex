@@ -172,8 +172,10 @@ y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ graden in tegengestelde richting te laten draaien. $y$ wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
 % ONTBREEKT: y0 + afwijking op 360°; y1 + afwijking; y2 + afwijking + ...
 
-Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 360\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'en\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
-% ONTBREEKT: MEETWAARDEN VAN 1x360° ter vergelijking
+
+Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'e\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
+% ONTBREEKT: MEETWAARDEN VAN 1x180° ter vergelijking
+
 
 % boxplots calibratie motoren
 \begin{figure}
@@ -344,7 +346,7 @@ Draai naar links tot witte lijn EN verhoog AngleTurned.
 Draai AngleTurned/2 naar rechts.
 \end{lstlisting}
 
-Bij demo 3 is er iets veranderd aan het algoritme. Tijdens het testen zagen we dat als er een zwarte lijn op een witte streep stond (scheiding van twee tegels die tegen elkaar worden gezet), dat de robot zich niet loodrecht kon zetten op de witte lijn. Om dit tegen te gaan is ervoor gezord dat als de robot een witte lijn detecteerd, hij er eerst helemaal overgaat en dan pas draait om zich loodrecht op de witte lijnen te plaatsen. Het resultaat was dat de robot zich veel beter recht zette op de witte lijn bij het testen.\\
+Bij demo 3 is er iets veranderd aan het algoritme. Tijdens het testen zagen we dat als er een zwarte lijn op een witte streep stond (scheiding van twee tegels die tegen elkaar worden gezet), dat de robot zich niet loodrecht kon zetten op de witte lijn. Om dit tegen te gaan is ervoor gezorgd dat als de robot een witte lijn detecteert, hij er eerst helemaal overgaat en dan pas draait om zich loodrecht op de witte lijnen te plaatsen. Het resultaat was dat de robot zich veel beter recht zette op de witte lijn bij het testen.\\
 
 Alternatief is het mogelijk te corrigeren op de muren, maar dan moet de robot zicht bevinden op een tegel die muren aan beide kanten bevat.
 
@@ -495,6 +497,7 @@ De simulator zelf bestaat uit zeven klassen:
 \item \textit{GridDrawer:} zet het grid op.
 \item \textit{Triangle:} berekent de hoekpunten van de driehoek die de 'robot' voorstelt.
 \item \textit{ExtMath:} doet enkele berekeningen.
+\item \textit{Bag:$^{3}$ } een geheugen opslagplaats waar dubbels in worden opgeslagen.
 \end{itemize}
 
 Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De klasse \textit{GridDrawer} voegt hier een grid aan toe. De roosters hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
