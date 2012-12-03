@@ -358,8 +358,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				getMapGraphConstructed().getCurrentTile().setContent(simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent());
 				if((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent() != null){
 					addBarcode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).toString(), barcode);
-					BarDecoder dec = new BarDecoder(getSSG().getCommunicator());
-					dec.decode(15);
+					//BarDecoder dec = new BarDecoder(getSSG().getCommunicator());
+					//dec.decode(15);
 				}
 		
 		}
