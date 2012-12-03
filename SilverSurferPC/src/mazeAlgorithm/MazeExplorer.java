@@ -34,11 +34,14 @@ public class MazeExplorer {
 	 * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
 	 */
 	public void startExploringMaze(){
+		gui.getCommunicator().setTilesBeforeAllign(1);
+		gui.getCommunicator().mustAllign(true);
 		allTiles.add(startTile);
 		algorithm(startTile);
 		for(Object tile: allTiles){
 			((Tile) tile).setMarkingExploreMaze(false);
 		}
+		gui.getCommunicator().mustAllign(false);
 	}
 	
 	/**
