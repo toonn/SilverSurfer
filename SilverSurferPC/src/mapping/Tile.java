@@ -300,6 +300,19 @@ public class Tile{
 			
 			return neighbours;
 		}
+		
+		public ArrayList getAllNeighbours() {
+			ArrayList neighbours = new ArrayList(4);
+			for(Orientation orientation: Orientation.values()){
+					neighbours.add(this.getEdge(orientation).getNeighbour(this));
+			}
+			
+			return neighbours;
+		}
+		
+//		public boolean isReachableNeighbour(Tile tile){
+//			return getReachableNeighbours().contains(tile);
+//		}
 	
 	/**
 	 * Set the borders in each direction for this square.
@@ -384,7 +397,6 @@ public class Tile{
 			this.cost = cost;
 		}
 	}
-
 
 	@Override
 	public String toString() {

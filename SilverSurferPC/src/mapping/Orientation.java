@@ -33,6 +33,13 @@ public enum Orientation {
 		{
 			return 0;
 		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 0;
+		}
+		
 	},
 	EAST
 	{
@@ -67,6 +74,12 @@ public enum Orientation {
 		{
 			return 4;
 		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 1;
+		}
 	},
 	SOUTH
 	{
@@ -100,6 +113,12 @@ public enum Orientation {
 		{
 			return 3;
 		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 2;
+		}
 	},
 	WEST
 	{
@@ -132,6 +151,12 @@ public enum Orientation {
 		public final int getNumberOrientation()
 		{
 			return 1;
+		}
+		
+		@Override
+		public final int getNumberArray()
+		{
+			return 3;
 		}
 	};
 
@@ -206,11 +231,18 @@ public enum Orientation {
 		// implementation is orientation dependent
 		return -1;
 	}
+	
+	public int getNumberArray(){
+		
+		//implementation is orientation dependent
+		return -1;
+		
+	}
 
 	/**
 	 * Calculates the orientation of the edge you will cross first while moving in the direction alpha, starting from x,y.
 	 */
-	public static Orientation calculateOrientation(double x, double y, double alpha)
+	public static Orientation calculateOrientation(double x, double y, double alpha, double sizeTile)
 	{
 		// current temporary position; to check whether there are walls in the direction the robot is facing
 		double xTemp = x;
@@ -221,7 +253,7 @@ public enum Orientation {
 
 		int i = 1;
 
-		while(!(Math.abs(xTempPrev%40 - xTemp%40) > 5) && !(Math.abs(yTempPrev%40 - yTemp%40) > 5))
+		while(!(Math.abs(xTempPrev%sizeTile - xTemp%sizeTile) > 5) && !(Math.abs(yTempPrev%sizeTile - yTemp%sizeTile) > 5))
 		{
 			xTempPrev = xTemp;
 			yTempPrev = yTemp;
@@ -231,7 +263,7 @@ public enum Orientation {
 			i++;
 		}
 
-		return defineBorderCrossed(xTemp, yTemp, xTempPrev, yTempPrev);
+		return defineBorderCrossed(xTemp, yTemp, xTempPrev, yTempPrev, sizeTile);
 	}
 
 	/**
@@ -242,13 +274,15 @@ public enum Orientation {
 	 * @return
 	 */
 	public static Orientation defineBorderCrossed(double xTemp, double yTemp,
-			double xTempPrev, double yTempPrev) {
+			double xTempPrev, double yTempPrev, double sizeTile) {
 		Orientation oriTemp = null;
 
+		//TODO waarom 20 en 5 ?
+		
 		// you have crossed a horizontal border
-		if(Math.abs(yTempPrev%40 - yTemp%40) > 5)
+		if(Math.abs(yTempPrev%sizeTile - yTemp%sizeTile) > 5)
 		{
-			if(yTempPrev%40 < 20)
+			if(yTempPrev%sizeTile < sizeTile/2)
 			{
 				oriTemp = Orientation.NORTH;
 			}
@@ -259,9 +293,9 @@ public enum Orientation {
 			}
 		}
 		// you have crossed a vertical border
-		else if(Math.abs(xTempPrev%40 - xTemp%40) > 5)
+		else if(Math.abs(xTempPrev%sizeTile - xTemp%sizeTile) > 5)
 		{
-			if(xTempPrev%40 > 20) 
+			if(xTempPrev%sizeTile > sizeTile/2) 
 			{
 				oriTemp = Orientation.EAST;
 			}
@@ -302,4 +336,5 @@ public enum Orientation {
 		else
 			return WEST;
 	}
+	
 }

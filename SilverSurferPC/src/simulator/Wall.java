@@ -2,19 +2,17 @@ package simulator;
 
 import java.awt.Rectangle;
 
+import mapping.Orientation;
+
 public class Wall extends Rectangle {
 
     private State state;
     /**
-     * dit is de x positie van de rechthoek in het midden van de breedte aan het
-     * linkeruiteinde van de rechthoek als de wall horizontaal ligt, en boven
-     * aan het uiteinde als de wall verticaal staat.
+     * dit is de x positie van de linkerbovenhoek van de rechthoek
      */
     private double xPosition;
     /**
-     * dit is de y positie van de rechthoek in het midden van de breedte
-     * helemaal links aan het uiteinde als de wall horizontaal ligt, en boven
-     * aan het uiteinde als de wall verticaal staat.
+     * dit is de y positie van de linkerbovenhoek van de rechthoek
      */
     private double yPosition;
 
@@ -25,10 +23,10 @@ public class Wall extends Rectangle {
      * rechthoek te initialiseren de linkerbovenhoek meegeven dus dat wordt -1
      * voor x en -1 voor y als je 5 hebt wordt dit -2 enzovoort
      */
-    private static final int standardWidth = 3;
-    private static final int standardLength = 40;
+    private static int standardWidth = 3;
+    private static int standardLength = 40;
 
-    public Wall(State state, double xPosition, double yPosition) {
+    public Wall(State state, double xPosition, double yPosition, double scalingfactor) {
         super(standardWidth, standardLength);
         this.state = state;
         this.xPosition = xPosition;
@@ -36,21 +34,19 @@ public class Wall extends Rectangle {
         double x;
         double y;
         if (state == State.HORIZONTAL) {
-
-            setSize(standardLength, standardWidth);
-
-            x = xPosition;
-            y = yPosition - 1;
+            setSize((int) (standardLength * scalingfactor), (int) (standardWidth * scalingfactor));
         } else {
-            x = xPosition - 1;
-            y = yPosition;
+        	setSize((int) (standardWidth * scalingfactor), (int) (standardLength * scalingfactor));
         }
-        setLocation((int) x, (int) y);
+        setLocation((int) xPosition, (int) yPosition);
 
     }
 
     public State getState() {
         return state;
     }
-
+    
+    public static int getStandardWidth(){
+    	return standardWidth;
+    }
 }

@@ -23,6 +23,10 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{subcaption}
+\usepackage{pgf,pgfplots}
+
+\usetikzlibrary{fit,calc}
+\usepgfplotslibrary{external}
 
 \begin{document}
 
@@ -39,10 +43,14 @@
 
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
-\label{ssec:abstr} % 3 ?
-De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauwkeurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en enkele klassen die de werking van de robot simuleren (simulator).\\
-De sensoren worden voor demo 2 wel geïnstalleerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
-De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zicht hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn).
+\label{ssec:abstr} % 3 ok
+Het P\&O-project bestaat erin een robot autonoom een doolhof te laten verkennen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf. De robot wordt voorzien van een lichtsensor en een ultrasone sensor. Deze staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De aansturing van de robot gebeurt via bluetoothverbinding. Een Grafische User Interface (GUI) maakt deze aansturing op een gebruiksvriendelijke manier mogelijk. De GUI geeft de baan van de robot  weer. Ook een historiek van de sensorwaarden wordt weergegeven in de GUI.
+
+De robot kan zich autonoom door een doolhof voortbewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map van het doolhof op. Op elke nieuwe tegel kijkt de robot rond en geeft de gedetecteerde muren door. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar het 'checkpoint' en vervolgens naar de 'finish' te bepalen. Het checkpoint en de finish worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
+
+Om de afwijking op de aansturing te minimaliseren, ori\"enteert de robot zich regelmatig op een witte lijn. Zo blijft de robot steeds zo dicht mogelijk bij het midden van de tegel.
+
+Een computerprogramma simuleert de werking van de robot. Het is voor de simulator mogelijk door een virtuele doolhof te rijden en deze op gelijkaardige wijze te verkennen. De sensorwaarden worden gesimuleerd, met een afwijking om de werkelijke robot zo goed mogelijk te benaderen. Verder worden dezelfde algoritmes als voor de robot gebruikt. Dit laat toe de algoritmes te testen zonder de robot te gebruiken.
 
 \end{abstract}
 
@@ -60,20 +68,20 @@ De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan bes
 \newpage 
 
 % == INLEIDING == %
-\section{Inleiding} % 3 ok!
+\section{Inleiding} % 3 ok
 \label{ssec:inl}
 In het kader van het vak 'Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk volledig autonoom een doolhof kunnen verkennen.\\
-Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom voortbewegen. Wanneer de robot zich in een doolhof voortbeweegt, kan hij deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar zijn beginpositie en rijdt hier in hoge snelheid naartoe.
+Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom door een doolhof voortbewegen en hij kan deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar de barcode met waarde 'checkpoint' en rijdt vandaar in hoge snelheid naar de barcode met waarde 'finish'.
 
 % == BOUW == %
-\section{Bouw van de robot} % 3 ?
+\section{Bouw van de robot} % 3 ok
 \label{sec:bouw}
-LEGO Mindstorms\footnote{\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
+LEGO Mindstorms\^{1} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
 
 % == fysieke bouw == %
-\subsection{Fysieke bouw} % 3 ?
+\subsection{Fysieke bouw} % 3 ok
 \label{ssec:fysbouw}
-Bij het bouwen van de robot (zie figuur \ref{robot}) werd het ontwerpboekje gevolgd dat bij het bouwpakket geleverd zat. Deze compacte samenstelling leek geen directe nadelen te hebben. Twee grote wielen worden elk met hun eigen motor aangestuurd. Kleine wielen achteraan zorgen voor meer stabiliteit en worden niet aangedreven. De sensoren werden als volgt ge\"implementeert: 
+Bij het bouwen van de robot (zie figuur \ref{robot}) werd het ontwerpboekje gevolgd. Deze compacte samenstelling leek geen directe nadelen te hebben. Twee grote wielen worden elk met hun eigen motor aangestuurd. Kleine wielen achteraan zorgen voor meer stabiliteit en worden niet aangedreven. De sensoren werden als volgt ge\"installeerd: 
 
 \begin{itemize}
 \item \textit{lichtsensor:} vooraan en dicht tegen de grond.
@@ -105,18 +113,19 @@ Bij het bouwen van de robot (zie figuur \ref{robot}) werd het ontwerpboekje gevo
                 \includegraphics[width=\textwidth]{robotLSTS}
                 \caption{Licht- en Druksensor}
                 \label{fig:LS+TS}
-                \end{subfigure}
+        \end{subfigure}
         \label{fig:sensors}
+        \caption{Sensoren}
 \end{figure}
 
 
-Een alternatieve opstelling bestaat erin de NXT plat te leggen met ernaast de twee grote wielen. Op deze manier kan de ultrasone sensor op een extra motor gemonteerd worden zodat onafhankelijk van de robot kan ronddraaien. Deze opstelling vraagt echter om een nieuwe calibratie. Bovendien kan deze opstelling tot extra afrondingsfouten leiden. Omdat het voorlopig niet noodzakelijk is dat de ultrasone sensor kan ronddraaien, werd niet voor deze opstelling gekozen.
+Een alternatieve opstelling bestaat erin de ultrasone sensor op een derde motor te monteren zodat deze onafhankelijk van de robot kan ronddraaien. Opdat hier plaats genoeg voor is, moet de NXT plat gelegd worden met de wielen aan weerszijde. Dit vraagt echter een nieuwe calibratie. Bovendien zou de meetwaarde van de ultrasone sensor afhangen van zijn positie ten opzichte van de robot, wat het interpreteren moeilijker maakt. Voor deze opstelling werd daarom niet gekozen.
 
 
 % == calibratie == %
 \subsection{Calibratie van de motoren} % 3 MEETWAARDEN + BOXPLOT
 \label{ssec:calibM}
-De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de twee wielen. De aansturing gebeurt door te bepalen hoeveel graden de wielen moeten draaien. Beide wielen kunnen onafhankelijk ingesteld worden. De robot kan \'e\'en cm vooruit bewegen (beide wielen draaien x aantal graden in dezelfde richting) en rond zijn as (beide wielen draaien y aantal graden in tegengestelde richting). De resultaten van de calibratie worden weergegeven in tabel \ref{tab:resultCalibM}. Het bepalen van parameters x en y gebeurt als volgt:
+De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de twee grote wielen. De aansturing gebeurt door te bepalen hoeveel graden de wielen moeten draaien. Beide motoren kunnen onafhankelijk ingesteld worden. De robot kan vooruit bewegen en rond zijn as. De resultaten van de calibratie worden weergegeven in tabel \ref{tab:resultCalibM}.
 
 %resultaten meetwaarden
 \begin{table}[hb]
@@ -137,68 +146,169 @@ De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de t
 
 
 
-\subsubsection{E\'en cm vooruit bewegen: bepalen van x} % 3 GEEN MEETWAARDEN VAN HET AANPASPROCES + BOXPLOT
+\subsubsection{E\'en cm vooruit bewegen: bepalen van $x$} % 3 te weinig meetwaarden
 \label{ssec:calibMx}
-Een schatting voor x via de diameter van het wiel, waarbij x voor het aantal graden staat en de diameter in centimeter:
+De parameter $x$ bepaalt het aantal graden dat de wielen moeten draaien opdat de robot \'e\'en cm vooruit beweegt.\\
+Een schatting voor $x$ via de $diameter$ (in centimeter) gebeurt als volgt:
 
 \begin{equation*}
 x_{0} \approx \frac{360}{\pi \cdot diameter}
 \end{equation*}
 
-De parameter x kan verder bepaald worden via tests.
-De robot rijdt naast een lintmeter tien keer tien cm af. De wielen draaien met andere woorden tien keer $10 \cdot x$ graden. De totale afwijking (in centimeter) op deze volledige meter is de som van alle afwijkingen op tien centimeter. Wanneer in \'e\'en keer \'e\'en meter wordt gereden is de totale afwijking kleiner.\\
-Uit de test blijkt dat de robot een afwijking naar links heeft bij het rechtdoor rijden.
+Een verdere bepaling van $x$ gebeurt via tests.\\
+De robot wordt naast een lintmeter geplaatst en krijgt opdracht beide wielen $100 \cdot x$ graden te laten draaien. Bij een perfect gekozen waarde voor $x$, legt de robot precies \'e\'en meter af. Indien niet, wordt $x$ aangepast en wordt de test herhaald tot een voldoende nauwkeurig resultaat bekomen wordt.
+% ONTBREEKT: x0 + afwijking op 1m; x1 + afwijking; x2 + afwijking + ...
 
-%boxplot motoren
-\begin{figure}[tbp]
-\begin{center}
-    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
-    \caption{Boxplot meetwaarden motoren}
-    \label{fig:boxMot}
-\end{center}
-\end{figure}
+Een volgende test bestaat erin de robot beide wielen tien maal $10 \cdot x$ graden te laten draaien. Een boxplot van de totaal afgelegde afstand wordt weergegeven in figuur \ref{fig:calibM}. Wanneer geen afwijking op \'e\'en meter wordt waargenomen, heeft het starten en stoppen geen invloed op de totale afgelegde afstand. Dit blijkt echter wel het geval. In verdere algoritmes wordt hier rekening mee gehouden. De robot legt steeds \'e\'en lange afstand af in plaats van vele korte.\\
+Uit deze test blijkt bovendien dat de robot een afwijking naar links heeft wanneer hij rechtdoor rijdt. De boxplot van deze afwijking wordt eveneens weergegeven in figuur \ref{fig:calibM}.
+% ONTBREEKT: MEETWAARDEN VAN 1x100CM ter vergelijking
 
-\subsubsection{Volledig rond de as draaien: bepalen van y} % 3 GEEN MEETWAARDEN VAN HET AANPASPROCES + BOXPLOT
+
+\subsubsection{Volledig rond de as draaien: bepalen van y} % 3 te weinig meetwaarden
 \label{ssec:calibMy}
-
-Een schatting voor y via de diameter van het wiel, met y in aantal graden en de as (afstand tussen beide wielen) en de diameter in centimeter:
+De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 180\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
+Een schatting voor $y$ via de diameter van het wiel, met $as_{robot}$ (afstand tussen beide wielen) en $diameter$ in centimeter:
 
 \begin{equation*}
 y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 \end{equation*}
 
-Om de robot om zijn as te laten draaien, bewegen de beide wielen in tegengestelde richting. De robot wordt naast een lijn geplaatst. De parameter wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
+De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ graden in tegengestelde richting te laten draaien. $y$ wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
+% ONTBREEKT: y0 + afwijking op 180°; y1 + afwijking; y2 + afwijking + ...
 
-\subsection{Calibratie van de lichtsensor} % 3 BOXPLOT UPDATEN
+Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'en\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
+% ONTBREEKT: MEETWAARDEN VAN 1x180° ter vergelijking
+
+% boxplots calibratie motoren
+\begin{figure}
+        \centering
+        \begin{subfigure}[h]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxMrechtdoor10x10}
+                \caption{Afgelegde afstand rechtdoor}
+        \end{subfigure}%
+        \begin{subfigure}[h]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxMlinks10x10}
+                \caption{Afwijking naar links}
+        \end{subfigure}%
+        \begin{subfigure}[h]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxMgraden4x90}
+                \caption{Afwijking op $180 \degree$}
+        \end{subfigure}
+ \caption{Boxplots calibratie motoren.}
+\label{fig:calibM}
+\end{figure}
+
+
+\subsection{Calibratie van de lichtsensor} % 3 ok
 \label{ssec:calibLS}
 De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe meer dit licht geabsorbeerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.\\
-De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht (VL - veel licht), in de schaduw (WL - weinig licht), terwijl de robot rijdt (R - rijdend) en terwijl hij stilstaat (NR - niet rijdend). Dit voor alle soorten ondergrond: een paneel, een witte lijn of een zwarte lijn. De resultaten van deze metingen laten toe de lichtsensorwaarden de interpreteren en te simuleren. Een boxplot wordt weergegeven in figuur \ref{fig:boxLicht}. Deze toont dat het gemiddelde weinig afhangt van de omstandigheden. De afwijking wordt echter sterk bepaald door het feit of de robot rijdt of stilstaat.
+De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht, in de schaduw, terwijl de robot rijdt en terwijl hij stilstaat. Dit voor alle soorten ondergrond die in de doolhof voorkomen: een paneel, een witte lijn en een zwarte lijn. Boxplots worden weergegeven in figuur \ref{fig:calibLS}. Deze toont dat het gemiddelde enkel bij een zwarte lijn afhangt van de omstandigheden. De afwijking wordt echter sterk bepaald door het feit of de robot rijdt of stilstaat. Bij het simuleren en het interpreteren van de meetwaarden wordt hier rekening mee gehouden.
 
-%boxplot lichtsensor
-\begin{figure}[tbp]
-\begin{center}
-    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
-    \caption{Boxplot meetwaarden lichtsensor}
-    \label{fig:boxLicht}
-\end{center}
+% boxplots calibratie lichtsensoren
+\begin{figure}
+        \centering
+        \begin{subfigure}[h]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxLSwit}
+                \caption{Witte lijn}
+        \end{subfigure}%
+        \begin{subfigure}[h]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxLSpaneel}
+                \caption{Paneel}
+        \end{subfigure}%
+        \begin{subfigure}[h]{0.32\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxLSzwart}
+                \caption{Zwarte lijn}
+        \end{subfigure}
+ \caption{Boxplots calibratie lichtsensor.}
+\label{fig:calibLS}
 \end{figure}
 
-\subsection{Calibratie van de ultrasone sensor} % 3 TE WEINIG TESTS + BOXPLOTS
+%%resultaten lichtsensor
+%\begin{table}[hb]
+%\begin{center}
+%    \begin{tabular}{ c | r || c | c | c | c | c | c | c | c }
+%     & & WVN & WVR & WWN & WWR & PVN & PVR & PWN & PWR \\ \hline \hline
+%    $Q_{0}$ & min & 53 & 49 & 55 & 49 & 49 & 47 & 49 & 47 \\ \hline
+%    $Q_{0.25}$ & 1/4 & 55 & 55 & 55 & 55 & 50 & 49 & 49 & 49 \\ \hline
+%    $Q_{0.5}$ & med & 55 & 55 & 55 & 55 & 50 & 49 & 49 & 49 \\ \hline
+%    $Q_{0.75}$ & 3/4 & 55 & 55 & 55 & 56 & 50 & 50 & 49 & 50\\ \hline
+%    $Q_{1}$ & max & 55 & 56 & 55 & 56 & 50 & 50 & 50 & 55 \\ \hline \hline
+%     & gem & 54.995 & 55.0261 & 55 & 55.0645 & 49.99688 & 490.2918 & 49.1 & 49.388\\ \hline
+%     & st.dev. & 0.10025 & 0.96642 & 0 & 1.025 & 0.055815 & 0.58241 & 0.30015 & 0.95622 \\
+%    \end{tabular}
+%    \caption{Resultaten lichtsensor, witte ondergrond en paneel ondergrond}
+%    \label{tab:resultCalibM}
+%\end{center}
+%\end{table}
+%
+%%resultaten lichtsensor
+%\begin{table}[hb]
+%\begin{center}
+%    \begin{tabular}{ c | r ||  c | c | c | c }
+%     & & ZVN & ZVR & ZWN & ZWR\\ \hline \hline
+%    $Q_{0}$ & min & 32 & 32 & 34 & 34 \\ \hline
+%    $Q_{0.25}$ & 1/4 & 33 & 33 & 34 & 34 \\ \hline
+%    $Q_{0.5}$ & med & 33 & 33 & 34 & 34 \\ \hline
+%    $Q_{0.75}$ & 3/4 & 33 & 33 & 34 & 34\\ \hline
+%    $Q_{1}$ & max & 34 & 34 & 34 & 34 \\ \hline \hline
+%     & gem & 33.05 & 33.05 & 34 & 34 \\ \hline
+%     & st.dev. & 0.27279 & 0.27279 & 0 & 0 \\
+%    \end{tabular}
+%    \caption{Resultaten lichtsensor, zwarte ondergrond}
+%    \label{tab:resultCalibM}
+%\end{center}
+%\end{table}
+
+
+\subsection{Calibratie van de ultrasone sensor} % 3 ok
 \label{ssec:calibUS}
-Een ultrasone sensor zendt ultrasone geluidsgolven uit. De golven weerkaatsen op een object dat zich binnen het bereik bevindt. Bij ontvangst van zijn eigen geluidsgolven, weet de robot dat er een object in de buurt is.\\
-In het kader van een doolhof, kan een robot muren tegenkomen als objecten. Maar ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om een onderscheid te maken tussen de paaltjes en de muren, dient de meetwaarde pas ge\"iterpreteerd worden wanneer de sensor aangeeft dat hij zich op 20 cm van een object bevindt. In dat geval kan het object veilig als muur geïnterpreteerd worden. Deze veiligheidsmarge werd vastgelegd op basis van testen.\\
-% WELKE TESTEN?? MEETRESULTATEN!!!
-De afwijking van de ultrasone sensor wordt gemeten door de robot op 30 cm van een muur te zetten en de bekomen meetwaarden te interpreteren. De robot staat in eerste instantie loodrecht ten opzichte van de muur en vervolgens met een afwijking van 20\degree van deze loodrecht stand. Een boxplot van de meetwaarden wordt weergegeven in figuur \ref{fig:boxUltra}.
-% OOK VOOR ANDERE AFSTANDEN METEN!!!
+Een ultrasone sensor zendt ultrasone geluidsgolven uit. De golven weerkaatsen op een object dat zich binnen het bereik bevindt. Bij ontvangst van zijn eigen geluidsgolven, weet de robot dat er een object in de buurt is en op welke afstand het object zich bevindt.\\
 
-%boxplot lichtsensor
-\begin{figure}[tbp]
-\begin{center}
-    \includegraphics[width=0.8\textwidth]{boxplotLichtSensor}
-    \caption{Boxplot meetwaarden ultrasone sensor}
-    \label{fig:boxUltra}
-\end{center}
+In het kader van een doolhof, kan een robot muren tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge\"interpreteerd worden enkel meetwaarden kleiner dan 29 cm als muur beschouwd.
+
+De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde afstand van een muur te zetten. Verschillende afstanden worden zo gemeten. Boxplots in figuur \ref{fig:calibUS} geven de gemeten waarden (boven de lijnen) ten opzichte van de werkelijke waarden weer. Hoewel de variantie op de gemeten waarde niet groot is, komt de gemiddelde gemeten waarde niet altijd overeen met de werkelijke afstand. Vooral voor afstanden kleiner dan 20 cm en groter dan 145 cm, wijkt de gemeten waarde af van de werkelijke waarde. Waarden buiten het interval [20,145] worden daarom niet als betrouwbaar veronderstelt.
+
+% boxplots calibratie ultrasone sensor
+\begin{figure}
+        \centering
+        \begin{subfigure}[h]{0.69\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxUS}
+                \caption{meetwaarden}
+        \end{subfigure}%
+        \begin{subfigure}[h]{0.31\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{boxUSeind}
+                \caption{laatste geldige meetwaarde}
+        \end{subfigure}
+ \caption{Boxplots calibratie ultrasone sensor.}
+\label{fig:calibUS}
 \end{figure}
+
+%%resultaten lichtsensor
+%\begin{table}[hb]
+%\begin{center}
+%    \begin{tabular}{ c | r || c | c | c | c | c | c | c | c | c | c | c | c }
+%     & & 12.5 & 20 & 30 & 40 & 41 & 60 & 61 & eind\\ \hline \hline
+%    $Q_{0}$ & min & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 147 \\ \hline
+%    $Q_{0.25}$ & 1/4 & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 148 \\ \hline
+%    $Q_{0.5}$ & med & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 149 \\ \hline
+%    $Q_{0.75}$ & 3/4 & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 149\\ \hline
+%    $Q_{1}$ & max & 16 & 20 & 30 & 40 & 42 & 61 & 62 & 149 \\ \hline \hline
+%     & gem & 16 & 20 & 30 & 40.99571 & 42 & 61 & 62 & 148.5 \\ \hline
+%     & st.dev. & 0 & 0 & 0 & 0.065512 & 0 & 0 & 0 & 0.565091 \\
+%    \end{tabular}
+%    \caption{Resultaten ultrasone sensor}
+%    \label{tab:resultCalibM}
+%\end{center}
+%\end{table}
+
 
 % == ALGORITMES == %
 \section{Algoritmes} % 3 ?
@@ -265,8 +375,9 @@ De simulator kan gebruikt worden om de software op te testen zonder telkens op d
 \label{ssec:Sdesign}
 Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren 4 en 5 tonen een klassendiagram.\\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
-Het computerproject heeft nog 4 andere packages: \textit{communication}, \textit{gui}, \textit{simulator} en \textit{mapping}. 
-De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden. Aan deze \textit{UnitCommunicator} is een object van de subklassen \textit{RobotCommunicator} of \textit{SimulatorCommunicator}  toegekend. Zo worden de commands dynamisch naar de juiste unit gestuurd: de \textit{RobotCommunicator} communiceert met het NXT-Project, de \textit{SimulatorCommunicator} met de simulator klassen.\\
+
+Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden. Aan deze \textit{UnitCommunicator} is een object van de subklassen \textit{RobotCommunicator} of \textit{SimulatorCommunicator}  toegekend. Zo worden de commands dynamisch naar de juiste unit gestuurd: de \textit{RobotCommunicator} communiceert met het NXT-Project, de \textit{SimulatorCommunicator} met de simulator klassen.
+
 Andere klassen van de package \textit{gui} zijn: \textit{MouseClickThread} , \textit{PolygonDrawThread}, \textit{RunForwardThread} en \textit{TurnAngleThread}. De vier Threads zorgen ervoor dat het tekenen van de baan van de robot de rest van het programma niet stillegt. \\
 Het package \textit{simulator} implementeert de functionaliteit van de simulator. \\
 Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction, Barcode, ...} die elementen uit de wereld van een robot voorstellen. Een tile stemt overeen met \'e\'en tegel van het doolhof en heeft vier edges: \'e\'en voor elke zijde. Die edges houden de twee aanliggende tegels bij en eventueel een Obstruction, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Het houdt een begin-tegel bij en en huidige-tegel. Het biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden die dynamisch kan aangevuld worden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met het doolhof dat in het bestand gedefinieerd wordt.
@@ -354,7 +465,7 @@ Voor de moveknop is er een Jslider voorzien net zoals voor de polygonDraw. Hierm
 \label{ssec:bluetooth}
 De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de klassen \textit{UnitCommunicator} en \textit{RobotCommunicator}.
 
-De leJOS-API\footnote{\textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: 'Silver' en '00:16:53:0A:04:5A'.
+De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: 'Silver' en '00:16:53:0A:04:5A'.
 
 % == robot == %
 \subsection{Robot} % 3 ?
@@ -369,10 +480,13 @@ Tot slot is er de klasse \textit{Automatic}. Deze heeft vier methoden: \textit{t
 \label{ssec:simulator}
 De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot. De GUI stuurt de simulator aan via de klassen \textit{UnitCommunicator} en \textit{SimulatorCommunicator}. Deze ontvangen de uit te voeren commando's, analyseren ze en sturen ze door naar de simulator.
 \\
-De simulator zelf bestaat uit vier klassen:
+De simulator zelf bestaat uit zeven klassen:
 
 % overzicht klassen simulator
 \begin{itemize}
+\item \textit{Wall:} tekent de muren van het doolhof.
+\item \textit{State:} wordt gebruikt om te zeggen of iets horizontaal of verticaal moet staan.
+\item \textit{SimulationSensorData}
 \item \textit{SimulationPilot:} houdt de positie en de richting van de 'robot' bij.
 \item \textit{SimulationPanel:} tekent de baan van de 'robot' in het tekenpaneel.
 \item \textit{GridDrawer:} zet het grid op.
@@ -394,27 +508,24 @@ De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handm
 \newpage
 \makeappendix
 
+
 % == DEMO 1 == %
-\section{Demo 1} % 3 ?
+\section{Demo 1} % 3 ok
 \label{Asec:demo1}
-De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-
-keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software
-bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat
-uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en
-enkele klassen die de werking van de robot simuleren (simulator).
+De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software bestaat uit twee projecten: een op de computer en een op de robot. De robot kan een willekeurige veelhoek rijden en een simulator bootst de werking van de robot na.
 
 % == resulaten == %
-\subsection{Resultaten} % 3 ?
+\subsection{Resultaten} % 3 ok
 \label{Assec:result1}
 Bij het rijden van de veelhoek had de robot een kleine afwijking. De afwijking werd groter bij grotere veelhoeken en meerdere hoeken om wille van de geaggregeerde fout.
 
 % == conclusies == %
-\subsection{Conclusies} % 3 ?
+\subsection{Conclusies} % 3 ok
 \label{Assec:conc1}
 Calibratie moet meer getest worden. De GUI kan gebruiksvriendelijker, ook moet het scherm van de simulator herschaald worden, zodat de lijn van simulator nog wordt weergegeven als de simulator van de robot uit het scherm gaat.
 
 % == aanpassingen == %
-\subsection{Oplijsting aanpassingen verslag} % 3 ?
+\subsection{Oplijsting aanpassingen verslag} % 3 ok
 \label{Assec:aanp1}
 Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 
@@ -431,9 +542,62 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 \item \textit{\ref{ssec:simulator} Simulator:} grid en triangle, virtuele doolhof.
 \end{itemize}
 
+% == DEMO 2 == %
+\section{Demo 2} % 3 ok
+\label{Asec:demo2}
+De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.
+
+De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zich hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn. Het is bovendien mogelijk de robot zich in het midden van de tegel te laten zetten.
+
+% == resulaten == %
+\subsection{Resultaten} % 3 ok
+\label{Assec:result2}
+Het verslag voor de tweede demonstratie bevatte enkele paragrafen die tegen het einde nog snel geschreven waren. Deze paragrafen waren van mindere kwaliteit. Ook sommige afbeeldingen werden verkeerd ingevoegd.
+
+Op de demonstratie reed de robot de eerste tegels zoals het hoorde. Ook het witte lijnalgoritme werd goed uitgevoerd. De sensorwaarden werden weergegeven in de GUI, zodat de bestuurder, die de robot en het doolhof niet zag, zich een beeld kon vormen van het doolhof. Op een gegeven moment gaf de bestuurder de robot opdracht zich midden op een tegel te zetten. Dit algoritme maakt gebruik van de muren rond de tegel. De robot bevond zich op dat ogenblik echter op een tegel die door geen enkele muur omsloten werd. De bestuurder had dit niet eerst nagekeken. Dit had als gevolg dat de robot helemaal scheef stond, zonder dat de bestuurder dit wist.
+
+De sensorwaarden werden niet gesimuleerd in de simulator. De simulator maakte in zijn algoritmes rechtstreeks gebruik van de virtuele doolhof. Robot en simulator maakten met andere woorden gebruik van andere algoritmes, wat niet het doel is van een simulator.
+
+De simulator kon wel door een virtuele doolhof manoeuvreren. Meestal 'botste' hij tegen de muren, maar soms reed hij toch door een muur.
+
+% == conclusies == %
+\subsection{Conclusies} % 3 ok
+\label{Assec:conc2}
+Aan het verslag zou vroeger begonnen moeten worden zodat domme fouten vermeden kunnen worden.
+
+De allign-algoritmes (op een witte lijn en in het midden van een tegel) werken enkel in specifieke situaties. De algoritmes dienen enkel in deze omstandigheden uitgevoerd te worden.
+
+De simulator dient de sensorwaarden te simuleren en zou dezelfde algoritmes moeten gebruiken als de robot. Op deze manier kunnen de algoritmes getest worden zonder steeds op de robot te wachten.
+
+% == aanpassingen == %
+\subsection{Oplijsting aanpassingen verslag} % 3 ok
+\label{Assec:aanp2}
+Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
+
+% overzicht aangepaste secties
+\begin{itemize}
+\item \textit{\ref{ssec:abstr} Abstract:} aangepast.
+\item \textit{\ref{ssec:calibM} Calibratie van de motoren:} boxplots toegevoegd.
+\item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} boxplots toegevoegd.
+\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} boxplots toegevoegd.
+\item \textit{ Het rijden van een veelhoek:} niet van toepassing op demo 3.
+\item \textit{\ref{ssec:algoWitteL} Het rechtzetten op een witte lijn:} aangepast.
+\item \textit{\ref{ssec:algoOnderzDoolhof} Doolhof verkennen:} nieuwe sectie.
+\item \textit{\ref{ssec:AlgoKortsteP}Kortste pad:} nieuwe sectie.
+\item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en packages.
+\item \textit{\ref{ssec:GUI} GUI:} aangepast.
+\item \textit{\ref{ssec:simulator} Simulator:} toevoegingen.
+\end{itemize}
+
 \newpage
-\bibliographystyle{siam}
-\bibliography{biblio.bib}
+\section*{Referenties}
+\begin{enumerate}
+
+\item \textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+
+\item \textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+
+\end{enumerate}
 
 \end{document}
 

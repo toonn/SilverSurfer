@@ -1,4 +1,4 @@
-package gui;
+/*package gui;
 
 import communication.*;
 
@@ -39,4 +39,4 @@ public class MouseClickThread extends Thread {
 	public void setQuit(boolean quit) {
 		this.quit = quit;
 	}
-}
+}*/

@@ -8,6 +8,8 @@ public class InfoReceiverThread extends Thread {
 	private static DataOutputStream dos;
 	private StatusInfoBuffer statusInfoBuffer;
 	private boolean quit = false;
+	private double[] coordinates = new double[2];
+	private int[] lookAroundResult = new int[4];
 	
 	public InfoReceiverThread(StatusInfoBuffer statusInfoBuffer) {
 		this.statusInfoBuffer = statusInfoBuffer;
@@ -52,18 +54,33 @@ public class InfoReceiverThread extends Thread {
 				}
 				else if(a.startsWith("[B]"))
 					statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
-				else if(a.startsWith("[RAL]"))
-					System.out.println("Align on white line: " + a.substring(6).trim());
-				else if(a.startsWith("[RAW]"))
-					System.out.println("Align on walls: " + Boolean.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[RLA]"))
-					System.out.println("Look around: " + a.substring(6).trim());
+				else if(a.startsWith("[X]"))
+					coordinates[0] = Double.valueOf(a.substring(4).trim());
+				else if(a.startsWith("[Y]")) {
+					coordinates[1] = Double.valueOf(a.substring(4).trim());
+					statusInfoBuffer.setCoordinatesAbsolute(coordinates);
+				}
+				else if(a.startsWith("[ANG]"))
+					statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
+				else if(a.startsWith("[LA0]"))
+					lookAroundResult[0] = Integer.valueOf(a.substring(6).trim());
+				else if(a.startsWith("[LA1]"))
+					lookAroundResult[1] = Integer.valueOf(a.substring(6).trim());
+				else if(a.startsWith("[LA2]"))
+					lookAroundResult[2] = Integer.valueOf(a.substring(6).trim());
+				else if(a.startsWith("[LA3]"))
+					lookAroundResult[3] = Integer.valueOf(a.substring(6).trim());
 				else if(a.startsWith("[BC]"))
 					statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
-				else if(a.startsWith("[TEST]"))
-					System.out.println("Testing: " + a.substring(7).trim());
+				else if(a.startsWith("[CH]")) {
+					statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
+					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().setCurrentTileCoordinatesRobot(statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteX(), statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteY());	
+					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().checkForObstructionAndSetTile();
+					statusInfoBuffer.getSSG().getCommunicator().setBuzy(false);
+				}
 			} catch (Exception e) {
 				System.out.println("Error in InfoReceiverThread.run()!");
+				e.printStackTrace();
 			}
 		}
 	}

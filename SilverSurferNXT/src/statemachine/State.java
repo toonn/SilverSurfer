@@ -1,4 +1,4 @@
-package statemachine;
+/*package statemachine;
 
 public class State {
 	
@@ -33,4 +33,4 @@ public class State {
 	public State RightReleased() {
 		return this;
 	}
-}
+}*/

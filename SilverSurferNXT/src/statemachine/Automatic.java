@@ -1,12 +1,13 @@
-package statemachine;
+/*package statemachine;
 
 import communication.*;
 
 import lejos.nxt.*;
 
-public class Automatic extends State {
+public class Automatic {
 	
 	BarcodeThread BT;
+	CommandUnit CU;
     
 	public Automatic() {
         Motor.A.setSpeed(CommandUnit.NORMAL_SPEED);
@@ -54,7 +55,13 @@ public class Automatic extends State {
 
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
-
+		
+		try {
+			Thread.sleep(300);
+		} catch(Exception e) {
+			
+		}
+		
 		WLT.setQuit(true);
 
 		while(lightSensor.getLightValue() < treshold)
@@ -76,12 +83,12 @@ public class Automatic extends State {
     	
     	turnAngle(179); //90 graden
     	firstUSRead = ultrasonicSensor.getDistance();
-    	if (firstUSRead < 32) {
+    	if (firstUSRead < 30) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*20.8));
         	turnAngle(-179);
         	turnAngle(-179);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 32)
+    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 30)
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*20.8));
     		turnAngle(179);
     		return true;
@@ -90,7 +97,7 @@ public class Automatic extends State {
         	turnAngle(-179);
     		turnAngle(-179);
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 32) {
+    		if (secondUSRead < 30) {
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*20.8));
         		turnAngle(179);
     			return true;
@@ -101,27 +108,19 @@ public class Automatic extends State {
     	}
     }
     
-    public String lookAround(UltrasonicSensor ultrasonicSensor) {
-    	String front = "no wall";
-    	String back = "no wall";
-    	String left = "no wall";
-    	String right = "no wall";
-    	
-    	if(ultrasonicSensor.getDistance() < 32)
-    		front = "wall";
+    public int[] lookAround(UltrasonicSensor ultrasonicSensor) {
+    	int[] lookAroundResult = new int[4];
+    	lookAroundResult[0] = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 32)
-    		right = "wall";
+    	lookAroundResult[1] = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 32)
-    		back = "wall";
+    	lookAroundResult[2] = ultrasonicSensor.getDistance();
     	turnAngle(179);
-    	if(ultrasonicSensor.getDistance() < 32)
-    		left = "wall";
+    	lookAroundResult[3] = ultrasonicSensor.getDistance();
     	turnAngle(-179);
     	turnAngle(-179);
     	turnAngle(-179);
-    	return "Front: " + front + ", back: " + back + ", left: " + left + ", right: " + right;
+    	return lookAroundResult;
     }
     
     public int readBarcode(LightSensor lightSensor) {
@@ -140,4 +139,4 @@ public class Automatic extends State {
     	Byte byteResult = Byte.valueOf(result, 2);
     	return Integer.valueOf(byteResult.intValue());
     }
-}
+}*/

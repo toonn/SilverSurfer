@@ -1,4 +1,4 @@
-package statemachine;
+/*package statemachine;
 
 import communication.CommandUnit;
 
@@ -31,4 +31,4 @@ public class DrivingForwardRight extends State {
 	public State RightReleased() {
 		return new DrivingForward();
 	}
-}
+}*/

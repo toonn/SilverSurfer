@@ -1,4 +1,4 @@
-package statemachine;
+/*package statemachine;
 
 import communication.CommandUnit;
 
@@ -52,4 +52,4 @@ public class Waiting extends State {
 	public State RightReleased() {
 		return new TurnLeft();
 	}
-}
+}*/

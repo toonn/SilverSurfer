@@ -5,12 +5,10 @@ import commands.Command;
 import gui.SilverSurferGUI;
 
 public class BarDecoder {
-
-	private SilverSurferGUI SSG;
+	
 	private Communicator communicator;
 	
-	public BarDecoder(SilverSurferGUI SSG, Communicator communicator) {
-		this.SSG = SSG;
+	public BarDecoder(Communicator communicator) {
 		this.communicator = communicator;
 	}
 	
@@ -42,17 +40,23 @@ public class BarDecoder {
 					Thread.sleep(5000);
 					break;
 				case(25):    
-					SSG.changeSpeed(1);
+					SilverSurferGUI.changeSpeed(1);
 	            	break;
 				case(38):    
-					SSG.changeSpeed(1);
+					SilverSurferGUI.changeSpeed(1);
 	            	break;
 				case(37):
-					SSG.changeSpeed(4);
+					SilverSurferGUI.changeSpeed(4);
 	            	break;
 				case(41):
-					SSG.changeSpeed(4);
+					SilverSurferGUI.changeSpeed(4);
 	            	break;
+				case(13):            
+					//TODO: start
+	            	break;
+				case(44):       
+					//TODO: start
+					break;
 				case(55):            
 					//TODO: finish
 	            	break;
