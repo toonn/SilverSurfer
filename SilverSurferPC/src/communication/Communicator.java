@@ -20,6 +20,9 @@ public class Communicator {
 	private static String deviceName = "Silver";
 	private static InfoReceiverThread IRT;
 	private boolean buzy = false;
+	private int tilesBeforeAllign = 0;
+	private int tilesRidden = 0;
+	private boolean mustAllign = true;
 
 	public Communicator(StatusInfoBuffer statusInfoBuffer) {
 		setStatusInfoBuffer(statusInfoBuffer);
@@ -195,12 +198,45 @@ public class Communicator {
 		return (double) 2.74;
 	}
 	
+	public int getTilesBeforeAllign(){
+		return tilesBeforeAllign;
+	}
+	
+	public void setTilesBeforeAllign(int tilesBeforeAllign){
+		this.tilesBeforeAllign = tilesBeforeAllign;
+	}
+	
+	private int getTilesRidden(){
+		return tilesRidden;
+	}
+	
+	private void setTilesRidden(int tilesRidden){
+		this.tilesRidden = tilesRidden;
+	}
+	
+	public void mustAllign(boolean mustAllign){
+		this.mustAllign = mustAllign;
+	}
+	
 	public void goToNextTile(Orientation orientation) throws IOException{
 		double currentAngle = getStatusInfoBuffer().getAngle();
 		int angleToRotate = (int)((double) orientation.getRightAngle() - currentAngle);
 		angleToRotate = (int) ExtMath.getSmallestAngle(angleToRotate);
 		sendCommand(angleToRotate*100 + Command.AUTOMATIC_TURN_ANGLE);
-		sendCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
+		
+		if(mustAllign){
+			tilesRidden++;
+			if(getTilesRidden() == getTilesBeforeAllign()){
+				sendCommand(7);
+				sendCommand(25*100 + Command.AUTOMATIC_MOVE_FORWARD);
+				setTilesRidden(0);
+			}	
+		}
+		else{
+		sendCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);}
+
+		
+		
 	}
 
 }
