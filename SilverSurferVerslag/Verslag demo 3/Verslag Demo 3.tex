@@ -504,7 +504,7 @@ De bluetooth laat toe enkele 'datastreams' tussen robot en computer op te zetten
 \label{ssec:robot}
 Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatsten maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn 'datastreams' en start hij een \textit{SensorThread} op.
 
-De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een 'datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonic sensor data).\\
+De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een 'datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonesensor data).\\
 
 Enkele belangrijke methodes van \textit{CommandUnit}:
 \begin{itemize}
