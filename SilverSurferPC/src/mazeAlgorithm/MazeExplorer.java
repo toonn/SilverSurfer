@@ -24,6 +24,8 @@ public class MazeExplorer {
 	private Tile startTile = null;
 	private SilverSurferGUI gui;
 	
+	private Tile checkTile = null;
+	private Tile endTile = null;
 	
 	public MazeExplorer(SilverSurferGUI gui){
 		this.gui = gui;
@@ -41,7 +43,41 @@ public class MazeExplorer {
 		for(Object tile: allTiles){
 			((Tile) tile).setMarkingExploreMaze(false);
 		}
+		//TODO test shortestPath op't einde.
+		if(getCheckTile() != null && getEndTile() != null){
+			ShortestPath finalPath = new ShortestPath(gui, getCheckTile(), getEndTile(), allTiles);
+			finalPath.goShortestPath();
+		}
+
 		gui.getCommunicator().mustAllign(false);
+	}
+	
+	/**
+	 * Set the endtile that's the ending of the shortest-path algorithm.
+	 */
+	public void setEndTile(Tile endTile) {
+		this.endTile = endTile;
+	}
+	
+	/**
+	 * Get the endtile that's the ending of the shortest-path algorithm.
+	 */
+	public Tile getEndTile() {
+		return endTile;
+	}
+	
+	/**
+	 * Set the checktile that's the beginning of the shortest-path algorithm.
+	 */
+	public void setCheckTile(Tile checkTile) {
+		this.checkTile = checkTile;
+	}
+	
+	/**
+	 * Get the checktile that's the beginning of the shortest-path algorithm.
+	 */
+	public Tile getCheckTile() {
+		return checkTile;
 	}
 	
 	/**

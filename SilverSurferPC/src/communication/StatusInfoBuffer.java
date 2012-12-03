@@ -381,7 +381,6 @@ public class StatusInfoBuffer {
 		SSG.getSimulationPanel().addBarcode(scanned.toString(), visualBarcode);
 		this.barcode = barcode;
 		SSG.executeBarcode();
-		System.out.println("geweest SIB line 384");
 	}
 	
 	public double getAngle() {
