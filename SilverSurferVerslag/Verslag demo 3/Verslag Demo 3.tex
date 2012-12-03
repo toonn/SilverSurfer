@@ -166,7 +166,7 @@ Uit deze test blijkt bovendien dat de robot een afwijking naar links heeft wanne
 
 \subsubsection{Volledig rond de as draaien: bepalen van y} % 3 te weinig meetwaarden
 \label{ssec:calibMy}
-De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 180\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
+De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 360\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
 Een schatting voor $y$ via de diameter van het wiel, met $as_{robot}$ (afstand tussen beide wielen) en $diameter$ in centimeter:
 
 \begin{equation*}
@@ -174,10 +174,10 @@ y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 \end{equation*}
 
 De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ graden in tegengestelde richting te laten draaien. $y$ wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
-% ONTBREEKT: y0 + afwijking op 180°; y1 + afwijking; y2 + afwijking + ...
+% ONTBREEKT: y0 + afwijking op 360°; y1 + afwijking; y2 + afwijking + ...
 
-Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'en\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
-% ONTBREEKT: MEETWAARDEN VAN 1x180° ter vergelijking
+Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 360\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'en\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
+% ONTBREEKT: MEETWAARDEN VAN 1x360° ter vergelijking
 
 % boxplots calibratie motoren
 \begin{figure}
@@ -195,7 +195,7 @@ Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de in
         \begin{subfigure}[h]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{boxMgraden4x90}
-                \caption{Afwijking op $180 \degree$}
+                \caption{Afwijking op $360 \degree$}
         \end{subfigure}
  \caption{Boxplots calibratie motoren.}
 \label{fig:calibM}
