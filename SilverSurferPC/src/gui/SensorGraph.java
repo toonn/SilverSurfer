@@ -50,8 +50,8 @@ public class SensorGraph extends JPanel {
         // Labels on the graph
         g2.setColor(Color.gray);
         g2.drawString("LightSensor", w / 2 / 5, 10);
-        g2.drawString("White", 15, (LSWhite - LSMin) * graphHeight / LSScale);
-        g2.drawString("Black", 15, (LSBlack - LSMin) * graphHeight / LSScale);
+        g2.drawString("White", 15, graphHeight - (LSWhite - LSMin) * graphHeight / LSScale);
+        g2.drawString("Black", 15, graphHeight - (LSBlack - LSMin) * graphHeight / LSScale);
         // Lightsensor scale
         for (int lsv = 30; lsv < 60; lsv += 5) {
             g2.drawString("" + lsv, 0, graphHeight - (lsv - LSMin)
