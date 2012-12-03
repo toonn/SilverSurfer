@@ -450,7 +450,7 @@ Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction
 % == commando's == %
 \subsection{Het doorgeven van commando's} % 3 ok!
 \label{ssec:commands}
-De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt gerepresenteerd door een integer dat naar de \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers (dit wordt in de volgende sectie in detail beschreven).\\
+De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt gerepresenteerd door een integer die naar de \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers (dit wordt in de volgende sectie in detail beschreven).\\
 De \textit{UnitCommunicator} stuurt de bekomen integer door naar ofwel de \textit{RobotCommunicator} ofwel de \textit{SimulatorCommunicator}. Deze zetten de integer weer om in de juiste actie van respectievelijk de robot en de simulator. De wijze waarop dit gebeurt, verschilt licht voor beide gevallen. Zo stuurt de \textit{RobotCommunicator} zijn commando's via Bluetooth door naar de NXT-brick, terwijl de \textit{SimulatorCommunicator} zo'n verbinding niet nodig heeft.\\
 
 \subsubsection{De bewerking op de integers} % 3 ok!
@@ -467,7 +467,7 @@ De doorgegeven integer wordt als volgt opgebouwd:
 Om de bekomen resultaten terug op te splitsen in de twee oorspronkelijke gegevens worden volgende stappen gevolgd:
 
 \begin{itemize}
-\item een modulo-operatie van tien geeft het laatste cijfer terug. Dit stelt het soort commando voor.
+\item een modulo-operatie van honderd geeft het laatste cijfer terug. Dit stelt het soort commando voor.
 \item dit getal wordt van de integer terug afgetrokken.
 \item de oorspronkelijke afstand (hoek) wordt bekomen door de integer door 1000 te delen.
 \end{itemize}
