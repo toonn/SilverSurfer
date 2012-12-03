@@ -4,6 +4,7 @@ import audio.SongThread;
 import commands.Command;
 import simulator.SimulationPilot;
 import mapping.*;
+import mazeAlgorithm.MazeExplorer;
 
 import java.io.*;
 
@@ -23,6 +24,7 @@ public class Communicator {
 	private int tilesBeforeAllign = 0;
 	private int tilesRidden = 0;
 	private boolean mustAllign = true;
+	private MazeExplorer explorer;
 
 	public Communicator(StatusInfoBuffer statusInfoBuffer) {
 		setStatusInfoBuffer(statusInfoBuffer);
@@ -138,84 +140,12 @@ public class Communicator {
 		}
 	}
 
-	public void moveTurn(int lengthInCM, int anglesInDegrees, int amtOfAngles) {
-		int length = lengthInCM*100 + Command.AUTOMATIC_MOVE_FORWARD;
-		int angles;
-		if(amtOfAngles == 0) {
-			angles = anglesInDegrees*100 + Command.AUTOMATIC_TURN_ANGLE;
-			sendCommand(length);
-			sendCommand(angles);
-		}
-		else {
-			angles = (int)Math.round(360.0/amtOfAngles)*100 + Command.AUTOMATIC_TURN_ANGLE;
-			if (amtOfAngles == 1)
-				sendCommand(length);
-			else for(int i = 0; i<amtOfAngles; i++) {
-				sendCommand(length);
-				sendCommand(angles);
-			}			
-		}
+    public void setExplorer(MazeExplorer explorer) {
+		this.explorer = explorer;
 	}
 	
-	public int getSpeed() {
-		return simulationPilot.getSpeed();
-	}
-	
-	public void setSpeed(int speed) {
-		if(speed == 1)
-			sendCommand(Command.SLOW_SPEED);
-		else if(speed == 2)
-			sendCommand(Command.NORMAL_SPEED);
-		else if(speed == 3)
-			sendCommand(Command.FAST_SPEED);
-		else
-			sendCommand(Command.VERY_FAST_SPEED);
-	}
-
-	public String getConsoleTag() {
-		if(robotConnected)
-			return "[ROBOT]";
-		return "[SIMULATOR]";
-	}
-	
-	public void clear() {
-		simulationPilot.clear();
-	}
-	
-	
-	//TODO: vanaf hier!
-	/**
-	 * Gets the amount of angles the arrow should turn in one event
-	 * to be at par with the robot.
-	 */
-	public double getAngularSpeed() {
-		switch(getSpeed()) {
-		case 1: return (double) 1.82;
-		case 2: return (double) 2.74;
-		case 3: return (double) 2.77;
-		case 4: return (double) 1.82;
-		}
-		return (double) 2.74;
-	}
-	
-	public int getTilesBeforeAllign(){
-		return tilesBeforeAllign;
-	}
-	
-	public void setTilesBeforeAllign(int tilesBeforeAllign){
-		this.tilesBeforeAllign = tilesBeforeAllign;
-	}
-	
-	private int getTilesRidden(){
-		return tilesRidden;
-	}
-	
-	private void setTilesRidden(int tilesRidden){
-		this.tilesRidden = tilesRidden;
-	}
-	
-	public void mustAllign(boolean mustAllign){
-		this.mustAllign = mustAllign;
+	public MazeExplorer getExplorer() {
+		return explorer;
 	}
 	
 	public void goToNextTile(Orientation orientation) throws IOException{
@@ -239,4 +169,87 @@ public class Communicator {
 		
 	}
 
+    public void moveTurn(int lengthInCM, int anglesInDegrees, int amtOfAngles) {
+        int length = lengthInCM * 100 + Command.AUTOMATIC_MOVE_FORWARD;
+        int angles;
+        if (amtOfAngles == 0) {
+            angles = anglesInDegrees * 100 + Command.AUTOMATIC_TURN_ANGLE;
+            sendCommand(length);
+            sendCommand(angles);
+        } else {
+            angles = (int) Math.round(360.0 / amtOfAngles) * 100
+                    + Command.AUTOMATIC_TURN_ANGLE;
+            if (amtOfAngles == 1)
+                sendCommand(length);
+            else
+                for (int i = 0; i < amtOfAngles; i++) {
+                    sendCommand(length);
+                    sendCommand(angles);
+                }
+        }
+    }
+
+    public int getSpeed() {
+        return simulationPilot.getSpeed();
+    }
+
+    public void setSpeed(int speed) {
+        if (speed == 1)
+            sendCommand(Command.SLOW_SPEED);
+        else if (speed == 2)
+            sendCommand(Command.NORMAL_SPEED);
+        else if (speed == 3)
+            sendCommand(Command.FAST_SPEED);
+        else
+            sendCommand(Command.VERY_FAST_SPEED);
+    }
+
+    public String getConsoleTag() {
+        if (robotConnected)
+            return "[ROBOT]";
+        return "[SIMULATOR]";
+    }
+
+    public void clear() {
+        simulationPilot.clear();
+    }
+
+    // TODO: vanaf hier!
+    /**
+     * Gets the amount of angles the arrow should turn in one event to be at par
+     * with the robot.
+     */
+    public double getAngularSpeed() {
+        switch (getSpeed()) {
+        case 1:
+            return (double) 1.82;
+        case 2:
+            return (double) 2.74;
+        case 3:
+            return (double) 2.77;
+        case 4:
+            return (double) 1.82;
+        }
+        return (double) 2.74;
+    }
+
+    public int getTilesBeforeAllign() {
+        return tilesBeforeAllign;
+    }
+
+    public void setTilesBeforeAllign(int tilesBeforeAllign) {
+        this.tilesBeforeAllign = tilesBeforeAllign;
+    }
+
+    private int getTilesRidden() {
+        return tilesRidden;
+    }
+
+    private void setTilesRidden(int tilesRidden) {
+        this.tilesRidden = tilesRidden;
+    }
+
+    public void mustAllign(boolean mustAllign) {
+        this.mustAllign = mustAllign;
+    }
 }

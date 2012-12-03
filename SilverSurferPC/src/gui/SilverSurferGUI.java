@@ -6,7 +6,10 @@ import simulator.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+
+import lejos.pc.tools.SensorPanel;
 
 import org.apache.bcel.generic.GETSTATIC;
 
@@ -20,7 +23,7 @@ public class SilverSurferGUI {
 
     private static JButton ZoomInButton;
     private static JButton ZoomOutButton;
-    
+
     private static JSpinner angle;
     private static JButton turnLeftButton;
     private static JButton turnRightButton;
@@ -42,21 +45,23 @@ public class SilverSurferGUI {
     private static JLabel infoLabel9;
 
     private static JPanel mappingPanel;
-    
-    private static JPanel consolePanel;
-    private static Console console;
+
+    // private static JPanel consolePanel;
+    // private static Console console;
+    private SensorGraph sensorGraph;
 
     private void createAndShowGUI() {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221, 230, 231));
-        
+
         JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
         JPanel otherPanel = otherPanel();
         JPanel infoPanel = infoPanel();
         JPanel mappingPanel = mappingPanel();
-        JPanel consolePanel = consolePanel();
+        // JPanel consolePanel = consolePanel();
+        JPanel sensorPanel = sensorPanel();
 
         GUIMenuBar menuBar = new GUIMenuBar(this);
         frame.setJMenuBar(menuBar);
@@ -73,38 +78,38 @@ public class SilverSurferGUI {
                                 .addComponent(directionPanel)
                                 .addComponent(otherPanel)
                                 .addComponent(infoPanel))
-                                .addGroup(
-                                        frameLayout
-                                                .createParallelGroup(
-                                                        GroupLayout.Alignment.CENTER)
-                                                .addComponent(mappingPanel)
-                                                .addComponent(consolePanel)));
+                .addGroup(
+                        frameLayout
+                                .createParallelGroup(
+                                        GroupLayout.Alignment.CENTER)
+                                .addComponent(mappingPanel)
+                                .addComponent(sensorPanel)));
         frameLayout.setVerticalGroup(frameLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addGroup(
                         frameLayout.createSequentialGroup()
-                        		.addComponent(scalePanel)
+                                .addComponent(scalePanel)
                                 .addComponent(directionPanel)
                                 .addComponent(otherPanel)
                                 .addComponent(infoPanel))
-                                .addGroup(
-                                        frameLayout.createSequentialGroup()
-                                                .addComponent(mappingPanel)
-                                                .addComponent(consolePanel)));
+                .addGroup(
+                        frameLayout.createSequentialGroup()
+                                .addComponent(mappingPanel)
+                                .addComponent(sensorPanel, 170, 170, 170)));
         frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
         frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
-        frameLayout.linkSize(SwingConstants.VERTICAL, consolePanel);
 
         frame.pack();
         frame.setSize(1000, 800);
         frame.setVisible(true);
-        
+
         statusInfoBuffer = new StatusInfoBuffer();
         statusInfoBuffer.setSSG(this);
         communicator = new Communicator(statusInfoBuffer);
         System.out.println("[CONNECTION] Entered simulator mode.");
 
-        getSimulationPanel().setSimulationPilot(communicator.getSimulationPilot());
+        getSimulationPanel().setSimulationPilot(
+                communicator.getSimulationPilot());
         addListeners();
         barDecoder = new BarDecoder(communicator);
 
@@ -120,13 +125,13 @@ public class SilverSurferGUI {
         return simulationPanel;
     }
 
-    private JPanel scalePanel(){
-    	ZoomInButton = new JButton("Zoom in");
-    	ZoomOutButton = new JButton("Zoom out");
-    	
-    	JPanel scalePanel = new JPanel();
-    	scalePanel.setBorder(BorderFactory.createTitledBorder(
-                createBorder(), "Zoom"));
+    private JPanel scalePanel() {
+        ZoomInButton = new JButton("Zoom in");
+        ZoomOutButton = new JButton("Zoom out");
+
+        JPanel scalePanel = new JPanel();
+        scalePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+                "Zoom"));
         scalePanel.setOpaque(false);
 
         GroupLayout scaleLayout = new GroupLayout(scalePanel);
@@ -137,11 +142,11 @@ public class SilverSurferGUI {
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(ZoomInButton).addComponent(ZoomOutButton));
         scaleLayout.setVerticalGroup(scaleLayout.createSequentialGroup()
-        		.addComponent(ZoomInButton).addComponent(ZoomOutButton));
-                                
+                .addComponent(ZoomInButton).addComponent(ZoomOutButton));
+
         return scalePanel;
     }
-    
+
     private JPanel directionPanel() {
         JLabel angleLabel = new JLabel("Angle (degrees)", JLabel.CENTER);
 
@@ -209,13 +214,15 @@ public class SilverSurferGUI {
         otherLayout.setAutoCreateContainerGaps(true);
         otherLayout.setHorizontalGroup(otherLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(lookAroundButton).addComponent(alignWhiteLineButton).addComponent(alignWall));
+                .addComponent(lookAroundButton)
+                .addComponent(alignWhiteLineButton).addComponent(alignWall));
         otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
-        		.addComponent(lookAroundButton).addComponent(alignWhiteLineButton).addComponent(alignWall));
+                .addComponent(lookAroundButton)
+                .addComponent(alignWhiteLineButton).addComponent(alignWall));
 
         return otherPanel;
     }
-    
+
     private JPanel infoPanel() {
         infoLabel1 = new JLabel("", JLabel.CENTER);
         infoLabel2 = new JLabel("", JLabel.CENTER);
@@ -226,53 +233,54 @@ public class SilverSurferGUI {
         infoLabel7 = new JLabel("", JLabel.CENTER);
         infoLabel8 = new JLabel("", JLabel.CENTER);
         infoLabel9 = new JLabel("", JLabel.CENTER);
-        
+
         JPanel outputPanel = new JPanel();
         outputPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
                 "Output"));
         outputPanel.setOpaque(false);
-        
+
         GroupLayout outputLayout = new GroupLayout(outputPanel);
         outputPanel.setLayout(outputLayout);
         outputLayout.setAutoCreateGaps(true);
         outputLayout.setAutoCreateContainerGaps(true);
-        outputLayout.setHorizontalGroup(outputLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-        		.addComponent(infoLabel1)
-        		.addComponent(infoLabel2)
-        		.addComponent(infoLabel3)
-        		.addComponent(infoLabel4)
-        		.addComponent(infoLabel5)
-        		.addComponent(infoLabel6)
-        		.addComponent(infoLabel7)
-        		.addComponent(infoLabel8)
-        		.addComponent(infoLabel9));
+        outputLayout.setHorizontalGroup(outputLayout
+                .createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(infoLabel1).addComponent(infoLabel2)
+                .addComponent(infoLabel3).addComponent(infoLabel4)
+                .addComponent(infoLabel5).addComponent(infoLabel6)
+                .addComponent(infoLabel7).addComponent(infoLabel8)
+                .addComponent(infoLabel9));
         outputLayout.setVerticalGroup(outputLayout.createSequentialGroup()
-        		.addComponent(infoLabel1)
-        		.addComponent(infoLabel2)
-        		.addComponent(infoLabel3)
-        		.addComponent(infoLabel4)
-        		.addComponent(infoLabel5)
-        		.addComponent(infoLabel6)
-        		.addComponent(infoLabel7)
-        		.addComponent(infoLabel8)
-        		.addComponent(infoLabel9));
-    	return outputPanel;
+                .addComponent(infoLabel1).addComponent(infoLabel2)
+                .addComponent(infoLabel3).addComponent(infoLabel4)
+                .addComponent(infoLabel5).addComponent(infoLabel6)
+                .addComponent(infoLabel7).addComponent(infoLabel8)
+                .addComponent(infoLabel9));
+        return outputPanel;
     }
 
     public void updateStatus() {
-    	infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
-    	infoLabel3.setText("Ultrasonicsensor: "
+        int ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
+                .getUltraSensorValue();
+        int lightSensorValue = getSimulationPanel().getSimulationPilot()
+                .getLightSensorValue();
+
+        try {
+            sensorGraph
+                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
+        } catch (NullPointerException e) {
+            // TODO: handle exception
+        }
+
+        infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
+        infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
+        infoLabel4.setText("Lightsensor: " + lightSensorValue);
+        infoLabel5.setText("Touchsensor 1: "
                 + getSimulationPanel().getSimulationPilot()
-                .getUltraSensorValue());
-    	infoLabel4.setText("Lightsensor: "
+                        .getTouchSensor1Value());
+        infoLabel6.setText("Touchsensor 2: "
                 + getSimulationPanel().getSimulationPilot()
-                .getLightSensorValue());
-    	infoLabel5.setText("Touchsensor 1: "
-                + getSimulationPanel().getSimulationPilot()
-                .getTouchSensor1Value());
-    	infoLabel6.setText("Touchsensor 2: "
-                + getSimulationPanel().getSimulationPilot()
-                .getTouchSensor2Value());
+                        .getTouchSensor2Value());
         infoLabel7.setText("Left Motor: "
                 + statusInfoBuffer.getLeftMotorMoving() + " "
                 + statusInfoBuffer.getLeftMotorSpeed());
@@ -307,27 +315,34 @@ public class SilverSurferGUI {
     }
 
     public void updateCoordinates(String s) {
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
+        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+                s));
     }
 
-    private JPanel consolePanel() {
-        console = new Console();
-        JScrollPane scrollPane = new JScrollPane(console);
-        console.setScroll(scrollPane);
+    /*
+     * Tijdelijk niet nodig private. JPanel consolePanel() { console = new
+     * Console(); JScrollPane scrollPane = new JScrollPane(console);
+     * console.setScroll(scrollPane);
+     * 
+     * consolePanel = new JPanel(); consolePanel.setOpaque(false);
+     * 
+     * GroupLayout consolelayout = new GroupLayout(consolePanel);
+     * consolePanel.setLayout(consolelayout);
+     * consolelayout.setAutoCreateGaps(true);
+     * consolelayout.setAutoCreateContainerGaps(true);
+     * consolelayout.setHorizontalGroup(consolelayout.createSequentialGroup()
+     * .addComponent(scrollPane));
+     * consolelayout.setVerticalGroup(consolelayout.createSequentialGroup()
+     * .addComponent(scrollPane));
+     * 
+     * return consolePanel; }
+     */
 
-        consolePanel = new JPanel();
-        consolePanel.setOpaque(false);
+    private JPanel sensorPanel() {
+        sensorGraph = new SensorGraph();
+        sensorGraph.setOpaque(false);
 
-        GroupLayout consolelayout = new GroupLayout(consolePanel);
-        consolePanel.setLayout(consolelayout);
-        consolelayout.setAutoCreateGaps(true);
-        consolelayout.setAutoCreateContainerGaps(true);
-        consolelayout.setHorizontalGroup(consolelayout.createSequentialGroup()
-                .addComponent(scrollPane));
-        consolelayout.setVerticalGroup(consolelayout.createSequentialGroup()
-                .addComponent(scrollPane));
-
-        return consolePanel;
+        return sensorGraph;
     }
 
     protected static void connectBluetooth() {
@@ -336,8 +351,8 @@ public class SilverSurferGUI {
             simulationPanel.resetMap();
             communicator.getSimulationPilot().setRealRobot(true);
             simulationPanel.setTile(0, 0);
-    		statusInfoBuffer.setXCoordinateRelative(0);
-    		statusInfoBuffer.setYCoordinateRelative(0);
+            statusInfoBuffer.setXCoordinateRelative(0);
+            statusInfoBuffer.setYCoordinateRelative(0);
             System.out.println("[CONNECTION] Connection established.");
             changeSpeed(2);
         } catch (Exception e) {
@@ -359,7 +374,7 @@ public class SilverSurferGUI {
                     .println("[CONNECTION] Oops! Something went wrong disconnecting!");
         }
     }
-    
+
     protected static void clearScreen() {
         System.out.println("[GUI] Screen cleared.");
         simulationPanel.clearPath();
@@ -367,7 +382,7 @@ public class SilverSurferGUI {
 
     public static void changeSpeed(int value) {
         communicator.setSpeed(value);
-    	infoLabel2.setText("Speed level: " + value);
+        infoLabel2.setText("Speed level: " + value);
         System.out.println(communicator.getConsoleTag()
                 + " Current Speed Level: " + value + ".");
     }
@@ -376,24 +391,24 @@ public class SilverSurferGUI {
      * Zooms in the SimulationJPanel.
      */
     public void zoomIn() {
-		ZoomThread ZT = new ZoomThread("ZT");
+        ZoomThread ZT = new ZoomThread("ZT");
         ZT.setSimulationPanel(simulationPanel);
         ZT.Zoomin(true);
         ZT.start();
-	}
-    
+    }
+
     /**
      * Zooms out the SimulationJPanel.
      */
     public void zoomOut() {
-		ZoomThread ZT = new ZoomThread("ZT");
+        ZoomThread ZT = new ZoomThread("ZT");
         ZT.setSimulationPanel(simulationPanel);
         ZT.Zoomin(false);
         ZT.start();
-	}
-    
+    }
+
     private void addListeners() {
-    	ZoomInButton.addMouseListener(new MouseListener() {
+        ZoomInButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {
             }
@@ -415,10 +430,9 @@ public class SilverSurferGUI {
                 zoomIn();
             }
 
-			
         });
-    	
-    	ZoomOutButton.addMouseListener(new MouseListener() {
+
+        ZoomOutButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {
             }
@@ -440,9 +454,8 @@ public class SilverSurferGUI {
                 zoomOut();
             }
 
-			
         });
-    	
+
         turnLeftButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {

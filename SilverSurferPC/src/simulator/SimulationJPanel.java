@@ -15,6 +15,8 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import communication.BarDecoder;
+
 import datastructures.Bag;
 import datastructures.Tuple;
 
@@ -355,7 +357,10 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				Rectangle2D[] barcode = Barcode.createVisualBarCode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()),getSimulationPilot().getCenterAbsoluteCurrentTile()[0],getSimulationPilot().getCenterAbsoluteCurrentTile()[1]);
 				getMapGraphConstructed().getCurrentTile().setContent(simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent());
 				if((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent() != null){
-				addBarcode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).toString(), barcode);}
+					addBarcode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).toString(), barcode);
+					BarDecoder dec = new BarDecoder(getSSG().getCommunicator());
+					dec.decode(15);
+				}
 		
 		}
 		
