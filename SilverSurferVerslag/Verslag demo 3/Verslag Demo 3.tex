@@ -39,7 +39,7 @@
 
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
-\label{ssec:abstr} % 3 ?
+\label{ssec:abstr} % 3 ok
 Het P\&O-project bestaat eruit een robot autonoom een doolhof te laten verkennen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf. De robot is voorzien van een lichtsensor en een ultrasone sensor. Deze staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De aansturing van de robot gebeurt via bluetoothverbinding. Een Grafische User Interface (GUI) maakt deze aansturing op een gebruiksvriendelijke manier mogelijk. De GUI geeft de baan van de robot  weer. Ook een historiek van de sensorwaarden wordt weergegeven in de GUI.
 
 De robot kan zich autonoom door een doolhof voortbewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map op van de doolhof. Op elke nieuwe tegel kijkt de robot rond en geeft de gedetecteerde muren door. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish te bepalen. De finish wordt aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
@@ -52,13 +52,13 @@ Een computerprogramma simuleert de werking van de robot. Het is voor de simulato
 
 \tableofcontents
 
-%figuur robot
-\begin{figure}[!hb]
-\begin{flushright}
-    \includegraphics[width=1\textwidth]{robotFP2}
-    \label{fig:robotFP}
-\end{flushright}
-\end{figure}
+%%figuur robot
+%\begin{figure}[!hb]
+%\begin{flushright}
+%    \includegraphics[width=1\textwidth]{robotFP}
+%    \label{fig:robotFP}
+%\end{flushright}
+%\end{figure}
 
 
 \newpage 
@@ -77,7 +77,7 @@ LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een N
 % == fysieke bouw == %
 \subsection{Fysieke bouw} % 3 ok
 \label{ssec:fysbouw}
-Bij het bouwen van de robot (zie figuur \ref{robot}) werd het ontwerpboekje gevolgd. Deze compacte samenstelling leek geen directe nadelen te hebben. Twee grote wielen worden elk met hun eigen motor aangestuurd. Een klein wiel achteraan zorgt ervoor dat de robot vlot kan draaien en wordt niet aangedreven. De sensoren werden als volgt ge\"installeerd: 
+Bij het bouwen van de robot (zie figuur \ref{robot}) werd het ontwerpboekje gevolgd. Deze compacte samenstelling leek geen directe nadelen te hebben. Twee grote wielen worden elk met hun eigen motor aangestuurd. Een klein wiel achteraan zorgt ervoor dat de robot vlot kan draaien en wordt niet aangedreven. De sensoren (zie figuur \ref{fig:sensors}) werden als volgt ge\"installeerd: 
 
 \begin{itemize}
 \item \textit{lichtsensor:} vooraan en dicht tegen de grond.
@@ -98,17 +98,15 @@ Bij het bouwen van de robot (zie figuur \ref{robot}) werd het ontwerpboekje gevo
 % figuur sensoren
 \begin{figure}
         \centering
-        \begin{subfigure}[h]{0.48\textwidth}
+        \begin{subfigure}[h]{0.54\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{robotUS}
                 \caption{Ultrasone sensor}
-                \label{fig:US}
         \end{subfigure}%
-        \begin{subfigure}[h]{0.48\textwidth}
+        \begin{subfigure}[h]{0.46\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{robotLSTS}
                 \caption{Licht- en Druksensor}
-                \label{fig:LS+TS}
         \end{subfigure}
         \label{fig:sensors}
         \caption{Sensoren}
