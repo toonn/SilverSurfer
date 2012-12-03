@@ -33,8 +33,11 @@ public class SensorGraph extends JPanel {
         int w = getWidth();
         int h = getHeight();
 
-        int wLS = w / 2;
-        int wUS = w;
+        int graphWidth = w;
+        int graphHeight = h + 10;
+
+        int wLS = graphWidth / 2;
+        int wUS = graphWidth;
 
         int LSWhite = 54;
         int LSBlack = 34;
@@ -44,37 +47,70 @@ public class SensorGraph extends JPanel {
         int USMax = 150;
         int USWall = 28;
 
-        // LightSensor white and black boundary
-        g2.draw(new Line2D.Double(0, h - (LSWhite - LSMin) * h / LSScale, wLS,
-                h - (LSWhite - LSMin) * h / LSScale));
-        g2.draw(new Line2D.Double(0, h - (LSBlack - LSMin) * h / LSScale, wLS,
-                h - (LSBlack - LSMin) * h / LSScale));
+        // Labels on the graph
+        g2.setColor(Color.gray);
+        g2.drawString("LightSensor", w / 2 / 5, 10);
+        g2.drawString("White", 15, (LSWhite - LSMin) * graphHeight / LSScale);
+        g2.drawString("Black", 15, (LSBlack - LSMin) * graphHeight / LSScale);
+        // Lightsensor scale
+        for (int lsv = 30; lsv < 60; lsv += 5) {
+            g2.drawString("" + lsv, 0, graphHeight - (lsv - LSMin)
+                    * graphHeight / LSScale);
+            g2.draw(new Line2D.Double(0, graphHeight - (lsv - LSMin)
+                    * graphHeight / LSScale, wLS, graphHeight - (lsv - LSMin)
+                    * graphHeight / LSScale));
+        }
+
+        g2.drawString("UltrasonicSensor", w / 2 / 5 + w / 2, 10);
+        for (int usv = 0; usv < 160; usv += 30) {
+            g2.drawString("" + usv, wLS + 4, graphHeight - usv);
+            g2.draw(new Line2D.Double(wLS, graphHeight - usv, wUS, graphHeight
+                    - usv));
+        }
+
+        // LightSensor white and black threshold
+        g2.setColor(Color.black);
+        g2.draw(new Line2D.Double(0, graphHeight - (LSWhite - LSMin)
+                * graphHeight / LSScale, wLS, graphHeight - (LSWhite - LSMin)
+                * graphHeight / LSScale));
+        g2.draw(new Line2D.Double(0, graphHeight - (LSBlack - LSMin)
+                * graphHeight / LSScale, wLS, graphHeight - (LSBlack - LSMin)
+                * graphHeight / LSScale));
 
         // USensor maximum useful value
         g2.setColor(Color.red);
-        g2.draw(new Line2D.Double(wLS, h - USMax, wUS, h - USMax));
+        g2.draw(new Line2D.Double(wLS, graphHeight - USMax, wUS, graphHeight
+                - USMax));
         // USensor approximate wall values
         g2.setColor(Color.black);
         for (int wall = USWall; wall < USMax; wall += 40) {
-            g2.draw(new Line2D.Double(wLS, h - wall, wUS, h - wall));
+            g2.draw(new Line2D.Double(wLS, graphHeight - wall, wUS, graphHeight
+                    - wall));
         }
 
+        // Sensor values
+        int lineThickness = 3; // in pixels
+        g2.setStroke(new BasicStroke(lineThickness));
         for (int i = 0; i < US.size() - 1; i++) {
             g2.setColor(Color.orange);
-            g2.draw(new Line2D.Double(i * w / 200, h - (LS.get(i) - LSMin) * h
-                    / LSScale, (i + 1) * w / 200, h - (LS.get(i + 1) - LSMin)
-                    * h / LSScale));
+            g2.draw(new Line2D.Double(i * graphWidth / 200, graphHeight
+                    - (LS.get(i) - LSMin) * graphHeight / LSScale, (i + 1)
+                    * graphWidth / 200, graphHeight - (LS.get(i + 1) - LSMin)
+                    * graphHeight / LSScale));
 
             if (US.get(i) <= 150 && US.get(i + 1) <= 150) {
                 g2.setColor(Color.blue);
-                g2.draw(new Line2D.Double(wLS + i * w / 200, h - US.get(i), wLS
-                        + (i + 1) * w / 200, h - US.get(i + 1)));
+                g2.draw(new Line2D.Double(wLS + i * graphWidth / 200,
+                        graphHeight - US.get(i), wLS + (i + 1) * graphWidth
+                                / 200, graphHeight - US.get(i + 1)));
             } else {
                 g2.setColor(Color.lightGray);
-                g2.draw(new Line2D.Double(wLS + i * w / 200, h - 155, wLS
-                        + (i + 1) * w / 200, h - 155));
+                g2.draw(new Line2D.Double(wLS + i * graphWidth / 200,
+                        graphHeight - 155, wLS + (i + 1) * graphWidth / 200,
+                        graphHeight - 155));
             }
         }
+        g2.setStroke(new BasicStroke(1));
 
         // Dividing line between sensors
         g2.setColor(Color.gray);

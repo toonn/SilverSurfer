@@ -95,7 +95,7 @@ public class SilverSurferGUI {
                 .addGroup(
                         frameLayout.createSequentialGroup()
                                 .addComponent(mappingPanel)
-                                .addComponent(sensorPanel, 160, 160, 160)));
+                                .addComponent(sensorPanel, 170, 170, 170)));
         frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
         frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
 
