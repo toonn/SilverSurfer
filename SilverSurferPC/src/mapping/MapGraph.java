@@ -67,8 +67,7 @@ public class MapGraph {
 				return tile;
 			}
 		}
-		// gebeurt nooit
-		throw new IllegalStateException("bij getStartingTile in MapGraph");
+		return null;
 	}
 	public int[] getCurrentTileCoordinates() {
 		return currentTileCoordinates;

@@ -151,20 +151,4 @@ public class ShortestPath {
 			}
 		} 
 	}
-
-	
-	public static void main(String[] args) {
-		MapGraph map = (new MapReader()).createMapFromFile(new File("resources/maze_maps/Semester1Demo2.txt"), 2, 2);
-		Vector vec = new Vector<Tile>();
-		for(Tile tile: map.getTiles()){
-			vec.add(tile);
-		}
-		ShortestPath shor = new ShortestPath(new SilverSurferGUI(), map.getTileWithCoordinates(2, 4), map.getTileWithCoordinates(2, 2), vec);
-		shor.setHeuristics();
-		shor.fillTilesPath(map.getTileWithCoordinates(2, 4));
-		System.out.println("sysout");
-		for(Object tile:shor.getTilesPath()){
-			System.out.println(((Tile) tile).getxCoordinate() + "" +  ((Tile) tile).getyCoordinate());
-		}
-	}
 }
