@@ -453,74 +453,24 @@ De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI 
 
 De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: 'Silver' en '00:16:53:0A:04:5A'.
 
+De bluetooth laat toe enkele 'datastreams' tussen robot en computer op te zetten. Deze 'datastreams' sturen informatie in verschillende kanalen door. Zo kunnen zowel robot als computer de verschillende 'soorten informatie' van elkaar onderscheiden.
+
 % == robot == %
 \subsection{Robot} % 3 ?
 \label{ssec:robot}
-Het project op de NXT-brick bestaat uit \'e\'en hoofdklasse, \'e\'en commandoklasse en enkele threadklassen. Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn 'datastreams' en start hij een \textit{sensorthread} op.
+Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatsten maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn 'datastreams' en start hij een \textit{SensorThread} op.
 
-De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes geven een resultaat mee aan de computer. Dit gebeurt door ze op een datastream te zetten, voorafgaand door een tag (bijvoorbeeld [US] voor ultrasonic sensor data).
+De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een 'datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonic sensor data).\\
 
-Enkele belangrijke methodes:
+Enkele belangrijke methodes van \textit{CommandUnit}:
 \begin{itemize}
-\item \textit{updatecoordinates:} de robot houd zijn positie bij. bij elke beweging zullen de coordinaten worden geupdated.
-\item \textit{updateStatus:} stuur alle statusgegevens (lichtsensor, coordinaten, ...) naar de computer.
+\item \textit{updateCoordinates:} de robot houdt zijn positie bij. bij elke beweging zullen de co\"ordinaten worden ge\"updated.
+\item \textit{updateStatus:} stuur alle statusgegevens (lichtsensor, co\"ordinaten, ...) naar de computer.
 \item \textit{main:} wacht tot de computer een commando geeft en voer dit uit.
+\item \textit{moveForward:} beweegt voorwaarts, maar stopt bij een barcode.
 \end{itemize}
 
-De belangrijkste commandos zijn:
-- AlignPerpendicular (zet zich goed op de witte lijn, dit commando roept de methode alignonwhiteline in de klasse automatic op (zie onder))
-- AlignWall (zet zich goed tussen 2 muren, dit commando roept de methode alignWall in klasse automatic op (zie onder))
-- CloseConnection (sluit de connectie door de sensorthread the sluiten, de datastreams af te sluiten, de connectie te verbreken en het programma te laten eindigen)
-- lookAround (kijkt rond voor openingen/muren, roept methode lookaround in klasse automatic op)
-- playSong (maakt een songthread aan die een liedje afspeelt-
-- AutomaticMoveForward en AutomaticTurnAngle
-De laatste 2 commandos krijgen als input een invoer in cm of graden (naargelang het command), dit vermenigvuldigd met 100 en daarbij opgeteld de int van het juiste commando.
-Dit wordt terug omgezet naar de juiste invoer in cm of graden, en vervolgens naar een invoer in graden die de wielen moeten draaien om de juiste hoek of afstand af te leggen.
-Deze input wordt meegegeven aan een methode in autoamtic (zie onder).
-
-De robot heeft een state die aangeeft wat het momenteel aan het doen is.
-De mogelijkheden zijn:
-- Driving forward (naar voor rijden zolang de robot in deze state is-
-- Driving forward left (linksvoor)
-- Driving forward right (rechtsvoor)
-- Driving backward
-- Driving backward left
-- Driving backward right
-- Turn left
-- Turn right
-- Waiting (wachten tot er een nieuwe state wordt gegeven)
-- Automatic (in deze state zal de robot een bepaalde methode met bepaalde parameters uitvoeren die hij meekreeg van de main klasse, na de uitvoering zal de state terug naar waiting gaan)
-
-De klasse automatic is de meest belangrijke van de states. De gebruikte methodes hierin zijn: 
-- beweeg naar voor met barcodedetectie
-- beweeg naar voor zonder barcodedetectie
-- draai
-- zet loodrecht op witte lijn
-- zet halverwege tussen 2 muren
-- kijk rond en zoek naar muren/openingen
-- lees de barcode
-de methode "beweeg x cm naar voor met barcodedetectie" is de standaardbeweegmethode, de andere wordt alleen gebruikt bij het lezen van de barcode zelf (zie verder).
-De beweeg en draai methodes krijgen een input van x in graden die het wiel moet draaien. Deze graden worden berekent door de main klasse (zie hoger).
-De methode "zet halverwege tussen 2 muren" zal een boolean teruggeven die zegt of het gelukt is.
-De methode "lees de barcode" zal de barcode lezen door 2 cm naar voor te gaan, de lichtsensorwaarde te lezen, deze toe te voegen aan een string, en dan de volgende bar lezen.
-Het resultaat wordt teruggegeven aan de computer.
-
-Tenslotte zijn er nog enkele thread:
-- SensorThread
-- BarcodeThread
-- WhiteLineThread
-- Songthread (zie boven)
-De sensorthread zal elke 50 miliseconden alle data van zijn sensoren opslagen en deze naar de computer sturen.
-Dit gebeurt vaak genoeg voor up to date info maar niet teveel zodat we de stream niet overflowen.
-De barcodethread wordt gemaakt bij een moveforward commando, deze zal de beweging stoppen wanneer een zwarte lijn wordt gedetecteerd.
-De moveforward zal dan de methode readbarcode oproepen, die de barcode leest.
-De Whitelinethread zal naar voor bewegen tot hij wordt gestopt door de methode alignonwhiteline wanneer deze een witte lijn detecteerd.
-
-
-Een \textit{Finite State Machine} geeft de robot een concreet uitvoeringsschema. Een object van de klasse \textit{CommandUnit} houdt een currentState bij - een object van de superklasse \textit{State}. Negen subklassen verzorgen het nodige onderscheid: \textit{Waiting}, \textit{DrivingBackward}, \textit{TurnLeft}, \textit{DrivingRightForward}, …  en \'e\'en speciale toestand: de klasse \textit{Automatic}. De \textit{CommandUnit} ontvangt commando's via bluetooth. De \textit{CommandUnit} wijzigt de currentState naar een nieuw object van een \textit{State}-subklasse. De constructoren van elke subklasse passen het gedrag van de motoren aan bij de overgang naar de bepaalde state.
-Bijvoorbeeld: De robot staat stil en zijn currentState is \textit{Waiting}.
-Als de gebruiker de robot voorwaarts wil laten gaan, drukt hij de up-toets in. De \textit{CommandUnit} wijzigt de currentState van de robot naar currentState.ForwardPressed(). Dit levert een currentState van het type \textit{DrivingForward} op. De robot beweegt voorwaarts.
-Tot slot is er de klasse \textit{Automatic}. Deze heeft vier methoden: \textit{turnAngle(int)}, \textit{driveForward(int)}, \textit{forwardToWhiteLine(LightSensor)} en \textit{whiteLinePerpendicular(LightSensor)}. De \textit{CommandUnit} roept deze methoden op met argumenten die hij geparsed heeft uit de informatie van de ontvangen signalen, zoals beschreven in sectie \ref{ssec:commands}.
+De \textit{SensorThread} stuurt elke 50 milliseconden sensorinformatie door naar de computer. Zo blijft de data up to date zonder dat de 'datastream' te veel informatie moet slikken.
 
 % == simulator == %
 \subsection{Simulator} % 3 ?
