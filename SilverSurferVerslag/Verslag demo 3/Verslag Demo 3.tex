@@ -72,7 +72,7 @@ Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog 
 % == BOUW == %
 \section{Bouw van de robot} % 3 ok
 \label{sec:bouw}
-LEGO Mindstorms\^{1} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
+LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren met Java.
 
 % == fysieke bouw == %
 \subsection{Fysieke bouw} % 3 ok
@@ -162,7 +162,7 @@ Uit deze test blijkt bovendien dat de robot een afwijking naar links heeft wanne
 
 \subsubsection{Volledig rond de as draaien: bepalen van y} % 3 te weinig meetwaarden
 \label{ssec:calibMy}
-De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 180\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
+De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 360\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
 Een schatting voor $y$ via de diameter van het wiel, met $as_{robot}$ (afstand tussen beide wielen) en $diameter$ in centimeter:
 
 \begin{equation*}
@@ -170,10 +170,12 @@ y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 \end{equation*}
 
 De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ graden in tegengestelde richting te laten draaien. $y$ wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
-% ONTBREEKT: y0 + afwijking op 180°; y1 + afwijking; y2 + afwijking + ...
+% ONTBREEKT: y0 + afwijking op 360°; y1 + afwijking; y2 + afwijking + ...
+
 
 Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'e\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
 % ONTBREEKT: MEETWAARDEN VAN 1x180° ter vergelijking
+
 
 % boxplots calibratie motoren
 \begin{figure}
@@ -191,7 +193,7 @@ Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de in
         \begin{subfigure}[h]{0.32\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{boxMgraden4x90}
-                \caption{Afwijking op $180 \degree$}
+                \caption{Afwijking op $360 \degree$}
         \end{subfigure}
  \caption{Boxplots calibratie motoren.}
 \label{fig:calibM}
@@ -379,7 +381,7 @@ De simulator kan gebruikt worden om de software op te testen zonder telkens op d
 % == software design == %
 \subsection{Software ontwerp} % 3 ?
 \label{ssec:Sdesign}
-Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren 4 en 5 tonen een klassendiagram.\\
+Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren \ref{fig:klasDiaNXT} en \ref{fig:klasDiaPC} tonen een klassendiagram.\\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
 
 
@@ -417,7 +419,8 @@ De \textit{UnitCommunicator} stuurt de bekomen integer door naar ofwel de \texti
 
 \subsubsection{De bewerking op de integers} % 3 ok!
 \label{sssec:integer}
-Integers stellen de commando's voor. In twee gevallen is echter meer informatie nodig: om de robot een bepaalde afstand te laten afleggen en om de robot een bepaald aantal graden te laten draaien. Deze afstand en dit aantal graden moet mee doorgegeven worden met de integer. De eenheden waarin de afstand en de hoek worden doorgestuurd zijn respectievelijk cm en graden.\\\\
+Integers stellen de commando's voor. In twee gevallen is echter meer informatie nodig: om de robot een bepaalde afstand te laten afleggen en om de robot een bepaald aantal graden te laten draaien. Deze afstand en dit aantal graden moet mee doorgegeven worden met de integer. De eenheden waarin de afstand en de hoek worden doorgestuurd zijn respectievelijk cm en graden.
+
 De doorgegeven integer wordt als volgt opgebouwd:
 
 \begin{itemize}
@@ -461,6 +464,67 @@ De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{c
 % == robot == %
 \subsection{Robot} % 3 ?
 \label{ssec:robot}
+Het project op de NXT-brick bestaat uit \'e\'en hoofdklasse, \'e\'en commandoklasse en enkele threadklassen. Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn 'datastreams' en start hij een \textit{sensorthread} op.
+
+De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes geven een resultaat mee aan de computer. Dit gebeurt door ze op een datastream te zetten, voorafgaand door een tag (bijvoorbeeld [US] voor ultrasonic sensor data).
+
+Enkele belangrijke methodes:
+\begin{itemize}
+\item \textit{updatecoordinates:} de robot houd zijn positie bij. bij elke beweging zullen de coordinaten worden geupdated.
+\item \textit{updateStatus:} stuur alle statusgegevens (lichtsensor, coordinaten, ...) naar de computer.
+\item \textit{main:} wacht tot de computer een commando geeft en voer dit uit.
+\end{itemize}
+
+De belangrijkste commandos zijn:
+- AlignPerpendicular (zet zich goed op de witte lijn, dit commando roept de methode alignonwhiteline in de klasse automatic op (zie onder))
+- AlignWall (zet zich goed tussen 2 muren, dit commando roept de methode alignWall in klasse automatic op (zie onder))
+- CloseConnection (sluit de connectie door de sensorthread the sluiten, de datastreams af te sluiten, de connectie te verbreken en het programma te laten eindigen)
+- lookAround (kijkt rond voor openingen/muren, roept methode lookaround in klasse automatic op)
+- playSong (maakt een songthread aan die een liedje afspeelt-
+- AutomaticMoveForward en AutomaticTurnAngle
+De laatste 2 commandos krijgen als input een invoer in cm of graden (naargelang het command), dit vermenigvuldigd met 100 en daarbij opgeteld de int van het juiste commando.
+Dit wordt terug omgezet naar de juiste invoer in cm of graden, en vervolgens naar een invoer in graden die de wielen moeten draaien om de juiste hoek of afstand af te leggen.
+Deze input wordt meegegeven aan een methode in autoamtic (zie onder).
+
+De robot heeft een state die aangeeft wat het momenteel aan het doen is.
+De mogelijkheden zijn:
+- Driving forward (naar voor rijden zolang de robot in deze state is-
+- Driving forward left (linksvoor)
+- Driving forward right (rechtsvoor)
+- Driving backward
+- Driving backward left
+- Driving backward right
+- Turn left
+- Turn right
+- Waiting (wachten tot er een nieuwe state wordt gegeven)
+- Automatic (in deze state zal de robot een bepaalde methode met bepaalde parameters uitvoeren die hij meekreeg van de main klasse, na de uitvoering zal de state terug naar waiting gaan)
+
+De klasse automatic is de meest belangrijke van de states. De gebruikte methodes hierin zijn: 
+- beweeg naar voor met barcodedetectie
+- beweeg naar voor zonder barcodedetectie
+- draai
+- zet loodrecht op witte lijn
+- zet halverwege tussen 2 muren
+- kijk rond en zoek naar muren/openingen
+- lees de barcode
+de methode "beweeg x cm naar voor met barcodedetectie" is de standaardbeweegmethode, de andere wordt alleen gebruikt bij het lezen van de barcode zelf (zie verder).
+De beweeg en draai methodes krijgen een input van x in graden die het wiel moet draaien. Deze graden worden berekent door de main klasse (zie hoger).
+De methode "zet halverwege tussen 2 muren" zal een boolean teruggeven die zegt of het gelukt is.
+De methode "lees de barcode" zal de barcode lezen door 2 cm naar voor te gaan, de lichtsensorwaarde te lezen, deze toe te voegen aan een string, en dan de volgende bar lezen.
+Het resultaat wordt teruggegeven aan de computer.
+
+Tenslotte zijn er nog enkele thread:
+- SensorThread
+- BarcodeThread
+- WhiteLineThread
+- Songthread (zie boven)
+De sensorthread zal elke 50 miliseconden alle data van zijn sensoren opslagen en deze naar de computer sturen.
+Dit gebeurt vaak genoeg voor up to date info maar niet teveel zodat we de stream niet overflowen.
+De barcodethread wordt gemaakt bij een moveforward commando, deze zal de beweging stoppen wanneer een zwarte lijn wordt gedetecteerd.
+De moveforward zal dan de methode readbarcode oproepen, die de barcode leest.
+De Whitelinethread zal naar voor bewegen tot hij wordt gestopt door de methode alignonwhiteline wanneer deze een witte lijn detecteerd.
+
+
 Een \textit{Finite State Machine} geeft de robot een concreet uitvoeringsschema. Een object van de klasse \textit{CommandUnit} houdt een currentState bij - een object van de superklasse \textit{State}. Negen subklassen verzorgen het nodige onderscheid: \textit{Waiting}, \textit{DrivingBackward}, \textit{TurnLeft}, \textit{DrivingRightForward}, …  en \'e\'en speciale toestand: de klasse \textit{Automatic}. De \textit{CommandUnit} ontvangt commando's via bluetooth. De \textit{CommandUnit} wijzigt de currentState naar een nieuw object van een \textit{State}-subklasse. De constructoren van elke subklasse passen het gedrag van de motoren aan bij de overgang naar de bepaalde state.
 Bijvoorbeeld: De robot staat stil en zijn currentState is \textit{Waiting}.
 Als de gebruiker de robot voorwaarts wil laten gaan, drukt hij de up-toets in. De \textit{CommandUnit} wijzigt de currentState van de robot naar currentState.ForwardPressed(). Dit levert een currentState van het type \textit{DrivingForward} op. De robot beweegt voorwaarts.
@@ -610,15 +674,16 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 %\end{itemize}
 
 
-\newpage
-\section*{Referenties}
-\begin{enumerate}
 
-\item \textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+\begin{thebibliography}{9}
 
-\item \textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+\bibitem{mindstorms}
+\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
 
-\end{enumerate}
+\bibitem{leJOS}
+\textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+
+\end{thebibliography}
 
 \end{document}
 
