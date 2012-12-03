@@ -381,7 +381,7 @@ De simulator kan gebruikt worden om de software op te testen zonder telkens op d
 % == software design == %
 \subsection{Software ontwerp} % 3 ?
 \label{ssec:Sdesign}
-Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuren \ref{fig:klasDiaNXT} en \ref{fig:klasDiaPC} tonen een klassendiagram.\\
+Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur \ref{fig:klasDia} toont het klassendiagram.\\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
 
 
@@ -396,20 +396,12 @@ Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction
 %figuur klassendiagram PC
 \begin{figure}[tbp]
 \begin{center}
-    \includegraphics[width=0.8\textwidth]{KlassendiagramPC}
-    \caption{Klassendiagram van de software die op de PC loopt}
-    \label{fig:klasDiaPC}
+    \includegraphics[width=0.8\textwidth]{Klassendiagram}
+    \caption{Klassendiagram van het project}
+    \label{fig:klasDia}
 \end{center}
 \end{figure}
 
-%figuur klassendiagram NXT
-\begin{figure}[tbp]
-\begin{center}
-    \includegraphics[width=0.8\textwidth]{KlassendiagramNXT}
-    \caption{Klassendiagram van de software die op de robot loopt}
-	\label{fig:klasDiaNXT}
-\end{center}
-\end{figure}
 
 % == commando's == %
 \subsection{Het doorgeven van commando's} % 3 ok!
