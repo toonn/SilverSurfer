@@ -354,10 +354,54 @@ Alternatief is het mogelijk te corrigeren op de muren, maar dan moet de robot zi
 % == onderzoeken van het doolhof == %
 \subsection{Onderzoeken van het doolhof} % 3 ?
 \label{ssec:algoOnderzDoolhof}
-Alvorens de robot het kortste pad tussen twee punten bepaalt, dient het hele doolhof gekend te zijn. Dit verkennen doet de robot autonoom. Elke tegel die de robot reeds passeerde, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
+De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot reeds passeert, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
 
-Bij elke tegel onthoudt de robot alle uitwegen. Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden.
-Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof de 'finish'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.
+Bij elke tegel onthoudt de robot alle uitwegen (de naburige tegels). Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden. De robot gebruikt het kortste pad algoritme om de weg naar dit kruispunt te bepalen.
+Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof een 'finish'-barcode en een 'checkpoint'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.\\
+
+
+Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassing implementeert steeds ook de aanpassingen die eerder werden toegevoegd. Tabel \ref{tab:resultVerken} geeft de resultaten van de aanpassingen weer. Figuur \ref{fig:resultVerkenE} toont de gebruikte doolhoven en de uitvoering van het algoritme met aanpassing E.
+\begin{description}
+\item[A] draai bij elke tegel vier keer (eindig in startori\"ntatie) en neem de laatste tile in de queue als volgende tile.
+\item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tile.
+\item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori\"ntatie).
+\item[D] muren die vanuit een naburige tile reeds gedetecteerd werden, worden niet nog eens nagekeken.
+\item[E] tiles waarvan de vier zijden al gekend zijn, worden niet meer bezocht.
+\end{description}
+
+%resultaten lichtsensor
+\begin{table}[hb]
+\begin{center}
+    \begin{tabular}{ c ||  c | c | c | c }
+     & \multicolumn{2}{|c|}{map 1}& \multicolumn{2}{|c}{map 2} \\
+    optimalisatie & \degree gedraaid & cm afgelegd & \degree gedraaid & cm afgelegd\\ \hline \hline
+    A & 14400 & 2160 & 10620 & 1080 \\ \hline
+    B & 13770 & 1920 & 10800 & 1160 \\ \hline
+    C & 11970 & 2000 & 9090 & 1080 \\ \hline
+    D & 9180 & 2000 & 6570 & 1080\\ \hline
+    E & 8820 & 1520 & 6570 & 1080\\
+    \end{tabular}
+    \caption{Testen algoritmes}
+    \label{tab:resultVerken}
+\end{center}
+\end{table}
+
+% figuren verkenning doolhof
+\begin{figure}
+        \centering
+        \begin{subfigure}[h]{0.64\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{verkenMap1E}
+                \caption{map 1}
+        \end{subfigure}%
+        \begin{subfigure}[h]{0.36\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{verkenMap2E}
+                \caption{map 2}
+        \end{subfigure}
+ \caption{Het verkennen van een doolhof met implementatie van aanpassing E. Deze aanpassing maakt dat in map 1 niet alle tegels bezocht hoeven te worden. In map 2 doet deze situatie zich niet voor. Dit is te wijten aan de opbouw van het doolhof.}
+\label{fig:resultVerkenE}
+\end{figure}
 
 % == het kortste pad == %
 \subsection{Het vinden van het kortste pad} % ?
