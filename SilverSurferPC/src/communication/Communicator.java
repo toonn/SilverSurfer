@@ -4,6 +4,7 @@ import audio.SongThread;
 import commands.Command;
 import simulator.SimulationPilot;
 import mapping.*;
+import mazeAlgorithm.MazeExplorer;
 
 import java.io.*;
 
@@ -23,10 +24,19 @@ public class Communicator {
 	private int tilesBeforeAllign = 0;
 	private int tilesRidden = 0;
 	private boolean mustAllign = true;
+	private MazeExplorer explorer;
 
 	public Communicator(StatusInfoBuffer statusInfoBuffer) {
 		setStatusInfoBuffer(statusInfoBuffer);
 		setSpeed(2);
+	}
+	
+	public void setExplorer(MazeExplorer explorer) {
+		this.explorer = explorer;
+	}
+	
+	public MazeExplorer getExplorer() {
+		return explorer;
 	}
 	
 	public StatusInfoBuffer getStatusInfoBuffer() {
