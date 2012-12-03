@@ -151,29 +151,29 @@ Een schatting voor $x$ via de $diameter$ (in centimeter) gebeurt als volgt:
 x_{0} \approx \frac{360}{\pi \cdot diameter}
 \end{equation*}
 
-Een verdere bepaling van $x$ gebeurt via tests.\\
+Een verdere nauwkeurigere bepaling van $x$ gebeurt via tests.\\
 De robot wordt naast een lintmeter geplaatst en krijgt opdracht beide wielen $100 \cdot x$ graden te laten draaien. Bij een perfect gekozen waarde voor $x$, legt de robot precies \'e\'en meter af. Indien niet, wordt $x$ aangepast en wordt de test herhaald tot een voldoende nauwkeurig resultaat bekomen wordt.
 % ONTBREEKT: x0 + afwijking op 1m; x1 + afwijking; x2 + afwijking + ...
 
-Een volgende test bestaat erin de robot beide wielen tien maal $10 \cdot x$ graden te laten draaien. Een boxplot van de totaal afgelegde afstand wordt weergegeven in figuur \ref{fig:calibM}. Wanneer geen afwijking op \'e\'en meter wordt waargenomen, heeft het starten en stoppen geen invloed op de totale afgelegde afstand. Dit blijkt echter wel het geval. In verdere algoritmes wordt hier rekening mee gehouden. De robot legt steeds \'e\'en lange afstand af in plaats van vele korte.\\
+Een volgende test bestaat eruit de robot beide wielen tien maal $10 \cdot x$ graden te laten draaien. Een boxplot van de totaal afgelegde afstand wordt weergegeven in figuur \ref{fig:calibM}. Wanneer geen afwijking op \'e\'en meter wordt waargenomen, heeft het starten en stoppen geen invloed op de totale afgelegde afstand. Dit blijkt echter wel het geval. In verdere algoritmes wordt hier rekening mee gehouden. De robot legt steeds \'e\'en lange afstand af in plaats van vele korte.\\
 Uit deze test blijkt bovendien dat de robot een afwijking naar links heeft wanneer hij rechtdoor rijdt. De boxplot van deze afwijking wordt eveneens weergegeven in figuur \ref{fig:calibM}.
 % ONTBREEKT: MEETWAARDEN VAN 1x100CM ter vergelijking
 
 
 \subsubsection{Volledig rond de as draaien: bepalen van y} % 3 te weinig meetwaarden
 \label{ssec:calibMy}
-De parameter $y$ bepaalt het aantal graden die de wielen moeten draaien opdat de robot 360\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
+De parameter $y$ bepaalt het aantal graden dat de wielen moeten draaien opdat de robot 360\degree rond zijn as zou draaien. Beide wielen draaien hierbij in tegengestelde richting.\\
 Een schatting voor $y$ via de diameter van het wiel, met $as_{robot}$ (afstand tussen beide wielen) en $diameter$ in centimeter:
 
 \begin{equation*}
 y_{0} \approx \frac{(2 \cdot \pi) \cdot (as_{robot}/2)}{diameter_{wiel}/2}
 \end{equation*}
 
-De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ graden in tegengestelde richting te laten draaien. $y$ wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
+De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ graden in tegengestelde richtingen te laten draaien. $y$ wordt aangepast tot de robot na het draaien opnieuw precies naast de lijn uitkomt.
 % ONTBREEKT: y0 + afwijking op 360°; y1 + afwijking; y2 + afwijking + ...
 
 
-Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed op het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'e\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
+Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed van het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'e\'en kant gedraaid heeft, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
 % ONTBREEKT: MEETWAARDEN VAN 1x180° ter vergelijking
 
 
@@ -202,7 +202,7 @@ Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de in
 
 \subsection{Calibratie van de lichtsensor} % 3 ok
 \label{ssec:calibLS}
-De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe meer dit licht geabsorbeerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.\\
+De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe minder licht gereflecteerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.\\
 De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht, in de schaduw, terwijl de robot rijdt en terwijl hij stilstaat. Dit voor alle soorten ondergrond die in de doolhof voorkomen: een paneel, een witte lijn en een zwarte lijn. Boxplots worden weergegeven in figuur \ref{fig:calibLS}. Deze toont dat het gemiddelde enkel bij een zwarte lijn afhangt van de omstandigheden. De afwijking wordt echter sterk bepaald door het feit of de robot rijdt of stilstaat. Bij het simuleren en het interpreteren van de meetwaarden wordt hier rekening mee gehouden.
 
 % boxplots calibratie lichtsensoren
@@ -266,7 +266,7 @@ De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlic
 
 \subsection{Calibratie van de ultrasone sensor} % 3 ok
 \label{ssec:calibUS}
-Een ultrasone sensor zendt ultrasone geluidsgolven uit. De golven weerkaatsen op een object dat zich binnen het bereik bevindt. Bij ontvangst van zijn eigen geluidsgolven, weet de robot dat er een object in de buurt is en op welke afstand het object zich bevindt.\\
+Een ultrasone sensor zendt ultrasone geluidsgolven uit. De golven weerkaatsen op een object dat zich binnen het bereik bevindt. Bij ontvangst van zijn eigen geluidsgolven, weet de robot dat er een object in de buurt is en door de tijd tuss uitzenden en ontvangen op welke afstand het object zich bevindt.\\
 
 In het kader van een doolhof, kan een robot muren tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge\"interpreteerd worden enkel meetwaarden kleiner dan 29 cm als muur beschouwd.
 
