@@ -616,7 +616,7 @@ public class SilverSurferGUI {
             }
         });
         simulationPanel.addKeyListener(new KeyListener() {
-			shiftThread ST = new shiftThread("ST");
+			ShiftThread ST = new ShiftThread("ST");
 
 			@Override
 			public void keyTyped(KeyEvent e) {}

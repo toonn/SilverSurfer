@@ -10,7 +10,7 @@ import lejos.nxt.comm.*;
 public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
-	private static final double ANGLE_COEF = 716; //Amount of degrees needed for a 360 degree turn.
+	private static final double ANGLE_COEF = 710; //Amount of degrees needed for a 360 degree turn.
     private static int NORMAL_SPEED = 180;
     private NXTConnection pcConnection;
     private DataInputStream dis;
