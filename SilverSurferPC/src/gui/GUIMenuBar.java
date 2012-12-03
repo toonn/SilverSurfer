@@ -529,6 +529,7 @@ public class GUIMenuBar extends JMenuBar {
 			public void actionPerformed(ActionEvent e) {
 				 MazeExplorer exp = new MazeExplorer(gui);
 				 ExploreThread explorer = new ExploreThread(exp);
+				 gui.getCommunicator().setExplorer(exp);
 				 explorer.start();
 			}
 		});

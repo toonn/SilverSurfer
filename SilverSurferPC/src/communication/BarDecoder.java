@@ -52,16 +52,16 @@ public class BarDecoder {
 					SilverSurferGUI.changeSpeed(4);
 	            	break;
 				case(13):            
-					//TODO: start
-	            	break;
+					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
+					break;
 				case(44):       
-					//TODO: start
+					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
 					break;
 				case(55):            
-					//TODO: finish
+					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
 	            	break;
 				case(59):       
-					//TODO: finish
+					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
 					break;
 				default:
 					break;
