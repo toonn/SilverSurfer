@@ -1,5 +1,8 @@
 package communication;
 
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+
 import commands.Command;
 
 import gui.SilverSurferGUI;
@@ -16,6 +19,7 @@ public class BarDecoder {
 		try {
 			int xCoordinate;
 			int yCoordinate;
+			double scalingfactor = 1;
 			switch(value) {
 				case(5):
 					communicator.moveTurn(0, -360, 0);
@@ -43,7 +47,6 @@ public class BarDecoder {
 					break;
 				case(25):  //25   
 					SilverSurferGUI.changeSpeed(1);
-					//communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
 	            	break;
 				case(38):	//38
 					SilverSurferGUI.changeSpeed(1);
@@ -54,22 +57,30 @@ public class BarDecoder {
 				case(41):	//41
 					SilverSurferGUI.changeSpeed(3);
 	            	break;
-				case(13):            
+				case(13):    
+					scalingfactor =  communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().checkHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
 					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
 					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
 					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
 					break;
-				case(44):       
+				case(44):  
+					scalingfactor = (int) communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().checkHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
 					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
 					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
 					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
 					break;
-				case(55):            
+				case(55):    
+					scalingfactor = (int) communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().endHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
 					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
 					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
 					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
 					break;
-				case(59):       
+				case(59):    
+					scalingfactor = (int) communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().endHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
 					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
 					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
 					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));

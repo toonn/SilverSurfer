@@ -70,7 +70,14 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * The placing of these 'barcodes' is specified in the seperate rectangles.
 	 */
 	private Bag<Tuple<String, Rectangle2D[]>> barcodes = new Bag<Tuple<String, Rectangle2D[]>>();
-
+	/**
+	 * The rectangle that Highlights the checktile on the gui.
+	 */
+	public Rectangle2D checkHighlight;
+	/**
+	 * The rectangle that Highlights the endtile on the gui.
+	 */
+	public Rectangle2D endHighlight;
 	public SimulationJPanel()
 	{
 		mapGraphConstructed = new MapGraph();
@@ -198,10 +205,13 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	protected void paintComponent(Graphics graph) {
 
 		paintPathComponent(graph);
+
 		//		paintGridComponent(graph);
 		paintWallComponent(graph);
 		paintUndergroundComponent(graph);
 		paintBeamComponent(graph);
+		paintHighLightComponents(graph);
+
 //		paintGridComponent(graph);
 	}
 
@@ -367,6 +377,17 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		}
 			
 	}
+	
+	private void paintHighLightComponents(Graphics graph) {
+		if(checkHighlight != null){
+			((Graphics2D)graph).setColor(Color.ORANGE);
+			((Graphics2D)graph).fill(checkHighlight);
+		}
+		if(endHighlight != null){
+			((Graphics2D)graph).setColor(Color.ORANGE);
+			((Graphics2D)graph).fill(endHighlight);
+		}
+	}
 
 	public void setRobotLocation(double x, double y, double degrees){
 		x = x - this.getShiftToTheRight();
@@ -474,6 +495,20 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				bc[i] = new Rectangle((int)(bc[i].getX()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getY()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getWidth()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getHeight()*scalingfactor/this.getScalingfactor()));	
 			}
 		}
+		//TODO
+//		if(checkHighlight != null){
+//			Rectangle2D temp = new Rectangle(((Double)(checkHighlight.getX()*getScalingfactor())).intValue(),((Double)(checkHighlight.getY()*getScalingfactor())).intValue(),((Double)(checkHighlight.getWidth()*getScalingfactor())).intValue(),((Double)(checkHighlight.getHeight()*getScalingfactor())).intValue());
+//			checkHighlight = null;
+//			checkHighlight = temp;
+//		}
+//			
+//		if(endHighlight != null){
+//			Rectangle2D temp = new Rectangle(((Double)(endHighlight.getX()*getScalingfactor())).intValue(),((Double)(endHighlight.getY()*getScalingfactor())).intValue(),((Double)(endHighlight.getWidth()*getScalingfactor())).intValue(),((Double)(endHighlight.getHeight()*getScalingfactor())).intValue());
+//			endHighlight = null;
+//			endHighlight = temp;
+//		}
+
+		
 
 	}
 	
