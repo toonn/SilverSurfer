@@ -357,14 +357,14 @@ Alternatief is het mogelijk te corrigeren op de muren, maar dan moet de robot zi
 De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot reeds passeert, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
 
 Bij elke tegel onthoudt de robot alle uitwegen (de naburige tegels). Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden. De robot gebruikt het kortste pad algoritme om de weg naar dit kruispunt te bepalen.
-Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof een 'finish'-barcode en een 'checkpoint'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.\\
+Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof een `finish'-barcode en een `checkpoint'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.\\
 
 
 Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassing implementeert steeds ook de aanpassingen die eerder werden toegevoegd. Tabel \ref{tab:resultVerken} geeft de resultaten van de aanpassingen weer. Figuur \ref{fig:resultVerkenE} toont de gebruikte doolhoven en de uitvoering van het algoritme met aanpassing E.
 \begin{description}
-\item[A] draai bij elke tegel vier keer (eindig in startori\"ntatie) en neem de laatste tile in de queue als volgende tile.
+\item[A] draai bij elke tegel vier keer (eindig in startori"entatie) en neem de laatste tile in de queue als volgende tile.
 \item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tile.
-\item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori\"ntatie).
+\item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori"entatie).
 \item[D] muren die vanuit een naburige tile reeds gedetecteerd werden, worden niet nog eens nagekeken.
 \item[E] tiles waarvan de vier zijden al gekend zijn, worden niet meer bezocht.
 \end{description}
@@ -408,12 +408,12 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \label{ssec:AlgoKortsteP}
 
 Het kortste pad algoritme maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
-De heuristiek is de verwachte afstand tot de "finishTile" en is een onderschatting, er wordt dus geen rekening gehouden met muren. De "finishTile" krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
-De kost van een tegel is het werkelijke aantal tegels nodig om van de "startTile" tot de "finishTile" te komen.
+De heuristiek is de verwachte afstand tot de `finish'-barcode en is een onderschatting, er wordt dus geen rekening gehouden met muren. De `finish' krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
+De kost van een tegel is het werkelijke aantal tegels nodig om van de `checkpoint'-barcode tot de `finish'-barcode te komen.
 
-In de beginsituatie zijn alle tegels ongemarkeerd en de kost van de "startTile" wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
+In de beginsituatie zijn alle tegels ongemarkeerd en de kost van de `checkpoint' wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
 
-Speciaal voor dit algoritme zijn dus 3 extra velden aan de klasse Tile toegevoegd, nl. een booleanveld isMarked dat bijhoudt of dit vakje al “onderzocht” is, een veld dat de heuristiekwaarde bijhoudt en een veld dat de kost van de tile bijhoudt.
+Speciaal voor dit algoritme zijn dus 3 extra velden aan de klasse Tile toegevoegd, nl. een booleanveld isMarked dat bijhoudt of dit vakje al `onderzocht' is, een veld dat de heuristiekwaarde bijhoudt en een veld dat de kost van de tile bijhoudt.
 
 
 % == SOFTWARE == %
@@ -477,7 +477,7 @@ Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek
 % == gui == %
 \subsection{GUI} % 3 ?
 \label{ssec:GUI}
-De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat. De knoppen voeren bepaalde functies uit, zoals "turn left/right", "look around" en "Align on the white line/ walls".\\
+De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat. De knoppen voeren bepaalde functies uit, zoals `Turn left/right', `Look around' en `Align on the white line/ wall'.\\
 
 Voor visualisatie van de sensoren zijn er grafieken die de waarden weergeven. De robot zelf op de simulator heeft een blauwe straal die de waarde van de ultrasone sensor aangeeft. 
 
@@ -495,26 +495,26 @@ Voor visualisatie van de sensoren zijn er grafieken die de waarden weergeven. De
 \label{ssec:bluetooth}
 De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de klassen \textit{UnitCommunicator} en \textit{RobotCommunicator}.
 
-De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: 'Silver' en '00:16:53:0A:04:5A'.
+De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: `Silver' en `00:16:53:0A:04:5A'.
 
-De bluetooth laat toe enkele 'datastreams' tussen robot en computer op te zetten. Deze 'datastreams' sturen informatie in verschillende kanalen door. Zo kunnen zowel robot als computer de verschillende 'soorten informatie' van elkaar onderscheiden.
+De bluetooth laat toe enkele `datastreams' tussen robot en computer op te zetten. Deze `datastreams' sturen informatie in verschillende kanalen door. Zo kunnen zowel robot als computer de verschillende soorten informatie van elkaar onderscheiden.
 
 % == robot == %
 \subsection{Robot} % 3 ?
 \label{ssec:robot}
 Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatsten maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn 'datastreams' en start hij een \textit{SensorThread} op.
 
-De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een 'datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonesensor data).\\
+De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een `datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonesensor data).\\
 
 Enkele belangrijke methodes van \textit{CommandUnit}:
 \begin{itemize}
-\item \textit{updateCoordinates:} de robot houdt zijn positie bij. bij elke beweging zullen de co\"ordinaten worden ge\"updated.
-\item \textit{updateStatus:} stuur alle statusgegevens (lichtsensor, co\"ordinaten, ...) naar de computer.
+\item \textit{updateCoordinates:} de robot houdt zijn positie bij. bij elke beweging zullen de co"ordinaten worden ge"updated.
+\item \textit{updateStatus:} stuur alle statusgegevens (lichtsensor, co"ordinaten, ...) naar de computer.
 \item \textit{main:} wacht tot de computer een commando geeft en voer dit uit.
 \item \textit{moveForward:} beweegt voorwaarts, maar stopt bij een barcode.
 \end{itemize}
 
-De \textit{SensorThread} stuurt elke 50 milliseconden sensorinformatie door naar de computer. Zo blijft de data up to date zonder dat de 'datastream' te veel informatie moet slikken.
+De \textit{SensorThread} stuurt elke 50 milliseconden sensorinformatie door naar de computer. Zo blijft de data up to date zonder dat de `datastream' te veel informatie moet slikken.
 
 % == simulator == %
 \subsection{Simulator} % 3 ?
@@ -528,22 +528,22 @@ De simulator zelf bestaat uit zeven klassen:
 \item \textit{Wall:} tekent de muren van het doolhof.
 \item \textit{State:} wordt gebruikt om te zeggen of iets horizontaal of verticaal moet staan.
 \item \textit{SimulationSensorData: }
-\item \textit{SimulationPilot:} houdt de positie en de richting van de 'robot' bij.
-\item \textit{SimulationPanel:} tekent de baan van de 'robot' in het tekenpaneel.
-\item \textit{Triangle:} berekent de hoekpunten van de driehoek die de 'robot' voorstelt.
+\item \textit{SimulationPilot:} houdt de positie en de richting van de `robot' bij.
+\item \textit{SimulationPanel:} tekent de baan van de `robot' in het tekenpaneel.
+\item \textit{Triangle:} berekent de hoekpunten van de driehoek die de `robot' voorstelt.
 \item \textit{ExtMath:} doet enkele berekeningen.
 \item \textit{Bag:\cite{Bag.java} } een geheugen opslagplaats waar double precision floating point getallen in worden opgeslagen.
 \end{itemize}
 
 Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De roosters op het achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
-Wanneer de 'robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige orientatie van de 'robot' wordt bovenaan het simulatorpaneel in de GUI weergegeven.
+Wanneer de `robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige orientatie van de `robot' wordt bovenaan het simulatorpaneel in de GUI weergegeven.
 
 % == BESLUIT == %
 \section{Besluit} % 3 ?
 \label{sec:besl}
 De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren.
 De calibratie van de robot zorgt ervoor dat hij precies aangestuurd kan worden en dat de sensoren waarden teruggeven die overeenkomen met de werkelijkheid.
-De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handmatig bestuurd kan worden. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot 'ziet'. Op deze manier krijgt de gebruiker een idee over de doolhof waar de robot in rijdt. Bovendien kan de robot zich loodrecht ori\"enteren op een witte lijn. De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten 'rijden'. De simulator is handig om testen op uit te voeren, zonder steeds op de robot te moeten wachten.
+De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handmatig bestuurd kan worden. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot `ziet'. Op deze manier krijgt de gebruiker een idee over de doolhof waar de robot in rijdt. Bovendien kan de robot zich loodrecht ori"enteren op een witte lijn. De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten `rijden'. De simulator is handig om testen op uit te voeren, zonder steeds op de robot te moeten wachten.
 
 
 \newpage
@@ -590,9 +590,9 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 % == DEMO 2 == %
 \section{Demo 2} % 3 ?
 \label{Asec:demo2}
-De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
+De sensoren worden voor demo 2 wel ge"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
 
-De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de 'robot' zich hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn. Het is bovendien mogelijk de robot zich in het midden van de tegel te laten zetten.
+De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de `robot' zich hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn. Het is bovendien mogelijk de robot zich in het midden van de tegel te laten zetten.
 
 
 % == resulaten D2== %
@@ -604,7 +604,7 @@ Op de demonstratie reed de robot de eerste tegels zoals het hoorde. Ook het witt
 
 De sensorwaarden werden niet gesimuleerd in de simulator. De simulator maakte in zijn algoritmes rechtstreeks gebruik van de virtuele doolhof. Robot en simulator maakten met andere woorden gebruik van andere algoritmes, wat niet het doel is van een simulator.\\
 
-De simulator kon wel door een virtuele doolhof manoeuvreren. Meestal 'botste' hij tegen de muren, maar soms reed hij toch door een muur.
+De simulator kon wel door een virtuele doolhof manoeuvreren. Meestal `botste' hij tegen de muren, maar soms reed hij toch door een muur.
 
 
 % == conclusies D2== %
@@ -663,14 +663,14 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 \begin{thebibliography}{9}
 
 \bibitem{mindstorms}
-\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule ('the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
 
 \bibitem{leJOS}
 \textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
 
 \bibitem{Bag.java}
 \textit{Bag.java}: Voor meer documentatie, zie naar http://algs4.cs.princeton.edu/13stacks. \\
-Section 1.3 of "Algorithms, 4th Edition" door Robert Sedgewick en Kevin Wayne.
+Section 1.3 of ``Algorithms, 4th Edition'' door Robert Sedgewick en Kevin Wayne.
 
 \end{thebibliography}
 
