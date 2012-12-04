@@ -173,7 +173,7 @@ De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ gr
 % ONTBREEKT: y0 + afwijking op 360°; y1 + afwijking; y2 + afwijking + ...
 
 
-Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed van het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Nadat de robot naar \'e\'en kant gedraaid heeft, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
+Door de robot in stappen rond zijn as te laten draaien ($4x90\degree$) kan de invloed van het starten en stoppen van de motoren bepaald worden. Figuur \ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op 180\degree. De algoritmes houden met deze afwijking rekening. Wanneer de robot tijdens het verkennen van het doolhof naar \'e\'en kant gedraaid heeft om te zien waar er muren staan, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. Op deze manier wordt de afwijking ongedaan gemaakt.
 % ONTBREEKT: MEETWAARDEN VAN 1x180° ter vergelijking
 
 
@@ -450,7 +450,7 @@ Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction
 % == commando's == %
 \subsection{Het doorgeven van commando's} % 3 ok!
 \label{ssec:commands}
-De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt gerepresenteerd door een integer dat naar de \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers (dit wordt in de volgende sectie in detail beschreven).\\
+De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt gerepresenteerd door een integer die naar de \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers (dit wordt in de volgende sectie in detail beschreven).\\
 De \textit{UnitCommunicator} stuurt de bekomen integer door naar ofwel de \textit{RobotCommunicator} ofwel de \textit{SimulatorCommunicator}. Deze zetten de integer weer om in de juiste actie van respectievelijk de robot en de simulator. De wijze waarop dit gebeurt, verschilt licht voor beide gevallen. Zo stuurt de \textit{RobotCommunicator} zijn commando's via Bluetooth door naar de NXT-brick, terwijl de \textit{SimulatorCommunicator} zo'n verbinding niet nodig heeft.\\
 
 \subsubsection{De bewerking op de integers} % 3 ok!
@@ -467,7 +467,7 @@ De doorgegeven integer wordt als volgt opgebouwd:
 Om de bekomen resultaten terug op te splitsen in de twee oorspronkelijke gegevens worden volgende stappen gevolgd:
 
 \begin{itemize}
-\item een modulo-operatie van tien geeft het laatste cijfer terug. Dit stelt het soort commando voor.
+\item een modulo-operatie van honderd geeft het laatste cijfer terug. Dit stelt het soort commando voor.
 \item dit getal wordt van de integer terug afgetrokken.
 \item de oorspronkelijke afstand (hoek) wordt bekomen door de integer door 1000 te delen.
 \end{itemize}
@@ -504,7 +504,7 @@ De bluetooth laat toe enkele 'datastreams' tussen robot en computer op te zetten
 \label{ssec:robot}
 Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatsten maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn 'datastreams' en start hij een \textit{SensorThread} op.
 
-De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een 'datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonic sensor data).\\
+De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een 'datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonesensor data).\\
 
 Enkele belangrijke methodes van \textit{CommandUnit}:
 \begin{itemize}
@@ -532,7 +532,7 @@ De simulator zelf bestaat uit zeven klassen:
 \item \textit{SimulationPanel:} tekent de baan van de 'robot' in het tekenpaneel.
 \item \textit{Triangle:} berekent de hoekpunten van de driehoek die de 'robot' voorstelt.
 \item \textit{ExtMath:} doet enkele berekeningen.
-\item \textit{Bag:\cite{Bag.java} } een geheugen opslagplaats waar dubbels in worden opgeslagen.
+\item \textit{Bag:\cite{Bag.java} } een geheugen opslagplaats waar double precision floating point getallen in worden opgeslagen.
 \end{itemize}
 
 Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De roosters op het achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
@@ -543,7 +543,7 @@ Wanneer de 'robot' een pad aflegt, tekent de simulator dit in het tekenpaneel al
 \label{sec:besl}
 De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren.
 De calibratie van de robot zorgt ervoor dat hij precies aangestuurd kan worden en dat de sensoren waarden teruggeven die overeenkomen met de werkelijkheid.
-De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handmatig bestuurd kan worden. Door het ingeven van parameters in de GUI kan de robot een willekeurige veelhoek rijden. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot 'ziet'. Op deze manier krijgt de gebruiker een idee over de doolhof waar de robot in rijdt. Bovendien kan de robot zich loodrecht ori\"enteren op een witte lijn. De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laten en de simulator hier in te laten 'rijden'. De simulator is handig om testen op uit te voeren, zonder steeds op de robot te moeten wachten.
+De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handmatig bestuurd kan worden. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot 'ziet'. Op deze manier krijgt de gebruiker een idee over de doolhof waar de robot in rijdt. Bovendien kan de robot zich loodrecht ori\"enteren op een witte lijn. De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten 'rijden'. De simulator is handig om testen op uit te voeren, zonder steeds op de robot te moeten wachten.
 
 
 \newpage
