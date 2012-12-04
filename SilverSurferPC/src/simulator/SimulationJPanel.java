@@ -350,21 +350,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 	
 	private void paintBarcodeComponent(Graphics graph) {
-		
-		
-		if (!SSG.getCommunicator().getRobotConnected() && simulationPilot.getMapGraph()!= null && getSimulationPilot().getLightSensorValue() <45){
 			
-				Rectangle2D[] barcode = Barcode.createVisualBarCode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()),getSimulationPilot().getCenterAbsoluteCurrentTile()[0],getSimulationPilot().getCenterAbsoluteCurrentTile()[1]);
-				getMapGraphConstructed().getCurrentTile().setContent(simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent());
-				if((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent() != null){
-					addBarcode(((Barcode)simulationPilot.getMapGraph().getTileWithCoordinates(simulationPilot.getCurrentPositionRelativeX(), simulationPilot.getCurrentPositionRelativeY()).getContent()).toString(), barcode);
-					//BarDecoder dec = new BarDecoder(getSSG().getCommunicator());
-					//dec.decode(15);
-				}
-		
-		}
-		
-		
 		//teken alle rectangles van alle barcodes
 		for (Tuple t : barcodes) {
 			String rep = (String) t.getItem1();

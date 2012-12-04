@@ -269,7 +269,7 @@ public class SilverSurferGUI {
             sensorGraph
                     .addSensorValues(ultrasonicSensorValue, lightSensorValue);
         } catch (NullPointerException e) {
-            // TODO: handle exception
+             //TODO: handle exception + uncomment
         }
 
         infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());

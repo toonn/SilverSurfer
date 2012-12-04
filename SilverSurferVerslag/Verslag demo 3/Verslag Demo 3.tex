@@ -389,12 +389,12 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 % figuren verkenning doolhof
 \begin{figure}
         \centering
-        \begin{subfigure}[h]{0.64\textwidth}
+        \begin{subfigure}[hb]{0.64\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{verkenMap1E}
                 \caption{map 1}
         \end{subfigure}%
-        \begin{subfigure}[h]{0.36\textwidth}
+        \begin{subfigure}[hb]{0.36\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{verkenMap2E}
                 \caption{map 2}
@@ -408,6 +408,15 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \label{ssec:AlgoKortsteP}
 
 Het kortste pad algoritme implementeert \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand \cite{manhattan} ge\"implementeerd en als kost de totale afgelegde afstand.
+
+%figuur kortste pad
+\begin{figure}[tbp]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{kortstepadvisual}
+    \caption{Kortste Pad Algoritme}
+	\label{fig:kortstepad}
+\end{center}
+\end{figure}
 
 Dit algoritme markeert alle tegels die al onderzocht zijn (dit is een andere mark dan het verkenalgoritme). In de beginsituatie zijn alle tegels ongemarkeerd. De kost van de startpunt wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
 

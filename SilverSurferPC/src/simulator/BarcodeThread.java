@@ -12,7 +12,7 @@ public class BarcodeThread extends Thread {
 
 	public BarcodeThread(String str, SilverSurferGUI gui) {
 		super(str);
-		this.gui = gui;
+		setgui(gui);
 	}
 	
 	@Override
@@ -23,7 +23,8 @@ public class BarcodeThread extends Thread {
 			} catch(Exception e) {
 				
 			}
-			if(gui.getInformationBuffer().getLatestLightSensorInfo() < 40) {
+			int lightsensorValue = gui.getInformationBuffer().getLatestLightSensorInfo();
+			if(lightsensorValue < 40 && lightsensorValue > 10) {
 				found = true;
 			}
 		}
