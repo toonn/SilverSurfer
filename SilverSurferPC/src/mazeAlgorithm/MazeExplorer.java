@@ -45,6 +45,8 @@ public class MazeExplorer {
 		}
 		//TODO test shortestPath op't einde.
 		if(getCheckTile() != null && getEndTile() != null){
+			System.out.println("Doing final shortest path. - MazeExplorer.line.48");
+			gui.getSimulationPanel().clearPath();
 			ShortestPath finalPath = new ShortestPath(gui, getCheckTile(), getEndTile(), allTiles);
 			finalPath.goShortestPath();
 		}
