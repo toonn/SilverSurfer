@@ -352,7 +352,7 @@ Een alternatieve manier om te corrigeren bestaat erin gebruik te maken van muren
 
 
 % == verkennen van het doolhof == %
-\subsection{Het verkennen van een doolhof} % 3
+\subsection{Het verkennen van een doolhof} % 3 ok
 \label{ssec:algoOnderzDoolhof}
 De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot passeert, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
 
@@ -367,6 +367,7 @@ Enkele optimalisaties verbeteren het algoritme. Onderstaande aanpassingen implem
 \item[D] muren die vanuit een naburige tile reeds gedetecteerd werden, worden niet nog eens nagekeken.
 \item[E] tiles waarvan de vier zijden al gekend zijn, worden niet meer bezocht.
 \end{description}
+% ONTBREEKT: kunnen er barcodes op niet-doorzochte tegels?
 
 %resultaten lichtsensor
 \begin{table}[hb]
@@ -406,7 +407,7 @@ Enkele optimalisaties verbeteren het algoritme. Onderstaande aanpassingen implem
 \subsection{Het vinden van het kortste pad} % ?
 \label{ssec:AlgoKortsteP}
 
-Het kortste pad algoritme maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
+Het kortste pad algoritme is een implementatie van \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand gebruikt en als kost de totaal afgelegde afstand.
 De heuristiek is de verwachte afstand tot de "finishTile" en is een onderschatting, er wordt dus geen rekening gehouden met muren. De "finishTile" krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
 De kost van een tegel is het werkelijke aantal tegels nodig om van de "startTile" tot de "finishTile" te komen.
 
