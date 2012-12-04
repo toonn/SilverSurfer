@@ -109,7 +109,7 @@ public class StatusInfoBuffer {
 	 * Returns the latest info available for the Light Sensor
 	 */
 	public int getLatestLightSensorInfo() {
-		return lightSensorInfo;
+		return getSSG().getSimulationPanel().getSimulationPilot().getLightSensorValue();
 	}
 
 	/**

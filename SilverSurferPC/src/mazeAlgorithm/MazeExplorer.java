@@ -40,18 +40,25 @@ public class MazeExplorer {
 		gui.getCommunicator().mustAllign(true);
 		allTiles.add(startTile);
 		algorithm(startTile);
-		for(Object tile: allTiles){
-			((Tile) tile).setMarkingExploreMaze(false);
-		}
+		
 		//TODO test shortestPath op't einde.
 		if(getCheckTile() != null && getEndTile() != null){
-			System.out.println("Doing final shortest path. - MazeExplorer.line.48");
+			
+			//Drive to checkpoint.
+			gui.getSimulationPanel().clearPath();
+			ShortestPath almostFinalPath = new ShortestPath(gui, gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)gui.getInformationBuffer().getXCoordinateRelative(), (int)gui.getInformationBuffer().getYCoordinateRelative()),getCheckTile(), allTiles);
+			almostFinalPath.goShortestPath();
+								
+			//Drive to endpoint.
 			gui.getSimulationPanel().clearPath();
 			ShortestPath finalPath = new ShortestPath(gui, getCheckTile(), getEndTile(), allTiles);
 			finalPath.goShortestPath();
 		}
-
+		for(Object tile: allTiles){
+			((Tile) tile).setMarkingExploreMaze(false);
+		}
 		gui.getCommunicator().mustAllign(false);
+		
 	}
 	
 	/**
@@ -139,6 +146,7 @@ public class MazeExplorer {
 			}
 			if(i == 4){
 				((Tile) neighbourTile).setMarkingExploreMaze(true);
+				allTiles.add((Tile) neighbourTile);
 				while(queu.contains(neighbourTile)){
 					queu.remove(neighbourTile);
 				}
