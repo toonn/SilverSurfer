@@ -2,12 +2,15 @@ package communication;
 
 import audio.SongThread;
 import commands.Command;
+import simulator.BarcodeThread;
 import simulator.SimulationPilot;
 import mapping.*;
 import mazeAlgorithm.MazeExplorer;
 
+import java.awt.geom.Rectangle2D;
 import java.io.*;
 
+import lejos.nxt.Motor;
 import lejos.pc.comm.*;
 
 public class Communicator {
@@ -111,25 +114,41 @@ public class Communicator {
 				simulationPilot.checkForObstructionAndSetTile();
 			}
 			else if(command%100 == Command.AUTOMATIC_MOVE_FORWARD) {
-				int amount = (command-Command.AUTOMATIC_MOVE_FORWARD)/100;
-				while(amount != 0) {
-					simulationPilot.travel(1);
-					amount = amount - 1;
+				if(!getRobotConnected()){
+					try {
+						BarcodeThread BT = new BarcodeThread("BT",getSimulationPilot().getSSG());
+			        	BT.start();
+			        	int amount = (command-Command.AUTOMATIC_MOVE_FORWARD)/100;
+						while(amount-- != 0)
+							simulationPilot.travel(1);
+			        	boolean found = BT.getFound();
+			        	BT.setQuit(true);
+			        	if(found) {
+			        		readBarcode();
+			        	}
+			        } catch(Exception e) {
+			        	e.printStackTrace();
+			        	System.out.println("Error in CommandUnit.moveForward(int angle)!");
+			        }
 				}
+				else{
+					int amount = (command-Command.AUTOMATIC_MOVE_FORWARD)/100;
+					while(amount-- != 0)
+						simulationPilot.travel(1);
+				}
+
+				
+				
 			}
 			else if(command%100 == Command.AUTOMATIC_TURN_ANGLE) {
 				double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
-				while(amount > 0) {
+				while(amount-- > 0)
 					simulationPilot.rotate(1);
-					amount = amount - 1;
-				}
 			}
 			else if(command%100 == -(100-Command.AUTOMATIC_TURN_ANGLE)) {
 				double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
-				while(amount < 0) {
+				while(amount++ < 0)
 					simulationPilot.rotate(-1);
-					amount = amount + 1;
-				}
 			}
 			if(robotConnected) {
 				while(buzy)
@@ -140,7 +159,15 @@ public class Communicator {
 		}
 	}
 
-    public void setExplorer(MazeExplorer explorer) {
+    private void readBarcode() {
+    		int value = ((Barcode)getSimulationPilot().getMapGraph().getCurrentTile().getContent()).getValue();
+    		//if (((Barcode)getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getContentCurrentTile()== null)){
+				getSimulationPilot().getSSG().getInformationBuffer().setBarcode(value);
+    		//}
+  	
+	}
+
+	public void setExplorer(MazeExplorer explorer) {
 		this.explorer = explorer;
 	}
 	

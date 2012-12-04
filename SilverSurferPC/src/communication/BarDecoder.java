@@ -14,6 +14,8 @@ public class BarDecoder {
 	
 	public void decode(int value) {
 		try {
+			int xCoordinate;
+			int yCoordinate;
 			switch(value) {
 				case(5):
 					communicator.moveTurn(0, -360, 0);
@@ -42,12 +44,7 @@ public class BarDecoder {
 				case(25):  //25   
 					SilverSurferGUI.changeSpeed(1);
 					//communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
-				
 	            	break;
-				//case(26):
-					//communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
-
-				//	break;
 				case(38):	//38
 					SilverSurferGUI.changeSpeed(1);
 	            	break;
@@ -58,16 +55,24 @@ public class BarDecoder {
 					SilverSurferGUI.changeSpeed(3);
 	            	break;
 				case(13):            
-					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
+					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
+					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
+					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
 					break;
 				case(44):       
-					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
+					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
+					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
+					communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
 					break;
 				case(55):            
-					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
-	            	break;
+					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
+					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
+					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
+					break;
 				case(59):       
-					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getCurrentTile());
+					xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
+					yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();;
+					communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
 					break;
 				default:
 					break;

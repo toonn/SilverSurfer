@@ -27,6 +27,8 @@ public class SimulationPilot {
 	private File mapFile;
 	private MapGraph mapGraph;
 	private boolean isRealRobot = false;
+	
+	private int amtToSendToBuffer = 50;
 
 	/**
 	 * waarde die afhangt van de robot!
@@ -739,9 +741,9 @@ public class SimulationPilot {
 				standardDeviation = SimulationSensorData
 				.getSDBarcodeTileLS(color);
 			}
-
 			return (int) Math.round(mean
 					+ (random.nextGaussian() * standardDeviation));
+			
 		}
 	}
 

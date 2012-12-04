@@ -144,11 +144,14 @@ public class ShortestPath {
 	 * checkt men de tile ervoor, enz...
 	 */	
 	private void deleteSuperfluousTiles(){
-		for(int i = tilesPath.size()-2; i!= 0 ; i--){
-			if((((Tile) tilesPath.get(i)).getCost() != ((Tile) tilesPath.get(i+1)).getCost() - 1) ||
-					!((Tile) tilesPath.get(i)).areNeighbours((Tile) tilesPath.get(i+1))){
-				tilesPath.remove(i);
+		if(tilesPath.size() > 1){
+			for(int i = tilesPath.size()-2; i!= 0 ; i--){
+				if((((Tile) tilesPath.get(i)).getCost() != ((Tile) tilesPath.get(i+1)).getCost() - 1) ||
+						!((Tile) tilesPath.get(i)).areNeighbours((Tile) tilesPath.get(i+1))){
+					tilesPath.remove(i);
+				}
 			}
-		} 
+		}
+		 
 	}
 }
