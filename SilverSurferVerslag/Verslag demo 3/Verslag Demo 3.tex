@@ -390,12 +390,12 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 % figuren verkenning doolhof
 \begin{figure}
         \centering
-        \begin{subfigure}[h]{0.64\textwidth}
+        \begin{subfigure}[hb]{0.64\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{verkenMap1E}
                 \caption{map 1}
         \end{subfigure}%
-        \begin{subfigure}[h]{0.36\textwidth}
+        \begin{subfigure}[hb]{0.36\textwidth}
                 \centering
                 \includegraphics[width=\textwidth]{verkenMap2E}
                 \caption{map 2}
@@ -408,7 +408,16 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \subsection{Het vinden van het kortste pad} % ?
 \label{ssec:AlgoKortsteP}
 
-Het kortste pad algoritme maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
+%figuur kortste pad
+\begin{figure}[tbp]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{kortstepadvisual}
+    \caption{Kortste Pad Algoritme}
+	\label{fig:kortstepad}
+\end{center}
+\end{figure}
+
+Het kortste pad algoritme(zie figuur~\ref{fig:kortstepad}) maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
 De heuristiek is de verwachte afstand tot de `finish'-barcode en is een onderschatting, er wordt dus geen rekening gehouden met muren. De `finish' krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
 De kost van een tegel is het werkelijke aantal tegels nodig om van de `checkpoint'-barcode tot de `finish'-barcode te komen.
 
