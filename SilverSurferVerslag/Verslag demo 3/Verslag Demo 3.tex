@@ -115,7 +115,7 @@ Bij het bouwen van de robot (zie figuur~\ref{robot}) werd het ontwerpboekje gevo
         \label{fig:sensors}
 \end{figure}
 
-Een alternatieve opstelling bestaat erin de ultrasone sensor op een derde motor te monteren zodat deze onafhankelijk van de robot kan ronddraaien. Opdat hier plaats genoeg voor is, moet de NXT plat gelegd worden met de wielen aan weerszijden. Dit vraagt echter een nieuwe calibratie. Bovendien zou de meetwaarde van de ultrasone sensor afhangen van zijn positie ten opzichte van de robot, wat het interpreteren moeilijker maakt. Voor deze opstelling werd daarom niet gekozen.
+Een alternatieve opstelling bestaat erin de ultrasone sensor op een derde motor te monteren zodat deze onafhankelijk van de robot kan ronddraaien. Opdat hier plaats genoeg voor is, moet de NXT plat gelegd worden met de wielen aan weerszijden. Bovendien zou de meetwaarde van de ultrasone sensor afhangen van zijn positie ten opzichte van de robot, wat het interpreteren moeilijker maakt. Voor deze opstelling werd daarom niet gekozen.
 
 
 % == calibratie == %
@@ -367,7 +367,7 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tile.
 \item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori"entatie).
 \item[D] muren die vanuit een naburige tile reeds gedetecteerd werden, worden niet nog eens nagekeken.
-\item[E] tiles waarvan de vier zijden al gekend zijn, worden niet meer bezocht.
+\item[E] tiles waarvan de vier zijden al gekend zijn en waaraan drie muren grenzen, worden niet meer bezocht (`dead-ends' kunnen onmogelijk barcodes bevatten, dus dit is geen probleem)
 \end{description}
 
 %resultaten lichtsensor
@@ -666,12 +666,14 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 \textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
 
 \bibitem{leJOS}
-\textit{leJOS}:  Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+\textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+
+\bibitem{A*}
+\textit{A*}: Een optimaal zoekalgoritme. \textit{A*} kiest zijn volgende punt op basis van een kostenfunctie: de werkelijke kost om tot de beschouwde buur te geraken, plus de geschatte kost om van dat punt naar het doel te geraken. Met andere woorden, het algoritme combineert een heuristisch algoritme met een kostenalgoritme. Zie ook de cursus \textit{Artifici\"ele Intelligentie (H06U1A)} door Daniel De Schreye.
 
 \bibitem{Bag.java}
-\textit{Bag.java}: Voor meer documentatie, zie naar http://algs4.cs.princeton.edu/13stacks. \\
-Section 1.3 of ``Algorithms, 4th Edition'' door Robert Sedgewick en Kevin Wayne.
-
+\textit{Bag}: Een manier om objecten op te slaan. Het is mogelijk te itereren over de verzameling, maar het is niet mogelijk objecten te verwijderen uit de verzameling. Meer documentatie: Section 1.3 of \textit{Algorithms, 4th Edition} door Robert Sedgewick en Kevin Wayne.\\
+\mbox{[http://algs4.cs.princeton.edu/13stacks]} \mbox{[http://algs4.cs.princeton.edu/13stacks/Bag.java.html]}
 \end{thebibliography}
 
 \end{document}
