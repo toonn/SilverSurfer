@@ -360,7 +360,6 @@ De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot r
 Bij elke tegel onthoudt de robot alle uitwegen (de naburige tegels). Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden. De robot gebruikt het kortste pad algoritme om de weg naar dit kruispunt te bepalen.
 Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof een `finish'-barcode en een `checkpoint'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.\\
 
-
 Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassing implementeert steeds ook de aanpassingen die eerder werden toegevoegd. Tabel \ref{tab:resultVerken} geeft de resultaten van de aanpassingen weer. Figuur \ref{fig:resultVerkenE} toont de gebruikte doolhoven en de uitvoering van het algoritme met aanpassing E.
 \begin{description}
 \item[A] draai bij elke tegel vier keer (eindig in startori"entatie) en neem de laatste tile in de queue als volgende tile.
@@ -405,16 +404,12 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \end{figure}
 
 % == het kortste pad == %
-\subsection{Het vinden van het kortste pad} % ?
+\subsection{Het vinden van het kortste pad} % 3 ok
 \label{ssec:AlgoKortsteP}
 
-Het kortste pad algoritme maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
-De heuristiek is de verwachte afstand tot de `finish'-barcode en is een onderschatting, er wordt dus geen rekening gehouden met muren. De `finish' krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
-De kost van een tegel is het werkelijke aantal tegels nodig om van de `checkpoint'-barcode tot de `finish'-barcode te komen.
+Het kortste pad algoritme implementeert \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand \cite{manhattan} ge\"implementeerd en als kost de totale afgelegde afstand.
 
-In de beginsituatie zijn alle tegels ongemarkeerd en de kost van de `checkpoint' wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
-
-Speciaal voor dit algoritme zijn dus 3 extra velden aan de klasse Tile toegevoegd, nl. een booleanveld isMarked dat bijhoudt of dit vakje al `onderzocht' is, een veld dat de heuristiekwaarde bijhoudt en een veld dat de kost van de tile bijhoudt.
+Dit algoritme markeert alle tegels die al onderzocht zijn (dit is een andere mark dan het verkenalgoritme). In de beginsituatie zijn alle tegels ongemarkeerd. De kost van de startpunt wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
 
 % == SOFTWARE == %
 \section{Software} % 3 ?
@@ -670,6 +665,12 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 
 \bibitem{A*}
 \textit{A*}: Een optimaal zoekalgoritme. \textit{A*} kiest zijn volgende punt op basis van een kostenfunctie: de werkelijke kost om tot de beschouwde buur te geraken, plus de geschatte kost om van dat punt naar het doel te geraken. Met andere woorden, het algoritme combineert een heuristisch algoritme met een kostenalgoritme. Zie ook de cursus \textit{Artifici\"ele Intelligentie (H06U1A)} door Daniel De Schreye.
+
+\bibitem{manhattan}
+\textit{Manhattanafstand:} Deze heuristiek tekent vanuit het ene punt een horizontale lijn en vanuit het andere punt een verticale lijn. De gemeten afstand is die van het ene punt tot het snijpunt, plus die van het andere punt tot het snijpunt.\\
+In de doolhof wordt geen rekening gehouden met muren.\\
+De Manhattanafstand verwijst naar een gelijknamige stadsdeel in New~York~City~VSA). New~York werd in het jaar~1625 door de Nederlanders gesticht. De straten werden in dambordpatroon gelegd: `Avenues' van noord naar zuid en `Streets' van oost naar west.\\
+\mbox{$[http://nl.wikipedia.org/wiki/Manhattan\_(New\_York)]$}\\ \mbox{$[http://nl.wikipedia.org/wiki/New\_York\_City]$}
 
 \bibitem{Bag.java}
 \textit{Bag}: Een manier om objecten op te slaan. Het is mogelijk te itereren over de verzameling, maar het is niet mogelijk objecten te verwijderen uit de verzameling. Meer documentatie: Section 1.3 of \textit{Algorithms, 4th Edition} door Robert Sedgewick en Kevin Wayne.\\
