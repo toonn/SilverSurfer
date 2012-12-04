@@ -370,7 +370,7 @@ Enkele optimalisaties verbeteren het algoritme. Onderstaande aanpassingen implem
 % ONTBREEKT: kunnen er barcodes op niet-doorzochte tegels?
 
 %resultaten lichtsensor
-\begin{table}[hb]
+\begin{table}[!hb]
 \begin{center}
     \begin{tabular}{ c ||  c | c | c | c }
      & \multicolumn{2}{|c|}{map 1}& \multicolumn{2}{|c}{map 2} \\
@@ -425,7 +425,7 @@ De simulator kan gebruikt worden om de software op te testen zonder telkens op d
 % == software design == %
 \subsection{Software ontwerp} % 3 ?
 \label{ssec:Sdesign}
-Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur \ref{fig:klasDia} toont het klassendiagram.\\
+Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur~\ref{fig:klasDia} toont het vereenvoudigd klassendiagram in de vorm van een flowchart. De gebruiker geeft zijn commandos door aan de \textit{GUI}, die het in zijn plaats doorgeeft aan de \textit{Robot} en de \textit{Communicator}. De \textit{Simulator} en de \textit{Robot} geven hun gegevens door aan de \textit{informatiebuffer}. \\
 Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
 
 
