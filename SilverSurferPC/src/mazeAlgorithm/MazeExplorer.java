@@ -158,7 +158,7 @@ public class MazeExplorer {
 					if(neighbour != null && (((Tile) neighbour).isMarkedExploreMaze()))
 						i++;
 				}
-				if(i == 4) {
+				if(i == 4 && ((Tile)neighbourTile).getAmountOfWalls() > 2) {
 					((Tile) neighbourTile).setMarkingExploreMaze(true);
 					allTiles.add((Tile) neighbourTile);
 					while(queue.contains(neighbourTile))
