@@ -417,35 +417,27 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \end{center}
 \end{figure}
 
-Het kortste pad algoritme (zie figuur~\ref{fig:kortstepad}) maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
-De heuristiek is de verwachte afstand tot de `finish'-barcode en is een onderschatting, er wordt dus geen rekening gehouden met muren. De `finish' krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
-De kost van een tegel is het werkelijke aantal tegels nodig om van de `checkpoint'-barcode tot de `finish'-barcode te komen.
+Het kortste pad algoritme implementeert \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand \cite{manhattan} ge\"implementeerd en als kost de totale afgelegde afstand. Figuur \ref{fig:kortstepad} toont een uitvoering van het algoritme.
 
-In de beginsituatie zijn alle tegels ongemarkeerd en de kost van de `checkpoint' wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
-
-Speciaal voor dit algoritme zijn dus 3 extra velden aan de klasse Tile toegevoegd, nl. een booleanveld isMarked dat bijhoudt of dit vakje al `onderzocht' is, een veld dat de heuristiekwaarde bijhoudt en een veld dat de kost van de tile bijhoudt.
+Dit algoritme markeert alle tegels die al onderzocht zijn (dit is een andere mark dan het verkenalgoritme). In de beginsituatie zijn alle tegels ongemarkeerd. De kost van de startpunt wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
 
 % == SOFTWARE == %
-\section{Software} % 3 ?
+\section{Software} % 3 ok
 \label{sec:softw}
-De software bestaat uit twee delen: een project dat op de NXT van de robot loopt en een project dat op de computer loopt. Alles wordt aangestuurd via de Graphical User Interface (GUI). Deze toepassing laat toe de robot te besturen (via bluetooth) en de reacties van de robot te simuleren met de simulator. Een Communication-pakket stuurt de commando's van de GUI door naar de juiste unit.
-De simulator kan gebruikt worden om de software op te testen zonder telkens op de robot te moeten wachten.
+De software bestaat uit twee delen: een project dat op de NXT van de robot loopt (sectie \ref{ssec:robot}) en een project dat op de computer loopt (sectie \ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie \ref{ssec:GUI}) . Deze toepassing laat toe de robot te besturen (via bluetooth: sectie \ref{ssec:bluetooth}) en de reacties van de robot weer te geven. Via de GUI kan ook een virtuele robot aangestuurd worden: de simulator (sectie \ref{ssec:simulator}). Een \textit{Communication}-pakket stuurt de commando's van de GUI door naar de juiste unit (sectie \ref{ssec:commands}). Wanneer robot of simulator een doolhof verkennen wordt een map opgebouwd met behulp van het \textit{Mapping}-pakket (sectie \ref{ssec:mapping}).\\
 
 % == software design == %
-\subsection{Software ontwerp} % 3 ?
+\subsection{Software ontwerp van het computerproject} % 3 ?
 \label{ssec:Sdesign}
-Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur~\ref{fig:klasDia} toont het vereenvoudigd klassendiagram in de vorm van een flowchart. De gebruiker geeft zijn commandos door aan de \textit{GUI}, die het in zijn plaats doorgeeft aan de \textit{Robot} en de \textit{Communicator}. De \textit{Simulator} en de \textit{Robot} geven hun gegevens door aan de \textit{informatiebuffer}. \\
-Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
-
-
-Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. 
-De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden.\\
-
-Andere klassen van de package \textit{gui} zijn: \textit{MouseClickThread} , \textit{PolygonDrawThread}, \textit{RunForwardThread} en \textit{TurnAngleThread}. De vier Threads zorgen ervoor dat het tekenen van de baan van de robot de rest van het programma niet stillegt. \\
-
-Het package \textit{simulator} implementeert de functionaliteit van de simulator. \\
-Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction, Barcode, ...} die elementen uit de wereld van een robot voorstellen. Een tile stemt overeen met \'e\'en tegel van de doolhof en heeft vier edges: \'e\'en voor elke zijde. Die edges houden de twee aanliggende tegels bij en eventueel een Obstruction, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Het houdt een begin-tegel bij en en huidige-tegel. Het biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden die dynamisch kan aangevuld worden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof dat in het bestand gedefinieerd wordt.
-
+Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur~\ref{fig:klasDia} toont een vereenvoudigd klassendiagram van de software die op de computer loopt. De gebruiker geeft zijn commando's door aan de \textit{GUI}. Deze stuurt de commando's weer door naar de \textit{Communicator} die verder doorstuurt naar ofwel de robot ofwel de simulator. De \textit{Simulator} en de \textit{Robot} geven hun sensorwaarden door aan de \textit{Informationbuffer}. De \textit{Informatiebuffer} stuurt ze weer door naar de \textit{GUI} zodat deze de sensorwaarden kan weergeven.\\
+%
+%Beide projecten hebben een identiek package \textit{Commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
+%
+%
+%Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. 
+%De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden.\\
+%
+%Andere klassen van de package \textit{gui} zijn: \textit{MouseClickThread} , \textit{PolygonDrawThread}, \textit{RunForwardThread} en \textit{TurnAngleThread}. De vier Threads zorgen ervoor dat het tekenen van de baan van de robot de rest van het programma niet stillegt. \\
 
 %figuur klassendiagram PC
 \begin{figure}[tbp]
@@ -456,12 +448,43 @@ Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction
 \end{center}
 \end{figure}
 
+% == gui == %
+\subsection{GUI} % 3 ok
+\label{ssec:GUI}
+De GUI toont een grafische weergave van de doolhof en de baan die de robot erin aflegt: zie figuur~\ref{fig:gui}. De sensorwaarden worden grafisch weergegeven: een bolletje op de robot geeft de kleur van de ondergrond aan en een blauwe straal toont het bereik van de ultrasone sensor. Grafieken tonen de historiek van de ultrasone sensor en de lichtsensor. Figuur~\ref{fig:guiSensoren} toont zowel de grafische weergave als de grafiek. \\
+
+Via de GUI kan de gebruiker de robot of de simulator aansturen, naargelang de bluetooth geactiveerd is. Het is mogelijk virtuele doolhoven te laden en te verkennen. Gemeten sensorwaarden kunnen ge\"xporteerd worden naar een text-file. Bovendien is het mogelijk in de zoomen op de robot en kan met het scherm geschoven worden.
+
+%figuur gui
+\begin{figure}[tbp]
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{GUI}
+    \caption{Grafische User Interface}
+	\label{fig:gui}
+\end{center}
+\end{figure}
+
+% figuren weergave sensoren
+\begin{figure}
+        \centering
+        \begin{subfigure}[hb]{0.25\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{guiRobot}
+                \caption{grafisch}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.75\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{guiSensor}
+                \caption{grafieken}
+        \end{subfigure}
+ \caption{Grafische weergave van de sensorwaarden.}
+\label{fig:guiSensoren}
+\end{figure}
 
 % == commando's == %
 \subsection{Het doorgeven van commando's} % 3 ok!
 \label{ssec:commands}
-De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt gerepresenteerd door een integer die naar de \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers (dit wordt in de volgende sectie in detail beschreven).\\
-
+De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt vertaalt naar een integer die naar de klasse \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers.\\
 
 \subsubsection{De bewerking op de integers} % 3 ok!
 \label{sssec:integer}
@@ -484,35 +507,19 @@ Om de bekomen resultaten terug op te splitsen in de twee oorspronkelijke gegeven
 
 Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek) kan slechts tot 2 cijfer(s) na de komma doorgegeven worden. De robot kan niet nauwkeuriger dan 0,1 cm aangestuurd worden. Hierdoor is het niet nodig de afstand nauwkeuriger door te geven. De nauwkeurigheid van de hoek is gevoeliger. De veelhoek stapelt immers veel afrondingsfouten op naarmate de lengte van de zijde en/of het aantal hoeken stijgt. Doordat de begin- en eindpunten niet samenvallen is te zien dat de som van de berekende hoeken samen geen 360 graden vormt. 
 
-% == gui == %
-\subsection{GUI} % 3 ?
-\label{ssec:GUI}
-De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetoothverbinding aan staat. De knoppen voeren bepaalde functies uit, zoals ``turn left/right'', ``look around'' en ``Align on the white line/ walls''.\\
-
-Voor visualisatie van de sensoren zijn er grafieken die de waarden weergeven. De robot zelf op de simulator heeft een blauwe straal die de waarde van de ultrasone sensor aangeeft. 
-
-%figuur gui
-\begin{figure}[tbp]
-\begin{center}
-    \includegraphics[width=0.8\textwidth]{GUI}
-    \caption{Grafische User Interface}
-	\label{fig:gui}
-\end{center}
-\end{figure}
-
 % == bluetooth == %
 \subsection{Bluetooth} % 3 ok!
 \label{ssec:bluetooth}
-De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de klassen \textit{UnitCommunicator} en \textit{RobotCommunicator}.
+De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de \textit{Communicator}-klassen.
 
 De leJOS-API\cite{leJOS} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: `Silver' en `00:16:53:0A:04:5A'.
 
-De bluetooth laat toe enkele `datastreams' tussen robot en computer op te zetten. Er is maar één verbindingskanaal (wel een inpustream en een outputstream) waarover alles in de byte-voorstelling van een string wordt overgestuurd. Die bytes worden dan terug omgezet naar een string en de computer interpreteert die aan de hand van tags die vooraan de string staan. Naar de robot worden enkel intigers gestuurd.
+De bluetooth laat toe enkele `datastreams' tussen robot en computer op te zetten. Er is maar één verbindingskanaal (wel een inpustream en een outputstream) waarover alles in de byte-voorstelling van een string wordt overgestuurd. Die bytes worden dan terug omgezet naar een string en de computer interpreteert die aan de hand van tags die vooraan de string staan. Naast de tags worden enkele integers doorgestuurd.
 
 % == robot == %
-\subsection{Robot} % 3 ?
+\subsection{Robot} % 3 ok
 \label{ssec:robot}
-Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatste maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn `datastreams' en start hij een \textit{SensorThread} op.
+Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatsten maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn `datastreams' en start hij een \textit{SensorThread} op.
 
 De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een `datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonesensor data).\\
 
@@ -524,29 +531,30 @@ Enkele belangrijke methodes van \textit{CommandUnit}:
 \item \textit{moveForward:} beweegt voorwaarts, maar stopt bij een barcode.
 \end{itemize}
 
-De \textit{SensorThread} stuurt elke 50 milliseconden sensorinformatie door naar de computer. Zo blijft de data up to date zonder dat de 'datastream' te veel informatie moet slikken.
+De \textit{SensorThread} stuurt elke 50 milliseconden sensorinformatie door naar de computer. Zo blijft de data up to date zonder dat de `datastream' te veel informatie moet slikken.
 
 % == simulator == %
-\subsection{Simulator} % 3 ?
+\subsection{Simulator} % 3 ok
 \label{ssec:simulator}
-De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot. De GUI stuurt de simulator aan via de klasse \textit{UnitCommunicator}. Deze ontvangt de uit te voeren commando's, analyseert ze en stuurt ze door naar de simulator.
-\\
-De simulator zelf bestaat uit zeven klassen:
+De \textit{Simulator} bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot.
+
+De belangrijkste klassen in het \textit{Simulator}-pakket:
 
 % overzicht klassen simulator
 \begin{itemize}
-\item \textit{Wall:} tekent de muren van de doolhof.
-\item \textit{State:} wordt gebruikt om te zeggen of iets horizontaal of verticaal moet staan.
-\item \textit{SimulationSensorData: }
+\item \textit{SimulationSensorData:} bevat numerische resultaten van sensortests met de echte rotot; deze data wordt gebruikt om de sensorwaarden te simuleren.
 \item \textit{SimulationPilot:} houdt de positie en de richting van de `robot' bij.
 \item \textit{SimulationPanel:} tekent de baan van de `robot' in het tekenpaneel.
-\item \textit{Triangle:} berekent de hoekpunten van de driehoek die de `robot' voorstelt.
-\item \textit{ExtMath:} doet enkele berekeningen.
-\item \textit{Bag: } een generische klasse waar eender wat in kan worden opgeslagen. Het wordt gebruikt om een tupel van <String, Rectangle2D[]> bij te houden. \cite{Bag.java}
+%\item \textit{Bag:} een generische klasse waar eender wat in kan worden opgeslagen. Het wordt gebruikt om een tupel van <String, Rectangle2D[]> bij te houden. \cite{Bag.java}
 \end{itemize}
 
-Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De roosters op de achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
-Wanneer de `robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige orientatie van de `robot' wordt bovenaan het simulatorpaneel in de GUI weergegeven.
+Het opzetten van het tekenpaneel gebeurt in de GUI. De roosters op de achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
+Wanneer de `robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige ori\"entatie van de `robot' weergegeven door de richting van de driehoek de die robot voorstelt.
+
+% == doolhof mapping == %
+\subsection{Het mappen van de doolhof} % 3 ok
+\label{ssec:mapping}
+Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \textit{Obstruction} en \textit{Barcode} die elementen uit de wereld van een robot voorstellen. Een \textit{Tile} stemt overeen met \'e\'en tegel van de doolhof en heeft vier \textit{Edges}: \'e\'en voor elke zijde. Die \textit{Edges} houden de twee aanliggende tegels bij en eventueel een \textit{Obstruction}, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze houdt een begin-tegel bij en en huidige-tegel. Ze biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof die in het bestand gedefinieerd wordt.
 
 % == BESLUIT == %
 \section{Besluit} % 3 ?
@@ -559,42 +567,42 @@ De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handm
 \newpage
 \makeappendix
 
-% == DEMO 1 == %
-\section{Demo 1} % 3 ?
-\label{Asec:demo1}
-De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-
-keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software
-bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat
-uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en
-enkele klassen die de werking van de robot simuleren (simulator).
-
-% == resulaten == %
-\subsection{Resultaten} % 3 ?
-\label{Assec:result1}
-Bij het rijden van de veelhoek had de robot een kleine afwijking. De afwijking werd groter bij grotere veelhoeken en meerdere hoeken omwille van de geaggregeerde fout.
-
-% == conclusies == %
-\subsection{Conclusies} % 3 ?
-\label{Assec:conc1}
-Calibratie moet meer getest worden. De GUI kan gebruiksvriendelijker, ook moet het scherm van de simulator herschaald worden, zodat de lijn van simulator nog wordt weergegeven als de simulator van de robot uit het scherm gaat.
-
-% == aanpassingen == %
-\subsection{Oplijsting aanpassingen verslag} % 3 ?
-\label{Assec:aanp1}
-Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
-
-% overzicht aangepaste secties
-\begin{itemize}
-\item \textit{\ref{ssec:fysbouw} Fysieke bouw:} de sensoren werden toegevoegd.
-\item \textit{\ref{ssec:calibM} Calibratie van de motoren:} opnieuw gedaan.
-\item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} nieuwe sectie.
-\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} nieuwe sectie.
-\item \textit{\ref{ssec:algoVeelH} Het rijden van een veelhoek:} nieuwe sectie.
-\item \textit{\ref{ssec:algoWitteL} Het rechtzetten op een witte lijn:} nieuwe sectie.
-\item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en mapping-package.
-\item \textit{\ref{ssec:GUI} GUI:} enkele nieuwe functionaliteiten.
-\item \textit{\ref{ssec:simulator} Simulator:} grid en triangle, virtuele doolhof.
-\end{itemize}
+%% == DEMO 1 == %
+%\section{Demo 1} % 3 ?
+%\label{Asec:demo1}
+%De robot wordt voor demo 1 nog niet voorzien van sensoren. De focus ligt vooral op de nauw-
+%keurigheid van de besturing en op het implementeren van alle softwarecomponenten. Deze software
+%bestaat uit twee projecten: een op de computer en een op de robot. De computersoftware bestaat
+%uit een Grafical User Interface (GUI), enkele Communication klassen die informatie doorsturen en
+%enkele klassen die de werking van de robot simuleren (simulator).
+%
+%% == resulaten == %
+%\subsection{Resultaten} % 3 ?
+%\label{Assec:result1}
+%Bij het rijden van de veelhoek had de robot een kleine afwijking. De afwijking werd groter bij grotere veelhoeken en meerdere hoeken omwille van de geaggregeerde fout.
+%
+%% == conclusies == %
+%\subsection{Conclusies} % 3 ?
+%\label{Assec:conc1}
+%Calibratie moet meer getest worden. De GUI kan gebruiksvriendelijker, ook moet het scherm van de simulator herschaald worden, zodat de lijn van simulator nog wordt weergegeven als de simulator van de robot uit het scherm gaat.
+%
+%% == aanpassingen == %
+%\subsection{Oplijsting aanpassingen verslag} % 3 ?
+%\label{Assec:aanp1}
+%Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
+%
+%% overzicht aangepaste secties
+%\begin{itemize}
+%\item \textit{\ref{ssec:fysbouw} Fysieke bouw:} de sensoren werden toegevoegd.
+%\item \textit{\ref{ssec:calibM} Calibratie van de motoren:} opnieuw gedaan.
+%\item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} nieuwe sectie.
+%\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} nieuwe sectie.
+%\item \textit{\ref{ssec:algoVeelH} Het rijden van een veelhoek:} nieuwe sectie.
+%\item \textit{\ref{ssec:algoWitteL} Het rechtzetten op een witte lijn:} nieuwe sectie.
+%\item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en mapping-package.
+%\item \textit{\ref{ssec:GUI} GUI:} enkele nieuwe functionaliteiten.
+%\item \textit{\ref{ssec:simulator} Simulator:} grid en triangle, virtuele doolhof.
+%\end{itemize}
 
 
 % == DEMO 2 == %
@@ -680,6 +688,13 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 
 \bibitem{A*}
 \textit{A*}: Een optimaal zoekalgoritme. \textit{A*} kiest zijn volgende punt op basis van een kostenfunctie: de werkelijke kost om tot de beschouwde buur te geraken, plus de geschatte kost om van dat punt naar het doel te geraken. Met andere woorden, het algoritme combineert een heuristisch algoritme met een kostenalgoritme. Zie ook de cursus \textit{Artifici\"ele Intelligentie (H06U1A)} door Daniel De Schreye.
+
+\bibitem{manhattan}
+\textit{Manhattanafstand:} Deze heuristiek tekent vanuit het ene punt een horizontale lijn en vanuit het andere punt een verticale lijn. De gemeten afstand is die van het ene punt tot het snijpunt, plus die van het andere punt tot het snijpunt.\\
+In de doolhof wordt geen rekening gehouden met muren.\\
+De Manhattanafstand verwijst naar een gelijknamige stadsdeel in New~York~City~VSA). New~York werd in het jaar~1625 door de Nederlanders gesticht. De straten werden in dambordpatroon gelegd: `Avenues' van noord naar zuid en `Streets' van oost naar west.\\
+\mbox{$[http://nl.wikipedia.org/wiki/Manhattan\_(New\_York)]$}\\ \mbox{$[http://nl.wikipedia.org/wiki/New\_York\_City]$}
+
 
 \bibitem{Bag.java}
 \textit{Bag}: Een manier om objecten op te slaan. Het is mogelijk te itereren over de verzameling, maar het is niet mogelijk objecten te verwijderen uit de verzameling. Meer documentatie: Section 1.3 of \textit{Algorithms, 4th Edition} door Robert Sedgewick en Kevin Wayne.\\
