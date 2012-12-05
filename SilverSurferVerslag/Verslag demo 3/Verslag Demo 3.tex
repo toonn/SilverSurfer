@@ -40,13 +40,13 @@
 % == ABSTRACT EN INHOUDSTAFEL == %
 \begin{abstract}
 \label{ssec:abstr} % 3 ok
-Het P\&O-project bestaat eruit een robot autonoom een doolhof te laten verkennen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf. De robot is voorzien van een lichtsensor en een ultrasone sensor. Deze staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De aansturing van de robot gebeurt via bluetoothverbinding. Een Grafische User Interface (GUI) maakt deze aansturing op een gebruiksvriendelijke manier mogelijk. De GUI geeft de baan van de robot  weer. Ook een historiek van de sensorwaarden wordt weergegeven.\\
+Het P\&O-project heeft als doel een robot autonoom een doolhof te laten verkennen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf. De robot is voorzien van een lichtsensor en een ultrasone sensor. Deze staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De aansturing van de robot gebeurt via bluetoothverbinding. Een Grafische User Interface (GUI) maakt deze aansturing op een gebruiksvriendelijke manier mogelijk. De GUI geeft de baan van de robot  weer. Ook de sensorwaarden en een historiek ervan worden weergegeven.\\
 
-De robot kan zich autonoom door een doolhof bewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map op van de doolhof. Op elke nieuwe tegel kijkt de robot rond zodat muren gedetecteerd kunnen worden door interpretatie van de sensorwaarden. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish (via het checkpoint) te bepalen. De finish en het checkpoint worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.\\
+De robot kan zich autonoom door een doolhof bewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map van de doolhof op. Op elke nieuwe tegel kijkt de robot rond zodat muren gedetecteerd kunnen worden door interpretatie van sensorwaarden. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish (via het checkpoint) te bepalen. De finish en het checkpoint worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.\\
 
 Om de afwijking op de aansturing te minimaliseren, ori\"enteert de robot zich regelmatig op een witte lijn. Zo blijft de robot steeds zo dicht mogelijk bij het midden van de tegels.\\
 
-Een computerprogramma simuleert de werking van de robot. Het is voor de simulator mogelijk door een virtuele doolhof te rijden en deze op gelijkaardige wijze te verkennen. De sensorwaarden worden gesimuleerd, met een afwijking om de werkelijke robot zo goed mogelijk te benaderen. Verder worden dezelfde algoritmes gebruikt als voor de robot. Dit laat toe de algoritmes te testen zonder de robot hiervoor te gebruiken.
+Een computerprogramma simuleert de werking van de robot. Het is voor de simulator mogelijk door een virtuele doolhof te rijden en deze op gelijkaardige wijze te verkennen. De sensorwaarden worden gesimuleerd met een afwijking om de werkelijke robot zo goed mogelijk te benaderen. Verder worden dezelfde algoritmes gebruikt als voor de robot. Dit laat toe de algoritmes te testen zonder de robot hiervoor te gebruiken.
 \end{abstract}
 
 %figuur robot
@@ -69,14 +69,14 @@ Een computerprogramma simuleert de werking van de robot. Het is voor de simulato
 % == INLEIDING == %
 \section{Inleiding} % 3 ok!
 \label{ssec:inl}
-In het kader van het vak 'Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms \cite{mindstorms}. Deze robot moet uiteindelijk volledig autonoom een doolhof kunnen verkennen.\\
+In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms \cite{mindstorms}. Deze robot moet uiteindelijk volledig autonoom een doolhof kunnen verkennen.\\
 
-Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom voortbewegen. Wanneer de robot zich in een doolhof voortbeweegt, kan hij deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar zijn beginpositie en rijdt hier in hoge snelheid naartoe.
+Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom voortbewegen. Wanneer de robot zich in een doolhof voortbeweegt, kan hij deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar de tegel met de barcode `checkpoint'. Vandaar gaat de robot zo snel mogelijk naar de tegel met barcode `finish'.
 
 % == BOUW == %
 \section{Bouw van de robot} % 3 ok
 \label{sec:bouw}
-LEGO Mindstorms biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren, met behulp van leJOS \cite{leJOS} kan dit in Java.
+LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS \cite{leJOS} kan dit in Java.
 
 % == fysieke bouw == %
 \subsection{Fysieke bouw} % 3 ok
@@ -115,7 +115,7 @@ Bij het bouwen van de robot (zie figuur~\ref{robot}) werd het ontwerpboekje gevo
         \label{fig:sensors}
 \end{figure}
 
-Een alternatieve opstelling bestaat erin de ultrasone sensor op een derde motor te monteren zodat deze onafhankelijk van de robot kan ronddraaien. Opdat hier plaats genoeg voor is, moet de NXT plat gelegd worden met de wielen aan weerszijden. Bovendien zou de meetwaarde van de ultrasone sensor afhangen van zijn positie ten opzichte van de robot, wat het interpreteren moeilijker maakt. Voor deze opstelling werd daarom niet gekozen.
+Een alternatieve opstelling bestaat erin de ultrasone sensor op een derde motor te monteren zodat deze onafhankelijk van de robot kan ronddraaien. De meetwaarde van de ultrasone sensor zou dan afhangen van zijn positie ten opzichte van de robot, wat het interpreteren moeilijker maakt. Voor deze opstelling werd daarom niet gekozen.
 
 
 % == calibratie == %
@@ -126,7 +126,7 @@ De robot wordt aangedreven door twee motoren, elk verbonden met \'e\'en van de t
 %resultaten meetwaarden
 \begin{table}[hb]
 \begin{center}
-    \begin{tabular}{  l || c  c | c }
+    \begin{tabular}{  r || c  c | c }
      & linkerwiel & rechterwiel & aantal graden \\ \hline 
     1 cm vooruit & voor & voor & 20,8\degree
     \\
@@ -198,11 +198,15 @@ Door de robot in stappen rond zijn as te laten draaien ($4 \cdot 90\degree$) kan
 \label{fig:calibM}
 \end{figure}
 
+\subsubsection{besluit calibratie motoren} %ok
+\label{ssec:calibMbesluit}
+Uit de tests blijkt dat de robot niet perfect rijdt en draait. Het is daarom nodig regelmatig te corrigeren, zodat de robot toch steeds in het midden van de regels rijdt. Deze correcties worden in de sectie~\ref{ssec:algoWitteL} en~\ref{ssec:algoMuur} beschreven.
+
 
 \subsection{Calibratie van de lichtsensor} % 3 ok
 \label{ssec:calibLS}
 De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe minder licht gereflecteerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.\\
-De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht, in de schaduw, terwijl de robot rijdt en terwijl hij stilstaat. Dit voor alle soorten ondergrond die in de doolhof voorkomen: een paneel, een witte lijn en een zwarte lijn. Boxplots worden weergegeven in figuur~\ref{fig:calibLS}. Deze toont dat het gemiddelde enkel bij een zwarte lijn afhangt van de omstandigheden. De afwijking wordt wel sterk bepaald door het al dan niet rijden van de robot. Bij het simuleren en het interpreteren van de meetwaarden wordt hier rekening mee gehouden.
+De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlicht, in de schaduw, terwijl de robot rijdt en terwijl hij stilstaat. Dit voor alle soorten ondergrond die in de doolhof voorkomen: een paneel, een witte lijn en een zwarte lijn. Boxplots worden weergegeven in figuur~\ref{fig:calibLS}. Deze toont dat het gemiddelde enkel bij een zwarte lijn echt afhangt van de omstandigheden. De afwijking wordt wel sterk bepaald door het al dan niet rijden van de robot. Bij het simuleren en het interpreteren van de meetwaarden wordt hier rekening mee gehouden.
 
 % boxplots calibratie lichtsensoren
 \begin{figure}
@@ -267,8 +271,9 @@ De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlic
 \label{ssec:calibUS}
 Een ultrasone sensor zendt ultrasone geluidsgolven uit. Indien een object in de buurt staat, weerkaatsen de golven hierop. De robot ontvangt dan zijn eigen golven. De tijd tussen het uitzenden en ontvangen laat toe de afstand tot het object te bepalen.\\
 
-In het kader van een doolhof, kan een robot muren tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge"interpreteerd worden enkel meetwaarden kleiner dan 29~cm als muur beschouwd.\\
-De 29~cm werd gemeten door eerst de robot in het midden van een tile te plaatsen. Eerst werd er voor de robot een muur geplaats. De gemeten waarden van de ultrasone sensor waren waarden tussen 12~cm en 24~cm. Daarna werd de muur verwijderd en werden er paatjes gezet. Nu werden er waarden tussen 32~cm en 50~cm gemeten. Hieruit hebben we besloten om de waarde 29~cm als bovengrens te nemen voor de muur. Later is dit verlaagd naar 28~cm omdat de robot soms wel een muur zag terwijl er geen was.
+In een doolhof, kan een robot muren tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge"interpreteerd worden enkel meetwaarden kleiner dan 28~cm als muur beschouwd.
+
+Deze 28~cm werd als volgt bepaald: De robot wordt in het midden van een tegel voor een muur geplaatst. De ultrasone sensor meet waarden tussen 12~cm en 24~cm. Vervolgens werd de muur verwijderd en werden er paatjes geplaatst. Nu werden er waarden tussen 32~cm en 50~cm gemeten. Deze metingen leidden tot een grens van 28~cm.\\
 
 De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde afstand van een muur te zetten. Verschillende afstanden worden zo gemeten. Boxplots in figuur~\ref{fig:calibUS} geven de gemeten waarden ten opzichte van de werkelijke waarden weer. Hoewel de variantie op de gemeten waarde niet groot is, komt de gemiddelde gemeten waarde niet altijd overeen met de werkelijke afstand. Vooral voor afstanden kleiner dan 20~cm en groter dan 145~cm. Waarden buiten het interval~[20,145] worden daarom niet als betrouwbaar verondersteld.
 
@@ -311,8 +316,6 @@ De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde
 % == ALGORITMES == %
 \section{Algoritmes} % 3 ok
 \label{sec:algo}
-Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoeren.
-
 % == veelhoek == %
 %\subsection{Het rijden van een veelhoek} % 3 ?
 %\label{ssec:algoVeelH}
@@ -332,10 +335,9 @@ Verschillende algoritmes zorgen ervoor dat de robot alle opdrachten kan uitvoere
 % == witte lijn == %
 \subsection{Het rechtzetten op een witte lijn} % 3 ok
 \label{ssec:algoWitteL}
-Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren.
-Onderstaand algoritme kan gebruikt worden wanneer de robot net over een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten detecteren).
+Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt onder andere door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren. List De robot rijdt dan weer rechtdoor. Listing~\ref{code:algoWitteL} toont een algoritme dat gebruikt kan worden wanneer de robot net over een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten detecteren).
 
-\lstset{frame=single, caption=Witte Lijn algoritme (pseudocode),
+\lstset{frame=single, caption=Witte Lijnalgoritme (pseudocode),
 		label=code:algoWitteL, numbers=left, numberstyle=\footnotesize,
 		basicstyle=\sffamily, numbersep=5pt}
 \begin{lstlisting}
@@ -345,25 +347,52 @@ Draai(rechts,5) tot witte lijn.
 Draai(links,1) tot witte lijn EN AngleTurned++.
 Draai(rechts, AngleTurned/2).
 \end{lstlisting}
+%ONTBREEKT: figuur
 
 De robot staat best net over de witte lijn. Wanneer de robot dan op een witte lijn tussen twee panelen staat, zorgt de donkere scheidingslijn tussen twee panelen niet voor verwarring.\\
 
-Een alternatieve manier om te corrigeren bestaat erin gebruik te maken van muren. De robot kijkt dan naar de muren en gaat meten met de ultrasone sensor op hoeveel afstand hij zich van de muur bevind en zich zo op gelijke afstand van tegenoverstaande muren plaatsen.  Nadeel is dat de robot zich dan moet bevinden op een tegel die muren aan beide kanten bevat.
+Dit algoritme wordt tijdens het verkennen en tijdens het rijden naar de finish uitgevoerd. De robot zet zich elke vijf tegels recht.
+% ONTBREEKT: elke vijf? of vaker?
 
+% == muren == %
+\subsection{Het centreren aan de hand van twee muren} % 3 ok
+\label{ssec:algoMuren}
+Een alternatieve manier om te corrigeren op calibratieafwijkingen is door gebruik te maken van muren. Met dit algoritme zet de robot zich in het midden van een tegel. De robot kijkt naar een muur en meet op hoeveel afstand hij zich van de muur bevindt. Hij rijdt eventueel wat naar voren en meet dan de afstand tot de tegenovergestelde muur. Eventueel rijdt hij weer wat naar voren. Het algoritme is enkel toepasbaar wanneer de robot zich op een tegel met muren aan twee kanten bevindt.
+
+\lstset{frame=single, caption=Muuralgoritme (pseudocode),
+		label=code:algoWitteL, numbers=left, numberstyle=\footnotesize,
+		basicstyle=\sffamily, numbersep=5pt}
+\begin{lstlisting}
+Draai(rechts,90)
+ALS     ultraSensor() < 28
+DAN 	Rijd(ultraSensor()-23)
+    	Draai(links,180)
+    	ALS 	ultraSensor() < 28 EN ultraSensor() NIET in [21,25]
+        DAN 	Rijd(ultraSensor()-23)
+		Draai(rechts,90)
+		
+ANDERS 	Draai(links,180)
+	ALS 	ultraSensor() < 28
+	DAN     Rijd(ultraSensor()-23)
+       	        Draai(rechs,90)
+	ANDERS	Draai(rechts,90)
+\end{lstlisting}
+%ONTBREEKT: figuur
+
+Dit algoritme wordt uitgevoerd op tegels met barcodes. Zo zijn er zeker muren aan weerskanten. Het algoritme wordt niet uitgevoerd tijdens het rijden naar de finish.
 
 % == verkennen van de doolhof == %
 \subsection{Het verkennen van een doolhof} % 3 ok
 \label{ssec:algoOnderzDoolhof}
 
-De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot reeds passeert, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
+De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot passeert, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Elke tegel houdt een boolean bij die deze markering voorstelt.
 
-Bij elke tegel onthoudt de robot alle uitwegen (de naburige tegels). Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden. De robot gebruikt het kortste pad algoritme om de weg naar dit kruispunt te bepalen.
+Bij elke tegel onthoudt de robot alle uitwegen (de naburige tegels). Vervolgens slaat hij de laatste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden. De robot gebruikt het kortste pad algoritme om de weg naar dit kruispunt te bepalen.
 Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof een `finish'-barcode en een `checkpoint'-barcode bevat. Indien niet, dan stopt de robot en voert hij het kortste pad algoritme niet uit.\\
 
-
-Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassing implementeert steeds ook de aanpassingen die eerder werden toegevoegd. Tabel \ref{tab:resultVerken} geeft de resultaten van de aanpassingen weer. Figuur \ref{fig:resultVerkenE} toont de gebruikte doolhoven en de uitvoering van het algoritme met aanpassing E.
+Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassing implementeert steeds ook de aanpassingen die eerder werden toegevoegd. Tabel~\ref{tab:resultVerken} geeft de resultaten van de aanpassingen weer. Figuur~\ref{fig:resultVerkenE} toont de gebruikte doolhoven en de uitvoering van het algoritme met aanpassing E. Er werd getracht het aantal draaiingen en afgelegde afstand te minimaliseren.
 \begin{description}
-\item[A] draai bij elke tegel vier keer (eindig in startori"entatie) en neem de laatste tile in de queue als volgende tile.
+\item[A] basisalgoritme zonder optimalisatie: draai bij elke tegel vier keer (eindig in startori\"entatie) en neem de laatste tile in de queue als volgende tile.
 \item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tile.
 \item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori"entatie).
 \item[D] muren die vanuit een naburige tile reeds gedetecteerd werden, worden niet nog eens nagekeken.
@@ -380,7 +409,7 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
     B & 13770 & 1920 & 10800 & 1160 \\ \hline
     C & 11970 & 2000 & 9090 & 1080 \\ \hline
     D & 9180 & 2000 & 6570 & 1080\\ \hline
-    E & 8820 & 1520 & 6570 & 1080\\
+    E & 8820 & 1880 & 6570 & 1080\\
     \end{tabular}
     \caption{Testen algoritmes}
     \label{tab:resultVerken}
@@ -417,9 +446,9 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \end{center}
 \end{figure}
 
-Het kortste pad algoritme implementeert \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand \cite{manhattan} ge\"implementeerd en als kost de totale afgelegde afstand. Figuur \ref{fig:kortstepad} toont een uitvoering van het algoritme.
+Het kortste pad algoritme implementeert \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand \cite{manhattan} ge\"implementeerd (zonder rekening te houden met muren) en als kost de totale afgelegde afstand (wel rekening houdend met muren). Figuur \ref{fig:kortstepad} toont een uitvoering van het algoritme.
 
-Dit algoritme markeert alle tegels die al onderzocht zijn (dit is een andere mark dan het verkenalgoritme). In de beginsituatie zijn alle tegels ongemarkeerd. De kost van de startpunt wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven. Hierbij worden de muren in rekening gebracht.
+Dit algoritme markeert alle tegels die al onderzocht zijn (dit is een andere mark dan het verkenalgoritme). In de beginsituatie zijn alle tegels ongemarkeerd. De kost van de startpunt wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven.
 
 % == SOFTWARE == %
 \section{Software} % 3 ok
@@ -429,7 +458,7 @@ De software bestaat uit twee delen: een project dat op de NXT van de robot loopt
 % == software design == %
 \subsection{Software ontwerp van het computerproject} % 3 ?
 \label{ssec:Sdesign}
-Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur~\ref{fig:klasDia} toont een vereenvoudigd klassendiagram van de software die op de computer loopt. De gebruiker geeft zijn commando's door aan de \textit{GUI}. Deze stuurt de commando's weer door naar de \textit{Communicator} die verder doorstuurt naar ofwel de robot ofwel de simulator. De \textit{Simulator} en de \textit{Robot} geven hun sensorwaarden door aan de \textit{Informationbuffer}. De \textit{Informatiebuffer} stuurt ze weer door naar de \textit{GUI} zodat deze de sensorwaarden kan weergeven.\\
+Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur~\ref{fig:klasDia} toont een vereenvoudigd klassendiagram van de software op de computer. De gebruiker geeft zijn commando's door aan de \textit{GUI}. Deze stuurt de commando's weer door naar de \textit{Communicator} die verder doorstuurt naar ofwel de robot ofwel de simulator. De \textit{Simulator} en de \textit{Robot} geven hun sensorwaarden door aan de \textit{Informationbuffer}. De \textit{Informatiebuffer} stuurt ze weer door naar de \textit{GUI} zodat deze de sensorwaarden kan weergeven.\\
 %
 %Beide projecten hebben een identiek package \textit{Commands} met \'e\'en klasse \textit{Command}. Hierin staan de final static integers die met de mogelijke bluetoothsignalen overeenkomen. Een verdere beschrijving van de software op de NXT-brick wordt in de sectie robot gegeven.\\
 %
@@ -477,7 +506,7 @@ Via de GUI kan de gebruiker de robot of de simulator aansturen, naargelang de bl
                 \includegraphics[width=\textwidth]{guiSensor}
                 \caption{grafieken}
         \end{subfigure}
- \caption{Grafische weergave van de sensorwaarden.}
+ \caption{Weergave van de sensorwaarden.}
 \label{fig:guiSensoren}
 \end{figure}
 
@@ -505,16 +534,16 @@ Om de bekomen resultaten terug op te splitsen in de twee oorspronkelijke gegeven
 \item de oorspronkelijke afstand (hoek) wordt bekomen door de integer door 1000 te delen.
 \end{itemize}
 
-Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek) kan slechts tot 2 cijfer(s) na de komma doorgegeven worden. De robot kan niet nauwkeuriger dan 0,1 cm aangestuurd worden. Hierdoor is het niet nodig de afstand nauwkeuriger door te geven. De nauwkeurigheid van de hoek is gevoeliger. De veelhoek stapelt immers veel afrondingsfouten op naarmate de lengte van de zijde en/of het aantal hoeken stijgt. Doordat de begin- en eindpunten niet samenvallen is te zien dat de som van de berekende hoeken samen geen 360 graden vormt. 
+Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek) kan slechts tot twee cijfer(s) na de komma doorgegeven worden. De robot kan niet nauwkeuriger dan 0,1~cm aangestuurd worden. Hierdoor is het niet nodig de afstand nauwkeuriger door te geven. De nauwkeurigheid van de hoek is gevoeliger. De veelhoek stapelt immers veel afrondingsfouten op naarmate de lengte van de zijde en/of het aantal hoeken stijgt. Doordat de begin- en eindpunten niet samenvallen is te zien dat de som van de berekende hoeken samen geen 360~graden vormt. 
 
 % == bluetooth == %
 \subsection{Bluetooth} % 3 ok!
 \label{ssec:bluetooth}
-De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de \textit{Communicator}-klassen.
+De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de \textit{Communicator}-klassen.\\
 
-De leJOS-API\cite{leJOS} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: `Silver' en `00:16:53:0A:04:5A'.
+De leJOS-API \cite{leJOS} voorziet een \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: `Silver' en `00:16:53:0A:04:5A'.\\
 
-De bluetooth laat toe enkele `datastreams' tussen robot en computer op te zetten. Er is maar één verbindingskanaal (wel een inpustream en een outputstream) waarover alles in de byte-voorstelling van een string wordt overgestuurd. Die bytes worden dan terug omgezet naar een string en de computer interpreteert die aan de hand van tags die vooraan de string staan. Naast de tags worden enkele integers doorgestuurd.
+De bluetooth laat toe twee `datastreams' tussen robot en computer op te zetten: een inputstream en een outputstream. Alle informatie wordt hierover doorgestuurd in de byte-voorstelling van een string. Op de Die bytes worden bij aankomst weer omgezet naar een string. De computer interpreteert die aan de hand van tags die vooraan de string staan. Naast de tags worden enkel integers doorgestuurd.
 
 % == robot == %
 \subsection{Robot} % 3 ok
@@ -544,17 +573,19 @@ De belangrijkste klassen in het \textit{Simulator}-pakket:
 \begin{itemize}
 \item \textit{SimulationSensorData:} bevat numerische resultaten van sensortests met de echte rotot; deze data wordt gebruikt om de sensorwaarden te simuleren.
 \item \textit{SimulationPilot:} houdt de positie en de richting van de `robot' bij.
-\item \textit{SimulationPanel:} tekent de baan van de `robot' in het tekenpaneel.
+\item \textit{SimulationPanel:} tekent de baan van de `robot' in het tekenpaneel en houdt de map van de verkende doolhof bij.
 %\item \textit{Bag:} een generische klasse waar eender wat in kan worden opgeslagen. Het wordt gebruikt om een tupel van <String, Rectangle2D[]> bij te houden. \cite{Bag.java}
 \end{itemize}
 
 Het opzetten van het tekenpaneel gebeurt in de GUI. De roosters op de achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
-Wanneer de `robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige ori\"entatie van de `robot' weergegeven door de richting van de driehoek de die robot voorstelt.
+Wanneer de `robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige ori\"entatie van de `robot' wordt weergegeven door een driehoek die draait met de ori\"entatie.
 
 % == doolhof mapping == %
 \subsection{Het mappen van de doolhof} % 3 ok
 \label{ssec:mapping}
-Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \textit{Obstruction} en \textit{Barcode} die elementen uit de wereld van een robot voorstellen. Een \textit{Tile} stemt overeen met \'e\'en tegel van de doolhof en heeft vier \textit{Edges}: \'e\'en voor elke zijde. Die \textit{Edges} houden de twee aanliggende tegels bij en eventueel een \textit{Obstruction}, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze houdt een begin-tegel bij en en huidige-tegel. Ze biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof die in het bestand gedefinieerd wordt.
+Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \textit{Obstruction} en \textit{Barcode} die elementen uit de wereld van een robot voorstellen. Een \textit{Tile} stemt overeen met \'e\'en tegel van de doolhof en heeft vier \textit{Edges}: \'e\'en voor elke zijde. Die \textit{Edges} houden de twee aanliggende tegels bij en eventueel een \textit{Obstruction}, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze houdt een begin-tegel bij en en huidige-tegel. Ze biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof die in het bestand gedefinieerd wordt.\\
+
+De \textit{Simulator} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld in de klasse \textit{SimulationPanel}, die de muren ook tekent. Ook de robot maakt gebruik van het \textit{SimulationPanel} om de verkende map op te slaan.
 
 % == BESLUIT == %
 \section{Besluit} % 3 ?
