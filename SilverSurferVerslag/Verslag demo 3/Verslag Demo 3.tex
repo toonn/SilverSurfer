@@ -194,11 +194,11 @@ Door de robot in stappen rond zijn as te laten draaien ($4 \cdot 90\degree$) kan
                 \includegraphics[width=\textwidth]{boxMgraden4x90}
                 \caption{Afwijking op $360 \degree$}
         \end{subfigure}
- \caption{Boxplots calibratie motoren.}
+ \caption{Boxplots calibratie motoren}
 \label{fig:calibM}
 \end{figure}
 
-\subsubsection{besluit calibratie motoren} %ok
+\subsubsection{Besluit calibratie motoren} %ok
 \label{ssec:calibMbesluit}
 Uit de tests blijkt dat de robot niet perfect rijdt en draait. Het is daarom nodig regelmatig te corrigeren, zodat de robot toch steeds in het midden van de regels rijdt. Deze correcties worden in de sectie~\ref{ssec:algoWitteL} en~\ref{ssec:algoMuur} beschreven.
 
@@ -226,7 +226,7 @@ De lichtsensor wordt in verschillende omstandigheden getest: bij direct kunstlic
                 \includegraphics[width=\textwidth]{boxLSzwart}
                 \caption{Zwarte lijn}
         \end{subfigure}
- \caption{Boxplots calibratie lichtsensor.}
+ \caption{Boxplots calibratie lichtsensor}
 \label{fig:calibLS}
 \end{figure}
 
@@ -290,7 +290,7 @@ De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde
                 \includegraphics[width=\textwidth]{boxUSeind}
                 \caption{laatste geldige meetwaarde}
         \end{subfigure}
- \caption{Boxplots calibratie ultrasone sensor.}
+ \caption{Boxplots calibratie ultrasone sensor}
 \label{fig:calibUS}
 \end{figure}
 
@@ -333,7 +333,7 @@ De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde
 
 
 % == witte lijn == %
-\subsection{Het rechtzetten op een witte lijn} % 3 ok
+\subsection{Rechtzetten op een witte lijn} % 3 ok
 \label{ssec:algoWitteL}
 Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt onder andere door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren. List De robot rijdt dan weer rechtdoor. Listing~\ref{code:algoWitteL} toont een algoritme dat gebruikt kan worden wanneer de robot net over een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten detecteren).
 
@@ -355,7 +355,7 @@ Dit algoritme wordt tijdens het verkennen en tijdens het rijden naar de finish u
 % ONTBREEKT: elke vijf? of vaker?
 
 % == muren == %
-\subsection{Het centreren aan de hand van twee muren} % 3 ok
+\subsection{Centreren aan de hand van twee muren} % 3 ok
 \label{ssec:algoMuren}
 Een alternatieve manier om te corrigeren op calibratieafwijkingen is door gebruik te maken van muren. Met dit algoritme zet de robot zich in het midden van een tegel. De robot kijkt naar een muur en meet op hoeveel afstand hij zich van de muur bevindt. Hij rijdt eventueel wat naar voren en meet dan de afstand tot de tegenovergestelde muur. Eventueel rijdt hij weer wat naar voren. Het algoritme is enkel toepasbaar wanneer de robot zich op een tegel met muren aan twee kanten bevindt.
 
@@ -381,8 +381,20 @@ ANDERS 	Draai(links,180)
 
 Dit algoritme wordt uitgevoerd op tegels met barcodes. Zo zijn er zeker muren aan weerskanten. Het algoritme wordt niet uitgevoerd tijdens het rijden naar de finish.
 
+% == barcodes lezen == %
+\subsection{Lezen van een barcode} % 3 ok
+\label{ssec:algoBarcode}
+Een \textit{Barcode} bestaat uit acht stroken van twee~cm breed. De eerste en de laatste strook zijn altijd zwart. De tussenin liggende stroken zijn ofwel zwart (waarde nul) ofwel wit (waarde \'e\'en). Deze combinatie van enen en nullen is een binaire voorstelling van een integer.
+
+De klasse \textit{BarDecoder} zet de integer om in de juiste opdracht. Ook indien de \textit{Barcode} in de andere richting gelezen werd, wordt de juiste opdracht toegekend.\\
+
+Zowel de robot als de simulator hebben een \textit{BarcodeThread} die checkt of er een zwarte ondergrond is. Dit gebeurt terwijl de robot rijdt. Bij detectie van een zwarte ondergrond, wordt het barcodealgoritme opgeroepen.
+
+Aan de start van het barcodealgoritme staat de robot op de eerste zwarte strook. De robot rijdt twee~cm vooruit, leest de waarde van zijn lichtsensor en interpreteert de waarde van de strook. Zo tot alle stroken gedetecteerd zijn. De waarde van de barcode wordt opgeslagen in de map van de doolhof. Nadien rijdt de robot nog vier~cm vooruit zodat hij de barcode zeker voorbij is. Het muuralgoritme wordt opgeroepen en daarna wordt de opdracht bij de barcode uitgevoerd.
+
+
 % == verkennen van de doolhof == %
-\subsection{Het verkennen van een doolhof} % 3 ok
+\subsection{Verkennen van een doolhof} % 3 ok
 \label{ssec:algoOnderzDoolhof}
 
 De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot passeert, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Elke tegel houdt een boolean bij die deze markering voorstelt.
@@ -429,24 +441,24 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
                 \includegraphics[width=\textwidth]{verkenMap2E}
                 \caption{map 2}
         \end{subfigure}
- \caption[Het verkennen van een doolhof]{Het verkennen van een doolhof met implementatie van aanpassing E. Deze aanpassing maakt dat in map 1 niet alle tegels bezocht hoeven te worden. In map 2 doet deze situatie zich niet voor. Dit is te wijten aan de opbouw van de doolhof.}
+ \caption[Verkennen van een doolhof]{Verkennen van een doolhof met implementatie van aanpassing E. Deze aanpassing maakt dat in map 1 niet alle tegels bezocht hoeven te worden. In map 2 doet deze situatie zich niet voor. Dit is te wijten aan de opbouw van de doolhof.}
 \label{fig:resultVerkenE}
 \end{figure}
 
 % == het kortste pad == %
-\subsection{Het vinden van het kortste pad} % ?
+\subsection{Vinden van het kortste pad} % ?
 \label{ssec:AlgoKortsteP}
 
 %figuur kortste pad
 \begin{figure}[tbp]
 \begin{center}
     \includegraphics[width=0.8\textwidth]{kortstepadvisual}
-    \caption{Kortste Pad Algoritme}
+    \caption{Kortste padalgoritme}
 	\label{fig:kortstepad}
 \end{center}
 \end{figure}
 
-Het kortste pad algoritme implementeert \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand \cite{manhattan} ge\"implementeerd (zonder rekening te houden met muren) en als kost de totale afgelegde afstand (wel rekening houdend met muren). Figuur \ref{fig:kortstepad} toont een uitvoering van het algoritme.
+Het kortste padalgoritme implementeert \textit{A*} \cite{A*}. Het maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Als heuristiek wordt de Manhattanafstand \cite{manhattan} ge\"implementeerd (zonder rekening te houden met muren) en als kost de totale afgelegde afstand (wel rekening houdend met muren). Figuur \ref{fig:kortstepad} toont een uitvoering van het algoritme.
 
 Dit algoritme markeert alle tegels die al onderzocht zijn (dit is een andere mark dan het verkenalgoritme). In de beginsituatie zijn alle tegels ongemarkeerd. De kost van de startpunt wordt op nul gezet. Daarna wordt de kost opbouwend aan elke tegel meegegeven.
 
@@ -456,7 +468,7 @@ Dit algoritme markeert alle tegels die al onderzocht zijn (dit is een andere mar
 De software bestaat uit twee delen: een project dat op de NXT van de robot loopt (sectie \ref{ssec:robot}) en een project dat op de computer loopt (sectie \ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie \ref{ssec:GUI}) . Deze toepassing laat toe de robot te besturen (via bluetooth: sectie \ref{ssec:bluetooth}) en de reacties van de robot weer te geven. Via de GUI kan ook een virtuele robot aangestuurd worden: de simulator (sectie \ref{ssec:simulator}). Een \textit{Communication}-pakket stuurt de commando's van de GUI door naar de juiste unit (sectie \ref{ssec:commands}). Wanneer robot of simulator een doolhof verkennen wordt een map opgebouwd met behulp van het \textit{Mapping}-pakket (sectie \ref{ssec:mapping}).\\
 
 % == software design == %
-\subsection{Software ontwerp van het computerproject} % 3 ?
+\subsection{Ontwerp van het computerproject} % 3 ?
 \label{ssec:Sdesign}
 Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op een computer en \'e\'en draait op de NXT-Brick. Figuur~\ref{fig:klasDia} toont een vereenvoudigd klassendiagram van de software op de computer. De gebruiker geeft zijn commando's door aan de \textit{GUI}. Deze stuurt de commando's weer door naar de \textit{Communicator} die verder doorstuurt naar ofwel de robot ofwel de simulator. De \textit{Simulator} en de \textit{Robot} geven hun sensorwaarden door aan de \textit{Informationbuffer}. De \textit{Informatiebuffer} stuurt ze weer door naar de \textit{GUI} zodat deze de sensorwaarden kan weergeven.\\
 %
@@ -472,13 +484,13 @@ Zoals reeds vermeld bestaat de software uit twee projecten: \'e\'en draait op ee
 \begin{figure}[tbp]
 \begin{center}
     \includegraphics[width=0.8\textwidth]{Klassendiagram}
-    \caption{Klassendiagram van het project}
+    \caption{Klassendiagram van het computerproject.}
     \label{fig:klasDia}
 \end{center}
 \end{figure}
 
 % == gui == %
-\subsection{GUI} % 3 ok
+\subsection{Grafische User Interface} % 3 ok
 \label{ssec:GUI}
 De GUI toont een grafische weergave van de doolhof en de baan die de robot erin aflegt: zie figuur~\ref{fig:gui}. De sensorwaarden worden grafisch weergegeven: een bolletje op de robot geeft de kleur van de ondergrond aan en een blauwe straal toont het bereik van de ultrasone sensor. Grafieken tonen de historiek van de ultrasone sensor en de lichtsensor. Figuur~\ref{fig:guiSensoren} toont zowel de grafische weergave als de grafiek. \\
 
@@ -506,16 +518,16 @@ Via de GUI kan de gebruiker de robot of de simulator aansturen, naargelang de bl
                 \includegraphics[width=\textwidth]{guiSensor}
                 \caption{grafieken}
         \end{subfigure}
- \caption{Weergave van de sensorwaarden.}
+ \caption{Weergave van de sensorwaarden}
 \label{fig:guiSensoren}
 \end{figure}
 
 % == commando's == %
 \subsection{Het doorgeven van commando's} % 3 ok!
 \label{ssec:commands}
-De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt vertaalt naar een integer die naar de klasse \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers.\\
+De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt vertaalt naar een integer die naar de klasse \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move $x$ cm forward} en \textit{rotate $x$ degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers.\\
 
-\subsubsection{De bewerking op de integers} % 3 ok!
+\subsubsection{Bewerking op de integers} % 3 ok!
 \label{sssec:integer}
 Integers stellen de commando's voor. In twee gevallen is echter meer informatie nodig: om de robot een bepaalde afstand te laten afleggen en om de robot een bepaald aantal graden te laten draaien. Deze afstand en dit aantal graden moet mee doorgegeven worden met de integer. De eenheden waarin de afstand en de hoek worden doorgestuurd zijn respectievelijk cm en graden.
 
@@ -581,18 +593,20 @@ Het opzetten van het tekenpaneel gebeurt in de GUI. De roosters op de achtergron
 Wanneer de `robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co\"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige ori\"entatie van de `robot' wordt weergegeven door een driehoek die draait met de ori\"entatie.
 
 % == doolhof mapping == %
-\subsection{Het mappen van de doolhof} % 3 ok
+\subsection{Mappen van een doolhof} % 3 ok
 \label{ssec:mapping}
 Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \textit{Obstruction} en \textit{Barcode} die elementen uit de wereld van een robot voorstellen. Een \textit{Tile} stemt overeen met \'e\'en tegel van de doolhof en heeft vier \textit{Edges}: \'e\'en voor elke zijde. Die \textit{Edges} houden de twee aanliggende tegels bij en eventueel een \textit{Obstruction}, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze houdt een begin-tegel bij en en huidige-tegel. Ze biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof die in het bestand gedefinieerd wordt.\\
 
 De \textit{Simulator} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld in de klasse \textit{SimulationPanel}, die de muren ook tekent. Ook de robot maakt gebruik van het \textit{SimulationPanel} om de verkende map op te slaan.
 
 % == BESLUIT == %
-\section{Besluit} % 3 ?
+\section{Besluit} % 3 ok
 \label{sec:besl}
-De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren.
-De calibratie van de robot zorgt ervoor dat hij precies aangestuurd kan worden en dat de sensoren waarden teruggeven die overeenkomen met de werkelijkheid.
-De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handmatig bestuurd kan worden. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot `ziet'. Op deze manier krijgt de gebruiker een idee over de doolhof waar de robot in rijdt. Bovendien kan de robot zich loodrecht ori"enteren op een witte lijn. De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten `rijden'. De simulator is handig om testen op uit te voeren, zonder steeds op de robot te moeten wachten.
+De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren. De calibratie toont aan dat het nodig is regelmatig te corrigeren. Bovendien moeten de sensorwaarden juist ge\"interpreteerd worden om correctie conclusies te trekken.\\
+
+De GUI biedt de gebruiker een mogelijkheid om verschillende commando's aan de robot te geven. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot `ziet'. Op deze manier kan de doolhof ge\"interpreteerd worden. De robot wordt tijdens het verkennen van de doolhof regelmatig gecorrigeerd met het witte lijnalgoritme en het muuralgoritme. Telkens wanneer een barcode gesignaleerd wordt, voert de robot de bijhorende opdracht uit. \'E\'en bepaalde barcode stelt een `checkpoint' voor en \'e\'en bepaalde barcode stelt een `finish' voor. Wanneer de hele doolhof verkend is, rijdt de robot zo snel mogelijk via de `checkpoint' naar de `finish'.\\
+
+De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten `rijden'.
 
 
 \newpage
@@ -673,17 +687,19 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 
 % overzicht aangepaste secties D2
 \begin{itemize}
-
-\item \textit{\ref{ssec:abstr} Abstract:} aangepast.
-\item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} meetresultaten toegevoegd.
-\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} meetresultaten toegevoegd en aangepast.
-\item \textit{ Het rijden van een veelhoek:} er uitgehaald.
-\item \textit{\ref{ssec:algoWitteL} Het rechtzetten op een witte lijn:} aangepast.
-\item \textit{\ref{ssec:algoOnderzDoolhof} Algoritme onderzoeken doolhof:} nieuwe sectie.
-\item \textit{\ref{ssec:AlgoKortsteP} Algoritme Kortste pad:} nieuwe sectie.
-\item \textit{\ref{ssec:Sdesign} Software ontwerp:} enkele nieuwe klassen en packages.
-\item \textit{\ref{ssec:GUI} GUI:} aangepast.
-\item \textit{\ref{ssec:simulator} Simulator:} toevoegingen.
+\item \textit{\ref{ssec:calibM} Calibratie van de motoren:} boxplots en besluit toegevoegd.
+\item \textit{\ref{ssec:calibLS} Calibratie van de lichtsensor:} boxplots en conclusie m.b.t. interpretatie toegevoegd.
+\item \textit{\ref{ssec:calibUS} Calibratie van de ultrasone sensor:} boxplots en conclusie m.b.t. interpretatie toegevoegd.
+\item \textit{\ref{ssec:algoWitteL} Rechtzetten op een witte lijn:} robot moet over de witte lijn staan.
+\item \textit{\ref{ssec:algoMuren} Centreren aan de hand van twee muren:} nieuwe sectie.
+\item \textit{\ref{ssec:algoBarcode} Lezen van barcodes} nieuwe sectie.
+\item \textit{\ref{ssec:algoOnderzDoolhof} Verkennen van een doolhof:} nieuwe sectie.
+\item \textit{\ref{ssec:AlgoKortsteP} Vinden van het kortste pad:} nieuwe sectie.
+\item \textit{\ref{ssec:Sdesign} Ontwerp van het computerproject:} nieuw klassediagram en nieuwe klassen.
+\item \textit{\ref{ssec:GUI} Grafische User Interface:} histortiek sensorwaarden in grafieken.
+\item \textit{\ref{ssec:bluetooth} Bluetooth:} `datastreams'.
+\item \textit{\ref{ssec:simulator} Simulator:} simuleren via data.
+\item \textit{\ref{ssec:mapping} Mappen van een doolhof:} nieuwe sectie.
 \end{itemize}
 
 % == DEMO 3 == %
