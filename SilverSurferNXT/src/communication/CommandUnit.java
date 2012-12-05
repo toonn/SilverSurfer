@@ -257,7 +257,7 @@ public class CommandUnit {
     }
 
     private void alignOnWhiteLine(int treshold) {
-    	if(treshold < 40)
+    	/*if(treshold < 40)
     		treshold = 52;
     	int angle = 0;
         
@@ -285,7 +285,32 @@ public class CommandUnit {
 			turnAngle(3);
 			angle = angle + 3;
 		}
-		turnAngle(-(angle/2));
+		turnAngle(-(angle/2));*/
+    	
+    	if(treshold < 40)
+    		treshold = 52;
+    	WhiteLineThread WLT = new WhiteLineThread("WLT");
+		WLT.start();
+		while(lightSensor.getLightValue() < treshold);
+		WLT.setQuit(true);
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
+		moveForwardWithoutBarcode((int)Math.round(9*LENGTH_COEF));
+		
+    	WLT = new WhiteLineThread("WLT");
+    	WLT.setCommand(1);
+		WLT.start();
+		while(lightSensor.getLightValue() < treshold);
+		WLT.setQuit(true);
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
+		turnAngle(-(int)Math.round(ANGLE_COEF/4));
     }
     
     private void alignOnWalls() {

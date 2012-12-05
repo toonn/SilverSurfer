@@ -125,8 +125,10 @@ public class MazeExplorer {
 		for(int i = 0; i < 4 ; i++){
 			currentOrientation = gui.getCommunicator().getSimulationPilot().getCurrentOrientation();
 			if(whichTilesAllreadyBeen[numberVariable] != 0) {
-				double angle = (numberVariable - currentOrientation.getNumberArray()) * 90;
+				double angle = (((numberVariable - currentOrientation.getNumberArray()) * 90)+360)%360;
+				System.out.println("ANGLE1: " + currentOrientation + " " + angle);
 				angle = ExtMath.getSmallestAngle(angle);
+				System.out.println("ANGLE2: " + currentOrientation + " " + angle);
 				gui.getCommunicator().sendCommand((int) (angle*10)*10 + Command.AUTOMATIC_TURN_ANGLE);
 				gui.getCommunicator().sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
 			}

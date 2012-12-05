@@ -138,7 +138,6 @@ public class Communicator {
                     while (amount-- != 0)
                         simulationPilot.travel(1);
                 }
-
             } else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
                 double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
                 while (amount-- > 0)
@@ -179,9 +178,13 @@ public class Communicator {
 
     public void goToNextTile(Orientation orientation) throws IOException {
         double currentAngle = getStatusInfoBuffer().getAngle();
+        System.out.println("current: " + currentAngle);
         int angleToRotate = (int) ((double) orientation.getRightAngle() - currentAngle);
+        System.out.println("angle: " + angleToRotate);
         angleToRotate = (int) ExtMath.getSmallestAngle(angleToRotate);
+        System.out.println("angletorotate: " + angleToRotate);
         sendCommand(angleToRotate * 100 + Command.AUTOMATIC_TURN_ANGLE);
+        System.out.println("-------");
 
         if (mustAllign) {
             tilesRidden++;
