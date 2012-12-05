@@ -381,6 +381,18 @@ ANDERS 	Draai(links,180)
 
 Dit algoritme wordt uitgevoerd op tegels met barcodes. Zo zijn er zeker muren aan weerskanten. Het algoritme wordt niet uitgevoerd tijdens het rijden naar de finish.
 
+% == barcodes lezen == %
+\subsection{Het lezen van een barcode} % 3 ok
+\label{ssec:algoBarcode}
+Een \textit{Barcode} bestaat uit acht stroken van twee~cm breed. De eerste en de laatste strook zijn altijd zwart. De tussenin liggende stroken zijn ofwel zwart (waarde nul) ofwel wit (waarde \'e\'en). Deze combinatie van enen en nullen is een binaire voorstelling van een integer.
+
+De klasse \textit{BarDecoder} zet de integer om in de juiste opdracht. Ook indien de \textit{Barcode} in de andere richting gelezen werd, wordt de juiste opdracht toegekend.\\
+
+Zowel de robot als de simulator hebben een \textit{BarcodeThread} die checkt of er een zwarte ondergrond is. Dit gebeurt terwijl de robot rijdt. Bij detectie van een zwarte ondergrond, wordt het barcodealgoritme opgeroepen.
+
+Aan de start van het barcodealgoritme staat de robot op de eerste zwarte strook. De robot rijdt twee~cm vooruit, leest de waarde van zijn lichtsensor en interpreteert de waarde van de strook. Zo tot alle stroken gedetecteerd zijn. De waarde van de barcode wordt opgeslagen in de map van de doolhof. Nadien rijdt de robot nog vier~cm vooruit zodat hij de barcode zeker voorbij is. Het muuralgoritme wordt opgeroepen en daarna wordt de opdracht bij de barcode uitgevoerd.
+
+
 % == verkennen van de doolhof == %
 \subsection{Het verkennen van een doolhof} % 3 ok
 \label{ssec:algoOnderzDoolhof}
@@ -588,11 +600,13 @@ Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \t
 De \textit{Simulator} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld in de klasse \textit{SimulationPanel}, die de muren ook tekent. Ook de robot maakt gebruik van het \textit{SimulationPanel} om de verkende map op te slaan.
 
 % == BESLUIT == %
-\section{Besluit} % 3 ?
+\section{Besluit} % 3 ok
 \label{sec:besl}
-De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren.
-De calibratie van de robot zorgt ervoor dat hij precies aangestuurd kan worden en dat de sensoren waarden teruggeven die overeenkomen met de werkelijkheid.
-De GUI gebruikt een eenvoudige interface en bevat knoppen waarmee de robot handmatig bestuurd kan worden. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot `ziet'. Op deze manier krijgt de gebruiker een idee over de doolhof waar de robot in rijdt. Bovendien kan de robot zich loodrecht ori"enteren op een witte lijn. De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten `rijden'. De simulator is handig om testen op uit te voeren, zonder steeds op de robot te moeten wachten.
+De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren. De calibratie toont aan dat het nodig is regelmatig te corrigeren. Bovendien moeten de sensorwaarden juist ge\"interpreteerd worden om correctie conclusies te trekken.\\
+
+De GUI biedt de gebruiker een mogelijkheid om verschillende commando's aan de robot te geven. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot `ziet'. Op deze manier kan de doolhof ge\"interpreteerd worden. De robot wordt tijdens het verkennen van de doolhof regelmatig gecorrigeerd met het witte lijnalgoritme en het muuralgoritme. Telkens wanneer een barcode gesignaleerd wordt, voert de robot de bijhorende opdracht uit. \'E\'en bepaalde barcode stelt een `checkpoint' voor en \'e\'en bepaalde barcode stelt een `finish' voor. Wanneer de hele doolhof verkend is, rijdt de robot zo snel mogelijk via de `checkpoint' naar de `finish'.\\
+
+De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten `rijden'.
 
 
 \newpage
