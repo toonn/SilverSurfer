@@ -451,7 +451,8 @@ public class GUIMenuBar extends JMenuBar {
 
                 // Prompt for a File
                 FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
-                        .getFrame(), "Select file:", FileDialog.LOAD);
+                        .getFrame(), "Select maze:", FileDialog.LOAD);
+                prompt.setDirectory("resources/maze_maps");
 
                 // Display the dialog and wait for the user's response
                 prompt.show();
