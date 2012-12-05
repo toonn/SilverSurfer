@@ -23,6 +23,7 @@ public class CommandUnit {
     private TouchSensor touchSensor1;
     private TouchSensor touchSensor2;
     private boolean busy = false;
+    private boolean readBarcodes = true;
     private double x = 220;
     private double y = 220;
     private double angle = 270;
@@ -107,8 +108,12 @@ public class CommandUnit {
     				ST.start();
                 	CU.sendStringToUnit("[DON]");
     				break;
-                case (Command.checkObstructionsAndSetTile):
+                case (Command.CHECK_OBSTRUCTIONS_AND_SET_TILE):
                     CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
+            		CU.sendStringToUnit("[DON]");
+                	break;
+                case (Command.READ_BARCODES):
+                    CU.readBarcodes = false;
             		CU.sendStringToUnit("[DON]");
                 	break;
                 default:
@@ -178,12 +183,13 @@ public class CommandUnit {
     	if(angle == 0) {
     		x = x + length*Math.cos(Math.toRadians(this.angle));
     		y = y - length*Math.sin(Math.toRadians(this.angle));
+            sendStringToUnit("[X] " + x);
+            sendStringToUnit("[Y] " + y);
     	}    		
-    	else 
+    	else {
     		this.angle = (this.angle + angle)%360;
-        sendStringToUnit("[X] " + x);
-        sendStringToUnit("[Y] " + y);
-        sendStringToUnit("[ANG] " + angle);
+            sendStringToUnit("[ANG] " + this.angle);
+    	}
     }
 
     public void updateStatus() {
@@ -197,17 +203,21 @@ public class CommandUnit {
     
     private int moveForward(int angle) {
         try {
-        	BT = new BarcodeThread("BT");
-        	BT.setLightSensor(lightSensor);
-        	BT.start();
+        	if(readBarcodes) {
+        		BT = new BarcodeThread("BT");
+        		BT.setLightSensor(lightSensor);
+        		BT.start();
+        	}
         	Motor.A.rotate(angle, true);
         	Motor.B.rotate(angle);
-        	Thread.sleep(500);
-        	boolean found = BT.getFound();
-        	BT.setQuit(true);
-        	if(found) {
+        	if(readBarcodes) {
         		Thread.sleep(500);
-        		return readBarcode();
+        		boolean found = BT.getFound();
+        		BT.setQuit(true);
+        		if(found) {
+        			Thread.sleep(500);
+        			return readBarcode();
+        		}
         	}
         } catch(Exception e) {
         	System.out.println("Error in CommandUnit.moveForward(int angle)!");
@@ -247,6 +257,8 @@ public class CommandUnit {
     }
 
     private void alignOnWhiteLine(int treshold) {
+    	if(treshold < 40)
+    		treshold = 52;
     	int angle = 0;
         
 		WhiteLineThread WLT = new WhiteLineThread("WLT");

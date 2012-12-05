@@ -69,6 +69,7 @@ public class MapGraph {
 		}
 		return null;
 	}
+	
 	public int[] getCurrentTileCoordinates() {
 		return currentTileCoordinates;
 	}

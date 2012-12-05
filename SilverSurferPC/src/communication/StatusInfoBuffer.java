@@ -109,7 +109,10 @@ public class StatusInfoBuffer {
 	 * Returns the latest info available for the Light Sensor
 	 */
 	public int getLatestLightSensorInfo() {
-		return getSSG().getSimulationPanel().getSimulationPilot().getLightSensorValue();
+		if(getSSG().getCommunicator().getRobotConnected())
+			return lightSensorInfo;
+		else
+			return getSSG().getSimulationPanel().getSimulationPilot().getLightSensorValue();
 	}
 
 	/**
@@ -376,7 +379,7 @@ public class StatusInfoBuffer {
 	public void setBarcode(int barcode) {
 		Barcode scanned = new Barcode(barcode, SSG.getSimulationPanel().getSimulationPilot().getCurrentOrientation());
 		int[] center = SSG.getSimulationPanel().getSimulationPilot().getCenterAbsoluteCurrentTile();
-		SSG.getSimulationPanel().getMapGraphConstructed().getCurrentTile().setContent(scanned);
+		SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeX(), getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeY()).setContent(scanned);
 		Rectangle2D[] visualBarcode = Barcode.createVisualBarCode(scanned, center[0],center[1]);
 		SSG.getSimulationPanel().addBarcode(scanned.toString(), visualBarcode);
 		this.barcode = barcode;
@@ -400,7 +403,7 @@ public class StatusInfoBuffer {
 		this.startPositionAbsoluteY = startPositionAbsoluteY;
 	}
 	
-	public void setStartPositionRelativeX(int startPositionAbsoluteX){
+	public void setStartPositionRelativeX(int startPositionRelativeX){
 		this.startPositionRelativeX = startPositionRelativeX;
 	}
 	

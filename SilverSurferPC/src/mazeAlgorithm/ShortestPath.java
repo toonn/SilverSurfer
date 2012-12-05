@@ -7,7 +7,6 @@ package mazeAlgorithm;
 
 import gui.SilverSurferGUI;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import mapping.*;
@@ -17,12 +16,12 @@ public class ShortestPath {
 	/**
 	 * hierin worden de tiles in de wachtrij gezet
 	 */
-	private ArrayList queu = new ArrayList();
+	private ArrayList<Tile> queue = new ArrayList<Tile>();
 	/**
 	 * hierin worden de tiles opgeslagen die het uiteindelijk pad vormen van startdoel tot einddoel,
 	 * inclusief deze laatste 2
 	 */
-	private Vector tilesPath = new Vector<Tile>();
+	private Vector<Tile> tilesPath = new Vector<Tile>();
 	/**
 	 * zijn alle tiles die meegegeven worden wanneer het algoritme opgeroepen wordt.
 	 * dus de tiles ter beschikking om van start- naar einddoel te gaan
@@ -32,7 +31,7 @@ public class ShortestPath {
 	Tile endTile = null;
 	SilverSurferGUI gui = null;
 	
-	public ShortestPath(SilverSurferGUI gui, Tile startTile, Tile endTile, Vector<Tile> tiles){
+	public ShortestPath(SilverSurferGUI gui, Tile startTile, Tile endTile, Vector<Tile> tiles) {
 		this.gui = gui;
 		this.tiles = tiles;
 		this.startTile = startTile;
@@ -74,10 +73,6 @@ public class ShortestPath {
 		}
 		
 	}
-	
-	private Vector getTilesPath() {
-		return tilesPath;
-	}
 
 	private Vector<Tile> getTiles() {
 		return tiles;
@@ -86,12 +81,13 @@ public class ShortestPath {
 	/**
 	 * zet de heuristiek op elke tile afhankelijk van de endTile die heuristiekwaarde 0 krijgt.
 	 */
-	private void setHeuristics(){
-			for(Tile tile: tiles){
+	private void setHeuristics() {
+			for(Tile tile: tiles) {
 				int xNextTile = endTile.getxCoordinate();
 				int yNextTile = endTile.getyCoordinate();
 				int heuristic = Math.abs(xNextTile - tile.getxCoordinate()) + Math.abs(yNextTile - tile.getyCoordinate());
-				tile.setManhattanValue(heuristic);}
+				tile.setManhattanValue(heuristic);
+			}
 	}
 
 	/**
@@ -108,13 +104,14 @@ public class ShortestPath {
 
 		//voeg neighbourTiles van de currentTile toe aan de queu
 		for(Object neighbourTile: currentTile.getReachableNeighbours()){
-			if(neighbourTile != null && tiles.contains(neighbourTile) && !((Tile) neighbourTile).isMarkedShortestPath()){
+			if(neighbourTile != null && tiles.contains(neighbourTile) && !((Tile) neighbourTile).isMarkedShortestPath()) {
 				((Tile) neighbourTile).setCost(currentTile.getCost() + 1);
-				queu.add((Tile) neighbourTile);}
+				queue.add((Tile) neighbourTile);
+			}
 		}
 		
 		//sorteer de queu: kleinste vooraan, nog niet getest
-		Collections.sort(queu, new Comparator<Tile>(){
+		Collections.sort(queue, new Comparator<Tile>(){
 			@Override
 			public int compare(Tile o1, Tile o2) {
 				if(o1.getManhattanValue() + o1.getCost() < o2.getManhattanValue() + o2.getCost())
@@ -128,9 +125,9 @@ public class ShortestPath {
 		
 		currentTile.setMarkingShortestPath(true);
 		
-		Tile nextTile = (Tile) queu.get(queu.size()-1);
-		while(queu.contains(nextTile)){
-		queu.remove(nextTile);}
+		Tile nextTile = (Tile) queue.get(queue.size()-1);
+		while(queue.contains(nextTile))
+			queue.remove(nextTile);
 		fillTilesPath(nextTile);	
 	} 
 	

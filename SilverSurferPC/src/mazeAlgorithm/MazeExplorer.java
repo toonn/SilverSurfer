@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import commands.Command;
-import communication.Communicator;
 import mapping.ExtMath;
 import mapping.Orientation;
 import mapping.Tile;
@@ -20,33 +19,35 @@ public class MazeExplorer {
 	/**
 	 * hierin worden de tiles in de wachtrij gezet
 	 */
-	private Vector<Tile> queu = new Vector<Tile>();
+	private Vector<Tile> queue = new Vector<Tile>();
 	private Tile startTile = null;
 	private SilverSurferGUI gui;
 	
 	private Tile checkTile = null;
 	private Tile endTile = null;
+	private boolean checkTileFound = false;
+	private boolean endTileFound = false;
 	
 	public MazeExplorer(SilverSurferGUI gui){
 		this.gui = gui;
-		startTile = gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)gui.getInformationBuffer().getXCoordinateRelative(), (int)gui.getInformationBuffer().getYCoordinateRelative());
+		startTile = gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getInformationBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getInformationBuffer().getYCoordinateRelative());
 	}
 	
 	/**
 	 * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
 	 */
 	public void startExploringMaze(){
-		gui.getCommunicator().setTilesBeforeAllign(1);
+		gui.getCommunicator().setTilesBeforeAllign(5);
 		gui.getCommunicator().mustAllign(true);
 		allTiles.add(startTile);
 		algorithm(startTile);
-		
+		gui.getCommunicator().sendCommand(Command.READ_BARCODES);
 		//TODO test shortestPath op't einde.
 		if(getCheckTile() != null && getEndTile() != null){
 			
 			//Drive to checkpoint.
 			gui.getSimulationPanel().clearPath();
-			ShortestPath almostFinalPath = new ShortestPath(gui, gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)gui.getInformationBuffer().getXCoordinateRelative(), (int)gui.getInformationBuffer().getYCoordinateRelative()),getCheckTile(), allTiles);
+			ShortestPath almostFinalPath = new ShortestPath(gui, gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getInformationBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getInformationBuffer().getYCoordinateRelative()) ,getCheckTile(), allTiles);
 			almostFinalPath.goShortestPath();
 								
 			//Drive to endpoint.
@@ -89,6 +90,14 @@ public class MazeExplorer {
 		return checkTile;
 	}
 	
+	public void setCheckTileFound(boolean check) {
+		checkTileFound = check;
+	}
+	
+	public void setEndTileFound(boolean check) {
+		endTileFound = check;
+	}
+	
 	/**
 	 * Deze methode exploreert het doolhof
 	 */
@@ -102,97 +111,99 @@ public class MazeExplorer {
 		int numberVariable = number;
 		int[] whichTilesAllreadyBeen = new int[4];
 		for(int i = 0; i < 4 ; i++){
-			ArrayList array = currentTile.getAllNeighbours();
-			if(array.get(numberVariable) != null && (((Tile) array.get(numberVariable)).isMarkedExploreMaze())){
-				whichTilesAllreadyBeen[numberVariable] = 0;}
-			else {whichTilesAllreadyBeen[numberVariable] = 1;}
+			ArrayList<Tile> array = currentTile.getAllNeighbours();
+			if(array.get(numberVariable) != null && (((Tile) array.get(numberVariable)).isMarkedExploreMaze()))
+				whichTilesAllreadyBeen[numberVariable] = 0;
+			else
+				whichTilesAllreadyBeen[numberVariable] = 1;
 			numberVariable = numberVariable + 1;
-			if(numberVariable == 4){
+			if(numberVariable == 4)
 				numberVariable = 0;
-			}
 		}
 		
 		numberVariable = number;
 		
 		for(int i = 0; i < 4 ; i++){
 			currentOrientation = gui.getCommunicator().getSimulationPilot().getCurrentOrientation();
-			if(whichTilesAllreadyBeen[numberVariable] == 0){}
-			else{
+			if(whichTilesAllreadyBeen[numberVariable] != 0) {
 				double angle = (numberVariable - currentOrientation.getNumberArray()) * 90;
 				angle = ExtMath.getSmallestAngle(angle);
 				gui.getCommunicator().sendCommand((int) (angle*10)*10 + Command.AUTOMATIC_TURN_ANGLE);
-				gui.getCommunicator().sendCommand(Command.checkObstructionsAndSetTile);
+				gui.getCommunicator().sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
 			}
 			numberVariable = numberVariable + 1;
-			if(numberVariable == 4){
+			if(numberVariable == 4)
 				numberVariable = 0;
-			}
+		}
+		if(checkTileFound) {
+			setCheckTile(gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(gui.getCommunicator().getSimulationPilot().getCurrentPositionRelativeX(), gui.getCommunicator().getSimulationPilot().getCurrentPositionRelativeY()));
+			setCheckTileFound(false);
+		}
+		if(endTileFound) {
+			setEndTile(gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(gui.getCommunicator().getSimulationPilot().getCurrentPositionRelativeX(), gui.getCommunicator().getSimulationPilot().getCurrentPositionRelativeY()));
+			setEndTileFound(false);
 		}
 		
 		//zet het mark-veld van de currentTile op true zodat deze niet meer opnieuw in de queu
-				//terecht kan komen
-				currentTile.setMarkingExploreMaze(true);
+		//terecht kan komen
+		currentTile.setMarkingExploreMaze(true);
 				
 	
 		//voegt buurtiles van de currentTile toe aan de queu, enkel als deze nog niet begaan
 		//zijn (niet gemarkeerd) 
-		for(Object neighbourTile: currentTile.getReachableNeighbours()){
-			if(neighbourTile != null && !(((Tile) neighbourTile).isMarkedExploreMaze())){
-			queu.add((Tile) neighbourTile);
-			int i = 0;
-			for(Object neighbour: ((Tile) neighbourTile).getAllNeighbours()){
-				if(neighbour != null && (((Tile) neighbour).isMarkedExploreMaze())){
-					i++;}
-			}
-			if(i == 4){
-				((Tile) neighbourTile).setMarkingExploreMaze(true);
-				allTiles.add((Tile) neighbourTile);
-				while(queu.contains(neighbourTile)){
-					queu.remove(neighbourTile);
+		for(Object neighbourTile: currentTile.getReachableNeighbours()) {
+			if(neighbourTile != null && !(((Tile) neighbourTile).isMarkedExploreMaze())) {
+				queue.add((Tile) neighbourTile);
+				int i = 0;
+				for(Object neighbour: ((Tile) neighbourTile).getAllNeighbours()) {
+					if(neighbour != null && (((Tile) neighbour).isMarkedExploreMaze()))
+						i++;
+				}
+				if(i == 4) {
+					((Tile) neighbourTile).setMarkingExploreMaze(true);
+					allTiles.add((Tile) neighbourTile);
+					while(queue.contains(neighbourTile))
+						queue.remove(neighbourTile);
 				}
 			}
-			
-			}
-			
 		}
 		
 		//returnt als er geen tiles meer in de wachtrij zitten (algoritme is afgelopen)
-		if(queu.isEmpty()){
+		if(queue.isEmpty()){
 			return;
 		}
 		Tile nextTile;
 		currentOrientation = gui.getCommunicator().getSimulationPilot().getCurrentOrientation();
 		
-		if(currentTile.getEdge(currentOrientation).isPassable() && currentTile.getEdge(currentOrientation).getNeighbour(currentTile) != null && 
-				 queu.contains(currentTile.getEdge(currentOrientation).getNeighbour(currentTile))){
+		if(currentTile.getEdge(currentOrientation).isPassable() 
+				&& currentTile.getEdge(currentOrientation).getNeighbour(currentTile) != null 
+				&& queue.contains(currentTile.getEdge(currentOrientation).getNeighbour(currentTile)))
 			nextTile = currentTile.getEdge(currentOrientation).getNeighbour(currentTile);
-		}
-		else if(currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).isPassable() && currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile) != null && queu.contains(currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile))){
-			nextTile = currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile);}
-		else if(currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).isPassable() && currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile) != null
-				 && queu.contains(currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile))){
+		else if(currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).isPassable() 
+				&& currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile) != null 
+				&& queue.contains(currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile)))
+			nextTile = currentTile.getEdge(currentOrientation.getOtherOrientationCorner()).getNeighbour(currentTile);
+		else if(currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).isPassable() 
+				&& currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile) != null 
+				&& queue.contains(currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile)))
 			nextTile = currentTile.getEdge(currentOrientation.getOtherOrientationCorner().getOppositeOrientation()).getNeighbour(currentTile);
-		}
-		else if(currentTile.getEdge(currentOrientation.getOppositeOrientation()).isPassable() && currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile) != null && queu.contains(currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile))){
+		else if(currentTile.getEdge(currentOrientation.getOppositeOrientation()).isPassable() 
+				&& currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile) != null 
+				&& queue.contains(currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile)))
 			nextTile = currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile);
-		}
-		else{
-			nextTile = queu.lastElement();
-		}
-			allTiles.add(nextTile);
+		else
+			nextTile = queue.lastElement();
+		allTiles.add(nextTile);
 		//verwijdert alle nextTiles uit de queu. De reden waarom deze meermaals in de queu 
 		//voorkomen is omdat het voordeliger is om de laatste versie te pakken omdat deze
 		//het dichts bij de currentTile ligt, zodat de robot niet voor elke nextTile massa's
 		//omweg moet doen
-		while(queu.contains(nextTile)){
-		queu.remove(nextTile);}
+		while(queue.contains(nextTile))
+			queue.remove(nextTile);
 		//voert een shortestPath uit om van currentTile naar startTile te gaan.
 		ShortestPath shortestPath = new ShortestPath(gui, currentTile, nextTile, allTiles);
 		shortestPath.goShortestPath();
 		//voert methode opnieuw uit met nextTile
 		algorithm(nextTile);
-		
 	}
-	
 }
-

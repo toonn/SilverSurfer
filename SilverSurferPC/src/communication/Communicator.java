@@ -7,6 +7,8 @@ import simulator.SimulationPilot;
 import mapping.*;
 import mazeAlgorithm.MazeExplorer;
 
+import gui.SilverSurferGUI;
+
 import java.awt.geom.Rectangle2D;
 import java.io.*;
 
@@ -24,7 +26,7 @@ public class Communicator {
 	private static String deviceName = "Silver";
 	private static InfoReceiverThread IRT;
 	private boolean buzy = false;
-	private int tilesBeforeAllign = 0;
+	private int tilesBeforeAllign = 5;
 	private int tilesRidden = 0;
 	private boolean mustAllign = true;
 	private MazeExplorer explorer;
@@ -110,7 +112,7 @@ public class Communicator {
 	    			SongThread ST = new SongThread(); 
 	    			ST.start();
 			}
-			else if(command == Command.checkObstructionsAndSetTile && !robotConnected){
+			else if(command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE && !robotConnected){
 				simulationPilot.checkForObstructionAndSetTile();
 			}
 			else if(command%100 == Command.AUTOMATIC_MOVE_FORWARD) {
@@ -123,9 +125,8 @@ public class Communicator {
 							simulationPilot.travel(1);
 			        	boolean found = BT.getFound();
 			        	BT.setQuit(true);
-			        	if(found) {
+			        	if(found)
 			        		readBarcode();
-			        	}
 			        } catch(Exception e) {
 			        	e.printStackTrace();
 			        	System.out.println("Error in CommandUnit.moveForward(int angle)!");
@@ -162,7 +163,7 @@ public class Communicator {
     private void readBarcode() {
     		int value = ((Barcode)getSimulationPilot().getMapGraph().getCurrentTile().getContent()).getValue();
     		//if (((Barcode)getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getContentCurrentTile()== null)){
-				getSimulationPilot().getSSG().getInformationBuffer().setBarcode(value);
+    		SilverSurferGUI.getInformationBuffer().setBarcode(value);
     		//}
   	
 	}
@@ -181,16 +182,18 @@ public class Communicator {
 		angleToRotate = (int) ExtMath.getSmallestAngle(angleToRotate);
 		sendCommand(angleToRotate*100 + Command.AUTOMATIC_TURN_ANGLE);
 		
-		if(mustAllign){
+		if(mustAllign) {
 			tilesRidden++;
-			if(getTilesRidden() == getTilesBeforeAllign()){
+			if(getTilesRidden() == getTilesBeforeAllign()) {
 				sendCommand(Command.ALIGN_PERPENDICULAR);
 				sendCommand(24*100 + Command.AUTOMATIC_MOVE_FORWARD);
 				setTilesRidden(0);
-			}	
+			}
+			else
+				sendCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
 		}
-		else{
-		sendCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);}
+		else
+			sendCommand(40*100 + Command.AUTOMATIC_MOVE_FORWARD);
 
 		
 		
@@ -240,8 +243,7 @@ public class Communicator {
     public void clear() {
         simulationPilot.clear();
     }
-
-    // TODO: vanaf hier!
+    
     /**
      * Gets the amount of angles the arrow should turn in one event to be at par
      * with the robot.
