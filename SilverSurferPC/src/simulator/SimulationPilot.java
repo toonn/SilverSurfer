@@ -28,7 +28,7 @@ public class SimulationPilot {
 	private MapGraph mapGraph;
 	private boolean isRealRobot = false;
 	
-	private int amtToSendToBuffer = 50;
+	//private int amtToSendToBuffer = 50;
 
 	/**
 	 * waarde die afhangt van de robot!
@@ -82,13 +82,13 @@ public class SimulationPilot {
 
 	public int getCurrentPositionRelativeX() {
 		if(isRealRobot())
-			return SSG.getInformationBuffer().getXCoordinateRelative();
+			return SilverSurferGUI.getInformationBuffer().getXCoordinateRelative();
 		return this.getMapGraph().getCurrentTileCoordinates()[0];
 	}
 
 	public int getCurrentPositionRelativeY() {
 		if(isRealRobot())
-			return SSG.getInformationBuffer().getYCoordinateRelative();
+			return SilverSurferGUI.getInformationBuffer().getYCoordinateRelative();
 		return this.getMapGraph().getCurrentTileCoordinates()[1];
 	}
 
@@ -181,12 +181,12 @@ public class SimulationPilot {
 		return this.mapFile;
 	}
 
-	public void setMapFile(File mapFile) {
+	/*public void setMapFile(File mapFile) {
 		this.setMapFile(mapFile, 0, 0);
 		SSG.getInformationBuffer().setXCoordinateRelative(0);
 		SSG.getInformationBuffer().setYCoordinateRelative(0);
 
-	}
+	}*/
 
 	public void setMapFile(File mapFile, int xCo, int yCo) {
 		this.mapFile = mapFile;
@@ -199,9 +199,9 @@ public class SimulationPilot {
 		this.startPositionAbsoluteX = getCurrentPositionAbsoluteX();
 		this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
 		this.getSSG().getSimulationPanel().clearTotal();
-		this.getSSG().getSimulationPanel().setTile(this.getMapGraph().getCurrentTileCoordinates()[0], this.getMapGraph().getCurrentTileCoordinates()[1]);
-		SSG.getInformationBuffer().setXCoordinateRelative(xCo);
-		SSG.getInformationBuffer().setYCoordinateRelative(yCo);
+		this.getSSG().getSimulationPanel().setTile(xCo, yCo);
+		SilverSurferGUI.getInformationBuffer().setXCoordinateRelative(xCo);
+		SilverSurferGUI.getInformationBuffer().setYCoordinateRelative(yCo);
 
 	}
 
@@ -246,8 +246,8 @@ public class SimulationPilot {
 		distance = distance*scalingfactor();
 		//travelledInTotal = travelledInTotal + Math.abs(distance);
 		//System.out.println("travelledInTotal : " + travelledInTotal);
-		double xOriginal = this.getCurrentPositionAbsoluteX();
-		double yOriginal = this.getCurrentPositionAbsoluteY();
+		//double xOriginal = this.getCurrentPositionAbsoluteX();
+		//double yOriginal = this.getCurrentPositionAbsoluteY();
 		double xTemp = this.getCurrentPositionAbsoluteX();
 		double yTemp = this.getCurrentPositionAbsoluteY();
 
@@ -377,7 +377,7 @@ public class SimulationPilot {
 	 */
 
 	public boolean checkForObstruction() {
-		Orientation currentOrientation = Orientation.calculateOrientation(
+		/*Orientation currentOrientation = */Orientation.calculateOrientation(
 				this.getCurrentPositionAbsoluteX(),
 				this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
 
@@ -391,26 +391,22 @@ public class SimulationPilot {
 	}
 	
 	public void checkForObstructionAndSetTile(){
-			if(checkForObstruction()){
-				addWall();
+		if(checkForObstruction())
+			addWall();
+		else {
+			Orientation currentOrientation = Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(),this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
+			int xCoordinate;
+			int yCoordinate;
+			if(isRealRobot) {
+				xCoordinate = SilverSurferGUI.getInformationBuffer().getXCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[0];
+				yCoordinate = SilverSurferGUI.getInformationBuffer().getYCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[1];
 			}
-			else{
-				//removeWall();
-				Orientation currentOrientation = Orientation.calculateOrientation(
-						this.getCurrentPositionAbsoluteX(),
-						this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
-				int xCoordinate;
-				int yCoordinate;
-				if(isRealRobot) {
-					xCoordinate = SSG.getInformationBuffer().getXCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[0];
-					yCoordinate = SSG.getInformationBuffer().getYCoordinateRelative() + currentOrientation.getArrayToFindNeighbourRelative()[1];
-					}
-				else {
-					xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
-					yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
-				}
-				if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
-				{ SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);}
+			else {
+				xCoordinate = mapGraph.getCurrentTileCoordinates()[0] + currentOrientation.getArrayToFindNeighbourRelative()[0];
+				yCoordinate = mapGraph.getCurrentTileCoordinates()[1] + currentOrientation.getArrayToFindNeighbourRelative()[1];
+			}
+			if(SSG.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate)==null)
+				SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);
 		}
 	}
 
@@ -449,20 +445,15 @@ public class SimulationPilot {
 
 		int j = 1;
 		if (alpha < 0)
-		{
 			j = -1;
-		}
 
-		for (int i = j; i*j <= alpha*j; i+=j)
-		{
+		for (int i = j; i*j <= alpha*j; i+=j) {
 			alphaTemp = (double) ExtMath.addDegree(alphaOriginal,i);
 
-			if (this.getMapGraph() != null)
-			{
-				if (robotOnEdge(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), alphaTemp))
-				{
+			/*if (this.getMapGraph() != null) {
+				if (robotOnEdge(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), alphaTemp)) {
 					// the edge you are standing on contains a wall
-					// TODO: weet niet goed hoe je dit kan checken
+					// weet niet goed hoe je dit kan checken
 					//					if(!(this.getMapGraph().canMoveTo(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(),
 					//							this.getCurrentPositionAbsoluteY(), ExtMath.addDegree(alphaTemp,j*30)))
 					//						&& this.getMapGraph().canMoveTo(Orientation.calculateOrientation(this.getCurrentPositionAbsoluteX(),
@@ -475,11 +466,11 @@ public class SimulationPilot {
 					//						return;
 					//					}
 				}
-			}
+			}*/
 
 			this.getSSG().getSimulationPanel().setRobotLocation(this.getCurrentPositionAbsoluteX(), this.getCurrentPositionAbsoluteY(), alphaTemp);
 			this.setAlpha(alphaTemp);
-			this.getSSG().getInformationBuffer().setAngle(alphaTemp);
+			SilverSurferGUI.getInformationBuffer().setAngle(alphaTemp);
 
 			this.getSSG().updateStatus();
 
@@ -669,14 +660,14 @@ public class SimulationPilot {
 	public void setCurrentTileCoordinates(MapGraph map, double xOld, double yOld) {
 		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
 		map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-		SSG.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
-		SSG.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
+		SilverSurferGUI.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
+		SilverSurferGUI.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
 	}
 	
 	public void setCurrentTileCoordinatesRobot(double xOld, double yOld) {
 		int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-		SSG.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
-		SSG.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
+		SilverSurferGUI.getInformationBuffer().setXCoordinateRelative(relativePosition[0]);
+		SilverSurferGUI.getInformationBuffer().setYCoordinateRelative(relativePosition[1]);
 	}
 
 	public void clear() {
@@ -713,10 +704,9 @@ public class SimulationPilot {
 	 * Returns a number from a normal districution that represents a lightsensor value.
 	 */
 	public int getLightSensorValue() {
-		if (this.isRealRobot()) {
-			return SilverSurferGUI.getInformationBuffer()
-			.getLatestLightSensorInfo();
-		} else {
+		if (this.isRealRobot())
+			return SilverSurferGUI.getInformationBuffer().getLatestLightSensorInfo();
+		else {
 			// initialisation
 			Random random = new Random();
 			double mean = 0;
@@ -851,7 +841,7 @@ public class SimulationPilot {
 
 	public void allignOnWhiteLine() {
 		if(getSSG().getCommunicator().getRobotConnected()) {
-			Orientation orientation = Orientation.calculateOrientation(
+			/*Orientation orientation = */Orientation.calculateOrientation(
 					getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY(),
 					getAlpha(), sizeTile());
 

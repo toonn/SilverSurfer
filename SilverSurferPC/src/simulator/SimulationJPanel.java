@@ -4,18 +4,11 @@ import gui.SilverSurferGUI;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import communication.BarDecoder;
 
 import datastructures.Bag;
 import datastructures.Tuple;
@@ -35,8 +28,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	/**
 	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
 	 */
-	private BufferedImage verticalWallImage;
-	private BufferedImage horizontalWallImage;
+	//private BufferedImage verticalWallImage;
+	//private BufferedImage horizontalWallImage;
 	/**
 	 * 2 driehoeken die elkaar afwisselen om afgebeeld te worden
 	 * de ene wordt afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden
@@ -82,17 +75,16 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	{
 		mapGraphConstructed = new MapGraph();
 		
-		try
+		/*try
 		{
 			verticalWallImage = ImageIO.read(new File("resources/wallImages/verticalwall2.png"));
 			horizontalWallImage = ImageIO.read(new File("resources/wallImages/horizontalwall2.png"));
 		}
 		catch (IOException e) {
 			System.out.println("1");
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("2");
-		}
+		}*/
 
 		shapes.add(triangle1);
 		shapes.add(triangle2);
@@ -226,7 +218,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				this.getSimulationPilot().getUltrasonicSensorPositionY() - getShiftDown(),
 				this.getSimulationPilot().getAlpha(),
 				this.getSimulationPilot().getUltraSensorValue()*getScalingfactor());
-		//TODO
 		if(simulationPilot != null)
 		{
 			((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
@@ -262,7 +253,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * Tekent het grid (rooster) op de achtergrond van de mapping
 	 * @param graph
 	 */
-	private void paintGridComponent(Graphics graph) {
+	/*private void paintGridComponent(Graphics graph) {
 
 		int count = 50;
 		int size = (int) getSizeTile();
@@ -275,7 +266,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
 				((Graphics2D) graph).draw(grid);
 			}
-	}
+	}*/
 
 	/**
 	 * Tekent het pad van de robot en de robot zelf met daarachter het grid.
@@ -362,7 +353,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	private void paintBarcodeComponent(Graphics graph) {
 			
 		//teken alle rectangles van alle barcodes
-		for (Tuple t : barcodes) {
+		for (Tuple<String,Rectangle2D[]> t : barcodes) {
 			String rep = (String) t.getItem1();
 			Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
 			for (int i = 0; i < 8; i++) {
@@ -436,7 +427,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 	public void resetMap(){
 		getSimulationPilot().reset();
-		SSG.getInformationBuffer().resetBuffer();
+		SilverSurferGUI.getInformationBuffer().resetBuffer();
 		triangle1 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
 		triangle2 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
 		mapGraphConstructed = new MapGraph();
@@ -487,9 +478,9 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * Updates the width/height/coordinates of the barcodes.
 	 */
 	private void scaleBarcodes(double scalingfactor) {
-		//TODO update coordinates
-		for (Tuple t : barcodes) {
-			String rep = (String) t.getItem1();
+		//to do: update coordinates
+		for (Tuple<String,Rectangle2D[]> t : barcodes) {
+			/*String rep = (String) */t.getItem1();
 			Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
 			for (int i = 0; i < 8; i++){
 				bc[i] = new Rectangle((int)(bc[i].getX()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getY()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getWidth()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getHeight()*scalingfactor/this.getScalingfactor()));	
@@ -546,7 +537,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	
 	private void scaleWalls(double scalingfactor){
 		
-		Vector oldPoints = new Vector<Point2D>();
+		Vector<Point2D> oldPoints = new Vector<Point2D>();
 		for(Point2D point: walls.keySet()){
 			oldPoints.add(point);
 		}
@@ -603,7 +594,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 
 	private void shiftWalls(boolean shiftHorizontal, int shift) {
-		Vector oldPoints = new Vector<Point2D>();
+		Vector<Point2D> oldPoints = new Vector<Point2D>();
 		for(Point2D point: walls.keySet()){
 			oldPoints.add(point);
 		}

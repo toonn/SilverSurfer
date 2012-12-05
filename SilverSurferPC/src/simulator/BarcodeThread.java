@@ -23,7 +23,7 @@ public class BarcodeThread extends Thread {
 			} catch(Exception e) {
 				
 			}
-			int lightsensorValue = gui.getInformationBuffer().getLatestLightSensorInfo();
+			int lightsensorValue = SilverSurferGUI.getInformationBuffer().getLatestLightSensorInfo();
 			if(lightsensorValue < 40 && lightsensorValue > 10) {
 				found = true;
 			}

@@ -9,7 +9,6 @@ public class InfoReceiverThread extends Thread {
 	private StatusInfoBuffer statusInfoBuffer;
 	private boolean quit = false;
 	private double[] coordinates = new double[2];
-	private int[] lookAroundResult = new int[4];
 	
 	public InfoReceiverThread(StatusInfoBuffer statusInfoBuffer) {
 		this.statusInfoBuffer = statusInfoBuffer;
@@ -62,14 +61,6 @@ public class InfoReceiverThread extends Thread {
 				}
 				else if(a.startsWith("[ANG]"))
 					statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[LA0]"))
-					lookAroundResult[0] = Integer.valueOf(a.substring(6).trim());
-				else if(a.startsWith("[LA1]"))
-					lookAroundResult[1] = Integer.valueOf(a.substring(6).trim());
-				else if(a.startsWith("[LA2]"))
-					lookAroundResult[2] = Integer.valueOf(a.substring(6).trim());
-				else if(a.startsWith("[LA3]"))
-					lookAroundResult[3] = Integer.valueOf(a.substring(6).trim());
 				else if(a.startsWith("[BC]"))
 					statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
 				else if(a.startsWith("[CH]")) {

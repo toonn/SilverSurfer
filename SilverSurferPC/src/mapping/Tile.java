@@ -403,4 +403,16 @@ public class Tile{
 		return "Content: " + getContent() + " Edges -- North: " + getEdge(Orientation.NORTH) + " East: " + getEdge(Orientation.EAST) + " South: "+getEdge(Orientation.SOUTH)+ " West: "+getEdge(Orientation.WEST);
 	}
 
+	public int getAmountOfWalls() {
+		int i = 0;
+		if(!getEdge(Orientation.EAST).isPassable())
+			i++;
+		if(!getEdge(Orientation.WEST).isPassable())
+			i++;
+		if(!getEdge(Orientation.NORTH).isPassable())
+			i++;
+		if(!getEdge(Orientation.SOUTH).isPassable())
+			i++;
+		return i;
+	}
 }
