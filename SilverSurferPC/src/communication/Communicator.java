@@ -137,9 +137,6 @@ public class Communicator {
 					while(amount-- != 0)
 						simulationPilot.travel(1);
 				}
-
-				
-				
 			}
 			else if(command%100 == Command.AUTOMATIC_TURN_ANGLE) {
 				double amount = (double) (command-Command.AUTOMATIC_TURN_ANGLE)/100;
