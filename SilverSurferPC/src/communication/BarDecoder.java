@@ -1,5 +1,7 @@
 package communication;
 
+import java.awt.Rectangle;
+
 import commands.Command;
 
 import gui.SilverSurferGUI;
@@ -14,13 +16,12 @@ public class BarDecoder {
 	
 	public void decode(int value) {
 		try {
-			int xCoordinate;
-			int yCoordinate;
+			double scalingfactor = 1;
 			switch(value) {
-				case(13):	//5
+				case(5):	//5
 					communicator.moveTurn(0, -360, 0);
 					break;
-				case(44):	//40
+				case(40):	//40
 					communicator.moveTurn(0, -360, 0);
 					break;
 				case(9):
@@ -53,33 +54,37 @@ public class BarDecoder {
 				case(41):	//41
 					SilverSurferGUI.changeSpeed(3);
 	            	break;
-				case(5):	//13
-					System.out.println("start found");
-					//xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
-					//yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();
-					communicator.getExplorer().setCheckTileFound(true);
-					//communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
+				case(13):	//13  //5
+					scalingfactor =  communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().checkHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
+					if(communicator.getRobotConnected())
+						communicator.getExplorer().setCheckTileFound(true);
+					else
+						communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeX(), communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeY()));
 					break;
-				case(40):    //44   
-					System.out.println("start found");
-					//xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
-					//yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();
-					communicator.getExplorer().setCheckTileFound(true);
-					//communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
+				case(44):    //44   //40
+					scalingfactor = (int) communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().checkHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
+					if(communicator.getRobotConnected())
+						communicator.getExplorer().setCheckTileFound(true);
+					else
+						communicator.getExplorer().setCheckTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeX(), communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeY()));
 					break;
-				case(10):    //55    
-					System.out.println("end found");    
-					//xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
-					//yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();
-					communicator.getExplorer().setEndTileFound(true);
-					//communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
+				case(55):    //55  //10
+					scalingfactor = (int) communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().endHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
+					if(communicator.getRobotConnected())
+						communicator.getExplorer().setEndTileFound(true);
+					else
+						communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeX(), communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeY()));
 					break;
-				case(20):    //59   
-					System.out.println("end found");
-					//xCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeX();
-					//yCoordinate = communicator.getSimulationPilot().getCurrentPositionRelativeY();
-					communicator.getExplorer().setEndTileFound(true);
-					//communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate));
+				case(59):    //59  //20
+					scalingfactor = (int) communicator.getSimulationPilot().getSSG().getSimulationPanel().getScalingfactor();
+					communicator.getSimulationPilot().getSSG().getSimulationPanel().endHighlight = new Rectangle(((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[0]*scalingfactor-20*scalingfactor)).intValue(),((Double)(communicator.getSimulationPilot().getCenterAbsoluteCurrentTile()[1]*scalingfactor-20*scalingfactor)).intValue(),((Double)(40*scalingfactor)).intValue(),(((Double)(40*scalingfactor)).intValue()));
+					if(communicator.getRobotConnected())
+						communicator.getExplorer().setEndTileFound(true);
+					else
+						communicator.getExplorer().setEndTile(communicator.getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates(communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeX(), communicator.getSimulationPilot().getSSG().getCommunicator().getSimulationPilot().getCurrentPositionRelativeY()));
 					break;
 				default:
 					break;

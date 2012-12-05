@@ -43,13 +43,12 @@ public class MazeExplorer {
 		algorithm(startTile);
 		gui.getCommunicator().sendCommand(Command.READ_BARCODES);
 		//TODO test shortestPath op't einde.
-		if(getCheckTile() != null && getEndTile() != null){
-			
+		if(getCheckTile() != null && getEndTile() != null) {
 			//Drive to checkpoint.
 			gui.getSimulationPanel().clearPath();
 			ShortestPath almostFinalPath = new ShortestPath(gui, gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getInformationBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getInformationBuffer().getYCoordinateRelative()) ,getCheckTile(), allTiles);
 			almostFinalPath.goShortestPath();
-								
+			
 			//Drive to endpoint.
 			gui.getSimulationPanel().clearPath();
 			ShortestPath finalPath = new ShortestPath(gui, getCheckTile(), getEndTile(), allTiles);
