@@ -172,7 +172,7 @@ De robot wordt naast een lijn geplaatst en krijgt de opdracht zijn wielen $y$ gr
 % ONTBREEKT: y0 + afwijking op 360°; y1 + afwijking; y2 + afwijking + ...
 
 
-Door de robot in stappen rond zijn as te laten draaien ($4 \cdot 90\degree$) kan de invloed van het starten en stoppen van de motoren bepaald worden. Figuur~\ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op~360\degree. De algoritmes houden met deze afwijking rekening. Wanneer de robot tijdens het verkennen van het doolhof naar \'e\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. De totale som van de gedraaide graden wordt zo dicht mogelijk bij nul gehouden. Dit maakt de afwijking gedeeltelijk ongedaan. Met de variaties op de afwijking kan echter geen rekening gehouden worden. De algoritmes laten de robot zo weinig mogelijk draaien.
+Door de robot in stappen rond zijn as te laten draaien ($4 \cdot 90\degree$) kan de invloed van het starten en stoppen van de motoren bepaald worden. Figuur~\ref{fig:calibM} geeft een boxplot van de gemeten afwijkingen op~360\degree. De algoritmes houden rekening met deze afwijking. Wanneer de robot tijdens het verkennen van de doolhof naar \'e\'en kant draait, draait hij, zo mogelijk, evenveel graden naar de andere kant terug. De totale som van de gedraaide graden wordt zo dicht mogelijk bij nul gehouden. Dit maakt de afwijking gedeeltelijk ongedaan. Met de variaties op de afwijking kan echter geen rekening gehouden worden. De algoritmes laten de robot zo weinig mogelijk draaien.
 % ONTBREEKT: meetwaarden 1x360° ter vergelijking
 % ONTBREEKT: figuur correctie draaien
 
@@ -270,7 +270,7 @@ Een ultrasone sensor zendt ultrasone geluidsgolven uit. Indien een object in de 
 In het kader van een doolhof, kan een robot muren tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge"interpreteerd worden enkel meetwaarden kleiner dan 29~cm als muur beschouwd.\\
 De 29~cm werd gemeten door eerst de robot in het midden van een tile te plaatsen. Eerst werd er voor de robot een muur geplaats. De gemeten waarden van de ultrasone sensor waren waarden tussen 12~cm en 24~cm. Daarna werd de muur verwijderd en werden er paatjes gezet. Nu werden er waarden tussen 32~cm en 50~cm gemeten. Hieruit hebben we besloten om de waarde 29~cm als bovengrens te nemen voor de muur. Later is dit verlaagd naar 28~cm omdat de robot soms wel een muur zag terwijl er geen was.
 
-De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde afstand van een muur te zetten. Verschillende afstanden worden zo gemeten. Boxplots in figuur~\ref{fig:calibUS} geven de gemeten waarden ten opzichte van de werkelijke waarden weer. Hoewel de variantie op de gemeten waarde niet groot is, komt de gemiddelde gemeten waarde niet altijd overeen met de werkelijke afstand. Vooral voor afstanden kleiner dan 20~cm en groter dan 145~cm. Waarden buiten het interval~[20,145] worden daarom niet als betrouwbaar veronderstelt.
+De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde afstand van een muur te zetten. Verschillende afstanden worden zo gemeten. Boxplots in figuur~\ref{fig:calibUS} geven de gemeten waarden ten opzichte van de werkelijke waarden weer. Hoewel de variantie op de gemeten waarde niet groot is, komt de gemiddelde gemeten waarde niet altijd overeen met de werkelijke afstand. Vooral voor afstanden kleiner dan 20~cm en groter dan 145~cm. Waarden buiten het interval~[20,145] worden daarom niet als betrouwbaar verondersteld.
 
 % boxplots calibratie ultrasone sensor
 \begin{figure}
@@ -348,17 +348,17 @@ Draai(rechts, AngleTurned/2).
 
 De robot staat best net over de witte lijn. Wanneer de robot dan op een witte lijn tussen twee panelen staat, zorgt de donkere scheidingslijn tussen twee panelen niet voor verwarring.\\
 
-Een alternatieve manier om te corrigeren bestaat erin gebruik te maken van muren, maar dan moet de robot zicht bevinden op een tegel die muren aan beide kanten bevat.
+Een alternatieve manier om te corrigeren bestaat erin gebruik te maken van muren. De robot kijkt dan naar de muren en gaat meten met de ultrasone sensor op hoeveel afstand hij zich van de muur bevind en zich zo op gelijke afstand van tegenoverstaande muren plaatsen.  Nadeel is dat de robot zich dan moet bevinden op een tegel die muren aan beide kanten bevat.
 
 
-% == verkennen van het doolhof == %
+% == verkennen van de doolhof == %
 \subsection{Het verkennen van een doolhof} % 3 ok
 \label{ssec:algoOnderzDoolhof}
 
 De robot kan een volledige doolhof autonoom verkennen. Elke tegel die de robot reeds passeert, wordt gemarkeerd. Indien alle tegels gemarkeerd zijn, is de volledige doolhof doorzocht. Het markeren gebeurt via een boolean die op true of false gezet wordt.
 
 Bij elke tegel onthoudt de robot alle uitwegen (de naburige tegels). Vervolgens slaat hij de eerste nog-niet-bekeken uitweg in. Wanneer de robot op een doodlopend stuk komt, keert hij terug tot een kruispunt waar nog niet alle uitwegen van bekeken werden. De robot gebruikt het kortste pad algoritme om de weg naar dit kruispunt te bepalen.
-Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof een `finish'-barcode en een `checkpoint'-barcode bevat. Indien niet, wordt het hele doolhof opnieuw onderzocht.\\
+Nadat de robot het hele doolhof bekeken heeft, kijkt hij na of de doolhof een `finish'-barcode en een `checkpoint'-barcode bevat. Indien niet, dan stopt de robot en voert hij het kortste pad algoritme niet uit.\\
 
 
 Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassing implementeert steeds ook de aanpassingen die eerder werden toegevoegd. Tabel \ref{tab:resultVerken} geeft de resultaten van de aanpassingen weer. Figuur \ref{fig:resultVerkenE} toont de gebruikte doolhoven en de uitvoering van het algoritme met aanpassing E.
@@ -400,7 +400,7 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
                 \includegraphics[width=\textwidth]{verkenMap2E}
                 \caption{map 2}
         \end{subfigure}
- \caption[Het verkennen van een doolhof]{Het verkennen van een doolhof met implementatie van aanpassing E. Deze aanpassing maakt dat in map 1 niet alle tegels bezocht hoeven te worden. In map 2 doet deze situatie zich niet voor. Dit is te wijten aan de opbouw van het doolhof.}
+ \caption[Het verkennen van een doolhof]{Het verkennen van een doolhof met implementatie van aanpassing E. Deze aanpassing maakt dat in map 1 niet alle tegels bezocht hoeven te worden. In map 2 doet deze situatie zich niet voor. Dit is te wijten aan de opbouw van de doolhof.}
 \label{fig:resultVerkenE}
 \end{figure}
 
@@ -417,7 +417,7 @@ Enkele optimalisaties werden doorgevoerd in het algoritme. De genoemde aanpassin
 \end{center}
 \end{figure}
 
-Het kortste pad algoritme(zie figuur~\ref{fig:kortstepad}) maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van het doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
+Het kortste pad algoritme (zie figuur~\ref{fig:kortstepad}) maakt gebruik van een graaf die opgesteld wordt tijdens het verkennen van de doolhof. Het algoritme is A* waarbij de Manhattan heuristiek en een kost wordt gebruikt.
 De heuristiek is de verwachte afstand tot de `finish'-barcode en is een onderschatting, er wordt dus geen rekening gehouden met muren. De `finish' krijgt de heuristiekwaarde 0, de buren hiervan (horizontaal en verticaal, niet diagonaal) de waarde 1 , enzoverder tot alle tegels een heuristische waarde gekregen hebben.
 De kost van een tegel is het werkelijke aantal tegels nodig om van de `checkpoint'-barcode tot de `finish'-barcode te komen.
 
@@ -439,11 +439,12 @@ Beide projecten hebben een identiek package \textit{commands} met \'e\'en klasse
 
 
 Het computerproject heeft nog zes andere packages: \textit{communication}, \textit{gui}, \textit{simulator}, \textit{mazeAlgorithm}, \textit{audio} en \textit{mapping}. 
-De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden. Aan deze \textit{UnitCommunicator} is een object van de subklassen \textit{RobotCommunicator} of \textit{SimulatorCommunicator}  toegekend. Zo worden de commands dynamisch naar de juiste unit gestuurd: de \textit{RobotCommunicator} communiceert met het NXT-Project, de \textit{SimulatorCommunicator} met de simulator klassen.\\
+De klasse \textit{SilverSurferGUI} uit de package \textit{gui} implementeert de GUI. De GUI communiceert met de simulator of de robot via de klassen in het package \textit{communication} door een object van de superklasse \textit{UnitCommunicator} bij te houden.\\
+
 Andere klassen van de package \textit{gui} zijn: \textit{MouseClickThread} , \textit{PolygonDrawThread}, \textit{RunForwardThread} en \textit{TurnAngleThread}. De vier Threads zorgen ervoor dat het tekenen van de baan van de robot de rest van het programma niet stillegt. \\
 
 Het package \textit{simulator} implementeert de functionaliteit van de simulator. \\
-Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction, Barcode, ...} die elementen uit de wereld van een robot voorstellen. Een tile stemt overeen met \'e\'en tegel van het doolhof en heeft vier edges: \'e\'en voor elke zijde. Die edges houden de twee aanliggende tegels bij en eventueel een Obstruction, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Het houdt een begin-tegel bij en en huidige-tegel. Het biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden die dynamisch kan aangevuld worden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met het doolhof dat in het bestand gedefinieerd wordt.
+Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction, Barcode, ...} die elementen uit de wereld van een robot voorstellen. Een tile stemt overeen met \'e\'en tegel van de doolhof en heeft vier edges: \'e\'en voor elke zijde. Die edges houden de twee aanliggende tegels bij en eventueel een Obstruction, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Het houdt een begin-tegel bij en en huidige-tegel. Het biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden die dynamisch kan aangevuld worden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof dat in het bestand gedefinieerd wordt.
 
 
 %figuur klassendiagram PC
@@ -460,7 +461,7 @@ Het \textit{mapping-package} heeft klassen zoals \textit{Tile, Edge, Obstruction
 \subsection{Het doorgeven van commando's} % 3 ok!
 \label{ssec:commands}
 De GUI zet een actie van de gebruiker om in een commando. Dit commando wordt gerepresenteerd door een integer die naar de \textit{UnitCommunicator} wordt gestuurd. Twee van de commando's hebben echter extra informatie nodig: \textit{automatic move x cm forward} en \textit{rotate x degrees}. Deze informatie wordt toegevoegd aan de integer door de integer uit te breiden met extra cijfers (dit wordt in de volgende sectie in detail beschreven).\\
-De \textit{UnitCommunicator} stuurt de bekomen integer door naar ofwel de \textit{RobotCommunicator} ofwel de \textit{SimulatorCommunicator}. Deze zetten de integer weer om in de juiste actie van respectievelijk de robot en de simulator. De wijze waarop dit gebeurt, verschilt licht voor beide gevallen. Zo stuurt de \textit{RobotCommunicator} zijn commando's via Bluetooth door naar de NXT-brick, terwijl de \textit{SimulatorCommunicator} zo'n verbinding niet nodig heeft.\\
+
 
 \subsubsection{De bewerking op de integers} % 3 ok!
 \label{sssec:integer}
@@ -481,12 +482,12 @@ Om de bekomen resultaten terug op te splitsen in de twee oorspronkelijke gegeven
 \item de oorspronkelijke afstand (hoek) wordt bekomen door de integer door 1000 te delen.
 \end{itemize}
 
-Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek) kan slechts tot 2 cijfer(s) na de komma doorgegeven worden. De robot kan niet nauwkeuriger dan 0,1 cm aangestuurd worden. Hierdoor is het niet nodig de afstand nauwkeuriger door te geven. De nauwkeurigheid van de hoek is gevoeliger. De veelhoek stapelt immers veel afrondingsfouten op naarmate de lengte van de zijde en/of het aantal hoeken stijgt. Doordat de begin- en eindpunten niet samen vallen is te zien dat de som van de berekende hoeken samen geen 360 graden vormt. 
+Deze werkwijze brengt een beperking met zich mee: de waarde van de afstand (hoek) kan slechts tot 2 cijfer(s) na de komma doorgegeven worden. De robot kan niet nauwkeuriger dan 0,1 cm aangestuurd worden. Hierdoor is het niet nodig de afstand nauwkeuriger door te geven. De nauwkeurigheid van de hoek is gevoeliger. De veelhoek stapelt immers veel afrondingsfouten op naarmate de lengte van de zijde en/of het aantal hoeken stijgt. Doordat de begin- en eindpunten niet samenvallen is te zien dat de som van de berekende hoeken samen geen 360 graden vormt. 
 
 % == gui == %
 \subsection{GUI} % 3 ?
 \label{ssec:GUI}
-De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetooth verbinding aan staat. De knoppen voeren bepaalde functies uit, zoals ``turn left/right'', ``look around'' en ``Align on the white line/ walls''.\\
+De GUI bestaat uit twee vensters, enkele knoppen, een menubar en enkele instelmogelijkheden: zie figuur \ref{fig:gui}. Deze knoppen besturen ofwel de robot en de simulator ofwel enkel de simulator, naargelang de bluetoothverbinding aan staat. De knoppen voeren bepaalde functies uit, zoals ``turn left/right'', ``look around'' en ``Align on the white line/ walls''.\\
 
 Voor visualisatie van de sensoren zijn er grafieken die de waarden weergeven. De robot zelf op de simulator heeft een blauwe straal die de waarde van de ultrasone sensor aangeeft. 
 
@@ -504,20 +505,20 @@ Voor visualisatie van de sensoren zijn er grafieken die de waarden weergeven. De
 \label{ssec:bluetooth}
 De communicatie tussen robot en computer gebeurt volledig via bluetooth. De GUI voorziet een knop om deze verbinding te maken en geeft de status van de verbinding weer. De GUI stuurt commando's door naar de robot via de klassen \textit{UnitCommunicator} en \textit{RobotCommunicator}.
 
-De leJOS-API\^{2} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: `Silver' en `00:16:53:0A:04:5A'.
+De leJOS-API\cite{leJOS} voorziet de \textit{NXTConnector} klasse. De methode \textit{connectTo((String, String, int, int)} zet de bluetoothverbinding tussen computer en brick op. De belangrijkste argumenten hiervoor zijn de naam van de NXT-Brick en zijn DeviceUrl  - in het geval van de gebruikte NXT: `Silver' en `00:16:53:0A:04:5A'.
 
-De bluetooth laat toe enkele `datastreams' tussen robot en computer op te zetten. Deze `datastreams' sturen informatie in verschillende kanalen door. Zo kunnen zowel robot als computer de verschillende soorten informatie van elkaar onderscheiden.
+De bluetooth laat toe enkele `datastreams' tussen robot en computer op te zetten. Er is maar één verbindingskanaal (wel een inpustream en een outputstream) waarover alles in de byte-voorstelling van een string wordt overgestuurd. Die bytes worden dan terug omgezet naar een string en de computer interpreteert die aan de hand van tags die vooraan de string staan. Naar de robot worden enkel intigers gestuurd.
 
 % == robot == %
 \subsection{Robot} % 3 ?
 \label{ssec:robot}
-Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatsten maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn `datastreams' en start hij een \textit{SensorThread} op.
+Het project op de NXT-brick bestaat uit een klasse \textit{CommandUnit}, een klasse \textit{Command} en enkele threadklassen. Deze laatste maken het mogelijk meerdere dingen tegelijk te doen (bijvoorbeeld: sensorwaarden inlezen terwijl de robot rijdt). Bij het opstarten, initialiseert de robot zijn sensoren. Wanneer de computer verbinding maakt, initialiseert de robot ook zijn `datastreams' en start hij een \textit{SensorThread} op.
 
 De computer stuurt commando's in de vorm van integers. De robot vertaalt deze met behulp van de klasse \textit{Command} en voert de juiste actie uit. Sommige methodes retourneren een waarde aan de computer. Dit gebeurt door de waarde op een `datastream' te zetten, voorafgegaan door een tag (bijvoorbeeld: [US] voor ultrasonesensor data).\\
 
 Enkele belangrijke methodes van \textit{CommandUnit}:
 \begin{itemize}
-\item \textit{updateCoordinates:} de robot houdt zijn positie bij. bij elke beweging zullen de co\"ordinaten worden ge\"updated.
+\item \textit{updateCoordinates:} de robot houdt zijn positie bij. Bij elke beweging zullen de co\"ordinaten worden ge\"updated.
 \item \textit{updateStatus:} stuur alle statusgegevens (lichtsensor, co\"ordinaten, ...) naar de computer.
 \item \textit{main:} wacht tot de computer een commando geeft en voer dit uit.
 \item \textit{moveForward:} beweegt voorwaarts, maar stopt bij een barcode.
@@ -528,23 +529,23 @@ De \textit{SensorThread} stuurt elke 50 milliseconden sensorinformatie door naar
 % == simulator == %
 \subsection{Simulator} % 3 ?
 \label{ssec:simulator}
-De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot. De GUI stuurt de simulator aan via de klassen \textit{UnitCommunicator} en \textit{SimulatorCommunicator}. Deze ontvangen de uit te voeren commando's, analyseren ze en sturen ze door naar de simulator.
+De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot. De GUI stuurt de simulator aan via de klasse \textit{UnitCommunicator}. Deze ontvangt de uit te voeren commando's, analyseert ze en stuurt ze door naar de simulator.
 \\
 De simulator zelf bestaat uit zeven klassen:
 
 % overzicht klassen simulator
 \begin{itemize}
-\item \textit{Wall:} tekent de muren van het doolhof.
+\item \textit{Wall:} tekent de muren van de doolhof.
 \item \textit{State:} wordt gebruikt om te zeggen of iets horizontaal of verticaal moet staan.
 \item \textit{SimulationSensorData: }
 \item \textit{SimulationPilot:} houdt de positie en de richting van de `robot' bij.
 \item \textit{SimulationPanel:} tekent de baan van de `robot' in het tekenpaneel.
 \item \textit{Triangle:} berekent de hoekpunten van de driehoek die de `robot' voorstelt.
 \item \textit{ExtMath:} doet enkele berekeningen.
-\item \textit{Bag:\cite{Bag.java} } een geheugen opslagplaats waar double precision floating point getallen in worden opgeslagen.
+\item \textit{Bag: } een generische klasse waar eender wat in kan worden opgeslagen. Het wordt gebruikt om een tupel van <String, Rectangle2D[]> bij te houden. \cite{Bag.java}
 \end{itemize}
 
-Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De roosters op het achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
+Het opzetten van het tekenpaneel gebeurt in de klasse \textit{SilverSurferGUI}. De roosters op de achtergrond van het tekenpaneel hebben dezelfde afmetingen als de secties van de panelen. Zo kan een muur enkel op een lijn van het grid staan.
 Wanneer de `robot' een pad aflegt, tekent de simulator dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijn  bestaat uit verschillende cirkels die elkaar gedeeltelijk overlappen. Het \textit{SimulationPanel} houdt alle bezochte co"ordinaten bij. De klasse bevat een methode die deze cirkels \'e\'en na \'e\'en tekent. Dit zorgt ervoor dat de lijn continu bijgewerkt wordt. De huidige positie en de huidige orientatie van de `robot' wordt bovenaan het simulatorpaneel in de GUI weergegeven.
 
 % == BESLUIT == %
@@ -570,7 +571,7 @@ enkele klassen die de werking van de robot simuleren (simulator).
 % == resulaten == %
 \subsection{Resultaten} % 3 ?
 \label{Assec:result1}
-Bij het rijden van de veelhoek had de robot een kleine afwijking. De afwijking werd groter bij grotere veelhoeken en meerdere hoeken om wille van de geaggregeerde fout.
+Bij het rijden van de veelhoek had de robot een kleine afwijking. De afwijking werd groter bij grotere veelhoeken en meerdere hoeken omwille van de geaggregeerde fout.
 
 % == conclusies == %
 \subsection{Conclusies} % 3 ?
@@ -599,7 +600,7 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 % == DEMO 2 == %
 \section{Demo 2} % 3 ?
 \label{Asec:demo2}
-De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen doorsturen.\\
+De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen en doorsturen.\\
 
 De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de `robot' zich hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn. Het is bovendien mogelijk de robot zich in het midden van de tegel te laten zetten.
 
@@ -609,7 +610,7 @@ De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan bes
 \label{Assec:result2}
 Het verslag voor de tweede demonstratie bevatte enkele paragrafen die tegen het einde nog snel geschreven waren. Deze paragrafen waren van mindere kwaliteit. Ook sommige afbeeldingen werden verkeerd ingevoegd.\\
 
-Op de demonstratie reed de robot de eerste tegels zoals het hoorde. Ook het witte lijnalgoritme werd goed uitgevoerd. De sensorwaarden werden weergegeven in de GUI, zodat de bestuurder, die de robot en het doolhof niet zag, zich een beeld kon vormen van het doolhof. Op een gegeven moment gaf de bestuurder de robot opdracht zich midden op een tegel te zetten. Dit algoritme maakt gebruik van de muren rond de tegel. De robot bevond zich op dat ogenblik echter op een tegel die door geen enkele muur omsloten werd. De bestuurder had dit niet eerst nagekeken. Dit had als gevolg dat de robot helemaal scheef stond, zonder dat de bestuurder dit wist.\\
+Op de demonstratie reed de robot de eerste tegels zoals het hoorde. Ook het witte lijnalgoritme werd goed uitgevoerd. De sensorwaarden werden weergegeven in de GUI, zodat de bestuurder, die de robot en de doolhof niet zag, zich een beeld kon vormen van de doolhof. Op een gegeven moment gaf de bestuurder de robot opdracht zich midden op een tegel te zetten. Dit algoritme maakt gebruik van de muren rond de tegel. De robot bevond zich op dat ogenblik echter op een tegel die door geen enkele muur omsloten werd. De bestuurder had dit niet eerst nagekeken. Dit had als gevolg dat de robot helemaal scheef stond, zonder dat de bestuurder dit wist.\\
 
 De sensorwaarden werden niet gesimuleerd in de simulator. De simulator maakte in zijn algoritmes rechtstreeks gebruik van de virtuele doolhof. Robot en simulator maakten met andere woorden gebruik van andere algoritmes, wat niet het doel is van een simulator.\\
 
@@ -619,7 +620,7 @@ De simulator kon wel door een virtuele doolhof manoeuvreren. Meestal 'botste' hi
 % == conclusies D2== %
 \subsection{Conclusies} % 3 ?
 \label{Assec:conc2}
-Aan het verslag zou vroeger begonnen moeten worden zodat domme fouten vermeden kunnen worden.
+Aan het verslag zou vroeger begonnen moeten worden zodat fouten vermeden kunnen worden.
 
 De align-algoritmes (op een witte lijn en in het midden van een tegel) werken enkel in specifieke situaties. De algoritmes dienen enkel in deze omstandigheden uitgevoerd te worden.
 
