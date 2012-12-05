@@ -6,7 +6,7 @@ package mapping;
  */
 public class ExtMath {
 
-	
+	private static boolean lastTurnRight = false;
 	/**
 	 * Check whether the number corresponding with the given direction is an even number.
 	 * 
@@ -16,20 +16,23 @@ public class ExtMath {
 	 * 			| result ==
 	 * 			|   (Direction.getNumberDirection(direction)%2 == 0)
 	 */
-	public static boolean isNumberDirectionEven(Orientation orientation){
-
+	public static boolean isNumberDirectionEven(Orientation orientation) {
 		return (orientation.getNumberOrientation()%2 == 0);
 	}
-
 		
 	public static double getSmallestAngle(double angle){
-		if(Math.abs(angle)<180 || Math.abs(angle)==180){}
-		else if(angle<0){
+		if(angle < -180)
 			angle = angle + 360;
-		}
+		else if(angle > 180)
+			angle = angle - 360;
+		else if(lastTurnRight && angle == 180)
+			angle = -angle;
+		else if(!lastTurnRight && angle == -180)
+			angle = -angle;
+		if(angle >= 0)
+			lastTurnRight = true;
 		else
-		{ 	angle = angle -360;
-		}
+			lastTurnRight = false;
 		return angle;
 	}
 

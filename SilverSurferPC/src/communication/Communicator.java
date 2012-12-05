@@ -178,9 +178,13 @@ public class Communicator {
 	
 	public void goToNextTile(Orientation orientation) throws IOException{
 		double currentAngle = getStatusInfoBuffer().getAngle();
+		System.out.println("current: " + currentAngle);
 		int angleToRotate = (int)((double) orientation.getRightAngle() - currentAngle);
+		System.out.println("angle: "+angleToRotate);
 		angleToRotate = (int) ExtMath.getSmallestAngle(angleToRotate);
+		System.out.println("angletorotate: "+angleToRotate);
 		sendCommand(angleToRotate*100 + Command.AUTOMATIC_TURN_ANGLE);
+		System.out.println("-------");
 		
 		if(mustAllign) {
 			tilesRidden++;
