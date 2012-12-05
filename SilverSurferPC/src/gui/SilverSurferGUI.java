@@ -1,6 +1,5 @@
 package gui;
 
-import commands.Command;
 import communication.*;
 import simulator.*;
 
@@ -8,10 +7,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-
-import lejos.pc.tools.SensorPanel;
-
-import org.apache.bcel.generic.GETSTATIC;
 
 public class SilverSurferGUI {
 
@@ -57,7 +52,7 @@ public class SilverSurferGUI {
 
         JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
-        JPanel otherPanel = otherPanel();
+        // JPanel otherPanel = otherPanel();
         JPanel infoPanel = infoPanel();
         JPanel mappingPanel = mappingPanel();
         // JPanel consolePanel = consolePanel();
@@ -76,7 +71,6 @@ public class SilverSurferGUI {
                                         GroupLayout.Alignment.CENTER)
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
-                                .addComponent(otherPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout
@@ -90,7 +84,6 @@ public class SilverSurferGUI {
                         frameLayout.createSequentialGroup()
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
-                                .addComponent(otherPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout.createSequentialGroup()
@@ -114,7 +107,7 @@ public class SilverSurferGUI {
         barDecoder = new BarDecoder(communicator);
 
         changeSpeed(2);
-        updateStatus();
+        // updateStatus();
     }
 
     public JFrame getFrame() {
@@ -198,30 +191,30 @@ public class SilverSurferGUI {
         return directionPanel;
     }
 
-    private JPanel otherPanel() {
-        lookAroundButton = new JButton("Look Around");
-        alignWhiteLineButton = new JButton("Align on white line");
-        alignWall = new JButton("Align on walls");
-
-        JPanel otherPanel = new JPanel();
-        otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                "Other"));
-        otherPanel.setOpaque(false);
-
-        GroupLayout otherLayout = new GroupLayout(otherPanel);
-        otherPanel.setLayout(otherLayout);
-        otherLayout.setAutoCreateGaps(true);
-        otherLayout.setAutoCreateContainerGaps(true);
-        otherLayout.setHorizontalGroup(otherLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(lookAroundButton)
-                .addComponent(alignWhiteLineButton).addComponent(alignWall));
-        otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
-                .addComponent(lookAroundButton)
-                .addComponent(alignWhiteLineButton).addComponent(alignWall));
-
-        return otherPanel;
-    }
+    // private JPanel otherPanel() {
+    // lookAroundButton = new JButton("Look Around");
+    // alignWhiteLineButton = new JButton("Align on white line");
+    // alignWall = new JButton("Align on walls");
+    //
+    // JPanel otherPanel = new JPanel();
+    // otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+    // "Other"));
+    // otherPanel.setOpaque(false);
+    //
+    // GroupLayout otherLayout = new GroupLayout(otherPanel);
+    // otherPanel.setLayout(otherLayout);
+    // otherLayout.setAutoCreateGaps(true);
+    // otherLayout.setAutoCreateContainerGaps(true);
+    // otherLayout.setHorizontalGroup(otherLayout
+    // .createParallelGroup(GroupLayout.Alignment.CENTER)
+    // .addComponent(lookAroundButton)
+    // .addComponent(alignWhiteLineButton).addComponent(alignWall));
+    // otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
+    // .addComponent(lookAroundButton)
+    // .addComponent(alignWhiteLineButton).addComponent(alignWall));
+    //
+    // return otherPanel;
+    // }
 
     private JPanel infoPanel() {
         infoLabel1 = new JLabel("", JLabel.CENTER);
@@ -266,9 +259,10 @@ public class SilverSurferGUI {
                 .getLightSensorValue();
 
         try {
-            sensorGraph.addSensorValues(ultrasonicSensorValue, lightSensorValue);
+            sensorGraph
+                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
         } catch (NullPointerException e) {
-
+            // TODO: handle exception + uncomment
         }
 
         infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
@@ -338,7 +332,7 @@ public class SilverSurferGUI {
      */
 
     private JPanel sensorPanel() {
-        sensorGraph = new SensorGraph();
+        sensorGraph = new SensorGraph(this);
         sensorGraph.setOpaque(false);
 
         return sensorGraph;
@@ -537,130 +531,128 @@ public class SilverSurferGUI {
                 MTT.start();
             }
         });
-        lookAroundButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println(communicator.getConsoleTag()
-                        + " Looking around for obstructions.");
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(0);
-                MTT.setAmtOfAngles(0);
-                MTT.setCommand(Command.LOOK_AROUND);
-                MTT.start();
-            }
-        });
-        alignWhiteLineButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println(communicator.getConsoleTag()
-                        + " Aligning on white line.");
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(0);
-                MTT.setAmtOfAngles(0);
-                MTT.setCommand(Command.ALIGN_PERPENDICULAR);
-                MTT.start();
-            }
-        });
-        alignWall.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println(communicator.getConsoleTag()
-                        + " Aligning on walls.");
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(0);
-                MTT.setAmtOfAngles(0);
-                MTT.setCommand(Command.ALIGN_WALL);
-                MTT.start();
-            }
-        });
+        // lookAroundButton.addMouseListener(new MouseListener() {
+        // @Override
+        // public void mouseReleased(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mousePressed(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseExited(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseEntered(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseClicked(MouseEvent e) {
+        // System.out.println(communicator.getConsoleTag()
+        // + " Looking around for obstructions.");
+        // MoveTurnThread MTT = new MoveTurnThread("MTT");
+        // MTT.setCommunicator(communicator);
+        // MTT.setLength(0);
+        // MTT.setAngles(0);
+        // MTT.setAmtOfAngles(0);
+        // MTT.setCommand(Command.LOOK_AROUND);
+        // MTT.start();
+        // }
+        // });
+        // alignWhiteLineButton.addMouseListener(new MouseListener() {
+        // @Override
+        // public void mouseReleased(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mousePressed(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseExited(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseEntered(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseClicked(MouseEvent e) {
+        // System.out.println(communicator.getConsoleTag()
+        // + " Aligning on white line.");
+        // MoveTurnThread MTT = new MoveTurnThread("MTT");
+        // MTT.setCommunicator(communicator);
+        // MTT.setLength(0);
+        // MTT.setAngles(0);
+        // MTT.setAmtOfAngles(0);
+        // MTT.setCommand(Command.ALIGN_PERPENDICULAR);
+        // MTT.start();
+        // }
+        // });
+        // alignWall.addMouseListener(new MouseListener() {
+        // @Override
+        // public void mouseReleased(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mousePressed(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseExited(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseEntered(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseClicked(MouseEvent e) {
+        // System.out.println(communicator.getConsoleTag()
+        // + " Aligning on walls.");
+        // MoveTurnThread MTT = new MoveTurnThread("MTT");
+        // MTT.setCommunicator(communicator);
+        // MTT.setLength(0);
+        // MTT.setAngles(0);
+        // MTT.setAmtOfAngles(0);
+        // MTT.setCommand(Command.ALIGN_WALL);
+        // MTT.start();
+        // }
+        // });
         simulationPanel.addKeyListener(new KeyListener() {
-			ShiftThread ST = new ShiftThread("ST");
+            ShiftThread ST = new ShiftThread("ST");
 
-			@Override
-			public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
 
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_UP) {
-					ST.setShift(-1);
-					ST.setHorizontal(false);
-					ST.start();
-					}
-				else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
-					ST.setShift(1);
-					ST.setHorizontal(false);
-					ST.start();
-				}
-				else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
-					ST.setShift(-1);
-					ST.setHorizontal(true);
-					ST.start();
-				}
-				else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
-					ST.setShift(1);
-					ST.setHorizontal(true);
-					ST.start();
-					}
-				}
-		});
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    ST.setShift(-1);
+                    ST.setHorizontal(false);
+                    ST.start();
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    ST.setShift(1);
+                    ST.setHorizontal(false);
+                    ST.start();
+                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    ST.setShift(-1);
+                    ST.setHorizontal(true);
+                    ST.start();
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    ST.setShift(1);
+                    ST.setHorizontal(true);
+                    ST.start();
+                }
+            }
+        });
     }
 
     private static javax.swing.border.Border createBorder() {
