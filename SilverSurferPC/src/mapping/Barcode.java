@@ -7,6 +7,9 @@ public class Barcode extends TileContent{
 
 	private int value;
 	private Orientation direction;
+	private boolean isDrawn = false;
+	private int drawnCenterX = 0;
+	private int drawnCenterY = 0;
 	
 	/**
 	 * Creates a barcode with as value 'value'.
@@ -97,14 +100,21 @@ public class Barcode extends TileContent{
 	 * 
 	 * @pre Barcode.orientation should be specified.
 	 */
-	public static Rectangle2D[] createVisualBarCode(Barcode barcode, int centerX, int centerY){
+	public static Rectangle2D[] createVisualBarCode(Barcode barcode, int centerX, int centerY, double sizeTile){
 		if(barcode != null){
+			
+			double heightbarcode = sizeTile/(20.f);
+			
+			barcode.setDrawn(true);
+			barcode.setDrawnCenterX(centerX);
+			barcode.setDrawnCenterY(centerY);
+			
 		//North or South oriented barcode
 		if(barcode.getDirection() == Orientation.NORTH || barcode.getDirection() == Orientation.SOUTH){
 	
 			Rectangle2D[] visualBarcode = new Rectangle2D[8];
 			for (int i = 0; i < 8; i++)
-				visualBarcode[i] = new Rectangle(centerX-20, centerY-8+2*i, 40, 2);
+				visualBarcode[i] = new Rectangle2D.Double(centerX-sizeTile/2, centerY-8+heightbarcode*i, sizeTile, heightbarcode);
 			
 			return visualBarcode;
 			
@@ -114,13 +124,38 @@ public class Barcode extends TileContent{
 			
 			Rectangle2D[] visualBarcode = new Rectangle2D[8];
 			for (int i = 0; i < 8; i++)
-				visualBarcode[i] = new Rectangle(centerX-8+2*i, centerY-20, 2, 40);
+				visualBarcode[i] = new Rectangle2D.Double(centerX-8+heightbarcode*i, centerY-sizeTile/2, heightbarcode, sizeTile);
 			
 			return visualBarcode;
 		}}
 		
 		return null;
 	}
+	
+	public void setDrawn(boolean isDrawn){
+		this.isDrawn = isDrawn;
+	}
+	
+	public boolean isDrawn(){
+		return isDrawn;
+	}
+	
+	public int getDrawnCenterX(){
+		return drawnCenterX;
+	}
+	
+	public void setDrawnCenterX(int xCenter){
+		this.drawnCenterX = xCenter;
+	}
+	
+	public int getDrawnCenterY(){
+		return drawnCenterY;
+	}
+	
+	public void setDrawnCenterY(int yCenter){
+		this.drawnCenterY = yCenter;
+	}
+
 
 	@Override
 	public String toString() {

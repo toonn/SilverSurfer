@@ -175,17 +175,15 @@ public class SimulationPilot {
     }
 
     /**
-     * Returns the center of the currentTile in absolutes.
-     */
-    public int[] getCenterAbsoluteCurrentTile() {
-
-        int[] coord = new int[] { 0, 0 };
-        coord[0] = (int) (((Double) (getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()
-                % sizeTile())).intValue() + sizeTile() / 2);
-        coord[1] = (int) (((Double) (getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()
-                % sizeTile())).intValue() + sizeTile() / 2);
-        return coord;
-    }
+	 * Returns the center of the currentTile in absolutes.
+	 */
+	public int[] getCenterAbsoluteCurrentTile(){
+		
+		int[] coord = new int[]{0,0};
+		coord[0] =  (int) (((Double)(getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()%sizeTile())).intValue()*SSG.getSimulationPanel().getScalingfactor()+SSG.getSimulationPanel().getSizeTile()/2);
+		coord[1] =  (int) (((Double)(getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()%sizeTile())).intValue()*SSG.getSimulationPanel().getScalingfactor()+SSG.getSimulationPanel().getSizeTile()/2);
+		return coord;
+	}
 
     public File getMapFile() {
         return this.mapFile;
@@ -531,7 +529,7 @@ public class SimulationPilot {
      * checkt of de robot zich binnen de marge van een edge bevindt
      */
     public boolean pointOnEdge(double x, double y) {
-        return (x % getSSG().getSimulationPanel().getSizeTile()) > sizeTile()
+        return (x %  sizeTile()) > sizeTile()
                 - this.getEdgeMarge()
                 || (x % sizeTile()) < this.getEdgeMarge()
                 || (y % sizeTile()) > sizeTile() - this.getEdgeMarge()
@@ -682,10 +680,6 @@ public class SimulationPilot {
      * argumenten
      */
     public double[] setRelativeToAbsolute(int x, int y) {
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println("SimulationPilot 648");
-
         int a = x - getStartPositionRelativeX();
         int b = y - getStartPositionRelativeY();
         double c = a * 40;
@@ -721,7 +715,7 @@ public class SimulationPilot {
     }
 
     public void clear() {
-        this.getSSG().getSimulationPanel().clearPath();
+        this.getSSG().getSimulationPanel().resetPath();
     }
 
     /**
@@ -962,11 +956,11 @@ public class SimulationPilot {
     }
 
     public double sizeTile() {
-        return getSSG().getSimulationPanel().getSizeTile();
+        return 40;
     }
 
     public double scalingfactor() {
-        return getSSG().getSimulationPanel().getScalingfactor();
+        return 1;
     }
 
 }

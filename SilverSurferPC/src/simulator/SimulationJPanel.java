@@ -3,12 +3,14 @@ package simulator;
 import gui.SilverSurferGUI;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.*;
-
 
 import datastructures.Bag;
 import datastructures.Tuple;
@@ -16,7 +18,7 @@ import datastructures.Tuple;
 
 import mapping.*;
 
-public class SimulationJPanel extends JPanel implements Runnable {
+public class SimulationJPanel extends JPanel implements Runnable,MouseMotionListener {
 
 	private SilverSurferGUI SSG;
 	private SimulationPilot simulationPilot;
@@ -25,11 +27,11 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	private int shiftToTheRight = 0;
 	private int shiftDown = 0;
 
-	/**
-	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
-	 */
-	//private BufferedImage verticalWallImage;
-	//private BufferedImage horizontalWallImage;
+//	/**
+//	 * Images die de muur getekend worden (komende van de 8bit Pokemon games!)
+//	 */
+//	private BufferedImage verticalWallImage;
+//	private BufferedImage horizontalWallImage;
 	/**
 	 * 2 driehoeken die elkaar afwisselen om afgebeeld te worden
 	 * de ene wordt afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden
@@ -40,39 +42,54 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	/**
 	 * geeft het getal van de driehoek die afgebeeld wordt
 	 */
-	private int isVisible = 1;
+	private int isVisibleTriangle = 1;
 	/**
 	 * is true als de coordinaten van de driehoek die niet afgebeeld wordt, berekend zijn.
 	 */
-	private boolean isUpdated = false;
+	private boolean isUpdatedTriangle = false;
 
 	private Arc2D sonarArc = new Arc2D.Double();
 	private Ellipse2D undergroundCircle = new Ellipse2D.Double(); 
 
-	private Vector<Shape> shapes = new Vector<Shape>();
+	private Vector<Shape> shapes1 = new Vector<Shape>();
+	private Vector<Shape> shapes2 = new Vector<Shape>();
+
+	private boolean isUpdatedShapes = false;
+	private boolean isUpdatedWalls = false;
+	private boolean isUpdatedBarcodes = false;
+	
+	private int isVisibleObjects = 1;
+
+	
 
 	/**
 	 * Houdt een map bij met coordinaten die verwijzen naar de muur die erop staat
 	 * de positie van de muur ten opzichte van de coordinaten staat uitgelegd in de klasse
 	 * wall
 	 */
-	private HashMap<Point2D, Wall> walls = new HashMap<Point2D, Wall>();
+	private HashMap<Point2D, Wall> walls1 = new HashMap<Point2D, Wall>();
+	private HashMap<Point2D, Wall> walls2 = new HashMap<Point2D, Wall>();
 	
 	/**
 	 * A bag doesn't have any ordering, just used for iterating. 
 	 * The placing of these 'barcodes' is specified in the seperate rectangles.
 	 */
-	private Bag<Tuple<String, Rectangle2D[]>> barcodes = new Bag<Tuple<String, Rectangle2D[]>>();
+	private Bag<Tuple<Barcode, Rectangle2D[]>> barcodes1 = new Bag<Tuple<Barcode, Rectangle2D[]>>();
+	private Bag<Tuple<Barcode, Rectangle2D[]>> barcodes2 = new Bag<Tuple<Barcode, Rectangle2D[]>>();
+	
 	/**
 	 * The rectangle that Highlights the checktile on the gui.
 	 */
-	public Rectangle2D checkHighlight;
+	private Rectangle2D checkHighlight;
 	/**
 	 * The rectangle that Highlights the endtile on the gui.
 	 */
-	public Rectangle2D endHighlight;
+	private Rectangle2D endHighlight;
+	
 	public SimulationJPanel()
 	{
+		addMouseMotionListener(this);
+		
 		mapGraphConstructed = new MapGraph();
 		
 		/*try
@@ -82,12 +99,13 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		}
 		catch (IOException e) {
 			System.out.println("1");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("2");
 		}*/
 
-		shapes.add(triangle1);
-		shapes.add(triangle2);
+		shapes1.add(triangle1);
+		shapes1.add(triangle2);
 		
 	}
 	
@@ -102,24 +120,24 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 	public void addCircle(double x, double y, double degrees) {
 		// remove the last triangle and draw little circles to indicate the path
-		if(shapes.size()>0)
+		if(getVisibleShapes().size()>0)
 		{ 	
 			double oldX = this.getVisibleTriangle().getGravityCenterX();
 			double oldY = this.getVisibleTriangle().getGravityCenterY();
 
 			// add a bigger circle where the robot starts
-			if(shapes.size()<3)
+			if(getVisibleShapes().size()<3)
 			{
 				double diam = scalingfactor * 5;
 				Shape bigCircle = new Ellipse2D.Double(oldX - (diam/2), oldY - (diam/2), diam, diam); 
-				shapes.add(bigCircle);
+				getVisibleShapes().add(bigCircle);
 			}
 			// add smaller red circles to indicate the path of the robot
 			else
 			{
 				double diam = scalingfactor * 2;
 				Shape path = new Ellipse2D.Double(x - (diam/2), y - (diam/2), diam, diam);
-				shapes.add(path); 
+				getVisibleShapes().add(path); 
 			}						
 		}
 
@@ -130,23 +148,15 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		setUpdated(true);		
 	}
 
-	public void setVisibleTriangle1(){
-		isVisible = 1;
-	}
-
-	public void setVisibleTriangle2(){
-		isVisible = 2;
-	}
-
 	public void setOtherTriangleVisible(){
-		if(isVisible == 1)
-			isVisible = 2;
+		if(isVisibleTriangle == 1)
+			isVisibleTriangle = 2;
 		else
-			isVisible = 1;
+			isVisibleTriangle = 1;
 	}
 
 	public Triangle getVisibleTriangle(){
-		if(isVisible == 1){
+		if(isVisibleTriangle == 1){
 			return triangle1;
 		}
 		else
@@ -154,7 +164,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 
 	public Triangle getNotVisibleTriangle(){
-		if(isVisible == 2){
+		if(isVisibleTriangle == 2){
 			return triangle1;
 		}
 		else
@@ -162,7 +172,70 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 
 	public boolean waitingTriangleIsUpdated(){
-		return isUpdated;
+		return isUpdatedTriangle;
+	}
+	
+	
+	
+	public void setOtherObjectsVisible(){
+		if(isVisibleObjects == 1){
+			isVisibleObjects = 2;
+			}
+		else
+			{isVisibleObjects = 1;}
+	}
+
+	public HashMap<Point2D, Wall> getVisibleWalls(){
+		if(isVisibleObjects == 1){
+			return walls1;
+		}
+		else
+			return walls2;
+	}
+	
+	public Vector<Shape> getVisibleShapes(){
+		if(isVisibleObjects == 1){
+			return shapes1;
+		}
+		else
+			return shapes2;
+	}
+	
+	public Bag<Tuple<Barcode, Rectangle2D[]>> getVisibleBarcode(){
+		if(isVisibleObjects == 1){
+			return barcodes1;
+		}
+		else
+			return barcodes2;
+	}
+
+	public Vector<Shape> getNotVisibleShapes(){
+		if(isVisibleObjects == 2){
+			return shapes1;
+		}
+		else
+			return shapes2;
+	}
+	
+	public HashMap<Point2D, Wall> getNotVisibleWalls(){
+		if(isVisibleObjects == 2){
+			return walls1;
+		}
+		else
+			return walls2;
+	}
+	
+	public Bag<Tuple<Barcode, Rectangle2D[]>> getNotVisibleBarcode(){
+		if(isVisibleObjects == 2){
+			return barcodes1;
+		}
+		else
+			return barcodes2;
+	}
+
+
+	public boolean waitingObjectsAreUpdated(){
+		return isUpdatedShapes && isUpdatedWalls && isUpdatedBarcodes;
 	}
 
 	public void updateArc(double robotX, double robotY, double robotAngle, double USDistance){
@@ -178,7 +251,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 
 	public void setUpdated(boolean isUpdated){
-		this.isUpdated = isUpdated;
+		this.isUpdatedTriangle = isUpdated;
 	}
 
 	public void updateUndergroundCircle(double robotX, double robotY, double LSValue)
@@ -197,7 +270,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	protected void paintComponent(Graphics graph) {
 
 		paintPathComponent(graph);
-
 		//		paintGridComponent(graph);
 		paintWallComponent(graph);
 		paintUndergroundComponent(graph);
@@ -214,10 +286,11 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 	private void paintBeamComponent(Graphics graph) {
 
-		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX() - getShiftToTheRight(),
-				this.getSimulationPilot().getUltrasonicSensorPositionY() - getShiftDown(),
+		this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX()*scalingfactor - getShiftToTheRight(),
+				this.getSimulationPilot().getUltrasonicSensorPositionY()*scalingfactor - getShiftDown(),
 				this.getSimulationPilot().getAlpha(),
 				this.getSimulationPilot().getUltraSensorValue()*getScalingfactor());
+		
 		if(simulationPilot != null)
 		{
 			((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
@@ -239,9 +312,10 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * @param graph
 	 */
 	private void paintWallComponent(Graphics graph) {
+
 		((Graphics2D) graph).setColor(Color.BLACK);
 
-		for(Wall wall : walls.values()){
+		for(Wall wall : getVisibleWalls().values()){
 			((Graphics2D) graph).fill(wall);
 				
 //				graph.drawImage(getVerticalWallImage(), wall.x, wall.y, null);
@@ -249,24 +323,24 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		}
 	}
 
-	/**
-	 * Tekent het grid (rooster) op de achtergrond van de mapping
-	 * @param graph
-	 */
-	/*private void paintGridComponent(Graphics graph) {
-
-		int count = 50;
-		int size = (int) getSizeTile();
-
-		((Graphics2D) graph).setColor(Color.lightGray);
-
-		for( int i = 0; i < count; i ++)
-			for( int j = 0; j < count; j++)
-			{
-				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
-				((Graphics2D) graph).draw(grid);
-			}
-	}*/
+//	/**
+//	 * Tekent het grid (rooster) op de achtergrond van de mapping
+//	 * @param graph
+//	 */
+//	private void paintGridComponent(Graphics graph) {
+//
+//		int count = 50;
+//		int size = (int) getSizeTile();
+//
+//		((Graphics2D) graph).setColor(Color.lightGray);
+//
+//		for( int i = 0; i < count; i ++)
+//			for( int j = 0; j < count; j++)
+//			{
+//				Rectangle grid = new Rectangle( i * size,j * size, size, size);	
+//				((Graphics2D) graph).draw(grid);
+//			}
+//	}
 
 	/**
 	 * Tekent het pad van de robot en de robot zelf met daarachter het grid.
@@ -277,16 +351,14 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		paintBarcodeComponent(graph);		
 
 		Vector<Shape> shapesx = new Vector<Shape>();
-		shapesx.addAll(shapes);
-
-
+		shapesx.addAll(getVisibleShapes());
+		
 		((Graphics2D) graph).setColor(Color.red);
 
-		if(isUpdated){
+		if(isUpdatedTriangle){
 			setOtherTriangleVisible();
 			setUpdated(false);
 		}
-
 
 		int count = 50;
 		int size = (int) getSizeTile();
@@ -299,7 +371,6 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				Rectangle grid = new Rectangle( i * size - getShiftToTheRight(),j * size - getShiftDown(), size, size);	
 				((Graphics2D) graph).draw(grid);
 			}
-
 
 		((Graphics2D) graph).setColor(Color.red);
 		for(Shape s : shapesx)
@@ -317,7 +388,7 @@ public class SimulationJPanel extends JPanel implements Runnable {
 
 
 			if(simulationPilot!= null)
-				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y )+ " , " + simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
+				getSSG().updateCoordinates("Simulator (" + simulationPilot.getCurrentPositionAbsoluteX() + " , " + simulationPilot.getCurrentPositionAbsoluteY()+ " , " + simulationPilot.getAlpha() + "°, Map: " + simulationPilot.getMapString() + ")");
 			else
 				getSSG().updateCoordinates("Simulator (" + (x) + " , " + (y) + ")");
 
@@ -336,8 +407,8 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 */
 	private void paintUndergroundComponent(Graphics graph){
 
-		this.updateUndergroundCircle(this.getSimulationPilot().getLightsensorPositionX() - getShiftToTheRight(),
-				this.getSimulationPilot().getLightsensorPositionY() - getShiftDown(), 
+		this.updateUndergroundCircle(this.getSimulationPilot().getLightsensorPositionX()*scalingfactor - getShiftToTheRight(),
+				this.getSimulationPilot().getLightsensorPositionY()*scalingfactor - getShiftDown(), 
 				this.getSimulationPilot().getLightSensorValue());
 		if(this.getSimulationPilot().getLightSensorValue() < 45)
 			((Graphics2D) graph).setColor(Color.black);
@@ -350,11 +421,11 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		
 	}
 	
-	private void paintBarcodeComponent(Graphics graph) {
-			
+	private void paintBarcodeComponent(Graphics graph) {		
+		
 		//teken alle rectangles van alle barcodes
-		for (Tuple<String,Rectangle2D[]> t : barcodes) {
-			String rep = (String) t.getItem1();
+		for (Tuple t : getVisibleBarcode()) {
+			String rep = ((Barcode) t.getItem1()).toString();
 			Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
 			for (int i = 0; i < 8; i++) {
 				if(rep.charAt(i) == '0')
@@ -379,46 +450,72 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			((Graphics2D)graph).fill(endHighlight);
 		}
 	}
+	
+	public void setCheckHighlight(){
+		checkHighlight = new Rectangle(((Double)(simulationPilot.getCenterAbsoluteCurrentTile()[0]-20*scalingfactor)).intValue() - getShiftToTheRight(),((Double)(simulationPilot.getCenterAbsoluteCurrentTile()[1]-20*scalingfactor)).intValue() - getShiftDown(),(int) getSizeTile(),(int) getSizeTile());
+	}
+	
+	public void setEndHighlight(){
+		endHighlight = new Rectangle(((Double)(simulationPilot.getCenterAbsoluteCurrentTile()[0]-20*scalingfactor)).intValue() - getShiftToTheRight(),((Double)(simulationPilot.getCenterAbsoluteCurrentTile()[1]-20*scalingfactor)).intValue() - getShiftDown(),(int) getSizeTile(),(int) getSizeTile());  
+	}
 
 	public void setRobotLocation(double x, double y, double degrees){
-		x = x - this.getShiftToTheRight();
-		y = y - this.getShiftDown();
+		x = x*scalingfactor - getShiftToTheRight();
+		y = y*scalingfactor - getShiftDown();
+	//	System.out.println("xy = " + x + " " + y);
 		this.addCircle(x*1, y*1, degrees);
 	}
 
+	public void clearPath(){
+		triangle1 = new Triangle(triangle1.getGravityCenterX(), triangle1.getGravityCenterY(), triangle1.getAlpha(), scalingfactor);
+		triangle2 = new Triangle(triangle2.getGravityCenterX(), triangle2.getGravityCenterY(), triangle2.getAlpha(), scalingfactor);
+		getVisibleShapes().removeAllElements();	
+		getNotVisibleShapes().removeAllElements();
+		getVisibleShapes().add(triangle1);
+		getVisibleShapes().add(triangle2);
+	}
+	
 	/**
 	 * Deletes the former path of the robot
 	 */
-	public void clearPath() {
-
-		Shape triangle = getVisibleTriangle();
-		Shape triangletwo = getNotVisibleTriangle();
-		shapes.removeAllElements();		
-
-		shapes.add(triangle);
-		shapes.add(triangletwo);
+	public void resetPath() {
+		
+		getVisibleShapes().removeAllElements();	
+		getNotVisibleShapes().removeAllElements();
+		shiftToTheRight = 0;
+		shiftDown = 0;
+		scalingfactor = 1;
+		triangle1 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
+		triangle2 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
+		shapes1.add(triangle1);
+		shapes1.add(triangle2);
+		isVisibleObjects = 1;
 	}
 	
 	/**
 	 * Removes all Wall-objects this panel is keeping track of.
 	 */
 	public void removeWalls(){
-		walls.clear();
+		getVisibleWalls().clear();
+		getNotVisibleWalls().clear();
 	}
 
 	/**
 	 * Removes all Barcodes this panel is keeping track of.
 	 */
 	public void removeBarCodes() {
-		barcodes = new Bag<Tuple<String, Rectangle2D[]>>();
+		barcodes1 = new Bag<Tuple<Barcode, Rectangle2D[]>>();
+		barcodes2 = new Bag<Tuple<Barcode, Rectangle2D[]>>();
 	}
 	/**
 	 * Deletes the former path of the robot and all the walls that have been explored as yet.
 	 */
 	public void clearTotal() {
-		clearPath();
+		endHighlight = null;
+		checkHighlight = null;
+		resetPath();
 		removeWalls();
-		removeBarCodes();	
+		removeBarCodes();
 	}
 
 	/**
@@ -426,12 +523,10 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * Also calls clearTotal() and resets the triangles. (angle 270);
 	 */
 	public void resetMap(){
-		getSimulationPilot().reset();
-		SilverSurferGUI.getInformationBuffer().resetBuffer();
-		triangle1 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
-		triangle2 = new Triangle(5*getSizeTile() + getSizeTile()/2, 5*getSizeTile() + getSizeTile()/2, 270, scalingfactor);
-		mapGraphConstructed = new MapGraph();
 		clearTotal();
+		SSG.getInformationBuffer().resetBuffer();
+		mapGraphConstructed = new MapGraph();
+		getSimulationPilot().reset();
 
 	}
 	
@@ -468,23 +563,42 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		scaleWalls(scalingfactor);
 		scaleShapes(scalingfactor);
 		scaleBarcodes(scalingfactor);
-		getSimulationPilot().setStartPositionAbsoluteX(getSimulationPilot().getStartPositionAbsoluteX()*scalingfactor/this.getScalingfactor());
-		getSimulationPilot().setStartPositionAbsoluteY(getSimulationPilot().getStartPositionAbsoluteY()*scalingfactor/this.getScalingfactor());
+		scaleEndAndCheckTile(scalingfactor);
+		
+		if(waitingObjectsAreUpdated()){
+			setOtherObjectsVisible();
+		}
+		
+		isUpdatedShapes = false;
+		isUpdatedWalls = false;
+		isUpdatedBarcodes = false;
+		
+		getNotVisibleBarcode().empty();
+		getNotVisibleWalls().clear();
+		getNotVisibleShapes().removeAllElements();
+
 		this.scalingfactor = scalingfactor;
+
 	}
 	
+	
+	private void scaleEndAndCheckTile(double scalingfactor){
+		if(endHighlight != null){
+		endHighlight = new Rectangle((int) ((endHighlight.getX() + getShiftToTheRight())*scalingfactor/getScalingfactor() - getShiftToTheRight()), (int) ((endHighlight.getY() + getShiftDown())*scalingfactor/getScalingfactor() - getShiftDown()) , (int) (endHighlight.getHeight()*scalingfactor/getScalingfactor()), (int) (endHighlight.getWidth()*scalingfactor/getScalingfactor()));}
+		if(checkHighlight != null){
+		checkHighlight = new Rectangle((int) ((checkHighlight.getX() + getShiftToTheRight())*scalingfactor/getScalingfactor() - getShiftToTheRight()), (int) ((checkHighlight.getY() + getShiftDown())*scalingfactor/getScalingfactor() - getShiftDown()) , (int) (checkHighlight.getHeight()*scalingfactor/getScalingfactor()), (int) (checkHighlight.getWidth()*scalingfactor/getScalingfactor()));}	
+		}
 
 	/**
 	 * Updates the width/height/coordinates of the barcodes.
 	 */
 	private void scaleBarcodes(double scalingfactor) {
-		//to do: update coordinates
-		for (Tuple<String,Rectangle2D[]> t : barcodes) {
-			/*String rep = (String) */t.getItem1();
-			Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
-			for (int i = 0; i < 8; i++){
-				bc[i] = new Rectangle((int)(bc[i].getX()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getY()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getWidth()*scalingfactor/this.getScalingfactor()), (int)(bc[i].getHeight()*scalingfactor/this.getScalingfactor()));	
-			}
+		
+		
+		Bag<Tuple<Barcode, Rectangle2D[]>> storeBarcodes = new Bag<Tuple<Barcode, Rectangle2D[]>>();
+		
+		for(Tuple t : getVisibleBarcode()){
+			storeBarcodes.add(t);
 		}
 		//TODO
 //		if(checkHighlight != null){
@@ -499,25 +613,32 @@ public class SimulationJPanel extends JPanel implements Runnable {
 //			endHighlight = temp;
 //		}
 
+		for (Tuple t : storeBarcodes) {
+			Barcode barcode = (Barcode) t.getItem1();
+			int newX = (int) ((barcode.getDrawnCenterX() + getShiftToTheRight())*scalingfactor/getScalingfactor() - getShiftToTheRight());
+			int newY = (int) ((barcode.getDrawnCenterY() + getShiftDown())*scalingfactor/getScalingfactor() - getShiftDown());
+			Rectangle2D[] rect = Barcode.createVisualBarCode(barcode, newX, newY, 40*scalingfactor);
+			getNotVisibleBarcode().add(new Tuple<Barcode, Rectangle2D[]>(barcode, rect));
+		}
 		
+		isUpdatedBarcodes = true;
 
 	}
 	
 	private void scaleShapes(double scalingfactor){
-		for(Shape shape : shapes){
+
+		for(Shape shape : getVisibleShapes()){
 			if(shape instanceof Triangle){
-				((Triangle) shape).setScalingfactor(scalingfactor);
 				
-				double newGravityCenterX = ((Triangle) shape).getGravityCenterX()*scalingfactor/this.getScalingfactor();
-				double newGravityCenterY = ((Triangle) shape).getGravityCenterY()*scalingfactor/this.getScalingfactor();
-				
+				double newGravityCenterX = (((Triangle) shape).getGravityCenterX() + getShiftToTheRight())*scalingfactor/this.getScalingfactor() - getShiftToTheRight();
+				double newGravityCenterY = (((Triangle) shape).getGravityCenterY() + getShiftDown())*scalingfactor/this.getScalingfactor() - getShiftDown();
+
 				((Triangle) shape).setGravityCenterX(newGravityCenterX);
 				((Triangle) shape).setGravityCenterY(newGravityCenterY);
+				((Triangle) shape).setScalingfactor(scalingfactor);
 				
-				if(((Triangle) shape).equals(getVisibleTriangle())){
-					getSimulationPilot().setCurrentPositionAbsoluteX(newGravityCenterX);
-					getSimulationPilot().setCurrentPositionAbsoluteY(newGravityCenterY);
-				}
+				
+				getNotVisibleShapes().add(shape);
 				
 			}
 			
@@ -527,35 +648,39 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				double OldYCoordinate = ((Ellipse2D.Double) shape).getY() + oldDiam/2;
 				
 				double newDiam = oldDiam*scalingfactor/this.getScalingfactor();
-				double newXCoordinate = (OldXCoordinate - (newDiam/2))*scalingfactor/this.getScalingfactor();
-				double newYCoordinate = (OldYCoordinate - (newDiam/2))*scalingfactor/this.getScalingfactor();
+				double newXCoordinate = ((OldXCoordinate - (newDiam/2)) + getShiftToTheRight())*scalingfactor/this.getScalingfactor() - getShiftToTheRight();
+				double newYCoordinate = ((OldYCoordinate - (newDiam/2)) + getShiftDown())*scalingfactor/this.getScalingfactor() - getShiftDown();
 				
-				((Ellipse2D.Double) shape).setFrame(newXCoordinate, newYCoordinate, newDiam, newDiam);				
+				Ellipse2D.Double circle = new Ellipse2D.Double(newXCoordinate, newYCoordinate, newDiam, newDiam);
+
+				getNotVisibleShapes().add(circle);
 			}			
 		}
+		isUpdatedShapes = true;
 	}
 	
 	private void scaleWalls(double scalingfactor){
-		
-		Vector<Point2D> oldPoints = new Vector<Point2D>();
-		for(Point2D point: walls.keySet()){
+
+		Vector oldPoints = new Vector<Point2D>();
+		for(Point2D point: getVisibleWalls().keySet()){
 			oldPoints.add(point);
 		}
 		
 		for(Object point: oldPoints){
 			
-			Wall wall = walls.get(point);
+			Wall wall = getVisibleWalls().get(point);
 			
-			int whichXTile = (int) Math.round(((Point2D) point).getX()/getSizeTile());
-			int whichYTile = (int) Math.round(((Point2D) point).getY()/getSizeTile());
+			double pointWithoutShiftX = ((Point2D) point).getX() + getShiftToTheRight();
+			double pointWithoutShiftY = ((Point2D) point).getY() + getShiftDown();
 			
-			double newXCoordinate = whichXTile*(40*scalingfactor);
-			double newYCoordinate = whichYTile*(40*scalingfactor);
+			int whichXTile = (int) Math.round(pointWithoutShiftX/getSizeTile());
+			int whichYTile = (int) Math.round(pointWithoutShiftY/getSizeTile());
+			
+			double newXCoordinate = whichXTile*(40*scalingfactor) - getShiftToTheRight();
+			double newYCoordinate = whichYTile*(40*scalingfactor) - getShiftDown();
 			
 			int newWidth = (int) Math.round((wall.getWidth()*scalingfactor/this.getScalingfactor()));
 			int newHeight = (int) Math.round((wall.getHeight()*scalingfactor/this.getScalingfactor()));
-			
-			wall.setSize(newWidth, newHeight);
 			
 			if(wall.getState()==State.HORIZONTAL){
 				newYCoordinate = newYCoordinate - (Wall.getStandardWidth() * scalingfactor)/2;
@@ -565,11 +690,13 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				newXCoordinate = newXCoordinate - (Wall.getStandardWidth() * scalingfactor)/2;
 			}
 			
-			wall.setLocation((int) newXCoordinate, (int) newYCoordinate);
-			walls.remove(point);
-			walls.put(new Point2D.Double(newXCoordinate, newYCoordinate), wall);
+			Wall newWall = new Wall(wall.getState(), newXCoordinate, newYCoordinate, newWidth, newHeight);
+			
+			getNotVisibleWalls().put(new Point2D.Double(newXCoordinate, newYCoordinate), newWall);
 
 		}
+		
+		isUpdatedWalls = true;
 		
 	}
 	
@@ -577,10 +704,27 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		return shiftToTheRight;
 	}
 	
-	public void setShiftToTheRigth(int shiftRight){
+	
+	
+	public void setShiftToTheRight(int shiftRight){
 		this.shiftToTheRight = this.shiftToTheRight + shiftRight;
+		shiftBarcodes(true, shiftRight);
 		shiftWalls(true, shiftRight);
 		shiftShapes(true, shiftRight);
+		shiftEndAndCheckTile(true, shiftRight);
+		
+		if(waitingObjectsAreUpdated()){
+			setOtherObjectsVisible();
+		}
+		
+		isUpdatedShapes = false;
+		isUpdatedWalls = false;	
+		isUpdatedBarcodes = false;
+		
+		getNotVisibleBarcode().empty();
+		getNotVisibleWalls().clear();
+		getNotVisibleShapes().removeAllElements();
+		
 	}
 	
 	public int getShiftDown(){
@@ -588,20 +732,79 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	}
 	
 	public void setShiftDown(int shiftDown){
-		this.shiftDown = shiftDown;
+		this.shiftDown = this.shiftDown + shiftDown;
 		shiftWalls(false, shiftDown);
 		shiftShapes(false, shiftDown );
+		shiftBarcodes(false, shiftDown);
+		shiftEndAndCheckTile(false, shiftDown);
+		
+		setOtherObjectsVisible();		
+		
+		isUpdatedShapes = false;
+		isUpdatedWalls = false;	
+		isUpdatedBarcodes = false;
+		
+		getNotVisibleBarcode().empty();
+		getNotVisibleWalls().clear();
+		getNotVisibleShapes().removeAllElements();
 	}
 
+	private void shiftEndAndCheckTile(boolean shiftHorizontal, int shift){
+		if(shiftHorizontal){
+			if(endHighlight != null){
+		endHighlight = new Rectangle((int) (endHighlight.getX() - shift), (int) endHighlight.getY(), (int) endHighlight.getHeight(), (int) endHighlight.getWidth());}
+			if(checkHighlight != null){
+		checkHighlight = new Rectangle((int) (checkHighlight.getX() - shift), (int) checkHighlight.getY(), (int) checkHighlight.getHeight(), (int) checkHighlight.getWidth());
+			}
+			}
+		else{
+		if(endHighlight != null){
+		endHighlight = new Rectangle((int) endHighlight.getX(), (int) (endHighlight.getY() - shift), (int) endHighlight.getHeight(), (int) endHighlight.getWidth());}
+		if(checkHighlight != null){
+		checkHighlight = new Rectangle((int) checkHighlight.getX(), (int) (checkHighlight.getY()-shift), (int) checkHighlight.getHeight(), (int) checkHighlight.getWidth());
+		}}
+		}
+	
+	private void shiftBarcodes(boolean shiftHorizontal, int shift){
+		
+		Bag<Tuple<Barcode, Rectangle2D[]>> storeBarcodes = new Bag<Tuple<Barcode, Rectangle2D[]>>();
+		
+		for(Tuple t : getVisibleBarcode()){
+			storeBarcodes.add(t);
+		}
+		
+		
+
+		for (Tuple t : storeBarcodes) {
+			Barcode barcode = (Barcode) t.getItem1();
+			
+			int newX = (int) (barcode.getDrawnCenterX());
+			int newY = (int) (barcode.getDrawnCenterY());
+			
+			if(shiftHorizontal){
+				newX = newX - shift;
+			}
+			else{
+				newY = newY - shift;
+			}
+
+			Rectangle2D[] rect = Barcode.createVisualBarCode(barcode, newX, newY, getSizeTile());
+			getNotVisibleBarcode().add(new Tuple<Barcode, Rectangle2D[]>(barcode, rect));
+		}
+		
+		isUpdatedBarcodes = true;
+		
+	}
+	
 	private void shiftWalls(boolean shiftHorizontal, int shift) {
-		Vector<Point2D> oldPoints = new Vector<Point2D>();
-		for(Point2D point: walls.keySet()){
+		Vector oldPoints = new Vector<Point2D>();
+		for(Point2D point: getVisibleWalls().keySet()){
 			oldPoints.add(point);
 		}
 		
 		for(Object point: oldPoints){
 			
-			Wall wall = walls.get(point);
+			Wall wall = getVisibleWalls().get(point);
 			
 			double newXCoordinate = ((Point2D.Double) point).getX();
 			double newYCoordinate = ((Point2D.Double) point).getY();
@@ -612,17 +815,20 @@ public class SimulationJPanel extends JPanel implements Runnable {
 			else{
 				newYCoordinate = wall.getY()-shift;
 			}
-			wall.setLocation((int) newXCoordinate, (int) wall.getY());
+			wall.setLocation((int) newXCoordinate, (int) newYCoordinate);
 			
-			walls.remove(point);
-			walls.put(new Point2D.Double(newXCoordinate, newYCoordinate), wall);
-
+			getNotVisibleWalls().put(new Point2D.Double(newXCoordinate, newYCoordinate), wall);
 		}
+		
+		isUpdatedWalls = true;	
 	}
 	
 	private void shiftShapes(boolean shiftHorizontal, int shift) {
-		for(Shape shape : shapes){
-			if(shape instanceof Triangle){	
+		
+		Vector<Shape> newShapes = new Vector<Shape>();
+		
+		for(Shape shape : getVisibleShapes()){
+			if(shape instanceof Triangle){
 				
 				double newGravityCenterX = ((Triangle) shape).getGravityCenterX();
 				double newGravityCenterY = ((Triangle) shape).getGravityCenterY();
@@ -636,7 +842,10 @@ public class SimulationJPanel extends JPanel implements Runnable {
 				
 				((Triangle) shape).setGravityCenterX(newGravityCenterX);
 				((Triangle) shape).setGravityCenterY(newGravityCenterY);
+				
+//				Triangle triangle = new Triangle(newGravityCenterX, newGravityCenterY, ((Triangle) shape).getAlpha(), ((Triangle) shape).getScalingfactor());
 
+				getNotVisibleShapes().add(shape);				
 				}
 			
 			else{
@@ -651,9 +860,14 @@ public class SimulationJPanel extends JPanel implements Runnable {
 					newYCoordinate = newYCoordinate-shift;
 					}
 				
-				((Ellipse2D.Double) shape).setFrame(newXCoordinate, newYCoordinate, diam, diam);				
+				Ellipse2D.Double circle = new Ellipse2D.Double(newXCoordinate, newYCoordinate, diam, diam);	
+				
+				getNotVisibleShapes().add(circle);
 			}			
 		}
+		
+		isUpdatedShapes = true;
+		
 	}
 //	
 //	/**
@@ -690,17 +904,24 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * Voegt een barcode toe aan de bag met barcodes.
 	 * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld zijn.
 	 */
-	public void addBarcode(String stringRepr,  Rectangle2D[] visual){
-		barcodes.add(new Tuple<String, Rectangle2D[]>(stringRepr, visual));
+	public void addBarcode(Barcode barcode,  Rectangle2D[] visual){
+		getVisibleBarcode().add(new Tuple<Barcode, Rectangle2D[]>(barcode, visual));
 	}
+	
+	public void setBarcode(Barcode barcode){
 
+			if(!barcode.isDrawn())	{
+			Rectangle2D[] rect = Barcode.createVisualBarCode(barcode,getSimulationPilot().getCenterAbsoluteCurrentTile()[0] - getShiftToTheRight(),getSimulationPilot().getCenterAbsoluteCurrentTile()[1] - getShiftDown(), getSizeTile());
+					addBarcode(barcode, rect);
+				}
+			}
 
 	public void setWall(Point2D point, Wall wall){
-		walls.put(point, wall);
+		getVisibleWalls().put(point, wall);
 	}
 
 	public void removeWallFrom(Point2D point){
-		walls.remove(point);
+		getVisibleWalls().remove(point);
 	}
 
 	public void setTile(int x, int y){
@@ -734,8 +955,9 @@ public class SimulationJPanel extends JPanel implements Runnable {
 	 * tot op een veelvoud van 40)
 	 */
 	private Point2D calculateWallPoint(Orientation orientation, double x, double y){
-		double xCoordinate = (Math.floor(x/getSizeTile())*getSizeTile());
-		double yCoordinate = (Math.floor(y/getSizeTile())*getSizeTile());
+		
+		double xCoordinate = (Math.floor(x/40)*getSizeTile());
+		double yCoordinate = (Math.floor(y/40)*getSizeTile());
 		
 		if(orientation.equals(Orientation.NORTH)){
 			yCoordinate = yCoordinate - (Wall.getStandardWidth() * scalingfactor)/2;
@@ -755,10 +977,30 @@ public class SimulationJPanel extends JPanel implements Runnable {
 		return point;
 	}
 
+	private int lastMousePositionX;
+	private int lastMousePositionY;
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		setShiftDown(lastMousePositionY - (int) e.getPoint().getY());
+		setShiftToTheRight(lastMousePositionX - (int) e.getPoint().getX());
+		lastMousePositionX = (int) e.getPoint().getX();
+		lastMousePositionY = (int) e.getPoint().getY();	
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		lastMousePositionX = (int) e.getPoint().getX();
+		lastMousePositionY = (int) e.getPoint().getY();
+	}
+
+}
+
 //	public BufferedImage getVerticalWallImage() {
 //		return verticalWallImage;
 //	}
 //	public BufferedImage getHorizontalWallImage() {
 //		return horizontalWallImage;
 //	}
-}
+

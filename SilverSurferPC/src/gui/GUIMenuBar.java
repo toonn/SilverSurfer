@@ -333,9 +333,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                gui.getSimulationPanel().removeWalls();
-                gui.getSimulationPanel().removeBarCodes();
-                gui.getSimulationPanel().clearPath();
+                gui.getSimulationPanel().resetMap();
                 SilverSurferGUI.clearScreen();
 
             }
@@ -372,7 +370,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                gui.getSimulationPanel().clearPath();
+                gui.getSimulationPanel().resetPath();
 
             }
         });

@@ -376,8 +376,6 @@ public class StatusInfoBuffer {
     public void setBarcode(int barcode) {
         Barcode scanned = new Barcode(barcode, SSG.getSimulationPanel()
                 .getSimulationPilot().getCurrentOrientation());
-        int[] center = SSG.getSimulationPanel().getSimulationPilot()
-                .getCenterAbsoluteCurrentTile();
         SSG.getSimulationPanel()
                 .getMapGraphConstructed()
                 .getTileWithCoordinates(
@@ -386,9 +384,7 @@ public class StatusInfoBuffer {
                         getSSG().getCommunicator().getSimulationPilot()
                                 .getCurrentPositionRelativeY())
                 .setContent(scanned);
-        Rectangle2D[] visualBarcode = Barcode.createVisualBarCode(scanned,
-                center[0], center[1]);
-        SSG.getSimulationPanel().addBarcode(scanned.toString(), visualBarcode);
+        SSG.getSimulationPanel().setBarcode(scanned);
         this.barcode = barcode;
         SSG.executeBarcode();
     }

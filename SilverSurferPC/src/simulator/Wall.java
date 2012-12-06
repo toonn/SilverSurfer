@@ -41,6 +41,13 @@ public class Wall extends Rectangle {
         setLocation((int) xPosition, (int) yPosition);
 
     }
+    
+    
+    public Wall(State state, double newXCoordinate, double newYCoordinate, int newWidth, int newHeight){
+    	setLocation((int) newXCoordinate, (int) newYCoordinate);
+    	setSize(newWidth, newHeight);
+    	this.state = state;
+    }
 
     public State getState() {
         return state;

@@ -15,7 +15,7 @@ public class ShiftThread extends Thread {
 	public void run() {
 				
 		if(horizontal){
-			simulationPanel.setShiftToTheRigth(shift);
+			simulationPanel.setShiftToTheRight(shift);
 		}
 		else{
 			simulationPanel.setShiftDown(shift);

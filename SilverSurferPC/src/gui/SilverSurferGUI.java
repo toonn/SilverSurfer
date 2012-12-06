@@ -370,7 +370,7 @@ public class SilverSurferGUI {
 
     protected static void clearScreen() {
         System.out.println("[GUI] Screen cleared.");
-        simulationPanel.clearPath();
+        simulationPanel.resetPath();
     }
 
     public static void changeSpeed(int value) {
