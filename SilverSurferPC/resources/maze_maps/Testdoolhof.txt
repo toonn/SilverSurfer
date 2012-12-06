@@ -1,0 +1,7 @@
+4 4
+
+# Test
+Corner.N	Straight.W	T.N		Corner.E
+T.W		Straight.W.25	Corner.S	Straight.N
+Straight.N	Corner.N	Straight.W.22	T.E
+Corner.W	T.S		Straight.W	Corner.S

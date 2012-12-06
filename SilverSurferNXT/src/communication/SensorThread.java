@@ -12,7 +12,7 @@ public class SensorThread extends Thread {
     @Override
     public void run() {
         while (!quit) {
-            // CU.updateStatus();
+            CU.updateStatus();
             try {
                 Thread.sleep(100);
             } catch (Exception e) {

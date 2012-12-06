@@ -1,5 +1,6 @@
 package gui;
 
+import commands.Command;
 import communication.*;
 import simulator.*;
 
@@ -25,9 +26,7 @@ public class SilverSurferGUI {
     private static JSpinner length;
     private static JButton moveButton;
 
-    private static JButton lookAroundButton;
-    private static JButton alignWhiteLineButton;
-    private static JButton alignWall;
+    private static JButton readBarcode;
 
     private static JLabel infoLabel1;
     private static JLabel infoLabel2;
@@ -52,7 +51,7 @@ public class SilverSurferGUI {
 
         JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
-        // JPanel otherPanel = otherPanel();
+        JPanel otherPanel = otherPanel();
         JPanel infoPanel = infoPanel();
         JPanel mappingPanel = mappingPanel();
         // JPanel consolePanel = consolePanel();
@@ -71,6 +70,7 @@ public class SilverSurferGUI {
                                         GroupLayout.Alignment.CENTER)
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
+                                .addComponent(otherPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout
@@ -84,6 +84,7 @@ public class SilverSurferGUI {
                         frameLayout.createSequentialGroup()
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
+                                .addComponent(otherPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout.createSequentialGroup()
@@ -191,30 +192,26 @@ public class SilverSurferGUI {
         return directionPanel;
     }
 
-    // private JPanel otherPanel() {
-    // lookAroundButton = new JButton("Look Around");
-    // alignWhiteLineButton = new JButton("Align on white line");
-    // alignWall = new JButton("Align on walls");
-    //
-    // JPanel otherPanel = new JPanel();
-    // otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-    // "Other"));
-    // otherPanel.setOpaque(false);
-    //
-    // GroupLayout otherLayout = new GroupLayout(otherPanel);
-    // otherPanel.setLayout(otherLayout);
-    // otherLayout.setAutoCreateGaps(true);
-    // otherLayout.setAutoCreateContainerGaps(true);
-    // otherLayout.setHorizontalGroup(otherLayout
-    // .createParallelGroup(GroupLayout.Alignment.CENTER)
-    // .addComponent(lookAroundButton)
-    // .addComponent(alignWhiteLineButton).addComponent(alignWall));
-    // otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
-    // .addComponent(lookAroundButton)
-    // .addComponent(alignWhiteLineButton).addComponent(alignWall));
-    //
-    // return otherPanel;
-    // }
+     private JPanel otherPanel() {
+    	 readBarcode = new JButton("Read barcode");
+    
+     JPanel otherPanel = new JPanel();
+     otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+     "Other"));
+     otherPanel.setOpaque(false);
+    
+     GroupLayout otherLayout = new GroupLayout(otherPanel);
+     otherPanel.setLayout(otherLayout);
+     otherLayout.setAutoCreateGaps(true);
+     otherLayout.setAutoCreateContainerGaps(true);
+     otherLayout.setHorizontalGroup(otherLayout
+     .createParallelGroup(GroupLayout.Alignment.CENTER)
+     .addComponent(readBarcode));
+     otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
+     .addComponent(readBarcode));
+    
+     return otherPanel;
+     }
 
     private JPanel infoPanel() {
         infoLabel1 = new JLabel("", JLabel.CENTER);
@@ -253,14 +250,20 @@ public class SilverSurferGUI {
     }
 
     public void updateStatus() {
-        int ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
-                .getUltraSensorValue();
-        int lightSensorValue = getSimulationPanel().getSimulationPilot()
-                .getLightSensorValue();
-
+    	int ultrasonicSensorValue;
+    	int lightSensorValue;
+    	
+    	if(!getCommunicator().getRobotConnected()) {
+    		ultrasonicSensorValue = getSimulationPanel().getSimulationPilot().getUltraSensorValue();
+    		lightSensorValue = getSimulationPanel().getSimulationPilot().getLightSensorValue();
+    	}
+    	else {
+    		ultrasonicSensorValue = getInformationBuffer().getLatestUltraSensorInfo();
+    		lightSensorValue = getInformationBuffer().getLatestLightSensorInfo();
+    	}
+    	
         try {
-            sensorGraph
-                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
+            sensorGraph.addSensorValues(ultrasonicSensorValue, lightSensorValue);
         } catch (NullPointerException e) {
             // TODO: handle exception + uncomment
         }
@@ -531,36 +534,36 @@ public class SilverSurferGUI {
                 MTT.start();
             }
         });
-        // lookAroundButton.addMouseListener(new MouseListener() {
-        // @Override
-        // public void mouseReleased(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseExited(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseEntered(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseClicked(MouseEvent e) {
-        // System.out.println(communicator.getConsoleTag()
-        // + " Looking around for obstructions.");
-        // MoveTurnThread MTT = new MoveTurnThread("MTT");
-        // MTT.setCommunicator(communicator);
-        // MTT.setLength(0);
-        // MTT.setAngles(0);
-        // MTT.setAmtOfAngles(0);
-        // MTT.setCommand(Command.LOOK_AROUND);
-        // MTT.start();
-        // }
-        // });
+        readBarcode.addMouseListener(new MouseListener() {
+        	@Override
+        	public void mouseReleased(MouseEvent e) {
+        	}
+        	
+        	@Override
+        	public void mousePressed(MouseEvent e) {
+        	}
+        	
+        	@Override
+        	public void mouseExited(MouseEvent e) {
+        	}
+        	
+        	@Override
+        	public void mouseEntered(MouseEvent e) {
+        	}
+        	
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		System.out.println(communicator.getConsoleTag()
+        				+ " Reading barcode.");
+        		MoveTurnThread MTT = new MoveTurnThread("MTT");
+        		MTT.setCommunicator(communicator);
+        		MTT.setLength(0);
+        		MTT.setAngles(0);
+        		MTT.setAmtOfAngles(0);
+        		MTT.setCommand(Command.READ_CURRENT_BARCODE);
+        		MTT.start();
+        	}
+        });
         // alignWhiteLineButton.addMouseListener(new MouseListener() {
         // @Override
         // public void mouseReleased(MouseEvent e) {

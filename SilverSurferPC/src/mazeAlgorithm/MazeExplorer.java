@@ -44,6 +44,7 @@ public class MazeExplorer {
 		gui.getCommunicator().sendCommand(Command.READ_BARCODES);
 		//TODO test shortestPath op't einde.
 		if(getCheckTile() != null && getEndTile() != null) {
+			SilverSurferGUI.changeSpeed(3);
 			//Drive to checkpoint.
 			gui.getSimulationPanel().clearPath();
 			ShortestPath almostFinalPath = new ShortestPath(gui, gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getInformationBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getInformationBuffer().getYCoordinateRelative()) ,getCheckTile(), allTiles);
@@ -122,13 +123,15 @@ public class MazeExplorer {
 		
 		numberVariable = number;
 		
+		//update robot tilecoordinates
+		if(gui.getCommunicator().getRobotConnected())
+			gui.getCommunicator().getSimulationPilot().setCurrentTileCoordinatesRobot(gui.getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteX(), gui.getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteY());
+		
 		for(int i = 0; i < 4 ; i++){
 			currentOrientation = gui.getCommunicator().getSimulationPilot().getCurrentOrientation();
 			if(whichTilesAllreadyBeen[numberVariable] != 0) {
 				double angle = (((numberVariable - currentOrientation.getNumberArray()) * 90)+360)%360;
-				System.out.println("ANGLE1: " + currentOrientation + " " + angle);
 				angle = ExtMath.getSmallestAngle(angle);
-				System.out.println("ANGLE2: " + currentOrientation + " " + angle);
 				gui.getCommunicator().sendCommand((int) (angle*10)*10 + Command.AUTOMATIC_TURN_ANGLE);
 				gui.getCommunicator().sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
 			}

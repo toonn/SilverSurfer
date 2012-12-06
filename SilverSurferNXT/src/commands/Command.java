@@ -15,4 +15,5 @@ public class Command {
 	public static final int PLAY_SONG = 10;
 	public static final int CHECK_OBSTRUCTIONS_AND_SET_TILE = 11;
 	public static final int READ_BARCODES = 12;
+	public static final int READ_CURRENT_BARCODE = 13;
 }
