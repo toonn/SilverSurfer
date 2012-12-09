@@ -120,22 +120,28 @@ public class SilverSurferGUI {
     }
 
     private JPanel scalePanel() {
-        ZoomInButton = new JButton("Zoom in");
-        ZoomOutButton = new JButton("Zoom out");
+        ImageIcon MagnifyIcon = new ImageIcon(
+                "resources/magnifiers/Magnify.png", "A magnifier");
+        ZoomInButton = new JButton(MagnifyIcon);
+        ZoomInButton.setBorderPainted(false);
+        ImageIcon DeMagnifyIcon = new ImageIcon(
+                "resources/magnifiers/Demagnify.png", "A demagnifier");
+        ZoomOutButton = new JButton(DeMagnifyIcon);
+        ZoomOutButton.setBorderPainted(false);
 
         JPanel scalePanel = new JPanel();
-        scalePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                "Zoom"));
+        // scalePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+        // "Zoom"));
         scalePanel.setOpaque(false);
 
         GroupLayout scaleLayout = new GroupLayout(scalePanel);
         scalePanel.setLayout(scaleLayout);
         scaleLayout.setAutoCreateGaps(true);
         scaleLayout.setAutoCreateContainerGaps(true);
-        scaleLayout.setHorizontalGroup(scaleLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
+        scaleLayout.setHorizontalGroup(scaleLayout.createSequentialGroup()
                 .addComponent(ZoomInButton).addComponent(ZoomOutButton));
-        scaleLayout.setVerticalGroup(scaleLayout.createSequentialGroup()
+        scaleLayout.setVerticalGroup(scaleLayout
+                .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(ZoomInButton).addComponent(ZoomOutButton));
 
         return scalePanel;
@@ -147,71 +153,98 @@ public class SilverSurferGUI {
         SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0, 1080, 1);
         angle = new JSpinner(angleModel);
 
-        turnLeftButton = new JButton("Turn left");
-        turnRightButton = new JButton("Turn right");
+        ImageIcon turnLeftIcon = new ImageIcon(
+                "resources/direction_arrows/turnleft.png",
+                "A leftward turning arrow");
+        turnLeftButton = new JButton(turnLeftIcon);
+        turnLeftButton.setBorderPainted(false);
+        ImageIcon turnRightIcon = new ImageIcon(
+                "resources/direction_arrows/turnright.png",
+                "A rightward turning arrow");
+        turnRightButton = new JButton(turnRightIcon);
+        turnRightButton.setBorderPainted(false);
 
         JLabel lengthLabel = new JLabel("Length (centimeters)", JLabel.CENTER);
 
         SpinnerNumberModel lenghtModel = new SpinnerNumberModel(24, 0, 1000, 1);
         length = new JSpinner(lenghtModel);
 
-        moveButton = new JButton("Move");
+        ImageIcon moveIcon = new ImageIcon(
+                "resources/direction_arrows/move.png", "A straightahead arrow");
+        moveButton = new JButton(moveIcon);
+        moveButton.setBorderPainted(false);
 
         JPanel directionPanel = new JPanel();
-        directionPanel.setBorder(BorderFactory.createTitledBorder(
-                createBorder(), "Turn and Move"));
+        // directionPanel.setBorder(BorderFactory.createTitledBorder(
+        // createBorder(), "Turn and Move"));
         directionPanel.setOpaque(false);
 
         GroupLayout directionLayout = new GroupLayout(directionPanel);
         directionPanel.setLayout(directionLayout);
         directionLayout.setAutoCreateGaps(true);
         directionLayout.setAutoCreateContainerGaps(true);
-        directionLayout.setHorizontalGroup(directionLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(angleLabel)
-                .addComponent(angle)
-                .addGroup(
-                        directionLayout.createSequentialGroup()
-                                .addComponent(turnLeftButton)
-                                .addComponent(turnRightButton))
-                .addComponent(lengthLabel).addComponent(length)
-                .addComponent(moveButton));
-        directionLayout.setVerticalGroup(directionLayout
-                .createSequentialGroup()
-                .addComponent(angleLabel)
-                .addComponent(angle)
-                .addGroup(
-                        directionLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
-                                .addComponent(turnLeftButton)
-                                .addComponent(turnRightButton))
-                .addComponent(lengthLabel).addComponent(length)
-                .addComponent(moveButton));
+        directionLayout
+                .setHorizontalGroup(directionLayout
+                        .createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(angleLabel)
+                        .addGroup(
+                                directionLayout.createSequentialGroup()
+                                        .addComponent(angle)
+                                        .addComponent(turnLeftButton)
+                                        .addComponent(turnRightButton))
+                        .addComponent(lengthLabel)
+                        .addGroup(
+                                directionLayout.createSequentialGroup()
+                                        .addComponent(length)
+                                        .addComponent(moveButton)));
+        directionLayout
+                .setVerticalGroup(directionLayout
+                        .createSequentialGroup()
+                        .addComponent(angleLabel)
+                        .addGroup(
+                                directionLayout
+                                        .createParallelGroup(
+                                                GroupLayout.Alignment.CENTER)
+                                        .addComponent(angle)
+                                        .addComponent(turnLeftButton)
+                                        .addComponent(turnRightButton))
+                        .addComponent(lengthLabel)
+                        .addGroup(
+                                directionLayout
+                                        .createParallelGroup(
+                                                GroupLayout.Alignment.CENTER)
+                                        .addComponent(length)
+                                        .addComponent(moveButton)));
 
         return directionPanel;
     }
 
-     private JPanel otherPanel() {
-    	 readBarcode = new JButton("Read barcode");
-    
-     JPanel otherPanel = new JPanel();
-     otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-     "Other"));
-     otherPanel.setOpaque(false);
-    
-     GroupLayout otherLayout = new GroupLayout(otherPanel);
-     otherPanel.setLayout(otherLayout);
-     otherLayout.setAutoCreateGaps(true);
-     otherLayout.setAutoCreateContainerGaps(true);
-     otherLayout.setHorizontalGroup(otherLayout
-     .createParallelGroup(GroupLayout.Alignment.CENTER)
-     .addComponent(readBarcode));
-     otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
-     .addComponent(readBarcode));
-    
-     return otherPanel;
-     }
+    private JPanel otherPanel() {
+        ImageIcon barcodeIcon = new ImageIcon(
+                "resources/barcode/ScanBarcode.png", "A barcode");
+        readBarcode = new JButton("Scan Barcode", barcodeIcon);
+        readBarcode.setFont(new Font(readBarcode.getFont().getName(),
+                Font.BOLD, 12));
+        readBarcode.setVerticalTextPosition(SwingConstants.BOTTOM);
+        readBarcode.setHorizontalTextPosition(SwingConstants.CENTER);
+        readBarcode.setBorderPainted(false);
+
+        JPanel otherPanel = new JPanel();
+        // otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+        // "Other"));
+        otherPanel.setOpaque(false);
+
+        GroupLayout otherLayout = new GroupLayout(otherPanel);
+        otherPanel.setLayout(otherLayout);
+        otherLayout.setAutoCreateGaps(true);
+        otherLayout.setAutoCreateContainerGaps(true);
+        otherLayout.setHorizontalGroup(otherLayout.createParallelGroup(
+                GroupLayout.Alignment.CENTER).addComponent(readBarcode));
+        otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
+                .addComponent(readBarcode));
+
+        return otherPanel;
+    }
 
     private JPanel infoPanel() {
         infoLabel1 = new JLabel("", JLabel.CENTER);
@@ -250,20 +283,24 @@ public class SilverSurferGUI {
     }
 
     public void updateStatus() {
-    	int ultrasonicSensorValue;
-    	int lightSensorValue;
-    	
-    	if(!getCommunicator().getRobotConnected()) {
-    		ultrasonicSensorValue = getSimulationPanel().getSimulationPilot().getUltraSensorValue();
-    		lightSensorValue = getSimulationPanel().getSimulationPilot().getLightSensorValue();
-    	}
-    	else {
-    		ultrasonicSensorValue = getInformationBuffer().getLatestUltraSensorInfo();
-    		lightSensorValue = getInformationBuffer().getLatestLightSensorInfo();
-    	}
-    	
+        int ultrasonicSensorValue;
+        int lightSensorValue;
+
+        if (!getCommunicator().getRobotConnected()) {
+            ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
+                    .getUltraSensorValue();
+            lightSensorValue = getSimulationPanel().getSimulationPilot()
+                    .getLightSensorValue();
+        } else {
+            ultrasonicSensorValue = getInformationBuffer()
+                    .getLatestUltraSensorInfo();
+            lightSensorValue = getInformationBuffer()
+                    .getLatestLightSensorInfo();
+        }
+
         try {
-            sensorGraph.addSensorValues(ultrasonicSensorValue, lightSensorValue);
+            sensorGraph
+                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
         } catch (NullPointerException e) {
             // TODO: handle exception + uncomment
         }
@@ -535,34 +572,34 @@ public class SilverSurferGUI {
             }
         });
         readBarcode.addMouseListener(new MouseListener() {
-        	@Override
-        	public void mouseReleased(MouseEvent e) {
-        	}
-        	
-        	@Override
-        	public void mousePressed(MouseEvent e) {
-        	}
-        	
-        	@Override
-        	public void mouseExited(MouseEvent e) {
-        	}
-        	
-        	@Override
-        	public void mouseEntered(MouseEvent e) {
-        	}
-        	
-        	@Override
-        	public void mouseClicked(MouseEvent e) {
-        		System.out.println(communicator.getConsoleTag()
-        				+ " Reading barcode.");
-        		MoveTurnThread MTT = new MoveTurnThread("MTT");
-        		MTT.setCommunicator(communicator);
-        		MTT.setLength(0);
-        		MTT.setAngles(0);
-        		MTT.setAmtOfAngles(0);
-        		MTT.setCommand(Command.READ_CURRENT_BARCODE);
-        		MTT.start();
-        	}
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println(communicator.getConsoleTag()
+                        + " Reading barcode.");
+                MoveTurnThread MTT = new MoveTurnThread("MTT");
+                MTT.setCommunicator(communicator);
+                MTT.setLength(0);
+                MTT.setAngles(0);
+                MTT.setAmtOfAngles(0);
+                MTT.setCommand(Command.READ_CURRENT_BARCODE);
+                MTT.start();
+            }
         });
         // alignWhiteLineButton.addMouseListener(new MouseListener() {
         // @Override
