@@ -9,10 +9,6 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import lejos.pc.tools.SensorPanel;
-
-import org.apache.bcel.generic.GETSTATIC;
-
 public class SilverSurferGUI {
 
     private static JFrame frame;
@@ -30,9 +26,7 @@ public class SilverSurferGUI {
     private static JSpinner length;
     private static JButton moveButton;
 
-    private static JButton lookAroundButton;
-    private static JButton alignWhiteLineButton;
-    private static JButton alignWall;
+    private static JButton readBarcode;
 
     private static JLabel infoLabel1;
     private static JLabel infoLabel2;
@@ -57,7 +51,7 @@ public class SilverSurferGUI {
 
         JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
-        JPanel otherPanel = otherPanel();
+        JPanel otherPanel = barcodePanel();
         JPanel infoPanel = infoPanel();
         JPanel mappingPanel = mappingPanel();
         // JPanel consolePanel = consolePanel();
@@ -114,7 +108,7 @@ public class SilverSurferGUI {
         barDecoder = new BarDecoder(communicator);
 
         changeSpeed(2);
-        updateStatus();
+        // updateStatus();
     }
 
     public JFrame getFrame() {
@@ -126,22 +120,32 @@ public class SilverSurferGUI {
     }
 
     private JPanel scalePanel() {
-        ZoomInButton = new JButton("Zoom in");
-        ZoomOutButton = new JButton("Zoom out");
+        ImageIcon MagnifyIcon = new ImageIcon(
+                "resources/magnifiers/Magnify.png", "A magnifier");
+        ZoomInButton = new JButton(MagnifyIcon);
+        ZoomInButton.setOpaque(false);
+        ZoomInButton.setContentAreaFilled(false);
+        ZoomInButton.setBorderPainted(false);
+        ImageIcon DeMagnifyIcon = new ImageIcon(
+                "resources/magnifiers/Demagnify.png", "A demagnifier");
+        ZoomOutButton = new JButton(DeMagnifyIcon);
+        ZoomOutButton.setOpaque(false);
+        ZoomOutButton.setContentAreaFilled(false);
+        ZoomOutButton.setBorderPainted(false);
 
         JPanel scalePanel = new JPanel();
-        scalePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                "Zoom"));
+        // scalePanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+        // "Zoom"));
         scalePanel.setOpaque(false);
 
         GroupLayout scaleLayout = new GroupLayout(scalePanel);
         scalePanel.setLayout(scaleLayout);
         scaleLayout.setAutoCreateGaps(true);
         scaleLayout.setAutoCreateContainerGaps(true);
-        scaleLayout.setHorizontalGroup(scaleLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
+        scaleLayout.setHorizontalGroup(scaleLayout.createSequentialGroup()
                 .addComponent(ZoomInButton).addComponent(ZoomOutButton));
-        scaleLayout.setVerticalGroup(scaleLayout.createSequentialGroup()
+        scaleLayout.setVerticalGroup(scaleLayout
+                .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(ZoomInButton).addComponent(ZoomOutButton));
 
         return scalePanel;
@@ -153,72 +157,102 @@ public class SilverSurferGUI {
         SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0, 1080, 1);
         angle = new JSpinner(angleModel);
 
-        turnLeftButton = new JButton("Turn left");
-        turnRightButton = new JButton("Turn right");
-
+        ImageIcon turnLeftIcon = new ImageIcon(
+                "resources/direction_arrows/turnleft.png",
+                "A leftward turning arrow");
+        turnLeftButton = new JButton(turnLeftIcon);
+        turnLeftButton.setOpaque(false);
+        turnLeftButton.setContentAreaFilled(false);
+        turnLeftButton.setBorderPainted(false);
+        ImageIcon turnRightIcon = new ImageIcon(
+                "resources/direction_arrows/turnright.png",
+                "A rightward turning arrow");
+        turnRightButton = new JButton(turnRightIcon);
+        turnRightButton.setOpaque(false);
+        turnRightButton.setContentAreaFilled(false);
+        turnRightButton.setBorderPainted(false);
         JLabel lengthLabel = new JLabel("Length (centimeters)", JLabel.CENTER);
 
         SpinnerNumberModel lenghtModel = new SpinnerNumberModel(24, 0, 1000, 1);
         length = new JSpinner(lenghtModel);
 
-        moveButton = new JButton("Move");
+        ImageIcon moveIcon = new ImageIcon(
+                "resources/direction_arrows/move.png", "A straightahead arrow");
+        moveButton = new JButton(moveIcon);
+        moveButton.setOpaque(false);
+        moveButton.setContentAreaFilled(false);
+        moveButton.setBorderPainted(false);
 
         JPanel directionPanel = new JPanel();
-        directionPanel.setBorder(BorderFactory.createTitledBorder(
-                createBorder(), "Turn and Move"));
+        // directionPanel.setBorder(BorderFactory.createTitledBorder(
+        // createBorder(), "Turn and Move"));
         directionPanel.setOpaque(false);
 
         GroupLayout directionLayout = new GroupLayout(directionPanel);
         directionPanel.setLayout(directionLayout);
         directionLayout.setAutoCreateGaps(true);
         directionLayout.setAutoCreateContainerGaps(true);
-        directionLayout.setHorizontalGroup(directionLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(angleLabel)
-                .addComponent(angle)
-                .addGroup(
-                        directionLayout.createSequentialGroup()
-                                .addComponent(turnLeftButton)
-                                .addComponent(turnRightButton))
-                .addComponent(lengthLabel).addComponent(length)
-                .addComponent(moveButton));
-        directionLayout.setVerticalGroup(directionLayout
-                .createSequentialGroup()
-                .addComponent(angleLabel)
-                .addComponent(angle)
-                .addGroup(
-                        directionLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
-                                .addComponent(turnLeftButton)
-                                .addComponent(turnRightButton))
-                .addComponent(lengthLabel).addComponent(length)
-                .addComponent(moveButton));
+        directionLayout
+                .setHorizontalGroup(directionLayout
+                        .createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(angleLabel)
+                        .addGroup(
+                                directionLayout.createSequentialGroup()
+                                        .addComponent(angle)
+                                        .addComponent(turnLeftButton)
+                                        .addComponent(turnRightButton))
+                        .addComponent(lengthLabel)
+                        .addGroup(
+                                directionLayout.createSequentialGroup()
+                                        .addComponent(length)
+                                        .addComponent(moveButton)));
+        directionLayout
+                .setVerticalGroup(directionLayout
+                        .createSequentialGroup()
+                        .addComponent(angleLabel)
+                        .addGroup(
+                                directionLayout
+                                        .createParallelGroup(
+                                                GroupLayout.Alignment.CENTER)
+                                        .addComponent(angle)
+                                        .addComponent(turnLeftButton)
+                                        .addComponent(turnRightButton))
+                        .addComponent(lengthLabel)
+                        .addGroup(
+                                directionLayout
+                                        .createParallelGroup(
+                                                GroupLayout.Alignment.CENTER)
+                                        .addComponent(length)
+                                        .addComponent(moveButton)));
 
         return directionPanel;
     }
 
-    private JPanel otherPanel() {
-        lookAroundButton = new JButton("Look Around");
-        alignWhiteLineButton = new JButton("Align on white line");
-        alignWall = new JButton("Align on walls");
+    private JPanel barcodePanel() {
+        ImageIcon barcodeIcon = new ImageIcon(
+                "resources/barcode/ScanBarcode.png", "A barcode");
+        readBarcode = new JButton("Scan Barcode", barcodeIcon);
+        readBarcode.setFont(new Font(readBarcode.getFont().getName(),
+                Font.BOLD, 12));
+        readBarcode.setVerticalTextPosition(SwingConstants.BOTTOM);
+        readBarcode.setHorizontalTextPosition(SwingConstants.CENTER);
+        readBarcode.setOpaque(false);
+        readBarcode.setContentAreaFilled(false);
+        readBarcode.setBorderPainted(false);
 
         JPanel otherPanel = new JPanel();
-        otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                "Other"));
+        // otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+        // "Other"));
         otherPanel.setOpaque(false);
 
         GroupLayout otherLayout = new GroupLayout(otherPanel);
         otherPanel.setLayout(otherLayout);
         otherLayout.setAutoCreateGaps(true);
         otherLayout.setAutoCreateContainerGaps(true);
-        otherLayout.setHorizontalGroup(otherLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(lookAroundButton)
-                .addComponent(alignWhiteLineButton).addComponent(alignWall));
+        otherLayout.setHorizontalGroup(otherLayout.createParallelGroup(
+                GroupLayout.Alignment.CENTER).addComponent(readBarcode));
         otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
-                .addComponent(lookAroundButton)
-                .addComponent(alignWhiteLineButton).addComponent(alignWall));
+                .addComponent(readBarcode));
 
         return otherPanel;
     }
@@ -260,16 +294,26 @@ public class SilverSurferGUI {
     }
 
     public void updateStatus() {
-        int ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
-                .getUltraSensorValue();
-        int lightSensorValue = getSimulationPanel().getSimulationPilot()
-                .getLightSensorValue();
+        int ultrasonicSensorValue;
+        int lightSensorValue;
+
+        if (!getCommunicator().getRobotConnected()) {
+            ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
+                    .getUltraSensorValue();
+            lightSensorValue = getSimulationPanel().getSimulationPilot()
+                    .getLightSensorValue();
+        } else {
+            ultrasonicSensorValue = getInformationBuffer()
+                    .getLatestUltraSensorInfo();
+            lightSensorValue = getInformationBuffer()
+                    .getLatestLightSensorInfo();
+        }
 
         try {
             sensorGraph
                     .addSensorValues(ultrasonicSensorValue, lightSensorValue);
         } catch (NullPointerException e) {
-             //TODO: handle exception + uncomment
+            // TODO: handle exception + uncomment
         }
 
         infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
@@ -339,7 +383,7 @@ public class SilverSurferGUI {
      */
 
     private JPanel sensorPanel() {
-        sensorGraph = new SensorGraph();
+        sensorGraph = new SensorGraph(this);
         sensorGraph.setOpaque(false);
 
         return sensorGraph;
@@ -377,7 +421,7 @@ public class SilverSurferGUI {
 
     protected static void clearScreen() {
         System.out.println("[GUI] Screen cleared.");
-        simulationPanel.clearPath();
+        simulationPanel.resetPath();
     }
 
     public static void changeSpeed(int value) {
@@ -538,7 +582,7 @@ public class SilverSurferGUI {
                 MTT.start();
             }
         });
-        lookAroundButton.addMouseListener(new MouseListener() {
+        readBarcode.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
             }
@@ -558,110 +602,108 @@ public class SilverSurferGUI {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(communicator.getConsoleTag()
-                        + " Looking around for obstructions.");
+                        + " Reading barcode.");
                 MoveTurnThread MTT = new MoveTurnThread("MTT");
                 MTT.setCommunicator(communicator);
                 MTT.setLength(0);
                 MTT.setAngles(0);
                 MTT.setAmtOfAngles(0);
-                MTT.setCommand(Command.LOOK_AROUND);
+                MTT.setCommand(Command.READ_CURRENT_BARCODE);
                 MTT.start();
             }
         });
-        alignWhiteLineButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println(communicator.getConsoleTag()
-                        + " Aligning on white line.");
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(0);
-                MTT.setAmtOfAngles(0);
-                MTT.setCommand(Command.ALIGN_PERPENDICULAR);
-                MTT.start();
-            }
-        });
-        alignWall.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println(communicator.getConsoleTag()
-                        + " Aligning on walls.");
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(0);
-                MTT.setAmtOfAngles(0);
-                MTT.setCommand(Command.ALIGN_WALL);
-                MTT.start();
-            }
-        });
+        // alignWhiteLineButton.addMouseListener(new MouseListener() {
+        // @Override
+        // public void mouseReleased(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mousePressed(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseExited(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseEntered(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseClicked(MouseEvent e) {
+        // System.out.println(communicator.getConsoleTag()
+        // + " Aligning on white line.");
+        // MoveTurnThread MTT = new MoveTurnThread("MTT");
+        // MTT.setCommunicator(communicator);
+        // MTT.setLength(0);
+        // MTT.setAngles(0);
+        // MTT.setAmtOfAngles(0);
+        // MTT.setCommand(Command.ALIGN_PERPENDICULAR);
+        // MTT.start();
+        // }
+        // });
+        // alignWall.addMouseListener(new MouseListener() {
+        // @Override
+        // public void mouseReleased(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mousePressed(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseExited(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseEntered(MouseEvent e) {
+        // }
+        //
+        // @Override
+        // public void mouseClicked(MouseEvent e) {
+        // System.out.println(communicator.getConsoleTag()
+        // + " Aligning on walls.");
+        // MoveTurnThread MTT = new MoveTurnThread("MTT");
+        // MTT.setCommunicator(communicator);
+        // MTT.setLength(0);
+        // MTT.setAngles(0);
+        // MTT.setAmtOfAngles(0);
+        // MTT.setCommand(Command.ALIGN_WALL);
+        // MTT.start();
+        // }
+        // });
         simulationPanel.addKeyListener(new KeyListener() {
-			ShiftThread ST = new ShiftThread("ST");
+            ShiftThread ST = new ShiftThread("ST");
 
-			@Override
-			public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
 
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_UP) {
-					ST.setShift(-1);
-					ST.setHorizontal(false);
-					ST.start();
-					}
-				else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
-					ST.setShift(1);
-					ST.setHorizontal(false);
-					ST.start();
-				}
-				else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
-					ST.setShift(-1);
-					ST.setHorizontal(true);
-					ST.start();
-				}
-				else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
-					ST.setShift(1);
-					ST.setHorizontal(true);
-					ST.start();
-					}
-				}
-		});
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    ST.setShift(-1);
+                    ST.setHorizontal(false);
+                    ST.start();
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    ST.setShift(1);
+                    ST.setHorizontal(false);
+                    ST.start();
+                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    ST.setShift(-1);
+                    ST.setHorizontal(true);
+                    ST.start();
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    ST.setShift(1);
+                    ST.setHorizontal(true);
+                    ST.start();
+                }
+            }
+        });
     }
 
     private static javax.swing.border.Border createBorder() {

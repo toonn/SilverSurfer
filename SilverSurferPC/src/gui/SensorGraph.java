@@ -3,24 +3,36 @@ package gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.font.*;
 import java.awt.geom.*;
 
 import javax.swing.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class SensorGraph extends JPanel {
-    private List<Integer> US = new ArrayList<Integer>();
-    private List<Integer> LS = new ArrayList<Integer>();
+    private final int numberOfValuesToPlotLS = 100;
+    private final int numberOfValuesToPlotUS = 100;
+    private final int repaintPeriodInms = 10;
+    private final Queue<Integer> LS = new ArrayBlockingQueue<Integer>(
+            numberOfValuesToPlotLS);
+    private final Queue<Integer> US = new ArrayBlockingQueue<Integer>(
+            numberOfValuesToPlotUS);
 
-    public SensorGraph() {
-        for (int i = 0; i < 100; i++) {
-            US.add(0);
-            LS.add(0);
+    private final SilverSurferGUI gui;
+    private final int updateValuesPeriodInms = 100;
+
+    public SensorGraph(SilverSurferGUI gui) {
+        this.gui = gui;
+        new Timer(updateValuesPeriodInms, updateTimerAction).start();
+
+        for (int i = 0; i < numberOfValuesToPlotLS; i++) {
+            LS.offer(0);
         }
-        new Timer(100, repaintSensorGraph).start();
+        for (int i = 0; i < numberOfValuesToPlotUS; i++) {
+            US.offer(250);
+        }
+        new Timer(repaintPeriodInms, repaintSensorGraph).start();
     }
 
     @Override
@@ -50,8 +62,10 @@ public class SensorGraph extends JPanel {
         // Labels on the graph
         g2.setColor(Color.gray);
         g2.drawString("LightSensor", w / 2 / 5, 10);
-        g2.drawString("White", 15, graphHeight - (LSWhite - LSMin) * graphHeight / LSScale);
-        g2.drawString("Black", 15, graphHeight - (LSBlack - LSMin) * graphHeight / LSScale);
+        g2.drawString("White", 15, graphHeight - (LSWhite - LSMin)
+                * graphHeight / LSScale);
+        g2.drawString("Black", 15, graphHeight - (LSBlack - LSMin)
+                * graphHeight / LSScale);
         // Lightsensor scale
         for (int lsv = 30; lsv < 60; lsv += 5) {
             g2.drawString("" + lsv, 0, graphHeight - (lsv - LSMin)
@@ -91,24 +105,47 @@ public class SensorGraph extends JPanel {
         // Sensor values
         int lineThickness = 3; // in pixels
         g2.setStroke(new BasicStroke(lineThickness));
-        for (int i = 0; i < US.size() - 1; i++) {
-            g2.setColor(Color.orange);
-            g2.draw(new Line2D.Double(i * graphWidth / 200, graphHeight
-                    - (LS.get(i) - LSMin) * graphHeight / LSScale, (i + 1)
-                    * graphWidth / 200, graphHeight - (LS.get(i + 1) - LSMin)
-                    * graphHeight / LSScale));
 
-            if (US.get(i) <= 150 && US.get(i + 1) <= 150) {
+        int LSIndex = 0;
+        int LSValOld = -1;
+        int LSValNew = -1;
+        for (int LSValue : LS) {
+            LSValOld = LSValNew;
+            LSValNew = LSValue;
+
+            if (LSValOld == -1)
+                continue;
+
+            g2.setColor(Color.orange);
+            g2.draw(new Line2D.Double(LSIndex * graphWidth / (2 * LS.size()),
+                    graphHeight - (LSValOld - LSMin) * graphHeight / LSScale,
+                    (LSIndex + 1) * graphWidth / (2 * LS.size()), graphHeight
+                            - (LSValNew - LSMin) * graphHeight / LSScale));
+
+            LSIndex++;
+        }
+
+        int USIndex = 0;
+        int USValOld = -1;
+        int USValNew = -1;
+        for (int USValue : US) {
+            USValOld = USValNew;
+            USValNew = USValue;
+
+            if (USValOld <= 150 && USValNew <= 150) {
                 g2.setColor(Color.blue);
-                g2.draw(new Line2D.Double(wLS + i * graphWidth / 200,
-                        graphHeight - US.get(i), wLS + (i + 1) * graphWidth
-                                / 200, graphHeight - US.get(i + 1)));
+                g2.draw(new Line2D.Double(wLS + USIndex * graphWidth
+                        / (2 * US.size()), graphHeight - USValOld, wLS
+                        + (USIndex + 1) * graphWidth / (2 * US.size()),
+                        graphHeight - USValNew));
             } else {
                 g2.setColor(Color.lightGray);
-                g2.draw(new Line2D.Double(wLS + i * graphWidth / 200,
-                        graphHeight - 155, wLS + (i + 1) * graphWidth / 200,
-                        graphHeight - 155));
+                g2.draw(new Line2D.Double(wLS + USIndex * graphWidth / 200,
+                        graphHeight - 155, wLS + (USIndex + 1) * graphWidth
+                                / 200, graphHeight - 155));
             }
+
+            USIndex++;
         }
         g2.setStroke(new BasicStroke(1));
 
@@ -118,10 +155,10 @@ public class SensorGraph extends JPanel {
     }
 
     public void addSensorValues(int USValue, int LSValue) {
-        US.add(USValue);
-        US.remove(0);
-        LS.add(LSValue);
-        LS.remove(0);
+        LS.poll();
+        LS.offer(LSValue);
+        US.poll();
+        US.offer(USValue);
     }
 
     ActionListener repaintSensorGraph = new ActionListener() {
@@ -132,12 +169,11 @@ public class SensorGraph extends JPanel {
         }
     };
 
-    public static void main(String[] args) {
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.add(new SensorGraph());
-        f.setSize(400, 400);
-        f.setLocation(200, 200);
-        f.setVisible(true);
-    }
+    ActionListener updateTimerAction = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            gui.updateStatus();
+        }
+    };
 }

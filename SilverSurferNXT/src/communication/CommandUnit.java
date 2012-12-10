@@ -23,6 +23,8 @@ public class CommandUnit {
     private TouchSensor touchSensor1;
     private TouchSensor touchSensor2;
     private boolean busy = false;
+    private boolean readBarcodes = true;
+    private boolean readBarcodesTemp = true;
     private double x = 220;
     private double y = 220;
     private double angle = 270;
@@ -87,7 +89,7 @@ public class CommandUnit {
             		CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.ALIGN_PERPENDICULAR):
-                    CU.updateCoordinates(15, 0);
+                    CU.updateCoordinates(20, 0);
                     CU.alignOnWhiteLine(CU.lightSensor.getLightValue() + 4);
                     CU.waiting();
                 	CU.sendStringToUnit("[DON]");
@@ -107,16 +109,29 @@ public class CommandUnit {
     				ST.start();
                 	CU.sendStringToUnit("[DON]");
     				break;
-                case (Command.checkObstructionsAndSetTile):
+                case (Command.CHECK_OBSTRUCTIONS_AND_SET_TILE):
                     CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
+            		CU.sendStringToUnit("[DON]");
+                	break;
+                case (Command.READ_BARCODES):
+                    CU.readBarcodes = false;
+            		CU.sendStringToUnit("[DON]");
+                	break;
+                case (Command.READ_CURRENT_BARCODE):
+                    CU.readBarcodes = true;
+                	CU.readBarcodesTemp = true;
+                	CU.sendStringToUnit("[RBC] " + CU.moveForward((int)Math.round(LENGTH_COEF*100)));
             		CU.sendStringToUnit("[DON]");
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
                         CU.updateCoordinates((input-Command.AUTOMATIC_MOVE_FORWARD)/100, 0);
                         int result = CU.moveForward((int)Math.round(LENGTH_COEF*(input-Command.AUTOMATIC_MOVE_FORWARD)/100));
-    	    			if(result != 0)
+                        CU.readBarcodesTemp = true;
+    	    			if(result != 0) {
     	    				CU.sendStringToUnit("[BC] " + result);
+    	    				CU.readBarcodesTemp = false;
+    	    			}
                         CU.waiting();
                     } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -(100-Command.AUTOMATIC_TURN_ANGLE))) && input != Command.AUTOMATIC_TURN_ANGLE) {
                         CU.updateCoordinates(0, (input-Command.AUTOMATIC_TURN_ANGLE)/100);
@@ -178,12 +193,13 @@ public class CommandUnit {
     	if(angle == 0) {
     		x = x + length*Math.cos(Math.toRadians(this.angle));
     		y = y - length*Math.sin(Math.toRadians(this.angle));
+            sendStringToUnit("[X] " + x);
+            sendStringToUnit("[Y] " + y);
     	}    		
-    	else 
+    	else {
     		this.angle = (this.angle + angle)%360;
-        sendStringToUnit("[X] " + x);
-        sendStringToUnit("[Y] " + y);
-        sendStringToUnit("[ANG] " + angle);
+            sendStringToUnit("[ANG] " + this.angle);
+    	}
     }
 
     public void updateStatus() {
@@ -197,17 +213,21 @@ public class CommandUnit {
     
     private int moveForward(int angle) {
         try {
-        	BT = new BarcodeThread("BT");
-        	BT.setLightSensor(lightSensor);
-        	BT.start();
+        	if(readBarcodes && readBarcodesTemp) {
+        		BT = new BarcodeThread("BT");
+        		BT.setLightSensor(lightSensor);
+        		BT.start();
+        	}
         	Motor.A.rotate(angle, true);
         	Motor.B.rotate(angle);
-        	Thread.sleep(500);
-        	boolean found = BT.getFound();
-        	BT.setQuit(true);
-        	if(found) {
+        	if(readBarcodes && readBarcodesTemp) {
         		Thread.sleep(500);
-        		return readBarcode();
+        		boolean found = BT.getFound();
+        		BT.setQuit(true);
+        		if(found) {
+        			Thread.sleep(500);
+        			return readBarcode();
+        		}
         	}
         } catch(Exception e) {
         	System.out.println("Error in CommandUnit.moveForward(int angle)!");
@@ -247,6 +267,8 @@ public class CommandUnit {
     }
 
     private void alignOnWhiteLine(int treshold) {
+    	if(treshold < 40)
+    		treshold = 52;
     	int angle = 0;
         
 		WhiteLineThread WLT = new WhiteLineThread("WLT");
@@ -274,6 +296,31 @@ public class CommandUnit {
 			angle = angle + 3;
 		}
 		turnAngle(-(angle/2));
+    	
+    	/*if(treshold < 40)
+    		treshold = 52;
+    	WhiteLineThread WLT = new WhiteLineThread("WLT");
+		WLT.start();
+		while(lightSensor.getLightValue() < treshold);
+		WLT.setQuit(true);
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
+		moveForwardWithoutBarcode((int)Math.round(9*LENGTH_COEF));
+		
+    	WLT = new WhiteLineThread("WLT");
+    	WLT.setCommand(1);
+		WLT.start();
+		while(lightSensor.getLightValue() < treshold);
+		WLT.setQuit(true);
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
+		turnAngle(-(int)Math.round(ANGLE_COEF/4));*/
     }
     
     private void alignOnWalls() {

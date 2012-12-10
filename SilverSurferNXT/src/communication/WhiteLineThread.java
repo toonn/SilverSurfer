@@ -5,6 +5,7 @@ import lejos.nxt.Motor;
 public class WhiteLineThread extends Thread {
 	
 	private boolean quit = false;
+	private int command = 0;
 
 	public WhiteLineThread(String str) {
 		super(str);
@@ -17,8 +18,14 @@ public class WhiteLineThread extends Thread {
 		} catch (Exception e) {
 			
 		}
-		Motor.A.forward();
-		Motor.B.forward();
+		if(command == 0) {
+			Motor.A.forward();
+			Motor.B.forward();
+		}
+		else {
+			Motor.A.backward();
+			Motor.B.forward();
+		}
 		while(!quit);
         Motor.A.stop(true);
         Motor.B.stop();
@@ -26,5 +33,9 @@ public class WhiteLineThread extends Thread {
 	
 	public void setQuit(boolean quit) {
 		this.quit = quit;
+	}
+	
+	public void setCommand(int command) {
+		this.command = command;
 	}
 }
