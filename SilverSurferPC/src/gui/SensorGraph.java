@@ -7,8 +7,6 @@ import java.awt.geom.*;
 
 import javax.swing.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -22,11 +20,11 @@ public class SensorGraph extends JPanel {
             numberOfValuesToPlotUS);
 
     private final SilverSurferGUI gui;
-    private final int updatePeriodInms = 100;
+    private final int updateValuesPeriodInms = 100;
 
     public SensorGraph(SilverSurferGUI gui) {
         this.gui = gui;
-        new Timer(updatePeriodInms, updateTimerAction).start();
+        new Timer(updateValuesPeriodInms, updateTimerAction).start();
 
         for (int i = 0; i < numberOfValuesToPlotLS; i++) {
             LS.offer(0);
@@ -119,10 +117,10 @@ public class SensorGraph extends JPanel {
                 continue;
 
             g2.setColor(Color.orange);
-            g2.draw(new Line2D.Double(LSIndex * graphWidth / 200, graphHeight
-                    - (LSValOld - LSMin) * graphHeight / LSScale, (LSIndex + 1)
-                    * graphWidth / 200, graphHeight - (LSValNew - LSMin)
-                    * graphHeight / LSScale));
+            g2.draw(new Line2D.Double(LSIndex * graphWidth / (2 * LS.size()),
+                    graphHeight - (LSValOld - LSMin) * graphHeight / LSScale,
+                    (LSIndex + 1) * graphWidth / (2 * LS.size()), graphHeight
+                            - (LSValNew - LSMin) * graphHeight / LSScale));
 
             LSIndex++;
         }
@@ -136,9 +134,10 @@ public class SensorGraph extends JPanel {
 
             if (USValOld <= 150 && USValNew <= 150) {
                 g2.setColor(Color.blue);
-                g2.draw(new Line2D.Double(wLS + USIndex * graphWidth / 200,
-                        graphHeight - USValOld, wLS + (USIndex + 1)
-                                * graphWidth / 200, graphHeight - USValNew));
+                g2.draw(new Line2D.Double(wLS + USIndex * graphWidth
+                        / (2 * US.size()), graphHeight - USValOld, wLS
+                        + (USIndex + 1) * graphWidth / (2 * US.size()),
+                        graphHeight - USValNew));
             } else {
                 g2.setColor(Color.lightGray);
                 g2.draw(new Line2D.Double(wLS + USIndex * graphWidth / 200,
