@@ -51,7 +51,7 @@ public class SilverSurferGUI {
 
         JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
-        JPanel otherPanel = otherPanel();
+        JPanel otherPanel = barcodePanel();
         JPanel infoPanel = infoPanel();
         JPanel mappingPanel = mappingPanel();
         // JPanel consolePanel = consolePanel();
@@ -123,10 +123,14 @@ public class SilverSurferGUI {
         ImageIcon MagnifyIcon = new ImageIcon(
                 "resources/magnifiers/Magnify.png", "A magnifier");
         ZoomInButton = new JButton(MagnifyIcon);
+        ZoomInButton.setOpaque(false);
+        ZoomInButton.setContentAreaFilled(false);
         ZoomInButton.setBorderPainted(false);
         ImageIcon DeMagnifyIcon = new ImageIcon(
                 "resources/magnifiers/Demagnify.png", "A demagnifier");
         ZoomOutButton = new JButton(DeMagnifyIcon);
+        ZoomOutButton.setOpaque(false);
+        ZoomOutButton.setContentAreaFilled(false);
         ZoomOutButton.setBorderPainted(false);
 
         JPanel scalePanel = new JPanel();
@@ -157,13 +161,16 @@ public class SilverSurferGUI {
                 "resources/direction_arrows/turnleft.png",
                 "A leftward turning arrow");
         turnLeftButton = new JButton(turnLeftIcon);
+        turnLeftButton.setOpaque(false);
+        turnLeftButton.setContentAreaFilled(false);
         turnLeftButton.setBorderPainted(false);
         ImageIcon turnRightIcon = new ImageIcon(
                 "resources/direction_arrows/turnright.png",
                 "A rightward turning arrow");
         turnRightButton = new JButton(turnRightIcon);
+        turnRightButton.setOpaque(false);
+        turnRightButton.setContentAreaFilled(false);
         turnRightButton.setBorderPainted(false);
-
         JLabel lengthLabel = new JLabel("Length (centimeters)", JLabel.CENTER);
 
         SpinnerNumberModel lenghtModel = new SpinnerNumberModel(24, 0, 1000, 1);
@@ -172,6 +179,8 @@ public class SilverSurferGUI {
         ImageIcon moveIcon = new ImageIcon(
                 "resources/direction_arrows/move.png", "A straightahead arrow");
         moveButton = new JButton(moveIcon);
+        moveButton.setOpaque(false);
+        moveButton.setContentAreaFilled(false);
         moveButton.setBorderPainted(false);
 
         JPanel directionPanel = new JPanel();
@@ -219,7 +228,7 @@ public class SilverSurferGUI {
         return directionPanel;
     }
 
-    private JPanel otherPanel() {
+    private JPanel barcodePanel() {
         ImageIcon barcodeIcon = new ImageIcon(
                 "resources/barcode/ScanBarcode.png", "A barcode");
         readBarcode = new JButton("Scan Barcode", barcodeIcon);
@@ -227,6 +236,8 @@ public class SilverSurferGUI {
                 Font.BOLD, 12));
         readBarcode.setVerticalTextPosition(SwingConstants.BOTTOM);
         readBarcode.setHorizontalTextPosition(SwingConstants.CENTER);
+        readBarcode.setOpaque(false);
+        readBarcode.setContentAreaFilled(false);
         readBarcode.setBorderPainted(false);
 
         JPanel otherPanel = new JPanel();
