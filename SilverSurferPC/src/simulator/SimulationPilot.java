@@ -175,15 +175,21 @@ public class SimulationPilot {
     }
 
     /**
-	 * Returns the center of the currentTile in absolutes.
-	 */
-	public int[] getCenterAbsoluteCurrentTile(){
-		
-		int[] coord = new int[]{0,0};
-		coord[0] =  (int) (((Double)(getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()%sizeTile())).intValue()*SSG.getSimulationPanel().getScalingfactor()+SSG.getSimulationPanel().getSizeTile()/2);
-		coord[1] =  (int) (((Double)(getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()%sizeTile())).intValue()*SSG.getSimulationPanel().getScalingfactor()+SSG.getSimulationPanel().getSizeTile()/2);
-		return coord;
-	}
+     * Returns the center of the currentTile in absolutes.
+     */
+    public int[] getCenterAbsoluteCurrentTile() {
+
+        int[] coord = new int[] { 0, 0 };
+        coord[0] = (int) (((Double) (getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()
+                % sizeTile())).intValue()
+                * SSG.getSimulationPanel().getScalingfactor() + SSG
+                .getSimulationPanel().getSizeTile() / 2);
+        coord[1] = (int) (((Double) (getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()
+                % sizeTile())).intValue()
+                * SSG.getSimulationPanel().getScalingfactor() + SSG
+                .getSimulationPanel().getSizeTile() / 2);
+        return coord;
+    }
 
     public File getMapFile() {
         return this.mapFile;
@@ -297,7 +303,7 @@ public class SimulationPilot {
                                 * Math.cos(Math.toRadians(this.getAlpha()))));
                         this.setCurrentPositionAbsoluteY((yTemp - i
                                 * Math.sin(Math.toRadians(this.getAlpha()))));
-//                        this.getSSG().updateStatus();
+                        // this.getSSG().updateStatus();
 
                         System.out.println("Er staat een muur in de weg");
                         return;
@@ -513,7 +519,7 @@ public class SimulationPilot {
             this.setAlpha(alphaTemp);
             SilverSurferGUI.getInformationBuffer().setAngle(alphaTemp);
 
-//            this.getSSG().updateStatus();
+            // this.getSSG().updateStatus();
 
             try {
                 if (getSSG().getCommunicator().getRobotConnected())
@@ -529,8 +535,7 @@ public class SimulationPilot {
      * checkt of de robot zich binnen de marge van een edge bevindt
      */
     public boolean pointOnEdge(double x, double y) {
-        return (x %  sizeTile()) > sizeTile()
-                - this.getEdgeMarge()
+        return (x % sizeTile()) > sizeTile() - this.getEdgeMarge()
                 || (x % sizeTile()) < this.getEdgeMarge()
                 || (y % sizeTile()) > sizeTile() - this.getEdgeMarge()
                 || (y % sizeTile()) < this.getEdgeMarge();

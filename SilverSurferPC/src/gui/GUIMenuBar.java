@@ -459,31 +459,38 @@ public class GUIMenuBar extends JMenuBar {
                         + prompt.getFile()); // Load and display selection
                 prompt.dispose(); // Get rid of the dialog box
 
-                JPanel messagePanel = new JPanel();
-                SpinnerNumberModel xModel = new SpinnerNumberModel(0, 0, 1000,
-                        1);
-                SpinnerNumberModel yModel = new SpinnerNumberModel(0, 0, 1000,
-                        1);
-                JLabel x = new JLabel("x:");
-                JLabel y = new JLabel("y:");
+                // JPanel messagePanel = new JPanel();
+                // SpinnerNumberModel xModel = new SpinnerNumberModel(0, 0,
+                // 1000,
+                // 1);
+                // SpinnerNumberModel yModel = new SpinnerNumberModel(0, 0,
+                // 1000,
+                // 1);
+                // JLabel x = new JLabel("x:");
+                // JLabel y = new JLabel("y:");
+                //
+                // JSpinner xcoord = new JSpinner(xModel);
+                // JSpinner ycoord = new JSpinner(yModel);
+                // messagePanel.add(x);
+                // messagePanel.add(xcoord);
+                // messagePanel.add(y);
+                // messagePanel.add(ycoord);
+                //
+                // // Populate your panel components here.
+                // JOptionPane.showMessageDialog(getGui().getFrame(),
+                // messagePanel, "Enter relative starting coordinates:",
+                // JOptionPane.OK_OPTION);
+                //
+                // int xCo = Integer.valueOf(xcoord.getValue().toString());
+                // int yCo = Integer.valueOf(ycoord.getValue().toString());
+                //
+                // gui.getCommunicator().getSimulationPilot()
+                // .setMapFile(mapFile, xCo, yCo);
 
-                JSpinner xcoord = new JSpinner(xModel);
-                JSpinner ycoord = new JSpinner(yModel);
-                messagePanel.add(x);
-                messagePanel.add(xcoord);
-                messagePanel.add(y);
-                messagePanel.add(ycoord);
-
-                // Populate your panel components here.
-                JOptionPane.showMessageDialog(getGui().getFrame(),
-                        messagePanel, "Enter relative starting coordinates:",
-                        JOptionPane.OK_OPTION);
-
-                int xCo = Integer.valueOf(xcoord.getValue().toString());
-                int yCo = Integer.valueOf(ycoord.getValue().toString());
-
+                // Vervelend prompt weggedaan, ik heb het dan ook nog nooit
+                // nodig gehad. Feel free om het terug te zetten. -- Toon
                 gui.getCommunicator().getSimulationPilot()
-                        .setMapFile(mapFile, xCo, yCo);
+                        .setMapFile(mapFile, 0, 0);
 
                 System.out.println("[I/O] Map succesfully loaded!");
 
