@@ -1,6 +1,5 @@
 package gui;
 
-import commands.Command;
 import communication.*;
 import simulator.*;
 
@@ -26,8 +25,6 @@ public class SilverSurferGUI {
     private static JSpinner length;
     private static JButton moveButton;
 
-    private static JButton readBarcode;
-
     private static JLabel infoLabel1;
     private static JLabel infoLabel2;
     private static JLabel infoLabel3;
@@ -51,7 +48,6 @@ public class SilverSurferGUI {
 
         JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
-        JPanel otherPanel = barcodePanel();
         JPanel infoPanel = infoPanel();
         JPanel mappingPanel = mappingPanel();
         // JPanel consolePanel = consolePanel();
@@ -70,7 +66,6 @@ public class SilverSurferGUI {
                                         GroupLayout.Alignment.CENTER)
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
-                                .addComponent(otherPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout
@@ -84,7 +79,6 @@ public class SilverSurferGUI {
                         frameLayout.createSequentialGroup()
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
-                                .addComponent(otherPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout.createSequentialGroup()
@@ -228,35 +222,6 @@ public class SilverSurferGUI {
         return directionPanel;
     }
 
-    private JPanel barcodePanel() {
-        ImageIcon barcodeIcon = new ImageIcon(
-                "resources/barcode/ScanBarcode.png", "A barcode");
-        readBarcode = new JButton("Scan Barcode", barcodeIcon);
-        readBarcode.setFont(new Font(readBarcode.getFont().getName(),
-                Font.BOLD, 12));
-        readBarcode.setVerticalTextPosition(SwingConstants.BOTTOM);
-        readBarcode.setHorizontalTextPosition(SwingConstants.CENTER);
-        readBarcode.setOpaque(false);
-        readBarcode.setContentAreaFilled(false);
-        readBarcode.setBorderPainted(false);
-
-        JPanel otherPanel = new JPanel();
-        // otherPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-        // "Other"));
-        otherPanel.setOpaque(false);
-
-        GroupLayout otherLayout = new GroupLayout(otherPanel);
-        otherPanel.setLayout(otherLayout);
-        otherLayout.setAutoCreateGaps(true);
-        otherLayout.setAutoCreateContainerGaps(true);
-        otherLayout.setHorizontalGroup(otherLayout.createParallelGroup(
-                GroupLayout.Alignment.CENTER).addComponent(readBarcode));
-        otherLayout.setVerticalGroup(otherLayout.createSequentialGroup()
-                .addComponent(readBarcode));
-
-        return otherPanel;
-    }
-
     private JPanel infoPanel() {
         infoLabel1 = new JLabel("", JLabel.CENTER);
         infoLabel2 = new JLabel("", JLabel.CENTER);
@@ -294,44 +259,43 @@ public class SilverSurferGUI {
     }
 
     public void updateStatus() {
-        int ultrasonicSensorValue;
-        int lightSensorValue;
-
-        if (!getCommunicator().getRobotConnected()) {
-            ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
-                    .getUltraSensorValue();
-            lightSensorValue = getSimulationPanel().getSimulationPilot()
-                    .getLightSensorValue();
-        } else {
-            ultrasonicSensorValue = getInformationBuffer()
-                    .getLatestUltraSensorInfo();
-            lightSensorValue = getInformationBuffer()
-                    .getLatestLightSensorInfo();
-        }
-
         try {
-            sensorGraph
-                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
-        } catch (NullPointerException e) {
-            // TODO: handle exception + uncomment
-        }
+        	int ultrasonicSensorValue;
+        	int lightSensorValue;
+        	
+        	if (!getCommunicator().getRobotConnected()) {
+        		ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
+        				.getUltraSensorValue();
+        		lightSensorValue = getSimulationPanel().getSimulationPilot()
+        				.getLightSensorValue();
+        	} else {
+        		ultrasonicSensorValue = getInformationBuffer()
+        				.getLatestUltraSensorInfo();
+        		lightSensorValue = getInformationBuffer()
+        				.getLatestLightSensorInfo();
+        	}
+        	sensorGraph.addSensorValues(ultrasonicSensorValue, lightSensorValue);
 
-        infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
-        infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
-        infoLabel4.setText("Lightsensor: " + lightSensorValue);
-        infoLabel5.setText("Touchsensor 1: "
-                + getSimulationPanel().getSimulationPilot()
-                        .getTouchSensor1Value());
-        infoLabel6.setText("Touchsensor 2: "
-                + getSimulationPanel().getSimulationPilot()
-                        .getTouchSensor2Value());
-        infoLabel7.setText("Left Motor: "
-                + statusInfoBuffer.getLeftMotorMoving() + " "
-                + statusInfoBuffer.getLeftMotorSpeed());
-        infoLabel8.setText("Right Motor: "
-                + statusInfoBuffer.getRightMotorMoving() + " "
-                + statusInfoBuffer.getRightMotorSpeed());
-        infoLabel9.setText("Buzy: " + statusInfoBuffer.getBusy());
+
+        	infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
+        	infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
+        	infoLabel4.setText("Lightsensor: " + lightSensorValue);
+        	infoLabel5.setText("Touchsensor 1: "
+        			+ getSimulationPanel().getSimulationPilot()
+        			.getTouchSensor1Value());
+        	infoLabel6.setText("Touchsensor 2: "
+        			+ getSimulationPanel().getSimulationPilot()
+        			.getTouchSensor2Value());
+        	infoLabel7.setText("Left Motor: "
+        			+ statusInfoBuffer.getLeftMotorMoving() + " "
+        			+ statusInfoBuffer.getLeftMotorSpeed());
+	        infoLabel8.setText("Right Motor: "
+	                + statusInfoBuffer.getRightMotorMoving() + " "
+	                + statusInfoBuffer.getRightMotorSpeed());
+	        infoLabel9.setText("Buzy: " + statusInfoBuffer.getBusy());
+        } catch (NullPointerException e) {
+        	
+        }
     }
 
     private JPanel mappingPanel() {
@@ -579,36 +543,6 @@ public class SilverSurferGUI {
                 MTT.setLength(Integer.parseInt(length.getValue().toString()));
                 MTT.setAngles(0);
                 MTT.setAmtOfAngles(0);
-                MTT.start();
-            }
-        });
-        readBarcode.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println(communicator.getConsoleTag()
-                        + " Reading barcode.");
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(0);
-                MTT.setAmtOfAngles(0);
-                MTT.setCommand(Command.READ_CURRENT_BARCODE);
                 MTT.start();
             }
         });

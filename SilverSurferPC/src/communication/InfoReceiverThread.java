@@ -69,9 +69,7 @@ public class InfoReceiverThread extends Thread {
 					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().checkForObstructionAndSetTile();
 				}
 				else if(a.startsWith("[DON]"))
-					statusInfoBuffer.getSSG().getCommunicator().setBuzy(false);
-				else if(a.startsWith("[RBC]"))
-					System.out.println("Barcode result: " + a.substring(6).trim());
+					statusInfoBuffer.getSSG().getCommunicator().setBusy(false);
 			} catch (Exception e) {
 				System.out.println("Error in InfoReceiverThread.run()!");
 				e.printStackTrace();

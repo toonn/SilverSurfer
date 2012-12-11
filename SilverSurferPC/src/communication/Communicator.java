@@ -25,11 +25,14 @@ public class Communicator {
     private static String deviceURL = "00:16:53:0A:04:5A";
     private static String deviceName = "Silver";
     private static InfoReceiverThread IRT;
-    private boolean buzy = false;
+    private boolean busy = false;
     private int tilesBeforeAllign = 5;
     private int tilesRidden = 0;
     private boolean mustAllign = true;
     private MazeExplorer explorer;
+    private boolean readBarcodes = true;
+    private boolean permaBarcodeStop = false;
+    private BarcodeThread BT;
 
     public Communicator(StatusInfoBuffer statusInfoBuffer) {
         setStatusInfoBuffer(statusInfoBuffer);
@@ -84,16 +87,16 @@ public class Communicator {
         connection.close();
     }
 
-    public void setBuzy(boolean buzy) {
-        this.buzy = buzy;
+    public void setBusy(boolean busy) {
+        this.busy = busy;
     }
 
     public void sendCommand(int command) {
         try {
             if (robotConnected) {
+                busy = true;
                 dos.writeInt(command);
                 dos.flush();
-                buzy = true;
             }
             if (command == Command.SLOW_SPEED)
                 simulationPilot.setSpeed(194);
@@ -112,48 +115,59 @@ public class Communicator {
             else if (command == Command.PLAY_SONG) {
                 SongThread ST = new SongThread();
                 ST.start();
-            } else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE
-                    && !robotConnected) {
+            }
+            else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE && !robotConnected)
                 simulationPilot.checkForObstructionAndSetTile();
-            } else if (command % 100 == Command.AUTOMATIC_MOVE_FORWARD) {
+            else if (command == Command.STOP_READING_BARCODES)
+            	this.readBarcodes = false;
+            else if (command == Command.START_READING_BARCODES)
+            	this.readBarcodes = true;
+            else if (command == Command.PERMA_STOP_READING_BARCODES)
+            	this.permaBarcodeStop = true;
+            else if (command % 100 == Command.AUTOMATIC_MOVE_FORWARD) {
                 if (!getRobotConnected()) {
                     try {
-                        BarcodeThread BT = new BarcodeThread("BT",
-                                getSimulationPilot().getSSG());
-                        BT.start();
+                    	if(readBarcodes && !permaBarcodeStop) {
+                    		BT = new BarcodeThread("BT",
+                    				getSimulationPilot().getSSG());
+                    	BT.start();
+                    	}
                         int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
                         while (amount-- != 0)
                             simulationPilot.travel(1);
-                        boolean found = BT.getFound();
-                        BT.setQuit(true);
-                        if (found)
-                            readBarcode();
+                    	if(readBarcodes && !permaBarcodeStop) {
+                    		boolean found = BT.getFound();
+                    		BT.setQuit(true);
+                    		if (found)
+                    			readBarcode();
+                    	}
                     } catch (Exception e) {
+                        System.out.println("Error in Communicator.sendCommand(" + command + ")!");
                         e.printStackTrace();
-                        System.out
-                                .println("Error in CommandUnit.moveForward(int angle)!");
                     }
-                } else {
+                } 
+                else {
                     int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
                     while (amount-- != 0)
                         simulationPilot.travel(1);
                 }
-            } else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
+            } 
+            else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
                 double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
                 while (amount-- > 0)
                     simulationPilot.rotate(1);
-            } else if (command % 100 == -(100 - Command.AUTOMATIC_TURN_ANGLE)) {
+            } 
+            else if (command % 100 == -(100 - Command.AUTOMATIC_TURN_ANGLE)) {
                 double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
                 while (amount++ < 0)
                     simulationPilot.rotate(-1);
             }
-            if (robotConnected) {
-                while (buzy)
+            if (robotConnected)
+                while (busy)
                     Thread.sleep(100);
-            }
         } catch (Exception e) {
-            System.out.println("Error in Communicator.sendCommand(" + command
-                    + ")!");
+            System.out.println("Error in Communicator.sendCommand(" + command + ")!");
+            e.printStackTrace();
         }
     }
 

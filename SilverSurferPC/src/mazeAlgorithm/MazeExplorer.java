@@ -37,13 +37,13 @@ public class MazeExplorer {
 	 * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
 	 */
 	public void startExploringMaze(){
-		gui.getCommunicator().setTilesBeforeAllign(5);
+		gui.getCommunicator().setTilesBeforeAllign(3);
 		gui.getCommunicator().mustAllign(true);
 		allTiles.add(startTile);
 		algorithm(startTile);
-		gui.getCommunicator().sendCommand(Command.READ_BARCODES);
 		//TODO test shortestPath op't einde.
 		if(getCheckTile() != null && getEndTile() != null) {
+			gui.getCommunicator().sendCommand(Command.PERMA_STOP_READING_BARCODES);
 			SilverSurferGUI.changeSpeed(3);
 			//Drive to checkpoint.
 			gui.getSimulationPanel().clearPath();
@@ -158,7 +158,7 @@ public class MazeExplorer {
 		for(Object neighbourTile: currentTile.getReachableNeighbours()) {
 			if(neighbourTile != null && !(((Tile) neighbourTile).isMarkedExploreMaze())) {
 				queue.add((Tile) neighbourTile);
-				int i = 0;
+				/*int i = 0;
 				for(Object neighbour: ((Tile) neighbourTile).getAllNeighbours()) {
 					if(neighbour != null && (((Tile) neighbour).isMarkedExploreMaze()))
 						i++;
@@ -168,7 +168,7 @@ public class MazeExplorer {
 					allTiles.add((Tile) neighbourTile);
 					while(queue.contains(neighbourTile))
 						queue.remove(neighbourTile);
-				}
+				}*/
 			}
 		}
 		
@@ -197,6 +197,16 @@ public class MazeExplorer {
 			nextTile = currentTile.getEdge(currentOrientation.getOppositeOrientation()).getNeighbour(currentTile);
 		else
 			nextTile = queue.lastElement();
+		
+		while(!isGoodNextTile(nextTile)) {
+			nextTile.setMarkingExploreMaze(true);
+			allTiles.add(nextTile);
+			while(queue.contains(nextTile))
+				queue.remove(nextTile);
+			if(queue.isEmpty())
+				return;
+			nextTile = queue.lastElement();
+		}
 		allTiles.add(nextTile);
 		//verwijdert alle nextTiles uit de queu. De reden waarom deze meermaals in de queu 
 		//voorkomen is omdat het voordeliger is om de laatste versie te pakken omdat deze
@@ -209,5 +219,18 @@ public class MazeExplorer {
 		shortestPath.goShortestPath();
 		//voert methode opnieuw uit met nextTile
 		algorithm(nextTile);
+	}
+	
+	public boolean isGoodNextTile(Tile nextTile) {
+		 int j = 0;
+		 if(!nextTile.isStraightTile()){
+			 for(Object neighbourTile : nextTile.getAllNeighbours()){
+				 if(neighbourTile != null &&((Tile) neighbourTile).isMarkedExploreMaze())
+					 j++;
+			 }
+		 }
+		 if(j == 4)
+			 return false;
+		 return true;
 	}
 }

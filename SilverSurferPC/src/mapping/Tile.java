@@ -417,4 +417,14 @@ public class Tile {
             i++;
         return i;
     }
+    
+    public boolean isStraightTile() {
+    	if (!getEdge(Orientation.EAST).isPassable() && !getEdge(Orientation.WEST).isPassable() &&
+    			getEdge(Orientation.NORTH).isPassable() && getEdge(Orientation.SOUTH).isPassable())
+    		return true;
+    	if (!getEdge(Orientation.NORTH).isPassable() && !getEdge(Orientation.SOUTH).isPassable() &&
+    			getEdge(Orientation.WEST).isPassable() && getEdge(Orientation.EAST).isPassable())
+    		return true;
+    	return false;
+    }
 }

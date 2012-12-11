@@ -385,7 +385,7 @@ public class SimulationJPanel extends JPanel implements Runnable,
                                     + simulationPilot
                                             .getCurrentPositionAbsoluteY()
                                     + " , " + simulationPilot.getAlpha()
-                                    + "�, Map: "
+                                    + "\u00B0, Map: "
                                     + simulationPilot.getMapString() + ")");
                 else
                     getSSG().updateCoordinates(
