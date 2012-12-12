@@ -615,9 +615,9 @@ De \textit{Simulator} heeft een \textit{MapGraph} die de virtuele doolhof voorst
 % == BESLUIT == %
 \section{Besluit} % 3 ok
 \label{sec:besl}
-De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren. De calibratie toont aan dat het nodig is regelmatig te corrigeren. Bovendien moeten de sensorwaarden juist ge\"interpreteerd worden om correctie conclusies te trekken.\\
+De uiteindelijke fysieke bouw van de robot bestaat uit de NXT, de wielen met aandrijvingen, een ultrasone sensor, een lichtsensor en twee druksensoren. De calibratie toont aan dat het nodig is regelmatig te corrigeren. Bovendien moeten de sensorwaarden juist ge\"interpreteerd worden om correcte conclusies te trekken.\\
 
-De GUI biedt de gebruiker de mogelijkheid om verschillende commando's aan de robot te geven. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot `ziet'. Op deze manier kan de doolhof ge\"interpreteerd worden. De robot wordt tijdens het verkennen van de doolhof regelmatig gecorrigeerd met het witte-lijn-algoritme en het muur-algoritme. Telkens wanneer een barcode gesignaleerd wordt, voert de robot de bijhorende opdracht uit. E\'en bepaalde barcode stelt een `checkpoint' voor en \'e\'en bepaalde barcode stelt een `finish' voor. Wanneer de hele doolhof verkend is, rijdt de robot zo snel mogelijk via de `checkpoint' naar de `finish'.\\
+De GUI biedt de gebruiker de mogelijkheid om verschillende commando's aan de robot te geven. De uitleeswaarden van de sensoren vertellen de gebruiker wat de robot `ziet'. Op deze manier kan de doolhof ge\"interpreteerd worden. De robot wordt tijdens het verkennen van de doolhof regelmatig gecorrigeerd met het witte-lijn-algoritme en het muur-algoritme. Telkens wanneer een barcode gesignaleerd wordt, wordt deze ingelezen en wordt bijhorende opdracht uitgevoerd. E\'en bepaalde barcode stelt een `checkpoint' voor en \'e\'en bepaalde barcode stelt een `finish' voor. Wanneer de hele doolhof verkend is, rijdt de robot zo snel mogelijk via de `checkpoint' naar de `finish'.\\
 
 De simulator is ook verbonden aan de GUI. Deze voert dezelfde opdracht uit als de robot. Het is mogelijk een virtueel doolhof te laden en de simulator hierin te laten `rijden'.
 
@@ -666,7 +666,7 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 % == DEMO 2 == %
 \section{Demo 2} % 3 ?
 \label{Asec:demo2}
-De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kunnen ze informatie doorzenden naar de robot. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen en doorsturen.\\
+De sensoren worden voor demo 2 wel ge\"installeerd. Na calibratie kan de informatie die ze doorsturen correct ge\"interpreteerd worden. Threads zorgen ervoor dat de robot tegelijkertijd sensorwaarden kan lezen en doorsturen.\\
 
 De meetwaarden worden in de GUI weergegeven zodat een gebruiker de robot kan besturen zonder deze te zien. Bovendien is de simulator gekoppeld aan de robot. Wat de robot doet, doet de simulator ook en wordt getekend in de GUI. De simulator kan ook onafhankelijk van de robot opereren. Het is mogelijk een virtuele doolhof te laden en te simuleren dat de `robot' zich hierdoor beweegt. Zowel robot als simulator kunnen zich rechtzetten op een (virtuele) witte lijn. Het is bovendien mogelijk de robot zich in het midden van de tegel te laten zetten.
 
@@ -719,23 +719,23 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 % == DEMO 3 == %
 \section{Demo 3} % 3 ?
 \label{Asec:demo3}
-De robot kan zich autonoom door een doolhof bewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map van de doolhof op. Op elke nieuwe tegel kijkt de robot rond zodat muren gedetecteerd kunnen worden door interpretatie van sensorwaarden. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish (via het checkpoint) te bepalen. De finish en het checkpoint worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
+De robot kan zich autonoom door een doolhof bewegen zonder op muren te botsen. Tijdens het rijden bouwt de robot een map van de doolhof op. Op elke nieuwe tegel kijkt de robot rond zodat muren gedetecteerd kunnen worden door interpretatie van sensorwaarden. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish (via het checkpoint) te bepalen. De finish en het checkpoint worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
 
 % == resulaten D3 == %
 \subsection{Resultaten} % 3 ?
 \label{Assec:result3}
 De derde demonstratie bestond uit het verkennen van een doolhof met barcodes. Nadien moest de kortste weg naar de finish gereden worden. Dit geldt zowel voor robot als simulator.\\
 
-De eerste barcode lag een beetje los waardoor de robot er bleef achterhaken. Alles werd opnieuw opgestart. De robot bleef ook de tweede keer haken, maar nu werd verder gegaan. Na enkele tegels had de robot zichzelf weer recht en centraal gezet met behulp van de correctiealgoritmes.
+De eerste barcode lag een beetje los waardoor de robot er bleef achterhaken. Alles werd opnieuw opgestart. De robot bleef ook de tweede keer haken, maar nu werd besloten toch verder te gaan. Na enkele tegels had de robot zichzelf weer rechtgezet en gecentraliseerd met behulp van de correctiealgoritmes.
 
-De volgende barcode las de robot zoals het hoort. De tegel ernaast bevatte ook een barcode. Daar liep het mis. De barcode werd juist gelezen (en getekend in de GUI), vervolgens zette de robot zich recht op de muren en toen bleef hij staan. De robot zou in hoge snelheid verder moeten hebben gereden. Waarom dit niet gebeurde is niet duidelijk. Vermoedelijk heeft het iets te maken met de communicatie tussen robot en computer.\\
+De volgende barcode las de robot zoals het hoort. De tegel ernaast bevatte ook een barcode. Daar liep het mis. De barcode werd juist gelezen (en getekend in de GUI), vervolgens zette de robot zich recht op de muren en toen bleef hij staan. De robot zou in hoge snelheid verder moeten hebben gereden. De computer bleek op de robot de wachten, terwijl de robot op de computer wachtte.\\
 
 De simulator deed de demonstratie perfect. De hele virtuele doolhof werd verkend en het kortste pad naar de finish werd gevonden en gereden. Ook het barcodes lezen gebeurde zoals het hoort.
 
 % == conclusies D3== %
 \subsection{Conclusies} % 3 ?
 \label{Assec:conc3}
-De robot maakte een fout. De oorzaak is nog niet bekent, maar moet worden opgespoord opdat de fout in de toekomst vermeden kan worden.
+De robot maakte een fout. De precieze oorzaak wordt opgespoord opdat de fout in de toekomst vermeden kan worden.
 
 % == aanpassingen D3== %
 \subsection{Oplijsting aanpassingen verslag} % 3 ?
@@ -760,12 +760,12 @@ Aan het begin van het semester werd een planning opgesteld, maar hier werd niet 
 
 Meestal werkte elk teamlid `in zijn gebied'. Hij/zij wist hoe dat gebied in elkaar zat en wat er nog moest gebeuren. Er werd goed gecommuniceerd, wanneer iemand meer hulp nodig had.
 
-Tijdens de ingelaste momenten werd uiteraard met het hele team samen geprogrammeerd. Vaak werd ook buiten deze momenten afgesproken. Door samen te zitten, was het duidelijker wat nog moest gebeuren. Het had ook het voordeel dat hulp gevraagd kon worden aan andere teamleden, hoewel vaak aan verschillenden onderdelen gewerkt werd.
+Tijdens de ingelaste momenten werd uiteraard met het hele team samen geprogrammeerd. Vaak werd ook buiten deze momenten afgesproken. Door samen te zitten, was het duidelijker wat nog moest gebeuren. Het had ook het voordeel dat hulp gevraagd kon worden aan andere teamleden, hoewel vaak aan verschillende onderdelen gewerkt werd.
 
 \section{Beschrijving van de werkverdeling}
 \label{Assec:werkverdeling}
 Tabel~\ref{tab:werkuren} geeft weer wie hoeveel tijd in het project gestoken heeft. Figuur~\ref{fig:werkverdeling} toont welk deel van de tijd in een bepaald onderwerp gestoken werd.
-Maxim nam de taak van teamco\"oridnator op zich, Nele die van secretaris.
+Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris.
 
 %resultaten lichtsensor
 \begin{table}[!hb]
@@ -782,9 +782,9 @@ Maxim nam de taak van teamco\"oridnator op zich, Nele die van secretaris.
 	week 9 & 14u50 & 11u13 & 22u00 & 16u30 & 25u30 & 14u30\\
 	week 10 & 15u30 & 5u00 & 22u30 & 11u05 & 18u30 & 14u00\\
 	week 11 & 15u30 & 14u12 & 5u30 & 12u00 & 13u00 & 17u00\\
-	week 12 & 6u34 & 8u45 & 5u27 & 5u00 & 5u27 & 6u27\\ \hline
-	totaal & 138u39 & 107u54 & 169u00 & 124u20 & 169u50 & 144u12 \\
-	gemiddeld & 12u36 & 9u48 & 15u21 & 11u18 & 15u26 & 13u06
+	week 12 & 12u35 & 11u25 & 5u27 & 5u00 & 5u27 & 6u27\\ \hline
+	totaal & 144u40 & 110u344 & 169u00 & 124u20 & 169u50 & 144u12 \\
+	gemiddeld & 13u09 & 10u03 & 15u21 & 11u18 & 15u26 & 13u06
     \end{tabular}
     \caption{Overzicht werkuren}
     \label{tab:werkuren}
@@ -839,7 +839,7 @@ We hebben er vanaf het begin voor gekozen een deel van de software op de NXT van
 
 Een aantal keer hebben we testen gedaan zonder de resultaten te noteren. Daardoor konden onze bevindingen niet gestaafd worden met bewijs. Deze testen konden dan niet mee in het verslag of moesten opnieuw gedaan worden. We hebben hierdoor enkele kansen verloren.\\
 
-In eerste instantie werden de sensorwaarden niet gesimuleerd in de simulator. De simulator gebruikte andere algoritmes dan de robot omdat hij geen gebruik maakte van sensorwaarden. Dit hebben we aangepast voor demo~3. Het van de eerste keer juist doen, had echter heel wat tijd gepaard.\\
+In eerste instantie werden de sensorwaarden niet gesimuleerd in de simulator. De simulator gebruikte andere algoritmes dan de robot omdat hij geen gebruik maakte van sensorwaarden. Dit hebben we aangepast voor demo~3. Indien dit van de eerste keer juist was gebeurt, had het heel wat tijd bespaard.\\
 
 We hebben er steeds voor gezorgd de GUI zo overzichtelijk mogelijk te houden. Uiteindelijk zijn er slechts een paar knoppen beschikbaar en worden andere opdrachten gegeven via een compact dropdownmenu. Dit geeft een mooi resultaat.\\
 
@@ -868,10 +868,10 @@ Het zicht van een robot is beperkt: een robot 'ziet' alles wat gebeurt op plaats
 De robots proberen elkaar uit te schakelen door het plaatsen van bommen. Een bom is een obstakel waar de robots niet door kunnen. Na een tijd ontploft een bom. Op dat moment gaat alles dat zich in een rechte lijn binnen een bepaalde afstand van de bom bevindt kapot (zie figuur~\ref{fig:bomberman}). Explosies gaan niet diagonaal en niet door muren. Om te voorkomen dat robots de hele tijd bommen achterlaten wordt het aantal actieve bommen beperkt tot twee. Er kan dus pas een derde bom geplaatst worden als de eerste van die twee ontploft is.
 
 \item
-Naast bommen zijn ook andere (virtuele) obstakels aanwezig. Deze kunnen vernietigt worden door een bom. Het vakje waarop het obstakel stond word dan vrij gemaakt.
+Naast bommen zijn ook andere (virtuele) obstakels aanwezig. Deze kunnen vernietigd worden door een bom. Het vakje waarop het obstakel stond wordt dan vrij gemaakt.
 
 \item
-Twee `power-ups' maken de bommen van een robot sterker of de beschermen de robot. Als je over een power-up rijdt dan wordt die automatisch van toepassing en verdwijnt die ook. Power-ups kunnen ook vernietigt worden door de explosie van een bom. De power-up die bommen sterker maakt, heeft als resultaat dat de afstand waarover de explosie gebeurt vergroot. De power-up die bescherming biedt, zorgt ervoor dat de robot \'e\'en explosie kan overleven zonder schade.
+Twee `power-ups' maken de bommen van een robot sterker of beschermen de robot. Als je over een power-up rijdt dan wordt die automatisch van toepassing en verdwijnt die ook. Power-ups kunnen ook vernietigd worden door de explosie van een bom. De power-up die bommen sterker maakt, heeft als resultaat dat de afstand waarover de explosie gebeurt vergroot. De power-up die bescherming biedt, zorgt ervoor dat de robot \'e\'en explosie kan overleven zonder schade.
 
 \item
 Als extra kunnen er nog een groot aantal power-ups worden toegevoegd. (e.g. een power-up waarmee je sneller kan bewegen, ervan uitgaande dat je bewegingssnelheid op voorhand beperkt is of een power-up waarmee je drie bommen tegelijk kunt hebben liggen i.p.v. twee)
@@ -890,13 +890,13 @@ Als extra kunnen er nog een groot aantal power-ups worden toegevoegd. (e.g. een 
 Robot 1 (R1) heeft een bom gelegd vier vakjes naar rechts en is dan teruggekomen zodat hij niet geraakt wordt.
 
 \item
-Robot 2 (R2) heeft niet zoveel geluk, hij is geraakt en  dus vernietigt door de bom naast hem. Deze bom kan hij zelf geplaatst hebben of kan door een tegenstander geplaatst zijn.
+Robot 2 (R2) heeft niet zoveel geluk, hij is geraakt en  dus vernietigd door de bom naast hem. Deze bom kan hij zelf geplaatst hebben of kan door een tegenstander geplaatst zijn.
 
 \item
 De blauwe bom staat symbool voor een power-up. De rode bom is een bom die gelegd is door een robot die zo \'e\'en power-up heeft genomen. De afstand van deze bom is dus vergroot.
 
 \item
-Respectievelijk een power-up die de robot tegen \'e\'en explosie beschermt en een obstakel dat vernietigt moet worden alvorens de robots in het afgesloten deel van het doolhof kunnen komen. Robots zullen obstakels moeten vernietigen ofwel om tot bij power-ups te komen ofwel om tot bij elkaar te komen zodat ze kunnen proberen elkaar op te blazen. In het spel zelf zouden er natuurlijk meer power-ups en obstakels aanwezig zijn.
+Respectievelijk een power-up die de robot tegen \'e\'en explosie beschermt en een obstakel dat vernietigd moet worden alvorens de robots in het afgesloten deel van het doolhof kunnen komen. Robots zullen obstakels moeten vernietigen ofwel om tot bij power-ups te komen ofwel om tot bij elkaar te komen zodat ze kunnen proberen elkaar op te blazen. In het spel zelf zouden er natuurlijk meer power-ups en obstakels aanwezig zijn.
 \end{enumerate}
 
 \newpage
