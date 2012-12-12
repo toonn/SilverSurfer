@@ -9,6 +9,9 @@ import gui.SilverSurferGUI;
 
 import java.io.IOException;
 import java.util.*;
+
+import commands.Command;
+
 import mapping.*;
 
 public class ShortestPath {
@@ -61,6 +64,10 @@ public class ShortestPath {
 			ar[1] = ((Tile) tilesPath.get(i+1)).getyCoordinate() - ((Tile) tilesPath.get(i)).getyCoordinate();
 			Orientation orientation = Orientation.getOrientationOfArray(ar);
 			try {
+				if(tilesPath.size() - i > 2)
+					gui.getCommunicator().sendCommand(Command.STOP_READING_BARCODES);
+				else
+					gui.getCommunicator().sendCommand(Command.START_READING_BARCODES);
 				gui.getCommunicator().goToNextTile(orientation);
 			} catch (IOException e) {
 				System.err.println("exception in shortestpad gui.getunitcommunicator.goTonextTile");

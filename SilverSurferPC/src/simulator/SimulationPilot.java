@@ -164,14 +164,7 @@ public class SimulationPilot {
     }
 
     public void setSpeed(int speed) {
-        if (speed == 1)
-            this.speed = 194;
-        else if (speed == 2)
-            this.speed = 86;
-        else if (speed == 3)
-            this.speed = 58;
-        else
-            this.speed = 48;
+        this.speed = speed;
     }
 
     /**
@@ -325,8 +318,16 @@ public class SimulationPilot {
             try {
                 if (getSSG().getCommunicator().getRobotConnected())
                     Thread.sleep(speed / ((int) Math.ceil(Math.abs(distance))));
-                else
-                    Thread.sleep(10);
+                else {
+                	if(getSpeed() == 1)
+                		Thread.sleep(10);
+                	else if(getSpeed() == 2)
+                		Thread.sleep(7);
+                	if(getSpeed() == 3)
+                		Thread.sleep(5);
+                	else
+                		Thread.sleep(3);
+                }
             } catch (InterruptedException e) {
             }
         }
@@ -523,9 +524,17 @@ public class SimulationPilot {
 
             try {
                 if (getSSG().getCommunicator().getRobotConnected())
-                    Thread.sleep(speed / 5);
-                else
-                    Thread.sleep(4);
+                    Thread.sleep(speed / 10);
+                else {
+                	if(getSpeed() == 1)
+                		Thread.sleep(4);
+                	else if(getSpeed() == 2)
+                		Thread.sleep(3);
+                	if(getSpeed() == 3)
+                		Thread.sleep(2);
+                	else
+                		Thread.sleep(1);
+                }
             } catch (InterruptedException e) {
             }
         }

@@ -19,7 +19,7 @@ public class BarcodeThread extends Thread {
 	public void run() {
 		while(!quit) {
 			try {
-				Thread.sleep(50);
+				Thread.sleep(2);
 			} catch(Exception e) {
 				
 			}

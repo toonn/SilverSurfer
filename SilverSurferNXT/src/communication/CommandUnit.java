@@ -24,7 +24,7 @@ public class CommandUnit {
     private TouchSensor touchSensor2;
     private boolean busy = false;
     private boolean readBarcodes = true;
-    private boolean readBarcodesTemp = true;
+    private boolean permaBarcodeStop = false;
     private double x = 220;
     private double y = 220;
     private double angle = 270;
@@ -90,7 +90,7 @@ public class CommandUnit {
                     break;
                 case (Command.ALIGN_PERPENDICULAR):
                     CU.updateCoordinates(20, 0);
-                    CU.alignOnWhiteLine(CU.lightSensor.getLightValue() + 4);
+                    CU.alignOnWhiteLine();
                     CU.waiting();
                 	CU.sendStringToUnit("[DON]");
                     break;
@@ -113,32 +113,31 @@ public class CommandUnit {
                     CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
             		CU.sendStringToUnit("[DON]");
                 	break;
-                case (Command.READ_BARCODES):
+                case (Command.STOP_READING_BARCODES):
                     CU.readBarcodes = false;
             		CU.sendStringToUnit("[DON]");
                 	break;
-                case (Command.READ_CURRENT_BARCODE):
+                case (Command.START_READING_BARCODES):
                     CU.readBarcodes = true;
-                	CU.readBarcodesTemp = true;
-                	CU.sendStringToUnit("[RBC] " + CU.moveForward((int)Math.round(LENGTH_COEF*100)));
+            		CU.sendStringToUnit("[DON]");
+                	break;
+                case (Command.PERMA_STOP_READING_BARCODES):
+                    CU.permaBarcodeStop = true;
             		CU.sendStringToUnit("[DON]");
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
                         CU.updateCoordinates((input-Command.AUTOMATIC_MOVE_FORWARD)/100, 0);
                         int result = CU.moveForward((int)Math.round(LENGTH_COEF*(input-Command.AUTOMATIC_MOVE_FORWARD)/100));
-                        CU.readBarcodesTemp = true;
-    	    			if(result != 0) {
+    	    			if(result != 0)
     	    				CU.sendStringToUnit("[BC] " + result);
-    	    				CU.readBarcodesTemp = false;
-    	    			}
                         CU.waiting();
                     } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -(100-Command.AUTOMATIC_TURN_ANGLE))) && input != Command.AUTOMATIC_TURN_ANGLE) {
                         CU.updateCoordinates(0, (input-Command.AUTOMATIC_TURN_ANGLE)/100);
                         CU.turnAngle((int)Math.round(ANGLE_COEF*(input-Command.AUTOMATIC_TURN_ANGLE)/100/360));
                         CU.waiting();
                     }
-                	CU.sendStringToUnit("[DON]");
+                	CU.sendStringToUnit("[DON]");                	
                     break;
                 }
             } catch (Exception e) {
@@ -178,6 +177,7 @@ public class CommandUnit {
             NORMAL_SPEED = 360;
 		Motor.A.setSpeed(NORMAL_SPEED);
 		Motor.B.setSpeed(NORMAL_SPEED);
+		sendStringToUnit("[RBC] "+speed + " omg it works");
     }
 
     public void sendStringToUnit(String info) {
@@ -213,14 +213,14 @@ public class CommandUnit {
     
     private int moveForward(int angle) {
         try {
-        	if(readBarcodes && readBarcodesTemp) {
+        	if(readBarcodes && !permaBarcodeStop) {
         		BT = new BarcodeThread("BT");
         		BT.setLightSensor(lightSensor);
         		BT.start();
         	}
         	Motor.A.rotate(angle, true);
         	Motor.B.rotate(angle);
-        	if(readBarcodes && readBarcodesTemp) {
+        	if(readBarcodes && !permaBarcodeStop) {
         		Thread.sleep(500);
         		boolean found = BT.getFound();
         		BT.setQuit(true);
@@ -262,18 +262,32 @@ public class CommandUnit {
     }
 
     private void turnAngle(int angle) {
+    	if (NORMAL_SPEED > 180) {
+    		Motor.A.setSpeed(180);
+    		Motor.B.setSpeed(180);
+    	}
         Motor.A.rotate(-angle, true);
         Motor.B.rotate(angle);
+		Motor.A.setSpeed(NORMAL_SPEED);
+		Motor.B.setSpeed(NORMAL_SPEED);
     }
 
-    private void alignOnWhiteLine(int treshold) {
-    	if(treshold < 40)
-    		treshold = 52;
+    private void alignOnWhiteLine() {
+    	int treshold = 51;
     	int angle = 0;
+		
         
 		WhiteLineThread WLT = new WhiteLineThread("WLT");
 		WLT.start();
-
+		
+		for(int i = 0; i < 7; i++) {
+			try {
+				Thread.sleep(100);
+			} catch(Exception e) {
+				
+			}
+			while(lightSensor.getLightValue() > treshold || lightSensor.getLightValue() < 40);
+		}
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
 		
