@@ -44,7 +44,7 @@ Het P\&O-project heeft als doel een robot autonoom een doolhof te laten verkenne
 
 De robot kan zich autonoom door een doolhof bewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map van de doolhof op. Op elke nieuwe tegel kijkt de robot rond zodat muren gedetecteerd kunnen worden door interpretatie van sensorwaarden. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish (via het checkpoint) te bepalen. De finish en het checkpoint worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.\\
 
-Om de afwijking op de aansturing te minimaliseren, ori\"enteert de robot zich regelmatig op een witte lijn. Zo blijft de robot steeds zo dicht mogelijk bij het midden van de tegels.\\
+Om de afwijking op de aansturing te minimaliseren, ori\"enteert de robot zich regelmatig op een witte lijn en op basis van de muren. Zo blijft de robot steeds zo dicht mogelijk bij het midden van de tegels.\\
 
 Een computerprogramma simuleert de werking van de robot. Het is voor de simulator mogelijk door een virtuele doolhof te rijden en deze op gelijkaardige wijze te verkennen. De sensorwaarden worden gesimuleerd met een afwijking om de werkelijke robot zo goed mogelijk te benaderen. Verder worden dezelfde algoritmes gebruikt als voor de robot. Dit laat toe de algoritmes te testen zonder de robot hiervoor te gebruiken.
 \end{abstract}
@@ -59,9 +59,11 @@ Een computerprogramma simuleert de werking van de robot. Het is voor de simulato
 
 \newpage
 
+\setcounter{tocdepth}{2}
 \tableofcontents
 \listoftables
 \listoffigures
+
 \thispagestyle{empty}
 
 \newpage 
@@ -71,7 +73,10 @@ Een computerprogramma simuleert de werking van de robot. Het is voor de simulato
 \label{ssec:inl}
 In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms \cite{mindstorms}. Deze robot moet uiteindelijk volledig autonoom een doolhof kunnen verkennen.\\
 
-Op de derde demonstratie kan de robot alle taken van de vorige demonstratie nog steeds uitvoeren. De robot kan zich volledig autonoom voortbewegen. Wanneer de robot zich in een doolhof voortbeweegt, kan hij deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar de tegel met de barcode `checkpoint'. Vandaar gaat de robot zo snel mogelijk naar de tegel met barcode `finish'.
+Op de eerste demonstratie verbindt de robot via bluetooth met de computer. De GUI laat toe de robot via pijltjestoetsen handmatig te besturen of een veelhoek te rijden. De parameters voor deze veelhoek, het aantal hoeken en de lengte van de zijde, kunnen via de GUI ingegeven worden.\\
+Op de tweede demonstratie zoekt de robot autonoom een witte lijn in het doolhof en ori\"enteert zich hier loodrecht op. De GUI laat toe de sensorwaarden van de robot te lezen; via deze waarden kan een bestuurder het doolhof tekenen zonder het doolhof te zien.\\
+Op de derde demonstratie kan de robot zich volledig autonoom voortbewegen. Wanneer de robot zich in een doolhof voortbeweegt, kan hij deze in kaart brengen. Bij het inlezen van barcodes voert de robot een bepaalde opdracht uit. Op het moment dat de volledige doolhof is ingelezen, bepaalt de robot de kortste weg naar de tegel met de barcode `checkpoint'. Vandaar gaat de robot zo snel mogelijk naar de tegel met barcode `finish'.\\
+Steeds kan de robot ook de opdrachten van voorgaande demonstraties uitvoeren. Een simulator in staat dezelfde opdrachten uit te voeren als de robot.
 
 % == BOUW == %
 \section{Bouw van de robot} % 3 ok
@@ -319,37 +324,39 @@ De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde
  == veelhoek == %
 \subsection{Rijden van een veelhoek} % 3 ?
 \label{ssec:algoVeelH}
-De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van %de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, %draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de %volledige veelhoek gereden is. 
-
-\lstset{frame=single, language=Java, caption=Veelhoek algoritme (pseudocode),
-   	label=code:algoVeelH, numbers=left, numberstyle=\footnotesize,
-		basicstyle=\sffamily, numbersep=5pt}
-\begin{lstlisting}
-Angle = (360.0/amtOfAngles)*100
-Voor i van 0 tot amtOfAngles
-	Beweeg lengthInCM vooruit
-	Draai angle
-\end{lstlisting}
-
+De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de volledige veelhoek gereden is.
 
 % == witte lijn == %
 \subsection{Rechtzetten op een witte lijn} % 3 ok
 \label{ssec:algoWitteL}
-Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt onder andere door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren. List De robot rijdt dan weer rechtdoor. Listing~\ref{code:algoWitteL} toont een algoritme dat gebruikt kan worden wanneer de robot net over een witte lijn staat (wanneer hij volledig rond zijn as draait zou hij de witte lijn moeten detecteren).
+Indien regelmatig gecorrigeerd wordt op de calibratieafwijkingen kan de impact ervan geminimaliseerd worden. Deze correctie gebeurt onder andere door de witte lijnen als referentie te nemen en hier loodrecht op te ori\"enteren. De robot rijdt dan weer rechtdoor. Figuur~\ref{fig:algoWitteL} toont de werking van het algoritme. De robot rijdt eerst net over de witte lijn. Wanneer de robot dan op een witte lijn tussen twee panelen staat, zorgt de donkere scheidingslijn tussen twee panelen niet voor verwarring.
 
-\lstset{frame=single, caption=Witte Lijnalgoritme (pseudocode),
-		label=code:algoWitteL, numbers=left, numberstyle=\footnotesize,
-		basicstyle=\sffamily, numbersep=5pt}
-\begin{lstlisting}
-AngleTurned = 0
-
-Draai(rechts,5) tot witte lijn.
-Draai(links,1) tot witte lijn EN AngleTurned++.
-Draai(rechts, AngleTurned/2).
-\end{lstlisting}
-%ONTBREEKT: figuur
-
-De robot staat best net over de witte lijn. Wanneer de robot dan op een witte lijn tussen twee panelen staat, zorgt de donkere scheidingslijn tussen twee panelen niet voor verwarring.\\
+% figuren witte lijn
+\begin{figure}
+        \centering
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{witte_lijn1}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{witte_lijn2}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{witte_lijn3}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{witte_lijn4}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{witte_lijn5}
+        \end{subfigure}
+ \caption[Werking van het witte lijn algoritme.]{Werking van het witte lijn algoritme.\\(1) Detecteer een witte lijn. (2) Rij tot over de lijn. (3) Draai naar links tot op de witte lijn. (4) Draai naar rechts tot op de witte lijn en verhoog de teller. (5) Draai teller/2 graden naar links. De robot staat recht.}
+\label{fig:algoWitteL}
+\end{figure}
 
 Dit algoritme wordt tijdens het verkennen en tijdens het rijden naar de finish uitgevoerd. De robot zet zich elke vijf tegels recht.
 % ONTBREEKT: elke vijf? of vaker?
@@ -357,27 +364,36 @@ Dit algoritme wordt tijdens het verkennen en tijdens het rijden naar de finish u
 % == muren == %
 \subsection{Centreren aan de hand van twee muren} % 3 ok
 \label{ssec:algoMuren}
-Een alternatieve manier om te corrigeren op calibratieafwijkingen is door gebruik te maken van muren. Met dit algoritme zet de robot zich in het midden van een tegel. De robot kijkt naar een muur en meet op hoeveel afstand hij zich van de muur bevindt. Hij rijdt eventueel wat naar voren en meet dan de afstand tot de tegenovergestelde muur. Eventueel rijdt hij weer wat naar voren. Het algoritme is enkel toepasbaar wanneer de robot zich op een tegel met muren aan twee kanten bevindt.
+Een alternatieve manier om te corrigeren op calibratieafwijkingen is door gebruik te maken van muren. Met dit algoritme zet de robot zich in het midden van een tegel. De robot kijkt naar een muur en meet op hoeveel afstand hij zich van de muur bevindt. Hij rijdt eventueel wat naar voren (achteren) en meet dan de afstand tot de tegenovergestelde muur. Eventueel rijdt hij weer wat naar voren (achteren). Het algoritme is enkel toepasbaar wanneer de robot zich op een tegel met muren aan twee kanten bevindt.
 
-\lstset{frame=single, caption=Muuralgoritme (pseudocode),
-		label=code:algoWitteL, numbers=left, numberstyle=\footnotesize,
-		basicstyle=\sffamily, numbersep=5pt}
-\begin{lstlisting}
-Draai(rechts,90)
-ALS     ultraSensor() < 28
-DAN 	Rijd(ultraSensor()-23)
-    	Draai(links,180)
-    	ALS 	ultraSensor() < 28 EN ultraSensor() NIET in [21,25]
-        DAN 	Rijd(ultraSensor()-23)
-		Draai(rechts,90)
-		
-ANDERS 	Draai(links,180)
-	ALS 	ultraSensor() < 28
-	DAN     Rijd(ultraSensor()-23)
-       	        Draai(rechs,90)
-	ANDERS	Draai(rechts,90)
-\end{lstlisting}
-%ONTBREEKT: figuur
+In principe zou de robot zich ook op \'e\'en muur kunnen corrigeren in plaats van op twee. De ultrasone sensor is hier echter niet nauwkeurig genoeg voor (vooral voor heel korte afstanden). Door twee muren te gebruiken wordt dubbel gecheckt.
+
+% figuren muuralgoritme
+\begin{figure}
+        \centering
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{muur2}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{muur3}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{muur4}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{muur5}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.2\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{muur6}
+        \end{subfigure}
+ \caption[Werking van het muren algoritme.]{Werking van het muren algoritme.\\(1) Draai 90\degree naar rechts. (2) Rij eventueel naar voor (achter) om te corrigeren. (3) Draai 180\degree naar links. (4) Rij eventueel naar voor (achter) om te corrigeren. (5) Draai 90\degree naar rechts. De robot staat nu in het midden van de tegel.}
+\label{fig:algoMuur}
+\end{figure}
 
 Dit algoritme wordt uitgevoerd op tegels met barcodes. Zo zijn er zeker muren aan weerskanten. Het algoritme wordt niet uitgevoerd tijdens het rijden naar de finish.
 
@@ -732,6 +748,8 @@ Volgende secties werden aangepast ten opzichte van de derde demonstratie:
 overzicht aangepaste secties:
 \begin{itemize}
 	\item \textit{\ref{ssec:algoVeelH} Rijden van een veelhoek:} opnieuw ingevoerd.
+	\item \textit{\ref{ssec:algoWitteL} Rechtzetten op een witte lijn:} figuren toegevoegd.
+	\item \textit{\ref{ssec:algoMuren} Centreren aan de hand van twee muren:} opnieuw ingevoerd.
 	\item \textit{\ref{Asec:demo1} Demo 1:} opnieuw ingevoerd.
 	\item \textit{\ref{Asec:demo3} Demo 3:} nieuwe sectie.
 	\item \textit{\ref{Assec:beschrijvingProces} Beschrijving van het proces:} nieuwe sectie.
