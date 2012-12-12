@@ -13,7 +13,7 @@
 %%%                                                                     %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[tt3]{penoverslag}
+\documentclass[eind]{penoverslag}
 
 %%% PACKAGES
 \usepackage{lipsum}
@@ -317,7 +317,7 @@ De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde
 \section{Algoritmes} % 3 ok
 \label{sec:algo}
  == veelhoek == %
-\subsection{Het rijden van een veelhoek} % 3 ?
+\subsection{Rijden van een veelhoek} % 3 ?
 \label{ssec:algoVeelH}
 De robot en de simulator kunnen beiden een veelhoek rijden. Het aantal hoeken en de lengte van %de zijden kunnen via de GUI ingesteld worden. De robot en de simulator rijden een afstand, %draaien een bepaald aantal graden rond hun as, rijden weer dezelfde afstand,... Tot de %volledige veelhoek gereden is. 
 
@@ -703,20 +703,26 @@ Volgende secties werden aangepast ten opzichte van de tweede demonstratie:
 \end{itemize}
 
 
-
-
-
 % == DEMO 3 == %
 \section{Demo 3} % 3 ?
 \label{Asec:demo3}
+De robot kan zich autonoom door een doolhof bewegen zonder op muren te botsen. Tijdens het rijden slaat de robot een map van de doolhof op. Op elke nieuwe tegel kijkt de robot rond zodat muren gedetecteerd kunnen worden door interpretatie van sensorwaarden. Wanneer de hele doolhof verkend is, gebruikt de robot het \textit{A*}-algoritme om de kortste weg naar de finish (via het checkpoint) te bepalen. De finish en het checkpoint worden aangegeven met een bepaalde barcode. Andere barcodes laten de robot een opdracht uitvoeren.
 
 % == resulaten D3 == %
 \subsection{Resultaten} % 3 ?
 \label{Assec:result3}
+De derde demonstratie bestond uit het verkennen van een doolhof met barcodes. Nadien moest de kortste weg naar de finish gereden worden. Dit geldt zowel voor robot als simulator.\\
+
+De eerste barcode lag een beetje los waardoor de robot er bleef achterhaken. Alles werd opnieuw opgestart. De robot bleef ook de tweede keer haken, maar nu werd verder gegaan. Na enkele tegels had de robot zichzelf weer recht en centraal gezet met behulp van de correctiealgoritmes.
+
+De volgende barcode las de robot zoals het hoort. De tegel ernaast bevatte ook een barcode. Daar liep het mis. De barcode werd juist gelezen (en getekend in de GUI), vervolgens zette de robot zich recht op de muren en toen bleef hij staan. De robot zou in hoge snelheid verder moeten hebben gereden. Waarom dit niet gebeurde is niet duidelijk. Vermoedelijk heeft het iets te maken met de communicatie tussen robot en computer.\\
+
+De simulator deed de demonstratie perfect. De hele virtuele doolhof werd verkend en het kortste pad naar de finish werd gevonden en gereden. Ook het barcodes lezen gebeurde zoals het hoort.
 
 % == conclusies D3== %
 \subsection{Conclusies} % 3 ?
 \label{Assec:conc3}
+De robot maakte een fout. De oorzaak is nog niet bekent, maar moet worden opgespoord opdat de fout in de toekomst vermeden kan worden.
 
 % == aanpassingen D3== %
 \subsection{Oplijsting aanpassingen verslag} % 3 ?
@@ -725,38 +731,104 @@ Volgende secties werden aangepast ten opzichte van de derde demonstratie:
 
 overzicht aangepaste secties:
 \begin{itemize}
-\item \textit{ Het rijden van een veelhoek:} er terug ingezet.
+	\item \textit{\ref{ssec:algoVeelH} Rijden van een veelhoek:} opnieuw ingevoerd.
+	\item \textit{\ref{Asec:demo1} Demo 1:} opnieuw ingevoerd.
+	\item \textit{\ref{Asec:demo3} Demo 3:} nieuwe sectie.
+	\item \textit{\ref{Assec:beschrijvingProces} Beschrijving van het proces:} nieuwe sectie.
+	\item \textit{\ref{Assec:werkverdeling} Beschrijving van de werkverdeling:} nieuwe sectie.
+	\item \textit{\ref{Assec:kritischeAnalyse} Kritische analyse:} nieuwe sectie.
 \end{itemize}
 
 \section{Beschrijving van het proces}
 \label{Assec:beschrijvingProces}
- Welke moeilijkheden heb je ondervonden tijdens de uitwerking?
- Welke lessen heb je getrokken uit de manier waarop je het project hebt aangepakt?
- Hoe verliep het werken in team? Op welke manier werd de teamco"ordinatie en planning 
-aangepakt?
-\section{Beschrijving van de werkverdeling}
-\label{werkverdeling}
+Aan het begin van het semester werd een planning opgesteld, maar hier werd niet zo vaak naar gekeken. Er is ook een to-do lijst gemaakt. Deze werd wel gebruikt, hoewel niet altijd up to date gehouden. Een file om de werkuren bij te houden, werd wel altijd ingevuld.\\
 
-In de tabel~\ref{werkverdeling} wordt er aangegeven wie hoeveel uur per week heeft gewerkt aan PenO.  
-%figuur werkschema
-\begin{figure}[h!]
+
+\section{Beschrijving van de werkverdeling}
+\label{Assec:werkverdeling}
+
+Tabel~\ref{tab:werkuren} geeft weer wie hoeveel tijd in het project gestoken heeft. Figuur~\ref{fig:werkverdeling} toont welk deel van de tijd in een bepaald onderwerp gestoken werd.
+Maxim nam de taak van teamco\"oridnator op zich, Nele die van secretaris.
+
+%resultaten lichtsensor
+\begin{table}[!hb]
 \begin{center}
-    \includegraphics[width=0.8\textwidth]{werkschema}
-    \caption{Het werkschema}
-	\label{fig:werksch}
+    \begin{tabular}{ r | c  c  c  c  c  c}
+     & Nele & Toon & Sam & Sophie & Gerlinde & Maxim \\ \hline
+    week 2 & 12u15 & 9u10 & 12u21 & 14u15 & 14u40 & 13u00\\
+   	week 3 & 7u30 & 11u30 & 11u35 & 3u00 & 11u00 & 8u45\\
+	week 4 & 16u30 & 8u00 & 19u32 & 14u30 & 13u13 & 15u30\\
+	week 5 & 9u15 & 4u15 & 7u45 & 9u45 & 8u30 & 15u45\\
+	week 6 & 11u00 & 5u00 & 13u47 & 11u00 & 15u00 & 12u45\\
+	week 7 & 19u45 & 17u30 & 37u35 & 20u45 & 35u00 & 21u30\\
+	week 8 & 10u00 & 13u19 & 9u58 & 6u30 & 5u00 & 5u00\\
+	week 9 & 14u50 & 11u13 & 22u00 & 16u30 & 25u30 & 14u30\\
+	week 10 & 15u30 & 5u00 & 22u30 & 11u05 & 18u30 & 14u00\\
+	week 11 & 15u30 & 14u12 & 5u30 & 12u00 & 13u00 & 17u00\\
+	week 12 & 6u34 & 8u45 & 5u27 & 5u00 & 5u27 & 6u27\\ \hline
+	totaal & 138u39 & 107u54 & 169u00 & 124u20 & 169u50 & 144u12 \\
+	gemiddeld & 12u36 & 9u48 & 15u21 & 11u18 & 15u26 & 13u06
+    \end{tabular}
+    \caption{Overzicht werkuren}
+    \label{tab:werkuren}
 \end{center}
+\end{table}
+
+% figuren weergave sensoren
+\begin{figure}
+        \centering
+        \begin{subfigure}[hb]{0.15\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{werk_Nele}
+                \caption{Nele}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.15\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{werk_Toon}
+                \caption{Toon}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.15\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{werk_Sam}
+                \caption{Sam}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.15\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{werk_Sophie}
+                \caption{Sophie}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.15\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{werk_Gerlinde}
+                \caption{Gerlinde}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.15\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{werk_Maxim}
+                \caption{Maxim}
+        \end{subfigure}%
+        \begin{subfigure}[hb]{0.11\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{werk_legende}
+                \caption{legende}
+        \end{subfigure}
+ \caption{Weergave van de werkverdeling}
+\label{fig:werkverdeling}
 \end{figure}
 
-
-
- Geef voor elk van de groepsleden aan aan welke delen ze hebben meegewerkt en welke andere
-taken ze op zich hebben genomen.
- Rapporteer in tabelvorm hoeveel uur elk groepslid elke week aan het project gewerkt heeft,
-zowel tijdens als buiten de begeleide sessies. Geef ook totalen per groepslid voor het volledige
-semester.
 \section{Kritische analyse}
-\label{kritischeAnalyse}
- Maak een analyse van de sterke en zwakke punten van het project. Welke punten zijn vatbaar
+\label{Assec:kritischeAnalyse}
+We hebben er vanaf het begin voor gekozen een deel van de software op de NXT van de robot te plaatsen. Dit was een goede beslissing. Als alles via de computer gaat, vertraagt dat het geheel sterk, zeker wanneer de code complexer wordt. Het is echter niet eenvoudig te beslissen wat precies op de NXT moet. Mogelijk staat er nu iets te veel op.\\
+
+Een aantal keer hebben we testen gedaan zonder de resultaten te noteren. Daardoor konden onze bevindingen niet gestaafd worden met bewijs. Deze testen konden dan niet mee in het verslag of moesten opnieuw gedaan worden. We hebben hierdoor enkele kansen verloren.\\
+
+In eerste instantie werden de sensorwaarden niet gesimuleerd in de simulator. De simulator gebruikte andere algoritmes dan de robot omdat hij geen gebruik maakte van sensorwaarden. Dit hebben we aangepast voor demo~3. Het van de eerste keer juist doen, had echter heel wat tijd gepaard.\\
+
+We hebben er steeds voor gezorgd de GUI zo overzichtelijk mogelijk te houden. Uiteindelijk zijn er slechts een paar knoppen beschikbaar en worden andere opdrachten gegeven via een compact dropdownmenu. Dit geeft een mooi resultaat.\\
+
+De opbouw van de software had logische kunnen zijn. Nu zijn er heel veel Threads en kleine hulpklassen, wat het niet overzichtelijk maakt.\\
+
+Af en toe is het voorgekomen dat stukken code twee keer geschreven werden. Een gevolg van miscommunicatie. Bovendien is het moeilijk te weten wat de anderen al gedaan hebben, waardoor je niet weet welke methodes allemaal beschikbaar zijn. Verder is het werken in team heel goed verlopen. Iedereen heeft zijn steentje bijgedragen aan het geheel.
 
 
 \begin{thebibliography}{9}
