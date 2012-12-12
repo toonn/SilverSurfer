@@ -22,6 +22,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{caption}
 \usepackage{subcaption}
 
 \begin{document}
@@ -830,6 +831,55 @@ De opbouw van de software had logische kunnen zijn. Nu zijn er heel veel Threads
 
 Af en toe is het voorgekomen dat stukken code twee keer geschreven werden. Een gevolg van miscommunicatie. Bovendien is het moeilijk te weten wat de anderen al gedaan hebben, waardoor je niet weet welke methodes allemaal beschikbaar zijn. Verder is het werken in team heel goed verlopen. Iedereen heeft zijn steentje bijgedragen aan het geheel.
 
+\section{Voorstel voor de opdracht in het tweede semester}
+\label{Assec:voorstelOpdracht}
+Ons voorstel is gebaseerd op het spel bomberman van Hudson Soft. (Hoofdwebsite van hudson entertainment is niet meer beschikbaar op 12/12/2012 \mbox{$[http://en.wikipedia.org/wiki/Bomberman]$})
+
+\subsection{Doelstelling}
+De robots proberen elkaar uit te schakelen.
+
+\subsection{Probleemstelling}
+\begin{itemize}
+\item
+Het speelveld is een doolhof geconstrueerd op dezelfde manier als de doolhoven tijdens semester \'e\'en. Het doolhof bestaat het best uit korte rechte stukken met veel zijwegen door het spelmechanisme.
+
+\item
+Het zicht van een robot is beperkt, een robot 'ziet' alles wat gebeurt op plaatsen waar hij al geweest is en niets op plaatsen waar hij nog niet geweest is (vergelijk met de "Fog of War" in spellen als Age of Empires en Warcraft). Deze informatie krijgt de robot van een computer. De sensoren dienen enkel om ervoor te zorgen dat de robot door het doolhof kan bewegen zonder vast te komen zitten.
+
+\item
+De robots proberen elkaar uit te schakelen door het plaatsen van bommen, die na een bepaalde tijd ontploffen. Een bom is een obstakel waar de robots niet door kunnen. Als een bom ontploft dan gaat alles kapot dat zich in een rechte lijn binnen een bepaalde afstand van de bom bevindt (enkel horizontaal en verticaal). Explosies gaan dus niet diagonaal en ook niet door muren. Om te voorkomen dat robots gewoon heel de tijd bommen achterlaten bij het rijden is het aantal bommen dat tegelijk actief kan zijn twee, je kan dus pas een derde bom leggen als de eerste van die twee ontploft is.
+
+\item
+Er zijn ook obstakels (virtuele) die de robot kan vernietigen met een bom, dan wordt het vakje waarop het obstakel stond vrij gemaakt. En kunnen de robots hier ook door.
+
+\item
+Er zijn ook twee 'power-ups' die respectievelijk de bommen van een robot sterker maken of de robot beschermen. Als je over een power-up rijdt dan wordt die automatisch van toepassing en verdwijnt die ook. Power-ups kunnen natuurlijk ook vernietigt worden door de explosie van  een bom. De  power-up die bommen sterker maakt, heeft als resultaat dat de afstand waarover de explosie gebeurt vergroot. De power-up die bescherming biedt, zorgt ervoor dat de robot \'e\'en explosie kan overleven zonder schade.
+
+\item
+Als extra kunnen er nog een groot aantal power-ups worden toegevoegd. (e.g. een power-up waarmee je sneller kan bewegen, ervan uitgaande dat je bewegingssnelheid op voorhand beperkt is of een power-up waarmee je drie bommen tegelijk kunt hebben liggen i.p.v. twee)
+\end{itemize}
+
+\begin{figure}[h!]
+  \caption{Bomberman}
+  \centering
+    \includegraphics[width=0.5\textwidth]{bomberman.png}
+  \label{fig:bomberman}
+\end{figure}
+
+\subsection{Verduidelijking m.b.v. figuur \ref{fig:bomberman}}
+\begin{enumerate}
+\item
+Robot 1 (R1) heeft een bom gelegd vier vakjes naar rechts en is dan teruggekomen zodat hij niet geraakt wordt.
+
+\item
+Robot 2 (R2) heeft niet zoveel geluk, hij is geraakt en  dus vernietigt door de bom naast hem. Deze bom kan hij zelf geplaatst hebben of kan door een tegenstander geplaatst zijn.
+
+\item
+De blauwe bom staat symbool voor een power-up. De rode bom is een bom die gelegd is door een robot die zo \'e\'en power-up heeft genomen. De afstand van deze bom is dus vergroot.
+
+\item
+Respectievelijk een power-up die de robot tegen \'e\'en explosie beschermt en een obstakel dat vernietigt moet worden alvorens de robots in het afgesloten deel van het doolhof kunnen komen. Robots zullen obstakels moeten vernietigen ofwel om tot bij power-ups te komen ofwel om tot bij elkaar te komen zodat ze kunnen proberen elkaar op te blazen. In het spel zelf zouden er natuurlijk meer power-ups en obstakels aanwezig zijn.
+\end{enumerate}
 
 \begin{thebibliography}{9}
 
