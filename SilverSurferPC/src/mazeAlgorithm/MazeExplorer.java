@@ -217,6 +217,15 @@ public class MazeExplorer {
 		//voert een shortestPath uit om van currentTile naar startTile te gaan.
 		ShortestPath shortestPath = new ShortestPath(gui, currentTile, nextTile, allTiles);
 		shortestPath.goShortestPath();
+		
+		//wachten tot de barcode is uitgevoerd.
+		while(gui.getCommunicator().getExecutingBarcodes()) {
+			try {
+				Thread.sleep(100);
+			} catch(Exception e) {
+				
+			}
+		}
 		//voert methode opnieuw uit met nextTile
 		algorithm(nextTile);
 	}

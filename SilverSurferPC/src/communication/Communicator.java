@@ -32,6 +32,7 @@ public class Communicator {
     private MazeExplorer explorer;
     private boolean readBarcodes = true;
     private boolean permaBarcodeStop = false;
+    private boolean executingBarcode = false;
     private BarcodeThread BT;
 
     public Communicator(StatusInfoBuffer statusInfoBuffer) {
@@ -290,5 +291,13 @@ public class Communicator {
 
     public void mustAllign(boolean mustAllign) {
         this.mustAllign = mustAllign;
+    }
+    
+    public void setExecutingBarcodes(boolean executing) {
+    	this.executingBarcode = executing;
+    }
+    
+    public boolean getExecutingBarcodes() {
+    	return executingBarcode;
     }
 }

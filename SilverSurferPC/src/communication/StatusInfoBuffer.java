@@ -386,7 +386,10 @@ public class StatusInfoBuffer {
                 .setContent(scanned);
         SSG.getSimulationPanel().setBarcode(scanned);
         this.barcode = barcode;
-        SSG.executeBarcode();
+        SSG.getCommunicator().setExecutingBarcodes(true);
+        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET");
+        BET.setSSG(SSG);
+        BET.start();
     }
 
     public double getAngle() {

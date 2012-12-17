@@ -61,7 +61,7 @@ public class InfoReceiverThread extends Thread {
 				}
 				else if(a.startsWith("[ANG]"))
 					statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[BC]"))
+				else if(a.startsWith("[BC]")) 
 					statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
 				else if(a.startsWith("[CH]")) {
 					statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
