@@ -17,7 +17,7 @@ import lejos.pc.comm.*;
 
 public class Communicator {
     private StatusInfoBuffer statusInfoBuffer;
-    private SimulationPilot simulationPilot = new SimulationPilot();
+    private SimulationPilot simulationPilot;
     private boolean robotConnected = false;
     private static DataInputStream dis;
     private static DataOutputStream dos;
@@ -35,8 +35,10 @@ public class Communicator {
     private boolean executingBarcode = false;
     private BarcodeThread BT;
 
-    public Communicator(StatusInfoBuffer statusInfoBuffer) {
+    public Communicator(StatusInfoBuffer statusInfoBuffer,
+            SimulationPilot simulationPilot) {
         setStatusInfoBuffer(statusInfoBuffer);
+        this.simulationPilot = simulationPilot;
         setSpeed(2);
     }
 
@@ -46,10 +48,6 @@ public class Communicator {
 
     public void setStatusInfoBuffer(StatusInfoBuffer statusInfoBuffer) {
         this.statusInfoBuffer = statusInfoBuffer;
-    }
-
-    public SimulationPilot getSimulationPilot() {
-        return simulationPilot;
     }
 
     public boolean getRobotConnected() {
@@ -116,49 +114,46 @@ public class Communicator {
             else if (command == Command.PLAY_SONG) {
                 SongThread ST = new SongThread();
                 ST.start();
-            }
-            else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE && !robotConnected)
+            } else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE
+                    && !robotConnected)
                 simulationPilot.checkForObstructionAndSetTile();
             else if (command == Command.STOP_READING_BARCODES)
-            	this.readBarcodes = false;
+                this.readBarcodes = false;
             else if (command == Command.START_READING_BARCODES)
-            	this.readBarcodes = true;
+                this.readBarcodes = true;
             else if (command == Command.PERMA_STOP_READING_BARCODES)
-            	this.permaBarcodeStop = true;
+                this.permaBarcodeStop = true;
             else if (command % 100 == Command.AUTOMATIC_MOVE_FORWARD) {
                 if (!getRobotConnected()) {
                     try {
-                    	if(readBarcodes && !permaBarcodeStop) {
-                    		BT = new BarcodeThread("BT",
-                    				getSimulationPilot().getSSG());
-                    	BT.start();
-                    	}
+                        if (readBarcodes && !permaBarcodeStop) {
+                            BT = new BarcodeThread("BT", simulationPilot);
+                            BT.start();
+                        }
                         int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
                         while (amount-- != 0)
                             simulationPilot.travel(1);
-                    	if(readBarcodes && !permaBarcodeStop) {
-                    		boolean found = BT.getFound();
-                    		BT.setQuit(true);
-                    		if (found)
-                    			readBarcode();
-                    	}
+                        if (readBarcodes && !permaBarcodeStop) {
+                            boolean found = BT.getFound();
+                            BT.setQuit(true);
+                            if (found)
+                                readBarcode();
+                        }
                     } catch (Exception e) {
-                        System.out.println("Error in Communicator.sendCommand(" + command + ")!");
+                        System.out.println("Error in Communicator.sendCommand("
+                                + command + ")!");
                         e.printStackTrace();
                     }
-                } 
-                else {
+                } else {
                     int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
                     while (amount-- != 0)
                         simulationPilot.travel(1);
                 }
-            } 
-            else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
+            } else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
                 double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
                 while (amount-- > 0)
                     simulationPilot.rotate(1);
-            } 
-            else if (command % 100 == -(100 - Command.AUTOMATIC_TURN_ANGLE)) {
+            } else if (command % 100 == -(100 - Command.AUTOMATIC_TURN_ANGLE)) {
                 double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
                 while (amount++ < 0)
                     simulationPilot.rotate(-1);
@@ -167,14 +162,15 @@ public class Communicator {
                 while (busy)
                     Thread.sleep(100);
         } catch (Exception e) {
-            System.out.println("Error in Communicator.sendCommand(" + command + ")!");
+            System.out.println("Error in Communicator.sendCommand(" + command
+                    + ")!");
             e.printStackTrace();
         }
     }
 
     private void readBarcode() {
-        int value = ((Barcode) getSimulationPilot().getMapGraph()
-                .getCurrentTile().getContent()).getValue();
+        int value = ((Barcode) simulationPilot.getMapGraph().getCurrentTile()
+                .getContent()).getValue();
         // if
         // (((Barcode)getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getContentCurrentTile()==
         // null)){
@@ -292,12 +288,16 @@ public class Communicator {
     public void mustAllign(boolean mustAllign) {
         this.mustAllign = mustAllign;
     }
-    
+
     public void setExecutingBarcodes(boolean executing) {
-    	this.executingBarcode = executing;
+        this.executingBarcode = executing;
     }
-    
+
     public boolean getExecutingBarcodes() {
-    	return executingBarcode;
+        return executingBarcode;
+    }
+
+    public SimulationPilot getSimulationPilot() {
+        return simulationPilot;
     }
 }

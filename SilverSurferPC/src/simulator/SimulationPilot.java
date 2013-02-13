@@ -6,8 +6,7 @@ import java.io.File;
 import java.util.Random;
 
 public class SimulationPilot {
-
-    private SilverSurferGUI SSG = new SilverSurferGUI();
+    private SimulationJPanel simulationPanel;
     /**
      * verandert wanneer een nieuwe map wordt ingeladen naar de positie waar het
      * pijltje staat wanneer de map ingeladen wordt
@@ -24,7 +23,6 @@ public class SimulationPilot {
     private int speed = 10;
     private File mapFile;
     private MapGraph mapGraph;
-    private boolean isRealRobot = false;
 
     // private int amtToSendToBuffer = 50;
 
@@ -32,16 +30,12 @@ public class SimulationPilot {
      * waarde die afhangt van de robot!
      */
     private final double detectionDistanceUltrasonicSensorRobot = 28;
+    private boolean robotControllable = true;
+    private boolean robotSimulated = true;
 
-    public SimulationPilot() {
-        SSG.getSimulationPanel().setRobotLocation(
-                this.getCurrentPositionAbsoluteX(),
-                this.getCurrentPositionAbsoluteY(), this.getAlpha());
-    }
-
-    public SimulationPilot(int startPositionRelativeX,
-            int startPositionRelativeY) {
-        SSG.getSimulationPanel().setRobotLocation(
+    public SimulationPilot(SimulationJPanel simulationPanel) {
+        this.simulationPanel = simulationPanel;
+        getSimulationPanel().setRobotLocation(
                 this.getCurrentPositionAbsoluteX(),
                 this.getCurrentPositionAbsoluteY(), this.getAlpha());
     }
@@ -79,27 +73,27 @@ public class SimulationPilot {
     }
 
     public int getCurrentPositionRelativeX() {
-        if (isRealRobot())
+        if (!isRobotSimulated())
             return SilverSurferGUI.getInformationBuffer()
                     .getXCoordinateRelative();
         return this.getMapGraph().getCurrentTileCoordinates()[0];
     }
 
     public int getCurrentPositionRelativeY() {
-        if (isRealRobot())
+        if (!isRobotSimulated())
             return SilverSurferGUI.getInformationBuffer()
                     .getYCoordinateRelative();
         return this.getMapGraph().getCurrentTileCoordinates()[1];
     }
 
     public int getStartPositionRelativeX() {
-        if (isRealRobot())
+        if (!isRobotSimulated())
             return 0;
         return this.getMapGraph().getStartingTileCoordinates()[0];
     }
 
     public int getStartPositionRelativeY() {
-        if (isRealRobot())
+        if (!isRobotSimulated())
             return 0;
         return this.getMapGraph().getStartingTileCoordinates()[1];
     }
@@ -175,12 +169,12 @@ public class SimulationPilot {
         int[] coord = new int[] { 0, 0 };
         coord[0] = (int) (((Double) (getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()
                 % sizeTile())).intValue()
-                * SSG.getSimulationPanel().getScalingfactor() + SSG
-                .getSimulationPanel().getSizeTile() / 2);
+                * getSimulationPanel().getScalingfactor() + getSimulationPanel()
+                .getSizeTile() / 2);
         coord[1] = (int) (((Double) (getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()
                 % sizeTile())).intValue()
-                * SSG.getSimulationPanel().getScalingfactor() + SSG
-                .getSimulationPanel().getSizeTile() / 2);
+                * getSimulationPanel().getScalingfactor() + getSimulationPanel()
+                .getSizeTile() / 2);
         return coord;
     }
 
@@ -199,22 +193,13 @@ public class SimulationPilot {
     public void setMapFile(File mapFile, int xCo, int yCo) {
         this.mapFile = mapFile;
         this.setMapGraph(MapReader.createMapFromFile(mapFile, xCo, yCo));
-        this.getSSG().updateCoordinates(
-                "Simulator (" + (this.getCurrentPositionAbsoluteX()) + " , "
-                        + (this.getCurrentPositionAbsoluteY()) + " , "
-                        + (int) this.getAlpha() + "�, Map: "
-                        + this.getMapString() + ")");
         this.startPositionAbsoluteX = getCurrentPositionAbsoluteX();
         this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
-        this.getSSG().getSimulationPanel().clearTotal();
-        this.getSSG().getSimulationPanel().setTile(xCo, yCo);
+        getSimulationPanel().clearTotal();
+        getSimulationPanel().setTile(xCo, yCo);
         SilverSurferGUI.getInformationBuffer().setXCoordinateRelative(xCo);
         SilverSurferGUI.getInformationBuffer().setYCoordinateRelative(yCo);
 
-    }
-
-    public SilverSurferGUI getSSG() {
-        return this.SSG;
     }
 
     public MapGraph getMapGraph() {
@@ -235,7 +220,7 @@ public class SimulationPilot {
     public void setMapGraph(MapGraph mapGraph) {
         if (mapGraph == null) {
             this.mapGraph = null;
-            this.getSSG().getSimulationPanel().clearTotal();
+            getSimulationPanel().clearTotal();
         }
         this.mapGraph = mapGraph;
     }
@@ -248,6 +233,25 @@ public class SimulationPilot {
      */
     private double getEdgeMarge() {
         return (double) 1.2 * scalingfactor();
+    }
+
+    public SimulationJPanel getSimulationPanel() {
+        return simulationPanel;
+    }
+
+    /**
+     * Moet deze Pilot de robot aansturen? (echte robot of zelfgesimuleerde
+     * robot)
+     */
+    public boolean isRobotControllable() {
+        return robotControllable;
+    }
+
+    /**
+     * Zelf simuleren sensoren?
+     */
+    public boolean isRobotSimulated() {
+        return robotSimulated;
     }
 
     public void travel(double distance) {
@@ -306,8 +310,8 @@ public class SimulationPilot {
                     }
                 }
             }
-            SSG.getSimulationPanel().setRobotLocation(xTemp, yTemp,
-                    this.getAlpha());
+            getSimulationPanel()
+                    .setRobotLocation(xTemp, yTemp, this.getAlpha());
             this.setCurrentPositionAbsoluteX(xTemp);
             this.setCurrentPositionAbsoluteY(yTemp);
 
@@ -316,17 +320,17 @@ public class SimulationPilot {
                 i = distanceToGo;
             }
             try {
-                if (getSSG().getCommunicator().getRobotConnected())
+                if (isRobotControllable())
                     Thread.sleep(speed / ((int) Math.ceil(Math.abs(distance))));
                 else {
-                	if(getSpeed() == 1)
-                		Thread.sleep(10);
-                	else if(getSpeed() == 2)
-                		Thread.sleep(7);
-                	if(getSpeed() == 3)
-                		Thread.sleep(5);
-                	else
-                		Thread.sleep(3);
+                    if (getSpeed() == 1)
+                        Thread.sleep(10);
+                    else if (getSpeed() == 2)
+                        Thread.sleep(7);
+                    if (getSpeed() == 3)
+                        Thread.sleep(5);
+                    else
+                        Thread.sleep(3);
                 }
             } catch (InterruptedException e) {
             }
@@ -368,9 +372,9 @@ public class SimulationPilot {
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
                 int yCoordinate = mapGraph.getCurrentTileCoordinates()[1]
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
-                if (SSG.getSimulationPanel().getMapGraphConstructed()
+                if (getSimulationPanel().getMapGraphConstructed()
                         .getTileWithCoordinates(xCoordinate, yCoordinate) == null) {
-                    SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);
+                    getSimulationPanel().setTile(xCoordinate, yCoordinate);
                 }
 
             }
@@ -389,9 +393,9 @@ public class SimulationPilot {
                     + currentOrientation.getArrayToFindNeighbourRelative()[0];
             int yCoordinate = mapGraph.getCurrentTileCoordinates()[1]
                     + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            if (SSG.getSimulationPanel().getMapGraphConstructed()
+            if (getSimulationPanel().getMapGraphConstructed()
                     .getTileWithCoordinates(xCoordinate, yCoordinate) == null) {
-                SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);
+                getSimulationPanel().setTile(xCoordinate, yCoordinate);
             }
 
         }
@@ -431,7 +435,7 @@ public class SimulationPilot {
                     sizeTile());
             int xCoordinate;
             int yCoordinate;
-            if (isRealRobot) {
+            if (isRobotControllable()) {
                 xCoordinate = SilverSurferGUI.getInformationBuffer()
                         .getXCoordinateRelative()
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
@@ -444,9 +448,9 @@ public class SimulationPilot {
                 yCoordinate = mapGraph.getCurrentTileCoordinates()[1]
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
             }
-            if (SSG.getSimulationPanel().getMapGraphConstructed()
+            if (getSimulationPanel().getMapGraphConstructed()
                     .getTileWithCoordinates(xCoordinate, yCoordinate) == null)
-                SSG.getSimulationPanel().setTile(xCoordinate, yCoordinate);
+                getSimulationPanel().setTile(xCoordinate, yCoordinate);
         }
     }
 
@@ -456,9 +460,9 @@ public class SimulationPilot {
                         this.getCurrentPositionAbsoluteY(), this.getAlpha(),
                         sizeTile());
 
-        SSG.getSimulationPanel().addWall(currentOrientation,
+        getSimulationPanel().addWall(currentOrientation,
                 getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-        SSG.getSimulationPanel().setWallOnTile(getCurrentPositionRelativeX(),
+        getSimulationPanel().setWallOnTile(getCurrentPositionRelativeX(),
                 getCurrentPositionRelativeY(), currentOrientation);
     }
 
@@ -513,27 +517,26 @@ public class SimulationPilot {
              * } } }
              */
 
-            this.getSSG()
-                    .getSimulationPanel()
-                    .setRobotLocation(this.getCurrentPositionAbsoluteX(),
-                            this.getCurrentPositionAbsoluteY(), alphaTemp);
+            getSimulationPanel().setRobotLocation(
+                    this.getCurrentPositionAbsoluteX(),
+                    this.getCurrentPositionAbsoluteY(), alphaTemp);
             this.setAlpha(alphaTemp);
             SilverSurferGUI.getInformationBuffer().setAngle(alphaTemp);
 
             // this.getSSG().updateStatus();
 
             try {
-                if (getSSG().getCommunicator().getRobotConnected())
+                if (isRobotControllable())
                     Thread.sleep(speed / 10);
                 else {
-                	if(getSpeed() == 1)
-                		Thread.sleep(4);
-                	else if(getSpeed() == 2)
-                		Thread.sleep(3);
-                	if(getSpeed() == 3)
-                		Thread.sleep(2);
-                	else
-                		Thread.sleep(1);
+                    if (getSpeed() == 1)
+                        Thread.sleep(4);
+                    else if (getSpeed() == 2)
+                        Thread.sleep(3);
+                    if (getSpeed() == 3)
+                        Thread.sleep(2);
+                    else
+                        Thread.sleep(1);
                 }
             } catch (InterruptedException e) {
             }
@@ -729,7 +732,7 @@ public class SimulationPilot {
     }
 
     public void clear() {
-        this.getSSG().getSimulationPanel().resetPath();
+        getSimulationPanel().resetPath();
     }
 
     /**
@@ -746,16 +749,12 @@ public class SimulationPilot {
     }
 
     public void updateArc(int distance) {
-        getSSG().getSimulationPanel().updateArc(getCurrentPositionAbsoluteX(),
+        getSimulationPanel().updateArc(getCurrentPositionAbsoluteX(),
                 getCurrentPositionAbsoluteY(), getAlpha(), distance);
     }
 
-    public void setRealRobot(boolean isRealRobot) {
-        this.isRealRobot = isRealRobot;
-    }
-
-    public boolean isRealRobot() {
-        return isRealRobot;
+    public void setRobotControllable(boolean isRealRobot) {
+        this.robotControllable = isRealRobot;
     }
 
     /**
@@ -763,7 +762,7 @@ public class SimulationPilot {
      * value.
      */
     public int getLightSensorValue() {
-        if (this.isRealRobot())
+        if (!this.isRobotSimulated())
             return SilverSurferGUI.getInformationBuffer()
                     .getLatestLightSensorInfo();
         else {
@@ -799,7 +798,7 @@ public class SimulationPilot {
     }
 
     public int getUltraSensorValue() {
-        if (this.isRealRobot()) {
+        if (!this.isRobotSimulated()) {
             return SilverSurferGUI.getInformationBuffer()
                     .getLatestUltraSensorInfo();
         } else {
@@ -814,7 +813,7 @@ public class SimulationPilot {
     }
 
     public boolean getTouchSensor1Value() {
-        if (this.isRealRobot()) {
+        if (!this.isRobotSimulated()) {
             return SilverSurferGUI.getInformationBuffer()
                     .getLatestTouchSensor1Info();
         } else {
@@ -824,7 +823,7 @@ public class SimulationPilot {
     }
 
     public boolean getTouchSensor2Value() {
-        if (this.isRealRobot()) {
+        if (!this.isRobotSimulated()) {
             return SilverSurferGUI.getInformationBuffer()
                     .getLatestTouchSensor2Info();
         } else {
@@ -907,7 +906,7 @@ public class SimulationPilot {
     }
 
     public void allignOnWhiteLine() {
-        if (getSSG().getCommunicator().getRobotConnected()) {
+        if (isRobotControllable()) {
             /* Orientation orientation = */Orientation.calculateOrientation(
                     getCurrentPositionAbsoluteX(),
                     getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());

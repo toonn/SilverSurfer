@@ -93,11 +93,10 @@ public class SilverSurferGUI {
 
         statusInfoBuffer = new StatusInfoBuffer();
         statusInfoBuffer.setSSG(this);
-        communicator = new Communicator(statusInfoBuffer);
+        communicator = new Communicator(statusInfoBuffer, getSimulationPanel()
+                .getSimulationPilot());
         System.out.println("[CONNECTION] Entered simulator mode.");
 
-        getSimulationPanel().setSimulationPilot(
-                communicator.getSimulationPilot());
         addListeners();
         barDecoder = new BarDecoder(communicator);
 
@@ -260,41 +259,42 @@ public class SilverSurferGUI {
 
     public void updateStatus() {
         try {
-        	int ultrasonicSensorValue;
-        	int lightSensorValue;
-        	
-        	if (!getCommunicator().getRobotConnected()) {
-        		ultrasonicSensorValue = getSimulationPanel().getSimulationPilot()
-        				.getUltraSensorValue();
-        		lightSensorValue = getSimulationPanel().getSimulationPilot()
-        				.getLightSensorValue();
-        	} else {
-        		ultrasonicSensorValue = getInformationBuffer()
-        				.getLatestUltraSensorInfo();
-        		lightSensorValue = getInformationBuffer()
-        				.getLatestLightSensorInfo();
-        	}
-        	sensorGraph.addSensorValues(ultrasonicSensorValue, lightSensorValue);
+            int ultrasonicSensorValue;
+            int lightSensorValue;
 
+            if (!getCommunicator().getRobotConnected()) {
+                ultrasonicSensorValue = getSimulationPanel()
+                        .getSimulationPilot().getUltraSensorValue();
+                lightSensorValue = getSimulationPanel().getSimulationPilot()
+                        .getLightSensorValue();
+            } else {
+                ultrasonicSensorValue = getInformationBuffer()
+                        .getLatestUltraSensorInfo();
+                lightSensorValue = getInformationBuffer()
+                        .getLatestLightSensorInfo();
+            }
+            sensorGraph
+                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
 
-        	infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
-        	infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
-        	infoLabel4.setText("Lightsensor: " + lightSensorValue);
-        	infoLabel5.setText("Touchsensor 1: "
-        			+ getSimulationPanel().getSimulationPilot()
-        			.getTouchSensor1Value());
-        	infoLabel6.setText("Touchsensor 2: "
-        			+ getSimulationPanel().getSimulationPilot()
-        			.getTouchSensor2Value());
-        	infoLabel7.setText("Left Motor: "
-        			+ statusInfoBuffer.getLeftMotorMoving() + " "
-        			+ statusInfoBuffer.getLeftMotorSpeed());
-	        infoLabel8.setText("Right Motor: "
-	                + statusInfoBuffer.getRightMotorMoving() + " "
-	                + statusInfoBuffer.getRightMotorSpeed());
-	        infoLabel9.setText("Buzy: " + statusInfoBuffer.getBusy());
+            infoLabel1
+                    .setText("Bluetooth: " + communicator.getRobotConnected());
+            infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
+            infoLabel4.setText("Lightsensor: " + lightSensorValue);
+            infoLabel5.setText("Touchsensor 1: "
+                    + getSimulationPanel().getSimulationPilot()
+                            .getTouchSensor1Value());
+            infoLabel6.setText("Touchsensor 2: "
+                    + getSimulationPanel().getSimulationPilot()
+                            .getTouchSensor2Value());
+            infoLabel7.setText("Left Motor: "
+                    + statusInfoBuffer.getLeftMotorMoving() + " "
+                    + statusInfoBuffer.getLeftMotorSpeed());
+            infoLabel8.setText("Right Motor: "
+                    + statusInfoBuffer.getRightMotorMoving() + " "
+                    + statusInfoBuffer.getRightMotorSpeed());
+            infoLabel9.setText("Buzy: " + statusInfoBuffer.getBusy());
         } catch (NullPointerException e) {
-        	
+
         }
     }
 
@@ -357,7 +357,7 @@ public class SilverSurferGUI {
         try {
             communicator.setRobotConnected(true);
             simulationPanel.resetMap();
-            communicator.getSimulationPilot().setRealRobot(true);
+            simulationPanel.getSimulationPilot().setRobotControllable(true);
             simulationPanel.setTile(0, 0);
             statusInfoBuffer.setXCoordinateRelative(0);
             statusInfoBuffer.setYCoordinateRelative(0);
@@ -373,7 +373,7 @@ public class SilverSurferGUI {
         try {
             communicator.setRobotConnected(false);
             simulationPanel.resetMap();
-            communicator.getSimulationPilot().setRealRobot(true);
+            simulationPanel.getSimulationPilot().setRobotControllable(true);
             System.out
                     .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
             changeSpeed(2);

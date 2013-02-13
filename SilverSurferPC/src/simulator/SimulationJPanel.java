@@ -104,6 +104,7 @@ public class SimulationJPanel extends JPanel implements Runnable,
         shapes1.add(triangle1);
         shapes1.add(triangle2);
 
+        this.simulationPilot = new SimulationPilot(this);
     }
 
     public void run() {
