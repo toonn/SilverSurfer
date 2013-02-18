@@ -16,7 +16,7 @@ public class InfoReceiverThread extends Thread {
 	
 	@Override
 	public void run() {
-		byte[] b = new byte[500];
+		byte[] b;
 
 		while(!quit) {
 			try {

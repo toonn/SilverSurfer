@@ -74,14 +74,14 @@ public class SimulationPilot {
 
     public int getCurrentPositionRelativeX() {
         if (!isRobotSimulated())
-            return SilverSurferGUI.getInformationBuffer()
+            return SilverSurferGUI.getStatusInfoBuffer()
                     .getXCoordinateRelative();
         return this.getMapGraph().getCurrentTileCoordinates()[0];
     }
 
     public int getCurrentPositionRelativeY() {
         if (!isRobotSimulated())
-            return SilverSurferGUI.getInformationBuffer()
+            return SilverSurferGUI.getStatusInfoBuffer()
                     .getYCoordinateRelative();
         return this.getMapGraph().getCurrentTileCoordinates()[1];
     }
@@ -158,7 +158,14 @@ public class SimulationPilot {
     }
 
     public void setSpeed(int speed) {
-        this.speed = speed;
+        if (speed == 4)
+            this.speed = 48;
+        else if (speed == 3)
+        	this.speed = 58;
+        else if (speed == 2)
+        	this.speed = 86;
+        else
+        	this.speed = 194;
     }
 
     /**
@@ -197,8 +204,8 @@ public class SimulationPilot {
         this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
         getSimulationPanel().clearTotal();
         getSimulationPanel().setTile(xCo, yCo);
-        SilverSurferGUI.getInformationBuffer().setXCoordinateRelative(xCo);
-        SilverSurferGUI.getInformationBuffer().setYCoordinateRelative(yCo);
+        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(xCo);
+        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(yCo);
 
     }
 
@@ -436,10 +443,10 @@ public class SimulationPilot {
             int xCoordinate;
             int yCoordinate;
             if (isRobotControllable()) {
-                xCoordinate = SilverSurferGUI.getInformationBuffer()
+                xCoordinate = SilverSurferGUI.getStatusInfoBuffer()
                         .getXCoordinateRelative()
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = SilverSurferGUI.getInformationBuffer()
+                yCoordinate = SilverSurferGUI.getStatusInfoBuffer()
                         .getYCoordinateRelative()
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
             } else {
@@ -521,7 +528,7 @@ public class SimulationPilot {
                     this.getCurrentPositionAbsoluteX(),
                     this.getCurrentPositionAbsoluteY(), alphaTemp);
             this.setAlpha(alphaTemp);
-            SilverSurferGUI.getInformationBuffer().setAngle(alphaTemp);
+            SilverSurferGUI.getStatusInfoBuffer().setAngle(alphaTemp);
 
             // this.getSSG().updateStatus();
 
@@ -717,17 +724,17 @@ public class SimulationPilot {
     public void setCurrentTileCoordinates(MapGraph map, double xOld, double yOld) {
         int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
         map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-        SilverSurferGUI.getInformationBuffer().setXCoordinateRelative(
+        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(
                 relativePosition[0]);
-        SilverSurferGUI.getInformationBuffer().setYCoordinateRelative(
+        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(
                 relativePosition[1]);
     }
 
     public void setCurrentTileCoordinatesRobot(double xOld, double yOld) {
         int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        SilverSurferGUI.getInformationBuffer().setXCoordinateRelative(
+        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(
                 relativePosition[0]);
-        SilverSurferGUI.getInformationBuffer().setYCoordinateRelative(
+        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(
                 relativePosition[1]);
     }
 
@@ -763,7 +770,7 @@ public class SimulationPilot {
      */
     public int getLightSensorValue() {
         if (!this.isRobotSimulated())
-            return SilverSurferGUI.getInformationBuffer()
+            return SilverSurferGUI.getStatusInfoBuffer()
                     .getLatestLightSensorInfo();
         else {
             // initialisation
@@ -799,7 +806,7 @@ public class SimulationPilot {
 
     public int getUltraSensorValue() {
         if (!this.isRobotSimulated()) {
-            return SilverSurferGUI.getInformationBuffer()
+            return SilverSurferGUI.getStatusInfoBuffer()
                     .getLatestUltraSensorInfo();
         } else {
             Random random = new Random();
@@ -809,26 +816,6 @@ public class SimulationPilot {
 
             return (int) Math.round(mean
                     + (random.nextGaussian() * standardDeviation));
-        }
-    }
-
-    public boolean getTouchSensor1Value() {
-        if (!this.isRobotSimulated()) {
-            return SilverSurferGUI.getInformationBuffer()
-                    .getLatestTouchSensor1Info();
-        } else {
-            // to be implemented!!
-            return false;
-        }
-    }
-
-    public boolean getTouchSensor2Value() {
-        if (!this.isRobotSimulated()) {
-            return SilverSurferGUI.getInformationBuffer()
-                    .getLatestTouchSensor2Info();
-        } else {
-            // to be implemented!!
-            return false;
         }
     }
 

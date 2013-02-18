@@ -30,7 +30,7 @@ public class MazeExplorer {
 	
 	public MazeExplorer(SilverSurferGUI gui){
 		this.gui = gui;
-		startTile = gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getInformationBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getInformationBuffer().getYCoordinateRelative());
+		startTile = gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getStatusInfoBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getStatusInfoBuffer().getYCoordinateRelative());
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class MazeExplorer {
 			SilverSurferGUI.changeSpeed(3);
 			//Drive to checkpoint.
 			gui.getSimulationPanel().clearPath();
-			ShortestPath almostFinalPath = new ShortestPath(gui, gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getInformationBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getInformationBuffer().getYCoordinateRelative()) ,getCheckTile(), allTiles);
+			ShortestPath almostFinalPath = new ShortestPath(gui, gui.getSimulationPanel().getMapGraphConstructed().getTileWithCoordinates((int)SilverSurferGUI.getStatusInfoBuffer().getXCoordinateRelative(), (int)SilverSurferGUI.getStatusInfoBuffer().getYCoordinateRelative()) ,getCheckTile(), allTiles);
 			almostFinalPath.goShortestPath();
 			
 			//Drive to endpoint.

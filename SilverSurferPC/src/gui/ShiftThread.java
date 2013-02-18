@@ -1,7 +1,8 @@
-package gui;
+/*package gui;
 
 import simulator.SimulationJPanel;
 
+//Used for moving the simulatorscreen.
 public class ShiftThread extends Thread {
 	private SimulationJPanel simulationPanel;
 	private boolean horizontal = false;
@@ -12,15 +13,11 @@ public class ShiftThread extends Thread {
 	}
 	
 	@Override
-	public void run() {
-				
-		if(horizontal){
+	public void run() {	
+		if(horizontal)
 			simulationPanel.setShiftToTheRight(shift);
-		}
-		else{
+		else
 			simulationPanel.setShiftDown(shift);
-		}
-		
 	}
 
 	public void setSimulationPanel(SimulationJPanel simulationpanel){
@@ -35,4 +32,4 @@ public class ShiftThread extends Thread {
 		this.shift = shift;
 	}
 
-}
+}*/

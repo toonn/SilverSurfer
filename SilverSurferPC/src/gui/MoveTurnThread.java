@@ -2,6 +2,7 @@ package gui;
 
 import communication.*;
 
+//Thread to move and turn real-time, only needed for manual testing with the arrow-buttons (forward, left, right).
 public class MoveTurnThread extends Thread {
 	
 	private Communicator communicator;

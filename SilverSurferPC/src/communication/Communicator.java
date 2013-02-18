@@ -1,6 +1,5 @@
 package communication;
 
-import audio.SongThread;
 import commands.Command;
 import simulator.BarcodeThread;
 import simulator.SimulationPilot;
@@ -35,9 +34,8 @@ public class Communicator {
     private boolean executingBarcode = false;
     private BarcodeThread BT;
 
-    public Communicator(StatusInfoBuffer statusInfoBuffer,
-            SimulationPilot simulationPilot) {
-        setStatusInfoBuffer(statusInfoBuffer);
+    public Communicator(StatusInfoBuffer statusInfoBuffer, SimulationPilot simulationPilot) {
+    	this.statusInfoBuffer = statusInfoBuffer;
         this.simulationPilot = simulationPilot;
         setSpeed(2);
     }
@@ -46,8 +44,8 @@ public class Communicator {
         return statusInfoBuffer;
     }
 
-    public void setStatusInfoBuffer(StatusInfoBuffer statusInfoBuffer) {
-        this.statusInfoBuffer = statusInfoBuffer;
+    public SimulationPilot getSimulationPilot() {
+        return simulationPilot;
     }
 
     public boolean getRobotConnected() {
@@ -65,8 +63,7 @@ public class Communicator {
 
     public void openRobotConnection() throws Exception {
         connection = new NXTConnector();
-        connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH,
-                NXTComm.PACKET);
+        connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH, NXTComm.PACKET);
         dis = connection.getDataIn();
         dos = connection.getDataOut();
         if (dis == null || dos == null)
@@ -98,24 +95,20 @@ public class Communicator {
                 dos.flush();
             }
             if (command == Command.SLOW_SPEED)
-                simulationPilot.setSpeed(194);
+                simulationPilot.setSpeed(1);
             else if (command == Command.NORMAL_SPEED)
-                simulationPilot.setSpeed(86);
+                simulationPilot.setSpeed(2);
             else if (command == Command.FAST_SPEED)
-                simulationPilot.setSpeed(58);
+                simulationPilot.setSpeed(3);
             else if (command == Command.VERY_FAST_SPEED)
-                simulationPilot.setSpeed(48);
+                simulationPilot.setSpeed(4);
             else if (command == Command.ALIGN_PERPENDICULAR)
                 simulationPilot.allignOnWhiteLine();
             else if (command == Command.ALIGN_WALL)
                 simulationPilot.allignOnWalls();
-            else if (command == Command.LOOK_AROUND)
-                simulationPilot.checkForObstructions();
-            else if (command == Command.PLAY_SONG) {
-                SongThread ST = new SongThread();
-                ST.start();
-            } else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE
-                    && !robotConnected)
+            //else if (command == Command.LOOK_AROUND)
+            //    simulationPilot.checkForObstructions();
+            else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE && !robotConnected)
                 simulationPilot.checkForObstructionAndSetTile();
             else if (command == Command.STOP_READING_BARCODES)
                 this.readBarcodes = false;
@@ -140,9 +133,7 @@ public class Communicator {
                                 readBarcode();
                         }
                     } catch (Exception e) {
-                        System.out.println("Error in Communicator.sendCommand("
-                                + command + ")!");
-                        e.printStackTrace();
+                        System.out.println("Error in Communicator.sendCommand(" + command + ")!");
                     }
                 } else {
                     int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
@@ -162,21 +153,13 @@ public class Communicator {
                 while (busy)
                     Thread.sleep(100);
         } catch (Exception e) {
-            System.out.println("Error in Communicator.sendCommand(" + command
-                    + ")!");
-            e.printStackTrace();
+            System.out.println("Error in Communicator.sendCommand(" + command + ")!");
         }
     }
 
     private void readBarcode() {
-        int value = ((Barcode) simulationPilot.getMapGraph().getCurrentTile()
-                .getContent()).getValue();
-        // if
-        // (((Barcode)getSimulationPilot().getSSG().getSimulationPanel().getMapGraphConstructed().getContentCurrentTile()==
-        // null)){
-        SilverSurferGUI.getInformationBuffer().setBarcode(value);
-        // }
-
+        int value = ((Barcode) simulationPilot.getMapGraph().getCurrentTile().getContent()).getValue();
+        SilverSurferGUI.getStatusInfoBuffer().setBarcode(value);
     }
 
     public void setExplorer(MazeExplorer explorer) {
@@ -295,9 +278,5 @@ public class Communicator {
 
     public boolean getExecutingBarcodes() {
         return executingBarcode;
-    }
-
-    public SimulationPilot getSimulationPilot() {
-        return simulationPilot;
     }
 }

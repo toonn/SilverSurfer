@@ -1,4 +1,4 @@
-package audio;
+/*package audio;
 
 import java.io.File;
 
@@ -118,4 +118,4 @@ public class SongThread extends Thread {
 		SongThread s = new SongThread();
 		s.start();
 	}
-}
+}*/

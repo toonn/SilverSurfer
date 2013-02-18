@@ -542,7 +542,7 @@ public class SimulationJPanel extends JPanel implements Runnable,
      */
     public void resetMap() {
         clearTotal();
-        SSG.getInformationBuffer().resetBuffer();
+        SSG.getStatusInfoBuffer().resetBuffer();
         mapGraphConstructed = new MapGraph();
         getSimulationPilot().reset();
 

@@ -13,6 +13,7 @@ import mazeAlgorithm.MazeExplorer;
 import communication.*;
 import communication.StatusInfoBuffer.*;
 
+//Creates the menubar.
 public class GUIMenuBar extends JMenuBar {
 
     private SilverSurferGUI gui;
@@ -46,7 +47,6 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
                 // Prompt for a File
                 FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
                         .getFrame(), "Select file:", FileDialog.SAVE);
@@ -68,7 +68,7 @@ public class GUIMenuBar extends JMenuBar {
 
                     // Get buffer
                     StatusInfoBuffer buffer = SilverSurferGUI
-                            .getInformationBuffer();
+                            .getStatusInfoBuffer();
                     LSInfoNode head = buffer.getStartLSInfo();
                     // Create data output flow
                     FileWriter outFile = new FileWriter(export);
@@ -86,8 +86,7 @@ public class GUIMenuBar extends JMenuBar {
                     out.close();
 
                 } catch (IOException e) {
-                    System.out
-                            .println("Sorry, something went wrong exporting your data.");
+                    System.out.println("Sorry, something went wrong exporting your data.");
                 }
 
             }
@@ -101,7 +100,6 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
                 // Prompt for a File
                 FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
                         .getFrame(), "Select file:", FileDialog.SAVE);
@@ -123,7 +121,7 @@ public class GUIMenuBar extends JMenuBar {
 
                     // Get buffer
                     StatusInfoBuffer buffer = SilverSurferGUI
-                            .getInformationBuffer();
+                            .getStatusInfoBuffer();
                     USInfoNode head = buffer.getStartUSInfo();
                     // Create data output flow
                     FileWriter outFile = new FileWriter(export);
@@ -142,118 +140,7 @@ public class GUIMenuBar extends JMenuBar {
                     out.close();
 
                 } catch (IOException e) {
-                    System.out
-                            .println("Sorry, something went wrong exporting your data.");
-                }
-
-            }
-        });
-
-        JMenuItem exportTS1Item = new JMenuItem("Export Touchsensor1 data");
-        fileMenu.add(exportTS1Item);
-        // exportTS1Item.setMnemonic('1');
-
-        exportTS1Item.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                // Prompt for a File
-                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
-                        .getFrame(), "Select file:", FileDialog.SAVE);
-                prompt.setFilenameFilter(new FilenameFilter() {
-
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".txt");
-                    }
-                });
-
-                // Display the dialog and wait for the user's response
-                prompt.show();
-
-                File export = new File(prompt.getDirectory() + prompt.getFile());
-                try {
-                    // Create file
-                    export.createNewFile();
-
-                    // Get buffer
-                    StatusInfoBuffer buffer = SilverSurferGUI
-                            .getInformationBuffer();
-                    TS1InfoNode head = buffer.getStartTS1Info();
-                    // Create data output flow
-                    FileWriter outFile = new FileWriter(export);
-                    PrintWriter out = new PrintWriter(outFile);
-                    buffer.claimBuffer();
-                    // Print buffer
-                    if (head != null) {
-                        do {
-                            out.println(head.info);
-                            head = head.next;
-                        } while (head != null);
-                    }
-                    // free buffer and close stream.
-                    buffer.freeBuffer();
-                    out.close();
-
-                } catch (IOException e) {
-                    System.out
-                            .println("Sorry, something went wrong exporting your data.");
-                }
-
-            }
-        });
-
-        JMenuItem exportTS2Item = new JMenuItem("Export Touchsensor2 data");
-        fileMenu.add(exportTS2Item);
-        // exportTS2Item.setMnemonic('2');
-
-        exportTS2Item.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                // Prompt for a File
-                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
-                        .getFrame(), "Select file:", FileDialog.SAVE);
-                prompt.setFilenameFilter(new FilenameFilter() {
-
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".txt");
-                    }
-                });
-
-                // Display the dialog and wait for the user's response
-                prompt.show();
-                System.out.println(prompt.getDirectory() + prompt.getFile());
-                File export = new File(prompt.getDirectory() + prompt.getFile());
-                try {
-                    // Create file
-                    export.createNewFile();
-
-                    // Get buffer
-                    StatusInfoBuffer buffer = SilverSurferGUI
-                            .getInformationBuffer();
-                    TS2InfoNode head = buffer.getStartTS2Info();
-                    // Create data output flow
-                    FileWriter outFile = new FileWriter(export);
-                    PrintWriter out = new PrintWriter(outFile);
-                    buffer.claimBuffer();
-                    // Print buffer
-                    if (head != null) {
-                        do {
-                            out.println(head.info);
-                            head = head.next;
-                        } while (head != null);
-                    }
-                    // free buffer and close stream.
-                    buffer.freeBuffer();
-                    out.close();
-
-                } catch (IOException e) {
-                    System.out
-                            .println("Sorry, something went wrong exporting your data.");
+                    System.out.println("Sorry, something went wrong exporting your data.");
                 }
 
             }
@@ -280,7 +167,6 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 SilverSurferGUI.connectBluetooth();
-
             }
         });
 
@@ -289,7 +175,6 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SilverSurferGUI.disconnectBluetooth();
-                // gui.updateStatus();
             }
         });
 
@@ -310,7 +195,6 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 gui.zoomIn();
-
             }
         });
 
@@ -322,7 +206,6 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 gui.zoomOut();
-
             }
         });
 
@@ -335,7 +218,6 @@ public class GUIMenuBar extends JMenuBar {
             public void actionPerformed(ActionEvent arg0) {
                 gui.getSimulationPanel().resetMap();
                 SilverSurferGUI.clearScreen();
-
             }
         });
 
@@ -347,7 +229,6 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 gui.getSimulationPanel().removeWalls();
-
             }
         });
 
@@ -359,7 +240,6 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 gui.getSimulationPanel().removeBarCodes();
-
             }
         });
 
@@ -371,7 +251,6 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 gui.getSimulationPanel().resetPath();
-
             }
         });
         return screenMenu;
@@ -448,49 +327,16 @@ public class GUIMenuBar extends JMenuBar {
                 gui.getSimulationPanel().resetMap();
 
                 // Prompt for a File
-                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
-                        .getFrame(), "Select maze:", FileDialog.LOAD);
+                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui().getFrame(), "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
 
                 // Display the dialog and wait for the user's response
                 prompt.show();
 
-                File mapFile = new File(prompt.getDirectory()
-                        + prompt.getFile()); // Load and display selection
+                File mapFile = new File(prompt.getDirectory() + prompt.getFile()); // Load and display selection
                 prompt.dispose(); // Get rid of the dialog box
 
-                // JPanel messagePanel = new JPanel();
-                // SpinnerNumberModel xModel = new SpinnerNumberModel(0, 0,
-                // 1000,
-                // 1);
-                // SpinnerNumberModel yModel = new SpinnerNumberModel(0, 0,
-                // 1000,
-                // 1);
-                // JLabel x = new JLabel("x:");
-                // JLabel y = new JLabel("y:");
-                //
-                // JSpinner xcoord = new JSpinner(xModel);
-                // JSpinner ycoord = new JSpinner(yModel);
-                // messagePanel.add(x);
-                // messagePanel.add(xcoord);
-                // messagePanel.add(y);
-                // messagePanel.add(ycoord);
-                //
-                // // Populate your panel components here.
-                // JOptionPane.showMessageDialog(getGui().getFrame(),
-                // messagePanel, "Enter relative starting coordinates:",
-                // JOptionPane.OK_OPTION);
-                //
-                // int xCo = Integer.valueOf(xcoord.getValue().toString());
-                // int yCo = Integer.valueOf(ycoord.getValue().toString());
-                //
-                // gui.getCommunicator().getSimulationPilot()
-                // .setMapFile(mapFile, xCo, yCo);
-
-                // Vervelend prompt weggedaan, ik heb het dan ook nog nooit
-                // nodig gehad. Feel free om het terug te zetten. -- Toon
-                gui.getCommunicator().getSimulationPilot()
-                        .setMapFile(mapFile, 0, 0);
+                gui.getCommunicator().getSimulationPilot().setMapFile(mapFile, 0, 0);
 
                 System.out.println("[I/O] Map succesfully loaded!");
 
@@ -507,16 +353,14 @@ public class GUIMenuBar extends JMenuBar {
                 // reset the current map.
                 gui.getSimulationPanel().resetMap();
 
-                (gui.getCommunicator()).getSimulationPilot().setMapGraph(
-                        new MapGraph());
+                (gui.getCommunicator()).getSimulationPilot().setMapGraph(new MapGraph());
 
                 JPanel messagePanel = new JPanel();
                 JLabel x = new JLabel("Map succesfully deleted!");
                 messagePanel.add(x);
 
                 // Populate your panel components here.
-                JOptionPane.showMessageDialog(getGui().getFrame(),
-                        messagePanel, "Map deleted:", JOptionPane.OK_OPTION);
+                JOptionPane.showMessageDialog(getGui().getFrame(), messagePanel, "Map deleted:", JOptionPane.OK_OPTION);
 
                 System.out.println("[I/O] Map succesfully deleted!");
 

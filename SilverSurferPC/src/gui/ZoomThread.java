@@ -1,8 +1,8 @@
 package gui;
 
 import simulator.SimulationJPanel;
-import communication.*;
 
+//Used for zooming in.
 public class ZoomThread extends Thread {
 	
 	private SimulationJPanel simulationPanel;

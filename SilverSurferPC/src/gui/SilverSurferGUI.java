@@ -13,7 +13,6 @@ public class SilverSurferGUI {
     private static JFrame frame;
     private static SimulationJPanel simulationPanel;
     private static StatusInfoBuffer statusInfoBuffer;
-    private static BarDecoder barDecoder;
     private static Communicator communicator;
 
     private static JButton ZoomInButton;
@@ -32,8 +31,6 @@ public class SilverSurferGUI {
     private static JLabel infoLabel5;
     private static JLabel infoLabel6;
     private static JLabel infoLabel7;
-    private static JLabel infoLabel8;
-    private static JLabel infoLabel9;
 
     private static JPanel mappingPanel;
 
@@ -98,7 +95,6 @@ public class SilverSurferGUI {
         System.out.println("[CONNECTION] Entered simulator mode.");
 
         addListeners();
-        barDecoder = new BarDecoder(communicator);
 
         changeSpeed(2);
         // updateStatus();
@@ -229,8 +225,6 @@ public class SilverSurferGUI {
         infoLabel5 = new JLabel("", JLabel.CENTER);
         infoLabel6 = new JLabel("", JLabel.CENTER);
         infoLabel7 = new JLabel("", JLabel.CENTER);
-        infoLabel8 = new JLabel("", JLabel.CENTER);
-        infoLabel9 = new JLabel("", JLabel.CENTER);
 
         JPanel outputPanel = new JPanel();
         outputPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
@@ -246,14 +240,12 @@ public class SilverSurferGUI {
                 .addComponent(infoLabel1).addComponent(infoLabel2)
                 .addComponent(infoLabel3).addComponent(infoLabel4)
                 .addComponent(infoLabel5).addComponent(infoLabel6)
-                .addComponent(infoLabel7).addComponent(infoLabel8)
-                .addComponent(infoLabel9));
+                .addComponent(infoLabel7));
         outputLayout.setVerticalGroup(outputLayout.createSequentialGroup()
                 .addComponent(infoLabel1).addComponent(infoLabel2)
                 .addComponent(infoLabel3).addComponent(infoLabel4)
                 .addComponent(infoLabel5).addComponent(infoLabel6)
-                .addComponent(infoLabel7).addComponent(infoLabel8)
-                .addComponent(infoLabel9));
+                .addComponent(infoLabel7));
         return outputPanel;
     }
 
@@ -268,9 +260,9 @@ public class SilverSurferGUI {
                 lightSensorValue = getSimulationPanel().getSimulationPilot()
                         .getLightSensorValue();
             } else {
-                ultrasonicSensorValue = getInformationBuffer()
+                ultrasonicSensorValue = getStatusInfoBuffer()
                         .getLatestUltraSensorInfo();
-                lightSensorValue = getInformationBuffer()
+                lightSensorValue = getStatusInfoBuffer()
                         .getLatestLightSensorInfo();
             }
             sensorGraph
@@ -280,19 +272,13 @@ public class SilverSurferGUI {
                     .setText("Bluetooth: " + communicator.getRobotConnected());
             infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
             infoLabel4.setText("Lightsensor: " + lightSensorValue);
-            infoLabel5.setText("Touchsensor 1: "
-                    + getSimulationPanel().getSimulationPilot()
-                            .getTouchSensor1Value());
-            infoLabel6.setText("Touchsensor 2: "
-                    + getSimulationPanel().getSimulationPilot()
-                            .getTouchSensor2Value());
-            infoLabel7.setText("Left Motor: "
+            infoLabel5.setText("Left Motor: "
                     + statusInfoBuffer.getLeftMotorMoving() + " "
                     + statusInfoBuffer.getLeftMotorSpeed());
-            infoLabel8.setText("Right Motor: "
+            infoLabel6.setText("Right Motor: "
                     + statusInfoBuffer.getRightMotorMoving() + " "
                     + statusInfoBuffer.getRightMotorSpeed());
-            infoLabel9.setText("Buzy: " + statusInfoBuffer.getBusy());
+            infoLabel7.setText("Buzy: " + statusInfoBuffer.getBusy());
         } catch (NullPointerException e) {
 
         }
@@ -306,25 +292,21 @@ public class SilverSurferGUI {
         simulationPanel.setBorder(createBorder());
 
         mappingPanel = new JPanel();
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                "Simulator"));
+        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
         mappingPanel.setOpaque(false);
 
         GroupLayout mappingLayout = new GroupLayout(mappingPanel);
         mappingPanel.setLayout(mappingLayout);
         mappingLayout.setAutoCreateGaps(true);
         mappingLayout.setAutoCreateContainerGaps(true);
-        mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup()
-                .addComponent(simulationPanel));
-        mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup()
-                .addComponent(simulationPanel));
+        mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup().addComponent(simulationPanel));
+        mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup().addComponent(simulationPanel));
 
         return mappingPanel;
     }
 
     public void updateCoordinates(String s) {
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                s));
+        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
     }
 
     /*
@@ -364,8 +346,7 @@ public class SilverSurferGUI {
             System.out.println("[CONNECTION] Connection established.");
             changeSpeed(2);
         } catch (Exception e) {
-            System.out
-                    .println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
+            System.out.println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
         }
     }
 
@@ -374,12 +355,10 @@ public class SilverSurferGUI {
             communicator.setRobotConnected(false);
             simulationPanel.resetMap();
             simulationPanel.getSimulationPilot().setRobotControllable(true);
-            System.out
-                    .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
+            System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
             changeSpeed(2);
         } catch (Exception e) {
-            System.out
-                    .println("[CONNECTION] Oops! Something went wrong disconnecting!");
+            System.out.println("[CONNECTION] Oops! Something went wrong disconnecting!");
         }
     }
 
@@ -391,8 +370,7 @@ public class SilverSurferGUI {
     public static void changeSpeed(int value) {
         communicator.setSpeed(value);
         infoLabel2.setText("Speed level: " + value);
-        System.out.println(communicator.getConsoleTag()
-                + " Current Speed Level: " + value + ".");
+        System.out.println(communicator.getConsoleTag() + " Current Speed Level: " + value + ".");
     }
 
     /**
@@ -439,7 +417,6 @@ public class SilverSurferGUI {
             }
 
         });
-
         ZoomOutButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {
@@ -463,7 +440,6 @@ public class SilverSurferGUI {
             }
 
         });
-
         turnLeftButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent arg0) {
@@ -486,8 +462,7 @@ public class SilverSurferGUI {
                 MoveTurnThread MTT = new MoveTurnThread("MTT");
                 MTT.setCommunicator(communicator);
                 MTT.setLength(0);
-                MTT.setAngles(-1
-                        * Integer.parseInt(angle.getValue().toString()));
+                MTT.setAngles(-1 * Integer.parseInt(angle.getValue().toString()));
                 MTT.setAmtOfAngles(0);
                 MTT.start();
             }
@@ -546,98 +521,6 @@ public class SilverSurferGUI {
                 MTT.start();
             }
         });
-        // alignWhiteLineButton.addMouseListener(new MouseListener() {
-        // @Override
-        // public void mouseReleased(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseExited(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseEntered(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseClicked(MouseEvent e) {
-        // System.out.println(communicator.getConsoleTag()
-        // + " Aligning on white line.");
-        // MoveTurnThread MTT = new MoveTurnThread("MTT");
-        // MTT.setCommunicator(communicator);
-        // MTT.setLength(0);
-        // MTT.setAngles(0);
-        // MTT.setAmtOfAngles(0);
-        // MTT.setCommand(Command.ALIGN_PERPENDICULAR);
-        // MTT.start();
-        // }
-        // });
-        // alignWall.addMouseListener(new MouseListener() {
-        // @Override
-        // public void mouseReleased(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseExited(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseEntered(MouseEvent e) {
-        // }
-        //
-        // @Override
-        // public void mouseClicked(MouseEvent e) {
-        // System.out.println(communicator.getConsoleTag()
-        // + " Aligning on walls.");
-        // MoveTurnThread MTT = new MoveTurnThread("MTT");
-        // MTT.setCommunicator(communicator);
-        // MTT.setLength(0);
-        // MTT.setAngles(0);
-        // MTT.setAmtOfAngles(0);
-        // MTT.setCommand(Command.ALIGN_WALL);
-        // MTT.start();
-        // }
-        // });
-        simulationPanel.addKeyListener(new KeyListener() {
-            ShiftThread ST = new ShiftThread("ST");
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    ST.setShift(-1);
-                    ST.setHorizontal(false);
-                    ST.start();
-                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    ST.setShift(1);
-                    ST.setHorizontal(false);
-                    ST.start();
-                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    ST.setShift(-1);
-                    ST.setHorizontal(true);
-                    ST.start();
-                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    ST.setShift(1);
-                    ST.setHorizontal(true);
-                    ST.start();
-                }
-            }
-        });
     }
 
     private static javax.swing.border.Border createBorder() {
@@ -648,12 +531,8 @@ public class SilverSurferGUI {
         return communicator;
     }
 
-    public static StatusInfoBuffer getInformationBuffer() {
+    public static StatusInfoBuffer getStatusInfoBuffer() {
         return statusInfoBuffer;
-    }
-
-    public void executeBarcode() {
-        barDecoder.decode(statusInfoBuffer.getBarcode());
     }
 
     public static void main(String[] args) {

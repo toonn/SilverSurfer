@@ -1,4 +1,4 @@
-package gui;
+/*package gui;
 
 import java.awt.Color;
 
@@ -15,11 +15,10 @@ public class Console extends JTextPane {
         this.setEditable(false);
     }
 
-    /*
-     * http://www.java2s.com/Code/Java/Swing-JFC/
-     * ExtensionofJTextPanethatallowstheusertoeasilyappendcoloredtexttothedocument
-     * .htm
-     */
+     //http://www.java2s.com/Code/Java/Swing-JFC/
+     //ExtensionofJTextPanethatallowstheusertoeasilyappendcoloredtexttothedocument
+     //.htm
+     
     private void append(String s, Color c) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,
@@ -79,3 +78,4 @@ public class Console extends JTextPane {
 
     }
 }
+*/

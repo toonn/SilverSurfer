@@ -13,8 +13,6 @@ public class StatusInfoBuffer {
 
     private int lightSensorInfo;
     private int ultraSensorInfo;
-    private boolean touchSensor1Info;
-    private boolean touchSensor2Info;
     private boolean leftMotorMoving;
     private boolean rightMotorMoving;
     private int leftMotorSpeed;
@@ -44,15 +42,9 @@ public class StatusInfoBuffer {
     private LSInfoNode endLSInfo = new LSInfoNode();
     private USInfoNode startUSInfo = new USInfoNode();
     private USInfoNode endUSInfo = new USInfoNode();
-    private TS1InfoNode startTS1Info = new TS1InfoNode();
-    private TS1InfoNode endTS1Info = new TS1InfoNode();
-    private TS2InfoNode startTS2Info = new TS2InfoNode();
-    private TS2InfoNode endTS2Info = new TS2InfoNode();
 
     private int amtLSUpdated = 0;
     private int amtUSUpdated = 0;
-    private int amtTS1Updated = 0;
-    private int amtTS2Updated = 0;
 
     /**
      * Used to make a linked-list stack of LS-information.
@@ -68,22 +60,6 @@ public class StatusInfoBuffer {
     public class USInfoNode {
         public int info;
         public USInfoNode next;
-    }
-
-    /**
-     * Used to make a linked-list stack of TS1-information.
-     */
-    public class TS1InfoNode {
-        public boolean info;
-        public TS1InfoNode next;
-    }
-
-    /**
-     * Used to make a linked-list stack of TS1-information.
-     */
-    public class TS2InfoNode {
-        public boolean info;
-        public TS2InfoNode next;
     }
 
     /**
@@ -194,100 +170,6 @@ public class StatusInfoBuffer {
 
     }
 
-    /**
-     * Returns the latest info available for the first Touch Sensor
-     */
-    public boolean getLatestTouchSensor1Info() {
-        return touchSensor1Info;
-    }
-
-    /**
-     * Add new info for Touch Sensor 1.
-     */
-    public void addTouchSensor1Info(boolean touchSensor1Info) {
-        // Computer makes a beep when bumping a wall.
-        if (touchSensor1Info)
-            Toolkit.getDefaultToolkit().beep();
-
-        this.touchSensor1Info = touchSensor1Info;
-        // SSG.updateStatus();
-        if (!isBufferUsed) {
-            // Voeg toe aan buffer.
-            if (amtTS1Updated < BUFFER_SIZE) {
-                if (amtTS1Updated != 0) {
-                    TS1InfoNode temp = new TS1InfoNode();
-                    temp.info = touchSensor1Info;
-                    temp.next = null;
-                    endTS1Info.next = temp;
-                    endTS1Info = temp;
-                } else {
-                    startTS1Info = new TS1InfoNode();
-                    startTS1Info.info = touchSensor1Info;
-                    startTS1Info.next = null;
-                    endTS1Info = startTS1Info;
-                }
-            }
-            // Vewijder eerste element en voeg ��n toe.
-            else {
-                startTS1Info = startTS1Info.next;
-                TS1InfoNode temp = new TS1InfoNode();
-                temp.info = touchSensor1Info;
-                temp.next = null;
-                endTS1Info.next = temp;
-                endTS1Info = temp;
-            }
-            amtTS1Updated++;
-
-        }
-    }
-
-    /**
-     * Returns the latest info available for the 2nd Touch Sensor
-     */
-    public boolean getLatestTouchSensor2Info() {
-        return touchSensor2Info;
-    }
-
-    /**
-     * Add new info for Touch Sensor 1.
-     */
-    public void addTouchSensor2Info(boolean touchSensor2Info) {
-        // Computer makes a beep when bumping a wall.
-        if (touchSensor2Info)
-            Toolkit.getDefaultToolkit().beep();
-
-        this.touchSensor2Info = touchSensor2Info;
-        // SSG.updateStatus();
-        if (!isBufferUsed) {
-            // Voeg toe aan buffer.
-            if (amtTS2Updated < BUFFER_SIZE) {
-                if (amtTS2Updated != 0) {
-                    TS2InfoNode temp = new TS2InfoNode();
-                    temp.info = touchSensor2Info;
-                    temp.next = null;
-                    endTS2Info.next = temp;
-                    endTS2Info = temp;
-                } else {
-                    startTS2Info = new TS2InfoNode();
-                    startTS2Info.info = touchSensor2Info;
-                    startTS2Info.next = null;
-                    endTS2Info = startTS2Info;
-                }
-            }
-            // Vewijder eerste element en voeg ��n toe.
-            else {
-                startTS2Info = startTS2Info.next;
-                TS2InfoNode temp = new TS2InfoNode();
-                temp.info = touchSensor2Info;
-                temp.next = null;
-                endTS2Info.next = temp;
-                endTS2Info = temp;
-            }
-            amtTS2Updated++;
-
-        }
-    }
-
     public boolean getLeftMotorMoving() {
         return leftMotorMoving;
     }
@@ -346,20 +228,6 @@ public class StatusInfoBuffer {
         return startUSInfo;
     }
 
-    /**
-     * Get the head of the TS1-infostack.
-     */
-    public TS1InfoNode getStartTS1Info() {
-        return startTS1Info;
-    }
-
-    /**
-     * Get the head of the TS2-infostack.
-     */
-    public TS2InfoNode getStartTS2Info() {
-        return startTS2Info;
-    }
-
     public boolean getBusy() {
         return busy;
     }
@@ -388,6 +256,7 @@ public class StatusInfoBuffer {
         this.barcode = barcode;
         SSG.getCommunicator().setExecutingBarcodes(true);
         BarcodeExecuterThread BET = new BarcodeExecuterThread("BET");
+        BET.setBarcode(this.barcode);
         BET.setSSG(SSG);
         BET.start();
     }
