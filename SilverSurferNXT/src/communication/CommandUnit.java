@@ -20,9 +20,7 @@ public class CommandUnit {
     private boolean quit = false;
     private UltrasonicSensor ultrasonicSensor;
     private LightSensor lightSensor;
-    private TouchSensor touchSensor1;
-    private TouchSensor touchSensor2;
-    private boolean busy = false;
+    private boolean busy = false; //Boolean to show if robot is busy (turning, ...)
     private boolean readBarcodes = true;
     private boolean permaBarcodeStop = false;
     private double x = 220;
@@ -32,10 +30,9 @@ public class CommandUnit {
     public CommandUnit() {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
         lightSensor = new LightSensor(SensorPort.S2, false);
-        touchSensor1 = new TouchSensor(SensorPort.S3);
-        touchSensor2 = new TouchSensor(SensorPort.S4);
         Motor.A.setSpeed(CommandUnit.NORMAL_SPEED);
         Motor.B.setSpeed(CommandUnit.NORMAL_SPEED);
+        Motor.C.setSpeed(CommandUnit.NORMAL_SPEED);
 
         waiting();
         System.out.println("Waiting...");
@@ -74,56 +71,36 @@ public class CommandUnit {
                     break;
                 case (Command.SLOW_SPEED):
                     CU.setSpeed(1);
-                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.NORMAL_SPEED):
                     CU.setSpeed(2);
-                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.FAST_SPEED):
                     CU.setSpeed(3);
-            		CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.VERY_FAST_SPEED):
                     CU.setSpeed(4);
-            		CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.ALIGN_PERPENDICULAR):
                     CU.updateCoordinates(20, 0);
                     CU.alignOnWhiteLine();
                     CU.waiting();
-                	CU.sendStringToUnit("[DON]");
                     break;
                 case (Command.ALIGN_WALL):
                     CU.alignOnWalls();
                     CU.waiting();
-                	CU.sendStringToUnit("[DON]");
                     break;
-                case (Command.LOOK_AROUND):
-                    CU.lookAround();
-                    CU.waiting();
-                	CU.sendStringToUnit("[DON]");
-                    break;
-                case (Command.PLAY_SONG):
-    				SongThread ST = new SongThread();
-    				ST.start();
-                	CU.sendStringToUnit("[DON]");
-    				break;
                 case (Command.CHECK_OBSTRUCTIONS_AND_SET_TILE):
                     CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
-            		CU.sendStringToUnit("[DON]");
                 	break;
                 case (Command.STOP_READING_BARCODES):
                     CU.readBarcodes = false;
-            		CU.sendStringToUnit("[DON]");
                 	break;
                 case (Command.START_READING_BARCODES):
                     CU.readBarcodes = true;
-            		CU.sendStringToUnit("[DON]");
                 	break;
                 case (Command.PERMA_STOP_READING_BARCODES):
                     CU.permaBarcodeStop = true;
-            		CU.sendStringToUnit("[DON]");
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
@@ -137,8 +114,7 @@ public class CommandUnit {
                         CU.turnAngle((int)Math.round(ANGLE_COEF*(input-Command.AUTOMATIC_TURN_ANGLE)/100/360));
                         CU.waiting();
                     }
-                	CU.sendStringToUnit("[DON]");                	
-                    break;
+                	break;
                 }
             } catch (Exception e) {
             	System.out.println("Error in CommandUnit.main(String[] args)!");
@@ -177,7 +153,6 @@ public class CommandUnit {
             NORMAL_SPEED = 360;
 		Motor.A.setSpeed(NORMAL_SPEED);
 		Motor.B.setSpeed(NORMAL_SPEED);
-		sendStringToUnit("[RBC] "+speed + " omg it works");
     }
 
     public void sendStringToUnit(String info) {
@@ -185,7 +160,7 @@ public class CommandUnit {
             byte[] byteArray = info.getBytes();
             pcConnection.write(byteArray, byteArray.length);
         } catch (Exception e) {
-
+        	System.out.println("Error in CommandUnit.sendStringToUnit(String info)!");
         }
     }
     
@@ -205,8 +180,6 @@ public class CommandUnit {
     public void updateStatus() {
         sendStringToUnit("[US] " + ultrasonicSensor.getDistance());
         sendStringToUnit("[LS] " + lightSensor.getLightValue());
-        sendStringToUnit("[TS1] " + touchSensor1.isPressed());
-        sendStringToUnit("[TS2] " + touchSensor2.isPressed());
         sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
         sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
     }
@@ -241,7 +214,7 @@ public class CommandUnit {
     	String result = "";
     	if(lightSensor.getLightValue() < 40) {
         	moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
-        	for(int i = 0; i<6; i++) {
+        	for(int i = 0; i<3; i++) {
         		if(lightSensor.getLightValue() < 40) 
         			result = result + "0";
         		else
@@ -275,10 +248,9 @@ public class CommandUnit {
     private void alignOnWhiteLine() {
     	int treshold = 51;
     	int angle = 0;
-		
         
-		WhiteLineThread WLT = new WhiteLineThread("WLT");
-		WLT.start();
+		MoveThread MT = new MoveThread("MT");
+		MT.start();
 		
 		for(int i = 0; i < 7; i++) {
 			try {
@@ -291,7 +263,7 @@ public class CommandUnit {
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
 		
-		WLT.setQuit(true);
+		MT.setQuit(true);
 		try {
 			Thread.sleep(500);
 		} catch(Exception e) {
@@ -310,31 +282,6 @@ public class CommandUnit {
 			angle = angle + 3;
 		}
 		turnAngle(-(angle/2));
-    	
-    	/*if(treshold < 40)
-    		treshold = 52;
-    	WhiteLineThread WLT = new WhiteLineThread("WLT");
-		WLT.start();
-		while(lightSensor.getLightValue() < treshold);
-		WLT.setQuit(true);
-		try {
-			Thread.sleep(500);
-		} catch(Exception e) {
-			
-		}
-		moveForwardWithoutBarcode((int)Math.round(9*LENGTH_COEF));
-		
-    	WLT = new WhiteLineThread("WLT");
-    	WLT.setCommand(1);
-		WLT.start();
-		while(lightSensor.getLightValue() < treshold);
-		WLT.setQuit(true);
-		try {
-			Thread.sleep(500);
-		} catch(Exception e) {
-			
-		}
-		turnAngle(-(int)Math.round(ANGLE_COEF/4));*/
     }
     
     private void alignOnWalls() {
@@ -363,23 +310,5 @@ public class CommandUnit {
     		else 
         		turnAngle((int)ANGLE_COEF/4);
     	}
-    }
-    
-    private void lookAround() {
-    	int[] lookAroundResult = new int[4];
-    	lookAroundResult[0] = ultrasonicSensor.getDistance();
-    	turnAngle((int)ANGLE_COEF/4);
-    	lookAroundResult[1] = ultrasonicSensor.getDistance();
-    	turnAngle((int)ANGLE_COEF/4);
-    	lookAroundResult[2] = ultrasonicSensor.getDistance();
-    	turnAngle((int)ANGLE_COEF/4);
-    	lookAroundResult[3] = ultrasonicSensor.getDistance();
-    	turnAngle(-(int)ANGLE_COEF/4);
-    	turnAngle(-(int)ANGLE_COEF/4);
-    	turnAngle(-(int)ANGLE_COEF/4);
-        sendStringToUnit("[LA0] " + lookAroundResult[0]);
-        sendStringToUnit("[LA1] " + lookAroundResult[1]);
-        sendStringToUnit("[LA2] " + lookAroundResult[2]);
-        sendStringToUnit("[LA3] " + lookAroundResult[3]);
     }
 }

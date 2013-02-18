@@ -1,4 +1,4 @@
-package communication;
+/*package communication;
 
 import lejos.nxt.Sound;
 
@@ -51,7 +51,7 @@ public class SongThread extends Thread {
     		sixteenth,dottedEighth,quarter,quarter,quarter,sixteenth,dottedEighth,quarter,sixteenth,
     		sixteenth,sixteenth,quarter};
     */
-
+/*
     private int[] pinkFrequencies = { SI_KRUIS, HOGE_DO_KRUIS, RUST,
             HOGE_RE_KRUIS, HOGE_MI, RUST, SI_KRUIS, HOGE_DO_KRUIS, RUST,
             HOGE_RE_KRUIS, HOGE_MI, RUST, HOGE_LA, HOGE_SOL, RUST,
@@ -105,4 +105,4 @@ public class SongThread extends Thread {
             }
         }
     }
-}
+}*/

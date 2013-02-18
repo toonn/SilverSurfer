@@ -1,5 +1,6 @@
 package communication;
 
+//Continuously updates status info.
 public class SensorThread extends Thread {
 
     private CommandUnit CU;

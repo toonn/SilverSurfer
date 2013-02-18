@@ -2,12 +2,13 @@ package communication;
 
 import lejos.nxt.Motor;
 
-public class WhiteLineThread extends Thread {
+//Allows the robot to move continuously until stopped (needed for white line, ...).
+public class MoveThread extends Thread {
 	
 	private boolean quit = false;
 	private int command = 0;
 
-	public WhiteLineThread(String str) {
+	public MoveThread(String str) {
 		super(str);
 	}
 
@@ -18,11 +19,11 @@ public class WhiteLineThread extends Thread {
 		} catch (Exception e) {
 			
 		}
-		if(command == 0) {
+		if(command == 0) { //Move forward
 			Motor.A.forward();
 			Motor.B.forward();
 		}
-		else {
+		else { //Turn right
 			Motor.A.backward();
 			Motor.B.forward();
 		}

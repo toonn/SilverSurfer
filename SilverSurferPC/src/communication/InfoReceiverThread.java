@@ -27,10 +27,6 @@ public class InfoReceiverThread extends Thread {
 					statusInfoBuffer.addLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
 				else if(a.startsWith("[US]"))
 					statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
-				else if(a.startsWith("[TS1]"))
-					statusInfoBuffer.addTouchSensor1Info(Boolean.valueOf(a.substring(6).trim()));
-				else if(a.startsWith("[TS2]"))
-					statusInfoBuffer.addTouchSensor2Info(Boolean.valueOf(a.substring(6).trim()));
 				else if(a.startsWith("[LM]")) {
 					if(a.substring(5).startsWith("true")) {
 						statusInfoBuffer.setLeftMotorMoving(true);
@@ -51,8 +47,10 @@ public class InfoReceiverThread extends Thread {
 						statusInfoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
 					}
 				}
-				else if(a.startsWith("[B]"))
+				else if(a.startsWith("[B]")) {
+					statusInfoBuffer.getSSG().getCommunicator().setBusy(false);
 					statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
+				}
 				else if(a.startsWith("[X]"))
 					coordinates[0] = Double.valueOf(a.substring(4).trim());
 				else if(a.startsWith("[Y]")) {
@@ -68,8 +66,6 @@ public class InfoReceiverThread extends Thread {
 					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().setCurrentTileCoordinatesRobot(statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteX(), statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().getCurrentPositionAbsoluteY());	
 					statusInfoBuffer.getSSG().getCommunicator().getSimulationPilot().checkForObstructionAndSetTile();
 				}
-				else if(a.startsWith("[DON]"))
-					statusInfoBuffer.getSSG().getCommunicator().setBusy(false);
 			} catch (Exception e) {
 				System.out.println("Error in InfoReceiverThread.run()!");
 				e.printStackTrace();

@@ -2,6 +2,7 @@ package communication;
 
 import lejos.nxt.*;
 
+//Continuously searches for a barcode (= lightvalue < 40), stops the motors when one is found.
 public class BarcodeThread extends Thread {
 
 	private LightSensor lightSensor;
