@@ -7,8 +7,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -17,12 +19,10 @@ import datastructures.Tuple;
 
 import mapping.*;
 
-public class SimulationJPanel extends JPanel implements Runnable,
-        MouseMotionListener {
+public class SimulatorViewPort extends JPanel implements MouseMotionListener {
 
     private SilverSurferGUI SSG;
-    private SimulationPilot simulationPilot;
-    private MapGraph mapGraphConstructed;
+    SimulationPilot simulationPilot;
     private double scalingfactor = 1;
     private int shiftToTheRight = 0;
     private int shiftDown = 0;
@@ -87,13 +87,14 @@ public class SimulationJPanel extends JPanel implements Runnable,
      */
     private Rectangle2D endHighlight;
 
-    public SimulationJPanel() {
-        addMouseMotionListener(this);
+    private List<Point> pathCoordinates;
 
-        mapGraphConstructed = new MapGraph();
+    public SimulatorViewPort() {
+        addMouseMotionListener(this);
 
         shapes1.add(triangle1);
         shapes1.add(triangle2);
+        pathCoordinates = new ArrayList<Point>();
 
         this.simulationPilot = new SimulationPilot(this);
     }
@@ -106,36 +107,6 @@ public class SimulationJPanel extends JPanel implements Runnable,
             }
             this.repaint();
         }
-    }
-
-    public void addCircle(double x, double y, double degrees) {
-        // remove the last triangle and draw little circles to indicate the path
-        if (getVisibleShapes().size() > 0) {
-            double oldX = this.getVisibleTriangle().getGravityCenterX();
-            double oldY = this.getVisibleTriangle().getGravityCenterY();
-
-            // add a bigger circle where the robot starts
-            if (getVisibleShapes().size() < 3) {
-                double diam = scalingfactor * 5;
-                Shape bigCircle = new Ellipse2D.Double(oldX - (diam / 2), oldY
-                        - (diam / 2), diam, diam);
-                getVisibleShapes().add(bigCircle);
-            }
-            // add smaller red circles to indicate the path of the robot
-            else {
-                double diam = scalingfactor * 2;
-                Shape path = new Ellipse2D.Double(x - (diam / 2), y
-                        - (diam / 2), diam, diam);
-                getVisibleShapes().add(path);
-            }
-        }
-
-        // add a big triangle, indicating the position of the robot and its
-        // orientation
-        getNotVisibleTriangle().setGravityCenterX(x);
-        getNotVisibleTriangle().setGravityCenterY(y);
-        getNotVisibleTriangle().setAlpha(degrees);
-        setUpdated(true);
     }
 
     public void setOtherTriangleVisible() {
@@ -248,15 +219,15 @@ public class SimulationJPanel extends JPanel implements Runnable,
      */
     @Override
     protected void paintComponent(Graphics graph) {
-
+        super.paintComponent(graph);
+        paintBarcodeComponent(graph);
         paintPathComponent(graph);
+        paintRobotComponent(graph);
         // paintGridComponent(graph);
         paintWallComponent(graph);
         paintUndergroundComponent(graph);
         paintBeamComponent(graph);
         paintHighLightComponents(graph);
-
-        // paintGridComponent(graph);
     }
 
     /**
@@ -329,9 +300,24 @@ public class SimulationJPanel extends JPanel implements Runnable,
      * @param graph
      */
     private void paintPathComponent(Graphics graph) {
-        super.paintComponent(graph);
-        paintBarcodeComponent(graph);
+        Graphics2D g2 = ((Graphics2D) graph);
+        g2.setColor(Color.RED);
+        Stroke stroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(3));
+        for (int i = 0; i < pathCoordinates.size() - 1; i++) {
+            Line2D line = new Line2D.Double(pathCoordinates.get(i),
+                    pathCoordinates.get(i + 1));
+            g2.draw(line);
+        }
+        g2.setStroke(stroke);
+    }
 
+    /**
+     * Tekent de robot zelf met daarachter het grid.
+     * 
+     * @param graph
+     */
+    private void paintRobotComponent(Graphics graph) {
         Vector<Shape> shapesx = new Vector<Shape>();
         shapesx.addAll(getVisibleShapes());
 
@@ -367,22 +353,6 @@ public class SimulationJPanel extends JPanel implements Runnable,
                     ((Graphics2D) graph).fill(s);
                 x = (int) ((Triangle) s).getGravityCenterX();
                 y = (int) ((Triangle) s).getGravityCenterY();
-
-                if (simulationPilot != null)
-                    getSSG().updateCoordinates(
-                            "Simulator ("
-                                    + simulationPilot
-                                            .getCurrentPositionAbsoluteX()
-                                    + " , "
-                                    + simulationPilot
-                                            .getCurrentPositionAbsoluteY()
-                                    + " , " + simulationPilot.getAlpha()
-                                    + "\u00B0, Map: "
-                                    + simulationPilot.getMapString() + ")");
-                else
-                    getSSG().updateCoordinates(
-                            "Simulator (" + (x) + " , " + (y) + ")");
-
             } else {
                 ((Graphics2D) graph).fill(s);
             }
@@ -460,11 +430,35 @@ public class SimulationJPanel extends JPanel implements Runnable,
                 (int) getSizeTile());
     }
 
-    public void setRobotLocation(double x, double y, double degrees) {
+    public void moveRobot(double x, double y, double degrees) {
         x = x * scalingfactor - getShiftToTheRight();
         y = y * scalingfactor - getShiftDown();
         // System.out.println("xy = " + x + " " + y);
-        this.addCircle(x * 1, y * 1, degrees);
+        pathCoordinates.get(pathCoordinates.size() - 1).setLocation(x, y);
+
+        // remove the last triangle and draw little circles to indicate the path
+        if (getVisibleShapes().size() > 0) {
+            double oldX = this.getVisibleTriangle().getGravityCenterX();
+            double oldY = this.getVisibleTriangle().getGravityCenterY();
+
+            // add a bigger circle where the robot starts
+            if (getVisibleShapes().size() < 3) {
+                double diam = scalingfactor * 5;
+                Shape bigCircle = new Ellipse2D.Double(oldX - (diam / 2), oldY
+                        - (diam / 2), diam, diam);
+                getVisibleShapes().add(bigCircle);
+            }
+
+        }
+
+        // add a big triangle, indicating the position of the robot and its
+        // orientation
+        getNotVisibleTriangle().setGravityCenterX(x);
+        getNotVisibleTriangle().setGravityCenterY(y);
+        getNotVisibleTriangle().setAlpha(degrees);
+        setUpdated(true);
+
+        repaint();
     }
 
     public void clearPath() {
@@ -478,25 +472,6 @@ public class SimulationJPanel extends JPanel implements Runnable,
         getNotVisibleShapes().removeAllElements();
         getVisibleShapes().add(triangle1);
         getVisibleShapes().add(triangle2);
-    }
-
-    /**
-     * Deletes the former path of the robot
-     */
-    public void resetPath() {
-
-        getVisibleShapes().removeAllElements();
-        getNotVisibleShapes().removeAllElements();
-        shiftToTheRight = 0;
-        shiftDown = 0;
-        scalingfactor = 1;
-        triangle1 = new Triangle(5 * getSizeTile() + getSizeTile() / 2, 5
-                * getSizeTile() + getSizeTile() / 2, 270, scalingfactor);
-        triangle2 = new Triangle(5 * getSizeTile() + getSizeTile() / 2, 5
-                * getSizeTile() + getSizeTile() / 2, 270, scalingfactor);
-        shapes1.add(triangle1);
-        shapes1.add(triangle2);
-        isVisibleObjects = 1;
     }
 
     /**
@@ -522,7 +497,7 @@ public class SimulationJPanel extends JPanel implements Runnable,
     public void clearTotal() {
         endHighlight = null;
         checkHighlight = null;
-        resetPath();
+        clearPath();
         removeWalls();
         removeBarCodes();
     }
@@ -534,17 +509,10 @@ public class SimulationJPanel extends JPanel implements Runnable,
     public void resetMap() {
         clearTotal();
         SSG.getStatusInfoBuffer().resetBuffer();
-        mapGraphConstructed = new MapGraph();
+        // mapGraphConstructed in pilot moet nog gereset worden.
+        // mapGraphConstructed = new MapGraph();
         getSimulationPilot().reset();
 
-    }
-
-    public void setSSG(SilverSurferGUI SSG) {
-        this.SSG = SSG;
-    }
-
-    public SilverSurferGUI getSSG() {
-        return SSG;
     }
 
     public SimulationPilot getSimulationPilot() {
@@ -553,10 +521,6 @@ public class SimulationJPanel extends JPanel implements Runnable,
 
     public void setSimulationPilot(SimulationPilot simulationPilot) {
         this.simulationPilot = simulationPilot;
-    }
-
-    public MapGraph getMapGraphConstructed() {
-        return this.mapGraphConstructed;
     }
 
     public double getSizeTile() {
@@ -975,17 +939,6 @@ public class SimulationJPanel extends JPanel implements Runnable,
         setWall(point, wall);
     }
 
-    /**
-     * Voegt een barcode toe aan de bag met barcodes.
-     * 
-     * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld
-     *      zijn.
-     */
-    public void addBarcode(Barcode barcode, Rectangle2D[] visual) {
-        getVisibleBarcode().add(
-                new Tuple<Barcode, Rectangle2D[]>(barcode, visual));
-    }
-
     public void setBarcode(Barcode barcode) {
         if (!barcode.isDrawn()) {
             Rectangle2D[] rect = Barcode.createVisualBarCode(barcode,
@@ -993,7 +946,7 @@ public class SimulationJPanel extends JPanel implements Runnable,
                             - getShiftToTheRight(),
                     getSimulationPilot().getCenterAbsoluteCurrentTile()[1]
                             - getShiftDown(), getSizeTile());
-            addBarcode(barcode, rect);
+            simulationPilot.addBarcode(this, barcode, rect);
             barcode.setDrawn(true);
         }
     }
@@ -1007,25 +960,16 @@ public class SimulationJPanel extends JPanel implements Runnable,
     }
 
     public void setTile(int x, int y) {
-        getMapGraphConstructed().setTileXY(x, y, new Tile());
-    }
-
-    public void setWallOnTile(int x, int y, Orientation orientation) {
-        if (getMapGraphConstructed().getTileWithCoordinates(x, y) == null)
-            throw new IllegalArgumentException(
-                    "in simulationPanel bij methode SetWallOnTile "
-                            + "zijn coordinaten meegegeven die de mapgraph niet bevat nl"
-                            + x + " en " + y);
-        getMapGraphConstructed().getTileWithCoordinates(x, y)
-                .getEdge(orientation).setObstruction(Obstruction.WALL);
+        simulationPilot.getMapGraphConstructed().setTileXY(x, y, new Tile());
     }
 
     public void removeWallFromTile(int x, int y, Orientation orientation) {
-        if (getMapGraphConstructed().getTileWithCoordinates(x, y) == null)
+        if (simulationPilot.getMapGraphConstructed().getTileWithCoordinates(x,
+                y) == null)
             throw new IllegalArgumentException(
                     "in simulationPanel bij methode removeWallFromTile "
                             + "zijn coordinaten meegegeven die de mapgraph niet bevat");
-        getMapGraphConstructed().getTileWithCoordinates(x, y)
+        simulationPilot.getMapGraphConstructed().getTileWithCoordinates(x, y)
                 .getEdge(orientation).setObstruction(null);
     }
 
@@ -1084,6 +1028,12 @@ public class SimulationJPanel extends JPanel implements Runnable,
         lastMousePositionY = (int) e.getPoint().getY();
     }
 
+    public void addPathPoint(double x, double y) {
+        Point point = new Point();
+        point.setLocation(x, y);
+        pathCoordinates.add(point);
+        repaint();
+    }
 }
 
 // public BufferedImage getVerticalWallImage() {

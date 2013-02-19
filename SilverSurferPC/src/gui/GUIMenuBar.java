@@ -86,7 +86,8 @@ public class GUIMenuBar extends JMenuBar {
                     out.close();
 
                 } catch (IOException e) {
-                    System.out.println("Sorry, something went wrong exporting your data.");
+                    System.out
+                            .println("Sorry, something went wrong exporting your data.");
                 }
 
             }
@@ -140,7 +141,8 @@ public class GUIMenuBar extends JMenuBar {
                     out.close();
 
                 } catch (IOException e) {
-                    System.out.println("Sorry, something went wrong exporting your data.");
+                    System.out
+                            .println("Sorry, something went wrong exporting your data.");
                 }
 
             }
@@ -250,7 +252,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                gui.getSimulationPanel().resetPath();
+                gui.getSimulationPanel().clearPath();
             }
         });
         return screenMenu;
@@ -327,16 +329,19 @@ public class GUIMenuBar extends JMenuBar {
                 gui.getSimulationPanel().resetMap();
 
                 // Prompt for a File
-                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui().getFrame(), "Select maze:", FileDialog.LOAD);
+                FileDialog prompt = new FileDialog(GUIMenuBar.this.getGui()
+                        .getFrame(), "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
 
                 // Display the dialog and wait for the user's response
                 prompt.show();
 
-                File mapFile = new File(prompt.getDirectory() + prompt.getFile()); // Load and display selection
+                File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
                 prompt.dispose(); // Get rid of the dialog box
 
-                gui.getCommunicator().getSimulationPilot().setMapFile(mapFile, 0, 0);
+                gui.getCommunicator().getSimulationPilot()
+                        .setMapFile(mapFile, 0, 0);
 
                 System.out.println("[I/O] Map succesfully loaded!");
 

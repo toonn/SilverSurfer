@@ -12,7 +12,7 @@ public class SilverSurferGUI {
 
     private static JFrame frame;
     private static StatusInfoBuffer statusInfoBuffer;
-    private static SimulationJPanel simulationPanel;
+    private static SimulatorViewPort simulationPanel;
     private static SimulationPilot simulationPilot;
     private static Communicator communicator;
 
@@ -60,13 +60,15 @@ public class SilverSurferGUI {
                 .createSequentialGroup()
                 .addGroup(
                         frameLayout
-                                .createParallelGroup(GroupLayout.Alignment.CENTER)
+                                .createParallelGroup(
+                                        GroupLayout.Alignment.CENTER)
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout
-                                .createParallelGroup(GroupLayout.Alignment.CENTER)
+                                .createParallelGroup(
+                                        GroupLayout.Alignment.CENTER)
                                 .addComponent(mappingPanel)
                                 .addComponent(sensorPanel)));
         frameLayout.setVerticalGroup(frameLayout
@@ -107,7 +109,7 @@ public class SilverSurferGUI {
         return statusInfoBuffer;
     }
 
-    public SimulationJPanel getSimulationPanel() {
+    public SimulatorViewPort getSimulationPanel() {
         return simulationPanel;
     }
 
@@ -266,7 +268,8 @@ public class SilverSurferGUI {
             int lightSensorValue;
 
             if (!getCommunicator().getRobotConnected()) {
-                ultrasonicSensorValue = getSimulationPilot().getUltraSensorValue();
+                ultrasonicSensorValue = getSimulationPilot()
+                        .getUltraSensorValue();
                 lightSensorValue = getSimulationPilot().getLightSensorValue();
             } else {
                 ultrasonicSensorValue = getStatusInfoBuffer()
@@ -274,13 +277,19 @@ public class SilverSurferGUI {
                 lightSensorValue = getStatusInfoBuffer()
                         .getLatestLightSensorInfo();
             }
-            sensorGraph.addSensorValues(ultrasonicSensorValue, lightSensorValue);
+            sensorGraph
+                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
 
-            infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
+            infoLabel1
+                    .setText("Bluetooth: " + communicator.getRobotConnected());
             infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
             infoLabel4.setText("Lightsensor: " + lightSensorValue);
-            infoLabel5.setText("Left Motor: " + statusInfoBuffer.getLeftMotorMoving() + " " + statusInfoBuffer.getLeftMotorSpeed());
-            infoLabel6.setText("Right Motor: " + statusInfoBuffer.getRightMotorMoving() + " " + statusInfoBuffer.getRightMotorSpeed());
+            infoLabel5.setText("Left Motor: "
+                    + statusInfoBuffer.getLeftMotorMoving() + " "
+                    + statusInfoBuffer.getLeftMotorSpeed());
+            infoLabel6.setText("Right Motor: "
+                    + statusInfoBuffer.getRightMotorMoving() + " "
+                    + statusInfoBuffer.getRightMotorSpeed());
             infoLabel7.setText("Busy: " + statusInfoBuffer.getBusy());
         } catch (NullPointerException e) {
 
@@ -288,28 +297,31 @@ public class SilverSurferGUI {
     }
 
     private JPanel mappingPanel() {
-        simulationPanel = new SimulationJPanel();
-        simulationPanel.setSSG(this);
+        simulationPanel = new SimulatorViewPort();
         simulationPanel.setSize(20000, 20000);
         simulationPanel.setBackground(Color.WHITE);
         simulationPanel.setBorder(createBorder());
 
         mappingPanel = new JPanel();
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), "Simulator"));
+        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+                "Simulator"));
         mappingPanel.setOpaque(false);
 
         GroupLayout mappingLayout = new GroupLayout(mappingPanel);
         mappingPanel.setLayout(mappingLayout);
         mappingLayout.setAutoCreateGaps(true);
         mappingLayout.setAutoCreateContainerGaps(true);
-        mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup().addComponent(simulationPanel));
-        mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup().addComponent(simulationPanel));
+        mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup()
+                .addComponent(simulationPanel));
+        mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup()
+                .addComponent(simulationPanel));
 
         return mappingPanel;
     }
 
     public void updateCoordinates(String s) {
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
+        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+                s));
     }
 
     /*
@@ -349,7 +361,8 @@ public class SilverSurferGUI {
             System.out.println("[CONNECTION] Connection established.");
             changeSpeed(2);
         } catch (Exception e) {
-            System.out.println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
+            System.out
+                    .println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
         }
     }
 
@@ -358,22 +371,25 @@ public class SilverSurferGUI {
             communicator.setRobotConnected(false);
             simulationPanel.resetMap();
             simulationPilot.setRobotControllable(true);
-            System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
+            System.out
+                    .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
             changeSpeed(2);
         } catch (Exception e) {
-            System.out.println("[CONNECTION] Oops! Something went wrong disconnecting!");
+            System.out
+                    .println("[CONNECTION] Oops! Something went wrong disconnecting!");
         }
     }
 
     protected static void clearScreen() {
         System.out.println("[GUI] Screen cleared.");
-        simulationPanel.resetPath();
+        simulationPanel.resetMap();
     }
 
     public static void changeSpeed(int value) {
         communicator.setSpeed(value);
         infoLabel2.setText("Speed level: " + value);
-        System.out.println(communicator.getConsoleTag() + " Current Speed Level: " + value + ".");
+        System.out.println(communicator.getConsoleTag()
+                + " Current Speed Level: " + value + ".");
     }
 
     public void zoomIn() {
@@ -452,7 +468,9 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0, -1 * Integer.parseInt(angle.getValue().toString()), 0, 0);
+                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0,
+                        -1 * Integer.parseInt(angle.getValue().toString()), 0,
+                        0);
                 MTT.start();
             }
         });
@@ -475,7 +493,8 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0, Integer.parseInt(angle.getValue().toString()), 0, 0);
+                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0,
+                        Integer.parseInt(angle.getValue().toString()), 0, 0);
                 MTT.start();
             }
         });
@@ -498,7 +517,8 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, Integer.parseInt(length.getValue().toString()), 0, 0, 0);
+                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator,
+                        Integer.parseInt(length.getValue().toString()), 0, 0, 0);
                 MTT.start();
             }
         });

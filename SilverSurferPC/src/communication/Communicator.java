@@ -34,8 +34,9 @@ public class Communicator {
     private boolean executingBarcode = false;
     private BarcodeThread BT;
 
-    public Communicator(StatusInfoBuffer statusInfoBuffer, SimulationPilot simulationPilot) {
-    	this.statusInfoBuffer = statusInfoBuffer;
+    public Communicator(StatusInfoBuffer statusInfoBuffer,
+            SimulationPilot simulationPilot) {
+        this.statusInfoBuffer = statusInfoBuffer;
         this.simulationPilot = simulationPilot;
         setSpeed(2);
     }
@@ -63,7 +64,8 @@ public class Communicator {
 
     public void openRobotConnection() throws Exception {
         connection = new NXTConnector();
-        connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH, NXTComm.PACKET);
+        connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH,
+                NXTComm.PACKET);
         dis = connection.getDataIn();
         dos = connection.getDataOut();
         if (dis == null || dos == null)
@@ -104,9 +106,10 @@ public class Communicator {
                 simulationPilot.allignOnWhiteLine();
             else if (command == Command.ALIGN_WALL)
                 simulationPilot.allignOnWalls();
-            //else if (command == Command.LOOK_AROUND)
-            //    simulationPilot.checkForObstructions();
-            else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE && !robotConnected)
+            // else if (command == Command.LOOK_AROUND)
+            // simulationPilot.checkForObstructions();
+            else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE
+                    && !robotConnected)
                 simulationPilot.checkForObstructionAndSetTile();
             else if (command == Command.STOP_READING_BARCODES)
                 this.readBarcodes = false;
@@ -122,8 +125,7 @@ public class Communicator {
                             BT.start();
                         }
                         int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
-                        while (amount-- != 0)
-                            simulationPilot.travel(1);
+                        simulationPilot.travel(amount);
                         if (readBarcodes && !permaBarcodeStop) {
                             boolean found = BT.getFound();
                             BT.setQuit(true);
@@ -131,12 +133,12 @@ public class Communicator {
                                 readBarcode();
                         }
                     } catch (Exception e) {
-                        System.out.println("Error in Communicator.sendCommand(" + command + ")!");
+                        System.out.println("Error in Communicator.sendCommand("
+                                + command + ")!");
                     }
                 } else {
                     int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
-                    while (amount-- != 0)
-                        simulationPilot.travel(1);
+                    simulationPilot.travel(amount);
                 }
             } else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
                 double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
@@ -151,12 +153,14 @@ public class Communicator {
                 while (busy)
                     Thread.sleep(100);
         } catch (Exception e) {
-            System.out.println("Error in Communicator.sendCommand(" + command + ")!");
+            System.out.println("Error in Communicator.sendCommand(" + command
+                    + ")!");
         }
     }
 
     private void readBarcode() {
-        int value = ((Barcode) simulationPilot.getMapGraph().getCurrentTile().getContent()).getValue();
+        int value = ((Barcode) simulationPilot.getMapGraphLoaded()
+                .getCurrentTile().getContent()).getValue();
         SilverSurferGUI.getStatusInfoBuffer().setBarcode(value);
     }
 
@@ -170,7 +174,8 @@ public class Communicator {
 
     public void goToNextTile(Orientation orientation) throws IOException {
         double currentAngle = getStatusInfoBuffer().getAngle();
-        int angleToRotate = (int) ExtMath.getSmallestAngle((int) ((double) orientation.getRightAngle() - currentAngle));
+        int angleToRotate = (int) ExtMath
+                .getSmallestAngle((int) ((double) orientation.getRightAngle() - currentAngle));
         sendCommand(angleToRotate * 100 + Command.AUTOMATIC_TURN_ANGLE);
 
         if (mustAllign) {
@@ -179,11 +184,9 @@ public class Communicator {
                 sendCommand(Command.ALIGN_PERPENDICULAR);
                 sendCommand(24 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
                 setTilesRidden(0);
-            }
-            else
+            } else
                 sendCommand(40 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
-        }
-        else
+        } else
             sendCommand(40 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
 
     }
@@ -195,9 +198,9 @@ public class Communicator {
             angles = anglesInDegrees * 100 + Command.AUTOMATIC_TURN_ANGLE;
             sendCommand(length);
             sendCommand(angles);
-        }
-        else {
-            angles = (int) Math.round(360.0 / amtOfAngles) * 100 + Command.AUTOMATIC_TURN_ANGLE;
+        } else {
+            angles = (int) Math.round(360.0 / amtOfAngles) * 100
+                    + Command.AUTOMATIC_TURN_ANGLE;
             if (amtOfAngles == 1)
                 sendCommand(length);
             else

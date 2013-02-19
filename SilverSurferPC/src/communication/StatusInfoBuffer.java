@@ -23,8 +23,10 @@ public class StatusInfoBuffer {
     private int startPostitionRelativeY;
 
     private SilverSurferGUI SSG;
-    private boolean isBufferUsed = false; //Check if the buffer can be updated (can be updated when false).
-    private final int BUFFER_SIZE = 300; //Amount of datapoints kept by this buffer.
+    private boolean isBufferUsed = false; // Check if the buffer can be updated
+                                          // (can be updated when false).
+    private final int BUFFER_SIZE = 300; // Amount of datapoints kept by this
+                                         // buffer.
 
     private LSInfoNode startLSInfo = new LSInfoNode();
     private LSInfoNode endLSInfo = new LSInfoNode();
@@ -232,7 +234,8 @@ public class StatusInfoBuffer {
     public void setBarcode(int barcode) {
         Barcode scanned = new Barcode(barcode, SSG.getSimulationPanel()
                 .getSimulationPilot().getCurrentOrientation());
-        SSG.getSimulationPanel()
+        SSG.getCommunicator()
+                .getSimulationPilot()
                 .getMapGraphConstructed()
                 .getTileWithCoordinates(
                         getSSG().getCommunicator().getSimulationPilot()
@@ -243,7 +246,8 @@ public class StatusInfoBuffer {
         SSG.getSimulationPanel().setBarcode(scanned);
         this.barcode = barcode;
         SSG.getCommunicator().setExecutingBarcodes(true);
-        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET", SSG, this.barcode);
+        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET", SSG,
+                this.barcode);
         BET.start();
     }
 
@@ -295,7 +299,7 @@ public class StatusInfoBuffer {
     public void setCoordinatesAbsolute(double[] coordinates) {
         coordinatesAbsolute[0] = coordinates[0];
         coordinatesAbsolute[1] = coordinates[1];
-        SSG.getSimulationPanel().setRobotLocation(coordinates[0],
+        SSG.getSimulationPanel().moveRobot(coordinates[0],
                 coordinates[1], getAngle());
 
         // SSG.updateStatus();

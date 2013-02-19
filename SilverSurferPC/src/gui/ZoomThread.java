@@ -1,15 +1,15 @@
 package gui;
 
-import simulator.SimulationJPanel;
+import simulator.SimulatorViewPort;
 
 //Used for zooming in.
 public class ZoomThread extends Thread {
 	
-	private SimulationJPanel simulationPanel;
+	private SimulatorViewPort simulationPanel;
 	private boolean ZoomIn = false;
 	private final static double scaleDifferencePerZoom = 1f/4f;
 	
-	public ZoomThread(String str, SimulationJPanel simulationpanel, boolean ZoomIn) {
+	public ZoomThread(String str, SimulatorViewPort simulationpanel, boolean ZoomIn) {
 		super(str);
 		this.simulationPanel = simulationpanel;
 		this.ZoomIn = ZoomIn;

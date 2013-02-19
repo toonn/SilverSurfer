@@ -2,11 +2,15 @@ package simulator;
 
 import gui.SilverSurferGUI;
 import mapping.*;
+
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.Random;
 
+import datastructures.Tuple;
+
 public class SimulationPilot {
-    private SimulationJPanel simulationPanel;
+    private SimulatorViewPort simulationPanel;
     /**
      * verandert wanneer een nieuwe map wordt ingeladen naar de positie waar het
      * pijltje staat wanneer de map ingeladen wordt
@@ -22,7 +26,8 @@ public class SimulationPilot {
     private double alpha = 270;
     private int speed = 10;
     private File mapFile;
-    private MapGraph mapGraph;
+    private MapGraph mapGraphLoaded;
+    private MapGraph mapGraphConstructed;
 
     // private int amtToSendToBuffer = 50;
 
@@ -33,11 +38,11 @@ public class SimulationPilot {
     private boolean robotControllable = true;
     private boolean robotSimulated = true;
 
-    public SimulationPilot(SimulationJPanel simulationPanel) {
+    public SimulationPilot(SimulatorViewPort simulationPanel) {
         this.simulationPanel = simulationPanel;
-        getSimulationPanel().setRobotLocation(
-                this.getCurrentPositionAbsoluteX(),
-                this.getCurrentPositionAbsoluteY(), this.getAlpha());
+        getSimulationPanel().addPathPoint(getCurrentPositionAbsoluteX(),
+                getCurrentPositionAbsoluteY());
+
     }
 
     public double getCurrentPositionAbsoluteX() {
@@ -76,26 +81,26 @@ public class SimulationPilot {
         if (!isRobotSimulated())
             return SilverSurferGUI.getStatusInfoBuffer()
                     .getXCoordinateRelative();
-        return this.getMapGraph().getCurrentTileCoordinates()[0];
+        return this.getMapGraphLoaded().getCurrentTileCoordinates()[0];
     }
 
     public int getCurrentPositionRelativeY() {
         if (!isRobotSimulated())
             return SilverSurferGUI.getStatusInfoBuffer()
                     .getYCoordinateRelative();
-        return this.getMapGraph().getCurrentTileCoordinates()[1];
+        return this.getMapGraphLoaded().getCurrentTileCoordinates()[1];
     }
 
     public int getStartPositionRelativeX() {
         if (!isRobotSimulated())
             return 0;
-        return this.getMapGraph().getStartingTileCoordinates()[0];
+        return this.getMapGraphLoaded().getStartingTileCoordinates()[0];
     }
 
     public int getStartPositionRelativeY() {
         if (!isRobotSimulated())
             return 0;
-        return this.getMapGraph().getStartingTileCoordinates()[1];
+        return this.getMapGraphLoaded().getStartingTileCoordinates()[1];
     }
 
     /**
@@ -161,11 +166,11 @@ public class SimulationPilot {
         if (speed == 4)
             this.speed = 48;
         else if (speed == 3)
-        	this.speed = 58;
+            this.speed = 58;
         else if (speed == 2)
-        	this.speed = 86;
+            this.speed = 86;
         else
-        	this.speed = 194;
+            this.speed = 194;
     }
 
     /**
@@ -209,12 +214,16 @@ public class SimulationPilot {
 
     }
 
-    public MapGraph getMapGraph() {
-        return this.mapGraph;
+    public MapGraph getMapGraphLoaded() {
+        return this.mapGraphLoaded;
+    }
+
+    public MapGraph getMapGraphConstructed() {
+        return this.mapGraphConstructed;
     }
 
     public String getMapString() {
-        if (this.getMapGraph() == null) {
+        if (this.getMapGraphLoaded() == null) {
             return "/";
         }
         return this.mapFile.getName();
@@ -226,10 +235,10 @@ public class SimulationPilot {
      */
     public void setMapGraph(MapGraph mapGraph) {
         if (mapGraph == null) {
-            this.mapGraph = null;
+            this.mapGraphLoaded = null;
             getSimulationPanel().clearTotal();
         }
-        this.mapGraph = mapGraph;
+        this.mapGraphLoaded = mapGraph;
     }
 
     /**
@@ -242,7 +251,7 @@ public class SimulationPilot {
         return (double) 1.2 * scalingfactor();
     }
 
-    public SimulationJPanel getSimulationPanel() {
+    public SimulatorViewPort getSimulationPanel() {
         return simulationPanel;
     }
 
@@ -284,16 +293,17 @@ public class SimulationPilot {
         double distanceToGo = distance;
         double i = j;
 
+        getSimulationPanel().addPathPoint(xTemp, yTemp);
+
         while (distanceToGo != 0)
         // for (double i = j; i*j <= distance*j; i+=j)
         {
-
             xTemp = (double) (xTemp + i
                     * Math.cos(Math.toRadians(this.getAlpha())));
             yTemp = (double) (yTemp + i
                     * Math.sin(Math.toRadians(this.getAlpha())));
 
-            if (mapGraph != null) {
+            if (mapGraphLoaded != null) {
 
                 if (robotOnEdge(xTemp, yTemp, this.getAlpha())) {
                     Orientation edgeOrientation = this.pointOnWichSideOfTile(
@@ -301,7 +311,7 @@ public class SimulationPilot {
 
                     // the edge you are standing on contains a wall
                     if (travelOrientation == edgeOrientation
-                            && !this.getMapGraph().getCurrentTile()
+                            && !this.getMapGraphLoaded().getCurrentTile()
                                     .getEdge(travelOrientation).isPassable()) {
                         this.setCurrentPositionAbsoluteX((xTemp - i
                                 * Math.cos(Math.toRadians(this.getAlpha()))));
@@ -317,8 +327,7 @@ public class SimulationPilot {
                     }
                 }
             }
-            getSimulationPanel()
-                    .setRobotLocation(xTemp, yTemp, this.getAlpha());
+            getSimulationPanel().moveRobot(xTemp, yTemp, this.getAlpha());
             this.setCurrentPositionAbsoluteX(xTemp);
             this.setCurrentPositionAbsoluteY(yTemp);
 
@@ -353,9 +362,9 @@ public class SimulationPilot {
     private void travelToNextTileIfNeeded(double xTemp, double yTemp,
             Orientation travelOrientation) {
         if (pointOnEdge(xTemp, yTemp)
-                && this.getMapGraph().getCurrentTile()
+                && this.getMapGraphLoaded().getCurrentTile()
                         .getEdge(travelOrientation).isPassable()) {
-            setCurrentTileCoordinates(mapGraph, xTemp, yTemp);
+            setCurrentTileCoordinates(mapGraphLoaded, xTemp, yTemp);
         }
     }
 
@@ -375,12 +384,12 @@ public class SimulationPilot {
                                 this.getCurrentPositionAbsoluteX(),
                                 this.getCurrentPositionAbsoluteY(),
                                 this.getAlpha(), sizeTile());
-                int xCoordinate = mapGraph.getCurrentTileCoordinates()[0]
+                int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                int yCoordinate = mapGraph.getCurrentTileCoordinates()[1]
+                int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
-                if (getSimulationPanel().getMapGraphConstructed()
-                        .getTileWithCoordinates(xCoordinate, yCoordinate) == null) {
+                if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
+                        yCoordinate) == null) {
                     getSimulationPanel().setTile(xCoordinate, yCoordinate);
                 }
 
@@ -396,12 +405,12 @@ public class SimulationPilot {
                     this.getCurrentPositionAbsoluteX(),
                     this.getCurrentPositionAbsoluteY(), this.getAlpha(),
                     sizeTile());
-            int xCoordinate = mapGraph.getCurrentTileCoordinates()[0]
+            int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
                     + currentOrientation.getArrayToFindNeighbourRelative()[0];
-            int yCoordinate = mapGraph.getCurrentTileCoordinates()[1]
+            int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
                     + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            if (getSimulationPanel().getMapGraphConstructed()
-                    .getTileWithCoordinates(xCoordinate, yCoordinate) == null) {
+            if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
+                    yCoordinate) == null) {
                 getSimulationPanel().setTile(xCoordinate, yCoordinate);
             }
 
@@ -450,13 +459,13 @@ public class SimulationPilot {
                         .getYCoordinateRelative()
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
             } else {
-                xCoordinate = mapGraph.getCurrentTileCoordinates()[0]
+                xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = mapGraph.getCurrentTileCoordinates()[1]
+                yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
             }
-            if (getSimulationPanel().getMapGraphConstructed()
-                    .getTileWithCoordinates(xCoordinate, yCoordinate) == null)
+            if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
+                    yCoordinate) == null)
                 getSimulationPanel().setTile(xCoordinate, yCoordinate);
         }
     }
@@ -469,7 +478,7 @@ public class SimulationPilot {
 
         getSimulationPanel().addWall(currentOrientation,
                 getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-        getSimulationPanel().setWallOnTile(getCurrentPositionRelativeX(),
+        setWallOnTile(getCurrentPositionRelativeX(),
                 getCurrentPositionRelativeY(), currentOrientation);
     }
 
@@ -524,8 +533,7 @@ public class SimulationPilot {
              * } } }
              */
 
-            getSimulationPanel().setRobotLocation(
-                    this.getCurrentPositionAbsoluteX(),
+            getSimulationPanel().moveRobot(this.getCurrentPositionAbsoluteX(),
                     this.getCurrentPositionAbsoluteY(), alphaTemp);
             this.setAlpha(alphaTemp);
             SilverSurferGUI.getStatusInfoBuffer().setAngle(alphaTemp);
@@ -634,8 +642,8 @@ public class SimulationPilot {
         // this.getMapGraph().getObstruction(Orientation.calculateOrientation(x,
         // y, this.getAlpha())) != Obstruction.WALL)));
         return this.pointOnEdge(x, y)
-                && (this.getMapGraph() == null || this.getMapGraph()
-                        .getObstruction(
+                && (this.getMapGraphLoaded() == null || this
+                        .getMapGraphLoaded().getObstruction(
                                 Orientation.calculateOrientation(x, y,
                                         this.getAlpha(), sizeTile())) != Obstruction.WALL);
 
@@ -646,8 +654,8 @@ public class SimulationPilot {
      */
     public boolean onEmptyTile(double x, double y) {
 
-        return (!this.pointOnEdge(x, y) && this.getMapGraph() == null)
-                || (!this.pointOnEdge(x, y) && this.getMapGraph()
+        return (!this.pointOnEdge(x, y) && this.getMapGraphLoaded() == null)
+                || (!this.pointOnEdge(x, y) && this.getMapGraphLoaded()
                         .getContentCurrentTile() == null);
 
     }
@@ -656,7 +664,7 @@ public class SimulationPilot {
      * True if the robot is not on an edge, but on a tile containing a barcode.
      */
     public boolean onBarcodeTile(double x, double y) {
-        if (this.getMapGraph() == null) {
+        if (this.getMapGraphLoaded() == null) {
             // System.out.println("b: /");
             return false;
         } else {
@@ -664,7 +672,7 @@ public class SimulationPilot {
             // (this.getMapGraph().getContentCurrentTile() instanceof
             // Barcode)));
             return !this.pointOnEdge(x, y)
-                    && (this.getMapGraph().getContentCurrentTile() instanceof Barcode);
+                    && (this.getMapGraphLoaded().getContentCurrentTile() instanceof Barcode);
         }
     }
 
@@ -739,7 +747,7 @@ public class SimulationPilot {
     }
 
     public void clear() {
-        getSimulationPanel().resetPath();
+        getSimulationPanel().clearPath();
     }
 
     /**
@@ -790,7 +798,7 @@ public class SimulationPilot {
                 standardDeviation = SimulationSensorData.getSDWhiteLineLS();
             } else if (onBarcodeTile(getLightsensorPositionX(),
                     getLightsensorPositionY())) {
-                int color = ((Barcode) this.getMapGraph()
+                int color = ((Barcode) this.getMapGraphLoaded()
                         .getContentCurrentTile()).getColorValue(
                         getLightsensorPositionX() % 40,
                         getLightsensorPositionY() % 40);
@@ -841,10 +849,10 @@ public class SimulationPilot {
 
         // there is no map loaded, so the sensor will detect no walls en returns
         // the maximum value.
-        if (this.getMapGraph() == null) {
+        if (this.getMapGraphLoaded() == null) {
             return 250;
         }
-        Tile tileTemp = this.getMapGraph().getCurrentTile();
+        Tile tileTemp = this.getMapGraphLoaded().getCurrentTile();
         int i = 1;
 
         while (i < 148) {
@@ -961,6 +969,34 @@ public class SimulationPilot {
 
     public double scalingfactor() {
         return 1;
+    }
+
+    /**
+     * Voegt een barcode toe aan de bag met barcodes.
+     * 
+     * @param simulatorPanel
+     *            TODO
+     * @param barcode
+     *            TODO
+     * @param visual
+     *            TODO
+     * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld
+     *      zijn.
+     */
+    public void addBarcode(SimulatorViewPort simulatorPanel, Barcode barcode,
+            Rectangle2D[] visual) {
+        simulatorPanel.getVisibleBarcode().add(
+                new Tuple<Barcode, Rectangle2D[]>(barcode, visual));
+    }
+
+    public void setWallOnTile(int x, int y, Orientation orientation) {
+        if (getMapGraphConstructed().getTileWithCoordinates(x, y) == null)
+            throw new IllegalArgumentException(
+                    "in simulationPanel bij methode SetWallOnTile "
+                            + "zijn coordinaten meegegeven die de mapgraph niet bevat nl"
+                            + x + " en " + y);
+        getMapGraphConstructed().getTileWithCoordinates(x, y)
+                .getEdge(orientation).setObstruction(Obstruction.WALL);
     }
 
 }
