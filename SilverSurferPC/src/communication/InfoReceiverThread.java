@@ -10,8 +10,10 @@ public class InfoReceiverThread extends Thread {
 	private boolean quit = false;
 	private double[] coordinates = new double[2];
 	
-	public InfoReceiverThread(StatusInfoBuffer statusInfoBuffer) {
+	public InfoReceiverThread(StatusInfoBuffer statusInfoBuffer, DataInputStream dis, DataOutputStream dos) {
 		this.statusInfoBuffer = statusInfoBuffer;
+		InfoReceiverThread.dis = dis;
+		InfoReceiverThread.dos = dos;
 	}
 	
 	@Override
@@ -77,16 +79,8 @@ public class InfoReceiverThread extends Thread {
 		return dis;
 	}
 	
-	public void setDis(DataInputStream dis) {
-		InfoReceiverThread.dis = dis;
-	}
-	
 	public DataOutputStream getDos() {
 		return dos;
-	}
-	
-	public void setDos(DataOutputStream dos) {
-		InfoReceiverThread.dos = dos;
 	}
 	
 	public void setQuit(boolean quit) {

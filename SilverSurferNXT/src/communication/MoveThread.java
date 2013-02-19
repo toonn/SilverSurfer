@@ -8,8 +8,9 @@ public class MoveThread extends Thread {
 	private boolean quit = false;
 	private int command = 0;
 
-	public MoveThread(String str) {
+	public MoveThread(String str, int command) {
 		super(str);
+		this.command = command;
 	}
 
 	@Override
@@ -34,9 +35,5 @@ public class MoveThread extends Thread {
 	
 	public void setQuit(boolean quit) {
 		this.quit = quit;
-	}
-	
-	public void setCommand(int command) {
-		this.command = command;
 	}
 }

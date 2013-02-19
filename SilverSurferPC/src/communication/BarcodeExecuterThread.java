@@ -8,22 +8,16 @@ public class BarcodeExecuterThread extends Thread {
 	private SilverSurferGUI SSG;
 	private int barcode;
 	
-	public BarcodeExecuterThread(String str) {
+	public BarcodeExecuterThread(String str, SilverSurferGUI SSG, int barcode) {
 		super(str);
+		this.barcode = barcode;
+		this.SSG = SSG;
 	}
 	
 	@Override
 	public void run() {
 		executeBarcode(barcode);
 		SSG.getCommunicator().setExecutingBarcodes(false);
-	}
-	
-	public void setBarcode(int barcode) {
-		this.barcode = barcode;
-	}
-	
-	public void setSSG(SilverSurferGUI SSG) {
-		this.SSG = SSG;
 	}
 	
 	private void executeBarcode(int barcode) {

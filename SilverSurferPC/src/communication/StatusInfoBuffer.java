@@ -1,12 +1,6 @@
 package communication;
 
-import java.awt.Toolkit;
-import java.awt.geom.Rectangle2D;
-
 import mapping.Barcode;
-import mapping.MapGraph;
-
-import simulator.SimulationJPanel;
 import gui.SilverSurferGUI;
 
 public class StatusInfoBuffer {
@@ -29,14 +23,8 @@ public class StatusInfoBuffer {
     private int startPostitionRelativeY;
 
     private SilverSurferGUI SSG;
-    /**
-     * Check if the buffer can be updated (can be updated when false).
-     */
-    private boolean isBufferUsed = false;
-    /**
-     * Amount of datapoints kept by this buffer.
-     */
-    private final int BUFFER_SIZE = 300;
+    private boolean isBufferUsed = false; //Check if the buffer can be updated (can be updated when false).
+    private final int BUFFER_SIZE = 300; //Amount of datapoints kept by this buffer.
 
     private LSInfoNode startLSInfo = new LSInfoNode();
     private LSInfoNode endLSInfo = new LSInfoNode();
@@ -255,9 +243,7 @@ public class StatusInfoBuffer {
         SSG.getSimulationPanel().setBarcode(scanned);
         this.barcode = barcode;
         SSG.getCommunicator().setExecutingBarcodes(true);
-        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET");
-        BET.setBarcode(this.barcode);
-        BET.setSSG(SSG);
+        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET", SSG, this.barcode);
         BET.start();
     }
 

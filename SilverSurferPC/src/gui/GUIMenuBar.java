@@ -344,30 +344,6 @@ public class GUIMenuBar extends JMenuBar {
 
         });
 
-        JMenuItem deleteMapItem = new JMenuItem("Delete map");
-        // deleteMapItem.setMnemonic('D');
-        mapMenu.add(deleteMapItem);
-
-        deleteMapItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // reset the current map.
-                gui.getSimulationPanel().resetMap();
-
-                (gui.getCommunicator()).getSimulationPilot().setMapGraph(new MapGraph());
-
-                JPanel messagePanel = new JPanel();
-                JLabel x = new JLabel("Map succesfully deleted!");
-                messagePanel.add(x);
-
-                // Populate your panel components here.
-                JOptionPane.showMessageDialog(getGui().getFrame(), messagePanel, "Map deleted:", JOptionPane.OK_OPTION);
-
-                System.out.println("[I/O] Map succesfully deleted!");
-
-            }
-
-        });
-
         JMenuItem exploreItem = new JMenuItem("Explore...");
         // exploreItem.setMnemonic('E');
         mapMenu.add(exploreItem);
@@ -387,18 +363,11 @@ public class GUIMenuBar extends JMenuBar {
 
     }
 
-    /**
-     * Set the SilverSurferGUI this menubar should operate on.
-     */
     public void setGui(SilverSurferGUI gui) {
         this.gui = gui;
     }
 
-    /**
-     * get the SilverSurferGUI this menubar is operating on.
-     */
     public SilverSurferGUI getGui() {
         return gui;
     }
-
 }

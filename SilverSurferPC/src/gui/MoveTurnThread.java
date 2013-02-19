@@ -11,8 +11,13 @@ public class MoveTurnThread extends Thread {
 	private int amtOfAngles;
 	private int command;
 	
-	public MoveTurnThread(String str) {
+	public MoveTurnThread(String str, Communicator communicator, int length, int angles, int amtOfAngles, int command) {
 		super(str);
+		this.communicator = communicator;
+		this.length = length;
+		this.angles = angles;
+		this.amtOfAngles = amtOfAngles;
+		this.command = command;
 	}
 	
 	@Override
@@ -21,45 +26,5 @@ public class MoveTurnThread extends Thread {
 			communicator.sendCommand(command);
 		else
 			communicator.moveTurn(length, angles, amtOfAngles);
-	}
-	
-	public Communicator getCommunicator() {
-		return communicator;
-	}
-	
-	public void setCommunicator(Communicator communicator) {
-		this.communicator = communicator;
-	}
-	
-	public int getLength() {
-		return length;
-	}
-	
-	public void setLength(int length) {
-		this.length = length;
-	}
-	
-	public int getAngles() {
-		return angles;
-	}
-	
-	public void setAngles(int angles) {
-		this.angles = angles;
-	}
-	
-	public int getAmtOfAngles() {
-		return amtOfAngles;
-	}
-	
-	public void setAmtOfAngles(int amtOfAngles) {
-		this.amtOfAngles = amtOfAngles;
-	}
-
-	public int getCommand() {
-		return command;
-	}
-
-	public void setCommand(int command) {
-		this.command = command;
 	}
 }

@@ -92,15 +92,6 @@ public class SimulationJPanel extends JPanel implements Runnable,
 
         mapGraphConstructed = new MapGraph();
 
-        /*
-         * try { verticalWallImage = ImageIO.read(new
-         * File("resources/wallImages/verticalwall2.png")); horizontalWallImage
-         * = ImageIO.read(new File("resources/wallImages/horizontalwall2.png"));
-         * } catch (IOException e) { System.out.println("1"); // TODO
-         * Auto-generated catch block e.printStackTrace();
-         * System.out.println("2"); }
-         */
-
         shapes1.add(triangle1);
         shapes1.add(triangle2);
 

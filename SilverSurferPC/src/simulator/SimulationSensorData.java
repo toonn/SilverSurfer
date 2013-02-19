@@ -1,12 +1,6 @@
-/**
- * 
- */
 package simulator;
 
-/**
- * @author Nele
- *
- */
+//Genereert onnauwkeurigheden op de sensordata
 public class SimulationSensorData
 {
 	// whether there the light is bright or quite dark. influences the light sensor

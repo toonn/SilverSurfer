@@ -1,18 +1,14 @@
 package simulator;
 
 import gui.SilverSurferGUI;
-import lejos.nxt.*;
 
 public class BarcodeThread extends Thread {
 
     private boolean quit = false;
     private boolean found = false;
 
-    private SimulationPilot simulationPilot;
-
-    public BarcodeThread(String str, SimulationPilot simulationPilot) {
+    public BarcodeThread(String str) {
         super(str);
-        this.simulationPilot = simulationPilot;
     }
 
     @Override
@@ -23,8 +19,7 @@ public class BarcodeThread extends Thread {
             } catch (Exception e) {
 
             }
-            int lightsensorValue = SilverSurferGUI.getStatusInfoBuffer()
-                    .getLatestLightSensorInfo();
+            int lightsensorValue = SilverSurferGUI.getStatusInfoBuffer().getLatestLightSensorInfo();
             if (lightsensorValue < 40 && lightsensorValue > 10) {
                 found = true;
             }

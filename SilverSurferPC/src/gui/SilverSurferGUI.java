@@ -11,8 +11,9 @@ import javax.swing.*;
 public class SilverSurferGUI {
 
     private static JFrame frame;
-    private static SimulationJPanel simulationPanel;
     private static StatusInfoBuffer statusInfoBuffer;
+    private static SimulationJPanel simulationPanel;
+    private static SimulationPilot simulationPilot;
     private static Communicator communicator;
 
     private static JButton ZoomInButton;
@@ -46,7 +47,7 @@ public class SilverSurferGUI {
         JPanel scalePanel = scalePanel();
         JPanel directionPanel = directionPanel();
         JPanel infoPanel = infoPanel();
-        JPanel mappingPanel = mappingPanel();
+        mappingPanel = mappingPanel();
         // JPanel consolePanel = consolePanel();
         JPanel sensorPanel = sensorPanel();
 
@@ -59,15 +60,13 @@ public class SilverSurferGUI {
                 .createSequentialGroup()
                 .addGroup(
                         frameLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
+                                .createParallelGroup(GroupLayout.Alignment.CENTER)
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
+                                .createParallelGroup(GroupLayout.Alignment.CENTER)
                                 .addComponent(mappingPanel)
                                 .addComponent(sensorPanel)));
         frameLayout.setVerticalGroup(frameLayout
@@ -90,8 +89,8 @@ public class SilverSurferGUI {
 
         statusInfoBuffer = new StatusInfoBuffer();
         statusInfoBuffer.setSSG(this);
-        communicator = new Communicator(statusInfoBuffer, getSimulationPanel()
-                .getSimulationPilot());
+        simulationPilot = getSimulationPanel().getSimulationPilot();
+        communicator = new Communicator(statusInfoBuffer, simulationPilot);
         System.out.println("[CONNECTION] Entered simulator mode.");
 
         addListeners();
@@ -104,8 +103,20 @@ public class SilverSurferGUI {
         return frame;
     }
 
+    public static StatusInfoBuffer getStatusInfoBuffer() {
+        return statusInfoBuffer;
+    }
+
     public SimulationJPanel getSimulationPanel() {
         return simulationPanel;
+    }
+
+    public SimulationPilot getSimulationPilot() {
+        return simulationPilot;
+    }
+
+    public Communicator getCommunicator() {
+        return communicator;
     }
 
     private JPanel scalePanel() {
@@ -255,30 +266,22 @@ public class SilverSurferGUI {
             int lightSensorValue;
 
             if (!getCommunicator().getRobotConnected()) {
-                ultrasonicSensorValue = getSimulationPanel()
-                        .getSimulationPilot().getUltraSensorValue();
-                lightSensorValue = getSimulationPanel().getSimulationPilot()
-                        .getLightSensorValue();
+                ultrasonicSensorValue = getSimulationPilot().getUltraSensorValue();
+                lightSensorValue = getSimulationPilot().getLightSensorValue();
             } else {
                 ultrasonicSensorValue = getStatusInfoBuffer()
                         .getLatestUltraSensorInfo();
                 lightSensorValue = getStatusInfoBuffer()
                         .getLatestLightSensorInfo();
             }
-            sensorGraph
-                    .addSensorValues(ultrasonicSensorValue, lightSensorValue);
+            sensorGraph.addSensorValues(ultrasonicSensorValue, lightSensorValue);
 
-            infoLabel1
-                    .setText("Bluetooth: " + communicator.getRobotConnected());
+            infoLabel1.setText("Bluetooth: " + communicator.getRobotConnected());
             infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
             infoLabel4.setText("Lightsensor: " + lightSensorValue);
-            infoLabel5.setText("Left Motor: "
-                    + statusInfoBuffer.getLeftMotorMoving() + " "
-                    + statusInfoBuffer.getLeftMotorSpeed());
-            infoLabel6.setText("Right Motor: "
-                    + statusInfoBuffer.getRightMotorMoving() + " "
-                    + statusInfoBuffer.getRightMotorSpeed());
-            infoLabel7.setText("Buzy: " + statusInfoBuffer.getBusy());
+            infoLabel5.setText("Left Motor: " + statusInfoBuffer.getLeftMotorMoving() + " " + statusInfoBuffer.getLeftMotorSpeed());
+            infoLabel6.setText("Right Motor: " + statusInfoBuffer.getRightMotorMoving() + " " + statusInfoBuffer.getRightMotorSpeed());
+            infoLabel7.setText("Busy: " + statusInfoBuffer.getBusy());
         } catch (NullPointerException e) {
 
         }
@@ -339,7 +342,7 @@ public class SilverSurferGUI {
         try {
             communicator.setRobotConnected(true);
             simulationPanel.resetMap();
-            simulationPanel.getSimulationPilot().setRobotControllable(true);
+            simulationPilot.setRobotControllable(true);
             simulationPanel.setTile(0, 0);
             statusInfoBuffer.setXCoordinateRelative(0);
             statusInfoBuffer.setYCoordinateRelative(0);
@@ -354,7 +357,7 @@ public class SilverSurferGUI {
         try {
             communicator.setRobotConnected(false);
             simulationPanel.resetMap();
-            simulationPanel.getSimulationPilot().setRobotControllable(true);
+            simulationPilot.setRobotControllable(true);
             System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
             changeSpeed(2);
         } catch (Exception e) {
@@ -373,23 +376,13 @@ public class SilverSurferGUI {
         System.out.println(communicator.getConsoleTag() + " Current Speed Level: " + value + ".");
     }
 
-    /**
-     * Zooms in the SimulationJPanel.
-     */
     public void zoomIn() {
-        ZoomThread ZT = new ZoomThread("ZT");
-        ZT.setSimulationPanel(simulationPanel);
-        ZT.Zoomin(true);
+        ZoomThread ZT = new ZoomThread("ZT", simulationPanel, true);
         ZT.start();
     }
 
-    /**
-     * Zooms out the SimulationJPanel.
-     */
     public void zoomOut() {
-        ZoomThread ZT = new ZoomThread("ZT");
-        ZT.setSimulationPanel(simulationPanel);
-        ZT.Zoomin(false);
+        ZoomThread ZT = new ZoomThread("ZT", simulationPanel, false);
         ZT.start();
     }
 
@@ -459,11 +452,7 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(-1 * Integer.parseInt(angle.getValue().toString()));
-                MTT.setAmtOfAngles(0);
+                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0, -1 * Integer.parseInt(angle.getValue().toString()), 0, 0);
                 MTT.start();
             }
         });
@@ -486,11 +475,7 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(0);
-                MTT.setAngles(Integer.parseInt(angle.getValue().toString()));
-                MTT.setAmtOfAngles(0);
+                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0, Integer.parseInt(angle.getValue().toString()), 0, 0);
                 MTT.start();
             }
         });
@@ -513,11 +498,7 @@ public class SilverSurferGUI {
 
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                MoveTurnThread MTT = new MoveTurnThread("MTT");
-                MTT.setCommunicator(communicator);
-                MTT.setLength(Integer.parseInt(length.getValue().toString()));
-                MTT.setAngles(0);
-                MTT.setAmtOfAngles(0);
+                MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, Integer.parseInt(length.getValue().toString()), 0, 0, 0);
                 MTT.start();
             }
         });
@@ -525,14 +506,6 @@ public class SilverSurferGUI {
 
     private static javax.swing.border.Border createBorder() {
         return BorderFactory.createEtchedBorder(1);
-    }
-
-    public Communicator getCommunicator() {
-        return communicator;
-    }
-
-    public static StatusInfoBuffer getStatusInfoBuffer() {
-        return statusInfoBuffer;
     }
 
     public static void main(String[] args) {

@@ -46,8 +46,7 @@ public class CommandUnit {
 
         lightSensor.setFloodlight(true);
 
-        ST = new SensorThread("ST");
-        ST.setCommandUnit(this);
+        ST = new SensorThread("ST", this);
         ST.start();
     }
 
@@ -187,8 +186,7 @@ public class CommandUnit {
     private int moveForward(int angle) {
         try {
         	if(readBarcodes && !permaBarcodeStop) {
-        		BT = new BarcodeThread("BT");
-        		BT.setLightSensor(lightSensor);
+        		BT = new BarcodeThread("BT", lightSensor);
         		BT.start();
         	}
         	Motor.A.rotate(angle, true);
@@ -249,7 +247,7 @@ public class CommandUnit {
     	int treshold = 51;
     	int angle = 0;
         
-		MoveThread MT = new MoveThread("MT");
+		MoveThread MT = new MoveThread("MT", 0);
 		MT.start();
 		
 		for(int i = 0; i < 7; i++) {

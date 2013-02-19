@@ -68,9 +68,7 @@ public class Communicator {
         dos = connection.getDataOut();
         if (dis == null || dos == null)
             throw new IOException();
-        IRT = new InfoReceiverThread(statusInfoBuffer);
-        IRT.setDis(dis);
-        IRT.setDos(dos);
+        IRT = new InfoReceiverThread(statusInfoBuffer, dis, dos);
         IRT.start();
     }
 
@@ -120,7 +118,7 @@ public class Communicator {
                 if (!getRobotConnected()) {
                     try {
                         if (readBarcodes && !permaBarcodeStop) {
-                            BT = new BarcodeThread("BT", simulationPilot);
+                            BT = new BarcodeThread("BT");
                             BT.start();
                         }
                         int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
@@ -172,8 +170,7 @@ public class Communicator {
 
     public void goToNextTile(Orientation orientation) throws IOException {
         double currentAngle = getStatusInfoBuffer().getAngle();
-        int angleToRotate = (int) ((double) orientation.getRightAngle() - currentAngle);
-        angleToRotate = (int) ExtMath.getSmallestAngle(angleToRotate);
+        int angleToRotate = (int) ExtMath.getSmallestAngle((int) ((double) orientation.getRightAngle() - currentAngle));
         sendCommand(angleToRotate * 100 + Command.AUTOMATIC_TURN_ANGLE);
 
         if (mustAllign) {
@@ -182,9 +179,11 @@ public class Communicator {
                 sendCommand(Command.ALIGN_PERPENDICULAR);
                 sendCommand(24 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
                 setTilesRidden(0);
-            } else
+            }
+            else
                 sendCommand(40 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
-        } else
+        }
+        else
             sendCommand(40 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
 
     }
@@ -196,9 +195,9 @@ public class Communicator {
             angles = anglesInDegrees * 100 + Command.AUTOMATIC_TURN_ANGLE;
             sendCommand(length);
             sendCommand(angles);
-        } else {
-            angles = (int) Math.round(360.0 / amtOfAngles) * 100
-                    + Command.AUTOMATIC_TURN_ANGLE;
+        }
+        else {
+            angles = (int) Math.round(360.0 / amtOfAngles) * 100 + Command.AUTOMATIC_TURN_ANGLE;
             if (amtOfAngles == 1)
                 sendCommand(length);
             else

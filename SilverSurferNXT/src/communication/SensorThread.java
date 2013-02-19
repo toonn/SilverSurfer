@@ -6,8 +6,9 @@ public class SensorThread extends Thread {
     private CommandUnit CU;
     private boolean quit = false;
 
-    public SensorThread(String str) {
+    public SensorThread(String str, CommandUnit CU) {
         super(str);
+        this.CU = CU;
     }
 
     @Override
@@ -20,10 +21,6 @@ public class SensorThread extends Thread {
                 System.out.println("Error in SensorThread.run()!");
             }
         }
-    }
-
-    public void setCommandUnit(CommandUnit CU) {
-        this.CU = CU;
     }
 
     public void setQuit(boolean quit) {
