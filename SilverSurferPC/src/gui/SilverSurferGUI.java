@@ -8,11 +8,13 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import mapping.Tile;
+
 public class SilverSurferGUI {
 
     private static JFrame frame;
     private static StatusInfoBuffer statusInfoBuffer;
-    private static SimulatorViewPort simulationPanel;
+    private static ViewPort simulationPanel;
     private static SimulationPilot simulationPilot;
     private static Communicator communicator;
 
@@ -108,7 +110,7 @@ public class SilverSurferGUI {
         return statusInfoBuffer;
     }
 
-    public SimulatorViewPort getSimulationPanel() {
+    public ViewPort getSimulationPanel() {
         return simulationPanel;
     }
 
@@ -354,7 +356,7 @@ public class SilverSurferGUI {
             communicator.setRobotConnected(true);
             simulationPanel.resetMap();
             simulationPilot.setRobotControllable(true);
-            simulationPanel.setTile(0, 0);
+            simulationPilot.setTile(0, 0);
             statusInfoBuffer.setXCoordinateRelative(0);
             statusInfoBuffer.setYCoordinateRelative(0);
             System.out.println("[CONNECTION] Connection established.");

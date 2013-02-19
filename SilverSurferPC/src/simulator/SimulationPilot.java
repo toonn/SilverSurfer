@@ -208,7 +208,7 @@ public class SimulationPilot {
         this.startPositionAbsoluteX = getCurrentPositionAbsoluteX();
         this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
         getSimulationPanel().clearTotal();
-        getSimulationPanel().setTile(xCo, yCo);
+        setTile(xCo, yCo);
         SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(xCo);
         SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(yCo);
 
@@ -390,7 +390,7 @@ public class SimulationPilot {
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
                 if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
                         yCoordinate) == null) {
-                    getSimulationPanel().setTile(xCoordinate, yCoordinate);
+                    setTile(xCoordinate, yCoordinate);
                 }
 
             }
@@ -411,7 +411,7 @@ public class SimulationPilot {
                     + currentOrientation.getArrayToFindNeighbourRelative()[1];
             if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
                     yCoordinate) == null) {
-                getSimulationPanel().setTile(xCoordinate, yCoordinate);
+                setTile(xCoordinate, yCoordinate);
             }
 
         }
@@ -466,7 +466,7 @@ public class SimulationPilot {
             }
             if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
                     yCoordinate) == null)
-                getSimulationPanel().setTile(xCoordinate, yCoordinate);
+                setTile(xCoordinate, yCoordinate);
         }
     }
 
@@ -983,7 +983,7 @@ public class SimulationPilot {
      * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld
      *      zijn.
      */
-    public void addBarcode(SimulatorViewPort simulatorPanel, Barcode barcode,
+    public void addBarcode(ViewPort simulatorPanel, Barcode barcode,
             Rectangle2D[] visual) {
         simulatorPanel.getVisibleBarcode().add(
                 new Tuple<Barcode, Rectangle2D[]>(barcode, visual));
@@ -999,4 +999,7 @@ public class SimulationPilot {
                 .getEdge(orientation).setObstruction(Obstruction.WALL);
     }
 
+    public void setTile(int x, int y) {
+        getMapGraphConstructed().setTileXY(x, y, new Tile());
+    }
 }
