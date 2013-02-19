@@ -33,15 +33,12 @@ public class Wall extends Rectangle {
         this.yPosition = yPosition;
         double x;
         double y;
-        if (state == State.HORIZONTAL) {
+        if (state == State.HORIZONTAL)
             setSize((int) (standardLength * scalingfactor), (int) (standardWidth * scalingfactor));
-        } else {
+        else
         	setSize((int) (standardWidth * scalingfactor), (int) (standardLength * scalingfactor));
-        }
         setLocation((int) xPosition, (int) yPosition);
-
     }
-    
     
     public Wall(State state, double newXCoordinate, double newYCoordinate, int newWidth, int newHeight){
     	setLocation((int) newXCoordinate, (int) newYCoordinate);

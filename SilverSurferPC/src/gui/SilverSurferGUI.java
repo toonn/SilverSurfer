@@ -98,7 +98,6 @@ public class SilverSurferGUI {
         addListeners();
 
         changeSpeed(2);
-        // updateStatus();
     }
 
     public JFrame getFrame() {

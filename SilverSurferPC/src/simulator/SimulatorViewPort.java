@@ -65,7 +65,7 @@ public class SimulatorViewPort extends JPanel implements MouseMotionListener {
 
     /**
      * Houdt een map bij met coordinaten die verwijzen naar de muur die erop
-     * staat de positie van de muur ten opzichte van de coordinaten staat
+     * staat, de positie van de muur ten opzichte van de coordinaten staat
      * uitgelegd in de klasse wall
      */
     private HashMap<Point2D, Wall> walls1 = new HashMap<Point2D, Wall>();
@@ -104,6 +104,7 @@ public class SimulatorViewPort extends JPanel implements MouseMotionListener {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ee) {
+            	
             }
             this.repaint();
         }
