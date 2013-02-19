@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                                     %%%
+%%%   LaTeX template voor P&O: Computerwetenschappen.   %%%
+%%%                                                     %%%
+%%%   12 februari 2013                                  %%%
+%%%   Versie 1.0                                        %%%
+%%%                                                     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{peno}
+
+\team{Silver} % teamkleur
+
+\begin{document}
+
+
+\maketitle
+
+\section*{Algemene strategie voor het tweede semester}
+
+De opdracht wordt opgesplitst in deelproblemen waarvoor verder afzonderlijke strategie\"en worden uitgewerkt. Steeds wordt bekeken welke moeilijkheden aan bod komen. De deelproblemen:
+\begin{itemize}
+\item Hoe zoekt de robot het voorwerp?
+\item Hoe raapt de robot het voorwerp op?
+\item Hoe vindt de robot zijn teamgenoot?
+\item Hoe kan de robot over de wip?
+\item Hoe gaat de robot om met foute informatie?
+\item Hoe voegt de robot zijn map samen met die van een andere robot?
+\item Hoe onderscheidt de robot een andere robot van een muur?
+\item Hoe communiceert de robot met andere robots?
+\end{itemize}
+
+De laatste drie puntjes worden sterk bepaald door het protocol dat in de scheidsrechtercommissie besproken wordt. Deze worden niet verder besproken.
+
+
+\section*{Verschillende Strategie"en}
+\subsection*{Hoe zoekt de robot het voorwerp?}
+
+Om het doolhof te doorzoeken gebruiken we een aangepaste versie van het verkenalgoritme. Wanneer ergens mogelijke combinatie straight~+~dead-end gesignaleerd zijn: onmiddellijk naartoe gaan. De kans is groot dat hier een voorwerp ligt.
+
+Het oorspronkelijke algoritme vermeed dead-ends waarvan alle muren reeds gekend waren. Dit kan nog steeds: een voorwerp wordt immers steeds vooraf gegaan van een barcode, die zich op een straight bevindt. Bij het lezen van deze barcode is meteen geweten of het voorwerp het juiste is of niet. Zo niet, hoeft de beschouwde dead-end niet onderzocht worden.\footnote{Wanneer je een voorwerp-barcode tegenkomt, weet je sowieso dat er een dead-end volgt en kan je deze muren invullen zonder dat je ze echt gezien hoeft te hebben.}
+
+Nadat het voorwerp gevonden is, moet de vraag gesteld worden of de robot nog verder het doolhof moet verkennen. Hoe meer kennis de robot heeft van het doolhof hoe beter hij het kortste pad naar zijn teamgenoot kan vinden, aan de andere kant verlies je tijd door nog verder het doolhof te verkennen. Het is ook een mogelijke strategie om naar het voorwerp van je teamgenoot te gaan en daar op hem te wachten. Welke middenweg hierin genomen wordt, is nog niet helemaal beslist.
+
+\subsection*{Hoe raapt de robot het voorwerp op?}
+Er zijn verschillende punten waarop gelet moet worden:
+\begin{itemize}
+\item Het opnemen van het voorwerp mag niet te veel tijd kosten.
+\item Het voorwerp moet goed vastzitten.
+\item De robot moet nog goed kunnen manoeuvreren wanneer hij het voorwerp bij zich heeft (ook op de wip.
+\end{itemize} 
+
+Er moet ook voor gezorgd worden dat de robot de barcode, die aantoont om welk voorwerp het gaat, juist leest zodat de robot zeker het juiste voorwerp mee heeft.
+
+Het oprapen zelf kan op twee manieren: optillen of meeslepen. Om het voorwerp echt op te tillen is een extra motor nodig. Deze hebben we tot onze beschikking. Het voordeel hieraan is dat het voorwerp minder makkelijk zal loskomen. De robot zal sneller vooruit kunnen gaan (minder wrijving) en wordt minder gehinderd (vooral op de wip) dan wanneer het voorwerp over de grond gesleept wordt.
+
+De rug van de robot is een goede plaats om het voorwerp `bij te houden'. Zo bevindt het voorwerp zich niet in het zicht van de ultrasone sensor. De robot draait zich om, pakt het voorwerp langst achteren op en rijdt rechtdoor om verder het doolhof te verkennen.
+
+\subsection*{Hoe vindt de robot zijn teamgenoot?}
+Het kortste-pad-algoritme zal aangepast moeten worden zodat ook het aantal draaiingen geminimaliseerd wordt (dit werd voorlopig nog niet gedaan).
+
+Het is het gemakkelijkst een punt af te spreken waar beide teamgenoten naartoe gaan. Naar dit punt gaan kan via het kortste-pad-algoritme. Hoe dit punt bepaald wordt, moet in de scheidsrechtercommissie bepaald worden.
+
+\subsection*{Hoe kan de robot over de wip?}
+Het is belangrijk te weten of de wip naar beneden of naar boven staat. Het is moeilijk dit alleen op basis van de ultrasone sensor te bepalen zonder de wip te verwarren met een muur. Via de scheidsrechtercommissie werd besloten een barcode voor de wip te plaatsen. Of de stand van de wip kan worden afgeleid met behulp van infraroodlicht, wordt nog onderzocht.
+
+De robot heeft enkele laaghangende sensoren die mogelijk in de weg zitten om de wip om te rijden. Dit moet worden nagekeken en eventueel moet de robot worden herbouwd.
+
+\subsection*{Hoe gaat de robot om met foute informatie?}
+Wanneer de robot een muur detecteert waar een andere robot zegt dat er geen is (of andersom), onthoudt de robot een 'grijze` muur. Wanneer deze muur op het pad ligt, kijkt de robot eerst nog vooraleer er heen te rijden.
+
+\end{document}
