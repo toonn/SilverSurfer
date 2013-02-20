@@ -300,6 +300,9 @@ public class Tile {
         return neighbours;
     }
 
+    /**
+     * returns all 4 neighbours of this tile, if has 4, otherwise null.
+     */
     public ArrayList getAllNeighbours() {
         ArrayList neighbours = new ArrayList(4);
         for (Orientation orientation : Orientation.values()) {
