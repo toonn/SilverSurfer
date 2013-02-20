@@ -56,7 +56,8 @@ public class MazeExplorer {
                     Command.PERMA_STOP_READING_BARCODES);
             SilverSurferGUI.changeSpeed(3);
             // Drive to checkpoint.
-            gui.getSimulationPanel().clearPath();
+            // TODO clearpath in simulatorpanel
+            // gui.getSimulationPanel().clearPath();
             ShortestPath almostFinalPath = new ShortestPath(gui, gui
                     .getCommunicator()
                     .getSimulationPilot()
@@ -70,7 +71,8 @@ public class MazeExplorer {
             almostFinalPath.goShortestPath();
 
             // Drive to endpoint.
-            gui.getSimulationPanel().clearPath();
+            // TODO clearpath in simulatorpanel
+            // gui.getSimulationPanel().clearPath();
             ShortestPath finalPath = new ShortestPath(gui, getCheckTile(),
                     getEndTile(), allTiles);
             finalPath.goShortestPath();

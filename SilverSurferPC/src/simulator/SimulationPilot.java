@@ -5,12 +5,16 @@ import mapping.*;
 
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+
+import javax.print.attribute.HashAttributeSet;
 
 import datastructures.Tuple;
 
 public class SimulationPilot {
-    private SimulatorViewPort simulationPanel;
+    private SimulationViewPort simulationPanel;
     /**
      * verandert wanneer een nieuwe map wordt ingeladen naar de positie waar het
      * pijltje staat wanneer de map ingeladen wordt
@@ -38,11 +42,10 @@ public class SimulationPilot {
     private boolean robotControllable = true;
     private boolean robotSimulated = true;
 
-    public SimulationPilot(SimulatorViewPort simulationPanel) {
+    public SimulationPilot(SimulationViewPort simulationPanel) {
         this.simulationPanel = simulationPanel;
         getSimulationPanel().addPathPoint(getCurrentPositionAbsoluteX(),
                 getCurrentPositionAbsoluteY());
-
     }
 
     public double getCurrentPositionAbsoluteX() {
@@ -251,7 +254,7 @@ public class SimulationPilot {
         return (double) 1.2 * scalingfactor();
     }
 
-    public SimulatorViewPort getSimulationPanel() {
+    public SimulationViewPort getSimulationPanel() {
         return simulationPanel;
     }
 

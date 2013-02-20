@@ -93,7 +93,6 @@ public class SilverSurferGUI {
 
         statusInfoBuffer = new StatusInfoBuffer();
         statusInfoBuffer.setSSG(this);
-        simulationPilot = getSimulationPanel().getSimulationPilot();
         communicator = new Communicator(statusInfoBuffer, simulationPilot);
         System.out.println("[CONNECTION] Entered simulator mode.");
 
@@ -298,7 +297,7 @@ public class SilverSurferGUI {
     }
 
     private JPanel mappingPanel() {
-        simulationPanel = new SimulatorViewPort();
+        simulationPanel = new SimulationViewPort();
         simulationPanel.setSize(20000, 20000);
         simulationPanel.setBackground(Color.WHITE);
         simulationPanel.setBorder(createBorder());

@@ -11,19 +11,20 @@ import java.awt.Stroke;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimulatorViewPort extends ViewPort {
+public class SimulationViewPort extends ViewPort {
     private Arc2D sonarArc = new Arc2D.Double();
     private Ellipse2D undergroundCircle = new Ellipse2D.Double();
     private List<Point> pathCoordinates;
 
-    public SimulatorViewPort() {
+    public SimulationViewPort() {
         super();
         pathCoordinates = new ArrayList<Point>();
 
-        this.simulationPilot = new SimulationPilot(this);
+        pilots.add(new SimulationPilot(this));
     }
 
     public void updateArc(double robotX, double robotY, double robotAngle,
@@ -54,19 +55,18 @@ public class SimulatorViewPort extends ViewPort {
      */
 
     private void paintBeamComponent(Graphics graph) {
+        for (SimulationPilot pilot : pilots) {
 
-        this.updateArc(this.getSimulationPilot().getUltrasonicSensorPositionX()
-                * scalingfactor - getShiftToTheRight(), this
-                .getSimulationPilot().getUltrasonicSensorPositionY()
-                * scalingfactor - getShiftDown(), this.getSimulationPilot()
-                .getAlpha(), this.getSimulationPilot().getUltraSensorValue()
-                * getScalingfactor());
+            this.updateArc(pilot.getUltrasonicSensorPositionX() * scalingfactor
+                    - getShiftToTheRight(),
+                    pilot.getUltrasonicSensorPositionY() * scalingfactor
+                            - getShiftDown(), pilot.getAlpha(),
+                    pilot.getUltraSensorValue() * getScalingfactor());
 
-        if (simulationPilot != null) {
             ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.4f));
-            if (this.getSimulationPilot().getUltraSensorValue() > 200
-                    || this.getSimulationPilot().getUltraSensorValue() < 20) {
+            if (pilot.getUltraSensorValue() > 200
+                    || pilot.getUltraSensorValue() < 20) {
                 graph.setColor(new Color(12, 168, 244));
             } else {
                 graph.setColor(new Color(12, 24, 244));
@@ -90,6 +90,12 @@ public class SimulatorViewPort extends ViewPort {
                     pathCoordinates.get(i + 1));
             g2.draw(line);
         }
+        double radius = 3;
+        double diameter = 2 * radius;
+        double upperleftCornerX = pathCoordinates.get(0).x - radius;
+        double upperleftCornerY = pathCoordinates.get(0).y - radius;
+        Ellipse2D startPoint = new Ellipse2D.Double(upperleftCornerX,
+                upperleftCornerY, diameter, diameter);
         g2.setStroke(stroke);
     }
 
@@ -97,22 +103,20 @@ public class SimulatorViewPort extends ViewPort {
      * Draws a dot in the color of the underground
      */
     private void paintUndergroundComponent(Graphics graph) {
+        for (SimulationPilot pilot : pilots) {
+            this.updateUndergroundCircle(pilot.getLightsensorPositionX()
+                    * scalingfactor - getShiftToTheRight(),
+                    pilot.getLightsensorPositionY() * scalingfactor
+                            - getShiftDown(), pilot.getLightSensorValue());
+            if (pilot.getLightSensorValue() < 45)
+                ((Graphics2D) graph).setColor(Color.black);
+            else if (pilot.getLightSensorValue() > 53)
+                ((Graphics2D) graph).setColor(Color.white);
+            else
+                ((Graphics2D) graph).setColor(new Color(252, 221, 138));
 
-        this.updateUndergroundCircle(this.getSimulationPilot()
-                .getLightsensorPositionX()
-                * scalingfactor
-                - getShiftToTheRight(), this.getSimulationPilot()
-                .getLightsensorPositionY() * scalingfactor - getShiftDown(),
-                this.getSimulationPilot().getLightSensorValue());
-        if (this.getSimulationPilot().getLightSensorValue() < 45)
-            ((Graphics2D) graph).setColor(Color.black);
-        else if (this.getSimulationPilot().getLightSensorValue() > 53)
-            ((Graphics2D) graph).setColor(Color.white);
-        else
-            ((Graphics2D) graph).setColor(new Color(252, 221, 138));
-
-        ((Graphics2D) graph).fill(undergroundCircle);
-
+            ((Graphics2D) graph).fill(undergroundCircle);
+        }
     }
 
     public void moveRobot(double x, double y, double degrees) {
@@ -121,42 +125,14 @@ public class SimulatorViewPort extends ViewPort {
         // System.out.println("xy = " + x + " " + y);
         pathCoordinates.get(pathCoordinates.size() - 1).setLocation(x, y);
 
-        // remove the last triangle and draw little circles to indicate the path
-        if (getVisibleShapes().size() > 0) {
-            double oldX = this.getVisibleTriangle().getGravityCenterX();
-            double oldY = this.getVisibleTriangle().getGravityCenterY();
-
-            // add a bigger circle where the robot starts
-            if (getVisibleShapes().size() < 3) {
-                double diam = scalingfactor * 5;
-                Shape bigCircle = new Ellipse2D.Double(oldX - (diam / 2), oldY
-                        - (diam / 2), diam, diam);
-                getVisibleShapes().add(bigCircle);
-            }
-
-        }
-
-        // add a big triangle, indicating the position of the robot and its
-        // orientation
-        getNotVisibleTriangle().setGravityCenterX(x);
-        getNotVisibleTriangle().setGravityCenterY(y);
-        getNotVisibleTriangle().setAlpha(degrees);
-        setUpdated(true);
-
         repaint();
     }
 
     public void clearPath() {
-        triangle1 = new Triangle(triangle1.getGravityCenterX(),
-                triangle1.getGravityCenterY(), triangle1.getAlpha(),
-                scalingfactor);
-        triangle2 = new Triangle(triangle2.getGravityCenterX(),
-                triangle2.getGravityCenterY(), triangle2.getAlpha(),
-                scalingfactor);
-        getVisibleShapes().removeAllElements();
-        getNotVisibleShapes().removeAllElements();
-        getVisibleShapes().add(triangle1);
-        getVisibleShapes().add(triangle2);
+        pathCoordinates = new ArrayList<Point>();
+        for (SimulationPilot pilot : pilots)
+            addPathPoint(pilot.getCurrentPositionAbsoluteX(),
+                    pilot.getCurrentPositionAbsoluteY());
     }
 
     /**

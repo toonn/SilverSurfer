@@ -7,12 +7,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.*;
+
+import org.w3c.dom.css.Rect;
 
 import datastructures.Bag;
 import datastructures.Tuple;
@@ -22,36 +21,11 @@ import mapping.*;
 public abstract class ViewPort extends JPanel implements MouseMotionListener {
 
     private SilverSurferGUI SSG;
-    SimulationPilot simulationPilot;
+    protected Set<AbstractPilot> pilots;
     protected double scalingfactor = 1;
     private int shiftToTheRight = 0;
     private int shiftDown = 0;
 
-    /**
-     * 2 driehoeken die elkaar afwisselen om afgebeeld te worden de ene wordt
-     * afgebeeld terwijl de andere zijn nieuwe coordinaten berekend worden neem
-     * Triangle(220,220,270) ipv (0,0,0) om lelijke dot op 0,0 te voorkomen.
-     */
-    protected Triangle triangle1 = new Triangle(5 * getSizeTile()
-            + getSizeTile() / 2, 5 * getSizeTile() + getSizeTile() / 2, 270,
-            scalingfactor);
-    protected Triangle triangle2 = new Triangle(5 * getSizeTile()
-            + getSizeTile() / 2, 5 * getSizeTile() + getSizeTile() / 2, 270,
-            scalingfactor);
-    /**
-     * geeft het getal van de driehoek die afgebeeld wordt
-     */
-    private int isVisibleTriangle = 1;
-    /**
-     * is true als de coordinaten van de driehoek die niet afgebeeld wordt,
-     * berekend zijn.
-     */
-    private boolean isUpdatedTriangle = false;
-
-    private Vector<Shape> shapes1 = new Vector<Shape>();
-    private Vector<Shape> shapes2 = new Vector<Shape>();
-
-    private boolean isUpdatedShapes = false;
     private boolean isUpdatedWalls = false;
     private boolean isUpdatedBarcodes = false;
 
@@ -81,36 +55,12 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
      */
     private Rectangle2D endHighlight;
 
+    // boolean[] voor zwart of wit
+    private Map<Rectangle2D[], boolean[]> barcodeRectangles;
+
     public ViewPort() {
+        barcodeRectangles = new HashMap<Rectangle2D[], boolean[]>();
         addMouseMotionListener(this);
-
-        shapes1.add(triangle1);
-        shapes1.add(triangle2);
-    }
-
-    public void setOtherTriangleVisible() {
-        if (isVisibleTriangle == 1)
-            isVisibleTriangle = 2;
-        else
-            isVisibleTriangle = 1;
-    }
-
-    public Triangle getVisibleTriangle() {
-        if (isVisibleTriangle == 1) {
-            return triangle1;
-        } else
-            return triangle2;
-    }
-
-    public Triangle getNotVisibleTriangle() {
-        if (isVisibleTriangle == 2) {
-            return triangle1;
-        } else
-            return triangle2;
-    }
-
-    public boolean waitingTriangleIsUpdated() {
-        return isUpdatedTriangle;
     }
 
     public void setOtherObjectsVisible() {
@@ -128,25 +78,11 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
             return walls2;
     }
 
-    public Vector<Shape> getVisibleShapes() {
-        if (isVisibleObjects == 1) {
-            return shapes1;
-        } else
-            return shapes2;
-    }
-
     public Bag<Tuple<Barcode, Rectangle2D[]>> getVisibleBarcode() {
         if (isVisibleObjects == 1) {
             return barcodes1;
         } else
             return barcodes2;
-    }
-
-    public Vector<Shape> getNotVisibleShapes() {
-        if (isVisibleObjects == 2) {
-            return shapes1;
-        } else
-            return shapes2;
     }
 
     public HashMap<Point2D, Wall> getNotVisibleWalls() {
@@ -161,14 +97,6 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
             return barcodes1;
         } else
             return barcodes2;
-    }
-
-    public boolean waitingObjectsAreUpdated() {
-        return isUpdatedShapes && isUpdatedWalls && isUpdatedBarcodes;
-    }
-
-    public void setUpdated(boolean isUpdated) {
-        this.isUpdatedTriangle = isUpdated;
     }
 
     /**
@@ -204,64 +132,89 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
      * @param graph
      */
     private void paintRobotComponent(Graphics graph) {
-        Vector<Shape> shapesx = new Vector<Shape>();
-        shapesx.addAll(getVisibleShapes());
-
-        ((Graphics2D) graph).setColor(Color.red);
-
-        if (isUpdatedTriangle) {
-            setOtherTriangleVisible();
-            setUpdated(false);
-        }
-
-        int count = 50;
-        int size = (int) getSizeTile();
-
-        ((Graphics2D) graph).setColor(Color.lightGray);
-
-        for (int i = 0; i < count; i++)
-            for (int j = 0; j < count; j++) {
-                Rectangle grid = new Rectangle(i * size - getShiftToTheRight(),
-                        j * size - getShiftDown(), size, size);
-                ((Graphics2D) graph).draw(grid);
-            }
-
-        ((Graphics2D) graph).setColor(Color.red);
-        for (Shape s : shapesx)
-
-        {
-
-            int x;
-            int y;
-
-            if (s instanceof Triangle) {
-                if (s.equals(getVisibleTriangle()))
-                    ((Graphics2D) graph).fill(s);
-                x = (int) ((Triangle) s).getGravityCenterX();
-                y = (int) ((Triangle) s).getGravityCenterY();
-            } else {
-                ((Graphics2D) graph).fill(s);
-            }
-        }
+        // Vector<Shape> shapesx = new Vector<Shape>();
+        // shapesx.add(getVisibleShapes());
+        //
+        // ((Graphics2D) graph).setColor(Color.red);
+        //
+        // if (isUpdatedTriangle) {
+        // setOtherTriangleVisible();
+        // setUpdated(false);
+        // }
+        //
+        // int count = 50;
+        // int size = (int) getSizeTile();
+        //
+        // ((Graphics2D) graph).setColor(Color.lightGray);
+        //
+        // for (int i = 0; i < count; i++)
+        // for (int j = 0; j < count; j++) {
+        // Rectangle grid = new Rectangle(i * size - getShiftToTheRight(),
+        // j * size - getShiftDown(), size, size);
+        // ((Graphics2D) graph).draw(grid);
+        // }
+        //
+        // ((Graphics2D) graph).setColor(Color.red);
+        // for (Shape s : shapesx)
+        //
+        // {
+        //
+        // int x;
+        // int y;
+        //
+        // if (s instanceof Triangle) {
+        // if (s.equals(getVisibleTriangle()))
+        // ((Graphics2D) graph).fill(s);
+        // x = (int) ((Triangle) s).getGravityCenterX();
+        // y = (int) ((Triangle) s).getGravityCenterY();
+        // } else {
+        // ((Graphics2D) graph).fill(s);
+        // }
+        // }
 
     }
 
     private void paintBarcodeComponent(Graphics graph) {
-
-        // teken alle rectangles van alle barcodes
-        for (Tuple t : getVisibleBarcode()) {
-            String rep = ((Barcode) t.getItem1()).toString();
-            Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
-            for (int i = 0; i < 8; i++) {
-                if (rep.charAt(i) == '0')
-                    ((Graphics2D) graph).setColor(Color.black);
-                else
-                    ((Graphics2D) graph).setColor(Color.white);
-
-                ((Graphics2D) graph).fill(bc[i]);
-
+        // TODO Werkt niet als er meer dan 1 pilot in pilots zit.
+        for (AbstractPilot pilot : pilots) {
+            if (pilot.getBarcodes().size() != barcodeRectangles.size()) {
+                barcodeRectangles = new HashMap<Rectangle2D[], boolean[]>();
+                for (Barcode barcode : pilot.getBarcodes()) {
+                    barcodeRectangles.put(
+                            barcode.createVisualBarCode(getSizeTile()),
+                            barcode.getBoolRep());
+                }
             }
         }
+
+        Graphics2D g2 = ((Graphics2D) graph);
+        for (Rectangle2D[] barcodeRectangle : barcodeRectangles.keySet()) {
+            boolean[] boolRep = barcodeRectangles.get(barcodeRectangle);
+            for (int i = 0; i < 8; i++) {
+                if (boolRep[i]) {
+                    g2.setColor(Color.BLACK);
+                } else {
+                    g2.setColor(Color.WHITE);
+                }
+                g2.fill(barcodeRectangle[i]);
+            }
+        }
+
+        //
+        // // teken alle rectangles van alle barcodes
+        // for (Tuple t : getVisibleBarcode()) {
+        // String rep = ((Barcode) t.getItem1()).toString();
+        // Rectangle2D[] bc = (Rectangle2D[]) t.getItem2();
+        // for (int i = 0; i < 8; i++) {
+        // if (rep.charAt(i) == '0')
+        // ((Graphics2D) graph).setColor(Color.black);
+        // else
+        // ((Graphics2D) graph).setColor(Color.white);
+        //
+        // ((Graphics2D) graph).fill(bc[i]);
+        //
+        // }
+        // }
 
     }
 
@@ -276,21 +229,12 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
         }
     }
 
-    public void setCheckHighlight() {
+    public void setHighlight(double absoluteX, double absoluteY) {
         checkHighlight = new Rectangle(
-                ((Double) (simulationPilot.getCenterAbsoluteCurrentTile()[0] - 20 * scalingfactor)).intValue()
+                ((Double) (absoluteX - 20 * scalingfactor)).intValue()
                         - getShiftToTheRight(),
-                ((Double) (simulationPilot.getCenterAbsoluteCurrentTile()[1] - 20 * scalingfactor))
-                        .intValue() - getShiftDown(), (int) getSizeTile(),
-                (int) getSizeTile());
-    }
-
-    public void setEndHighlight() {
-        endHighlight = new Rectangle(
-                ((Double) (simulationPilot.getCenterAbsoluteCurrentTile()[0] - 20 * scalingfactor)).intValue()
-                        - getShiftToTheRight(),
-                ((Double) (simulationPilot.getCenterAbsoluteCurrentTile()[1] - 20 * scalingfactor))
-                        .intValue() - getShiftDown(), (int) getSizeTile(),
+                ((Double) (absoluteY - 20 * scalingfactor)).intValue()
+                        - getShiftDown(), (int) getSizeTile(),
                 (int) getSizeTile());
     }
 
@@ -333,16 +277,8 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
         SSG.getStatusInfoBuffer().resetBuffer();
         // mapGraphConstructed in pilot moet nog gereset worden.
         // mapGraphConstructed = new MapGraph();
-        getSimulationPilot().reset();
+        // getSimulationPilot().reset();
 
-    }
-
-    public SimulationPilot getSimulationPilot() {
-        return this.simulationPilot;
-    }
-
-    public void setSimulationPilot(SimulationPilot simulationPilot) {
-        this.simulationPilot = simulationPilot;
     }
 
     public double getSizeTile() {
@@ -359,17 +295,11 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
         scaleBarcodes(scalingfactor);
         scaleEndAndCheckTile(scalingfactor);
 
-        if (waitingObjectsAreUpdated()) {
-            setOtherObjectsVisible();
-        }
-
-        isUpdatedShapes = false;
         isUpdatedWalls = false;
         isUpdatedBarcodes = false;
 
         getNotVisibleBarcode().empty();
         getNotVisibleWalls().clear();
-        getNotVisibleShapes().removeAllElements();
 
         this.scalingfactor = scalingfactor;
 
@@ -424,53 +354,23 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
     }
 
     private void scaleShapes(double scalingfactor) {
+        // TODO scale(Shape shape)
 
-        for (Shape shape : getVisibleShapes()) {
-            if (shape instanceof Triangle) {
-
-                double newGravityCenterX = (((Triangle) shape)
-                        .getGravityCenterX() + getShiftToTheRight())
-                        * scalingfactor
-                        / this.getScalingfactor()
-                        - getShiftToTheRight();
-                double newGravityCenterY = (((Triangle) shape)
-                        .getGravityCenterY() + getShiftDown())
-                        * scalingfactor
-                        / this.getScalingfactor() - getShiftDown();
-
-                ((Triangle) shape).setGravityCenterX(newGravityCenterX);
-                ((Triangle) shape).setGravityCenterY(newGravityCenterY);
-                ((Triangle) shape).setScalingfactor(scalingfactor);
-
-                getNotVisibleShapes().add(shape);
-
-            }
-
-            else {
-                double oldDiam = ((Ellipse2D.Double) shape).getHeight();
-                double OldXCoordinate = ((Ellipse2D.Double) shape).getX()
-                        + oldDiam / 2;
-                double OldYCoordinate = ((Ellipse2D.Double) shape).getY()
-                        + oldDiam / 2;
-
-                double newDiam = oldDiam * scalingfactor
-                        / this.getScalingfactor();
-                double newXCoordinate = ((OldXCoordinate - (newDiam / 2)) + getShiftToTheRight())
-                        * scalingfactor
-                        / this.getScalingfactor()
-                        - getShiftToTheRight();
-                double newYCoordinate = ((OldYCoordinate - (newDiam / 2)) + getShiftDown())
-                        * scalingfactor
-                        / this.getScalingfactor()
-                        - getShiftDown();
-
-                Ellipse2D.Double circle = new Ellipse2D.Double(newXCoordinate,
-                        newYCoordinate, newDiam, newDiam);
-
-                getNotVisibleShapes().add(circle);
-            }
-        }
-        isUpdatedShapes = true;
+        // double newGravityCenterX = ((triangle1).getGravityCenterX() +
+        // getShiftToTheRight())
+        // * scalingfactor
+        // / this.getScalingfactor()
+        // - getShiftToTheRight();
+        // double newGravityCenterY = ((triangle1).getGravityCenterY() +
+        // getShiftDown())
+        // * scalingfactor / this.getScalingfactor() - getShiftDown();
+        //
+        // (triangle1).setGravityCenterX(newGravityCenterX);
+        // (triangle1).setGravityCenterY(newGravityCenterY);
+        // (triangle1).setScalingfactor(scalingfactor);
+        //
+        // // getNotVisibleShapes().add(shape);
+        // isUpdatedShapes = true;
     }
 
     private void scaleWalls(double scalingfactor) {
@@ -540,18 +440,11 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
         shiftShapes(true, shiftRight);
         shiftEndAndCheckTile(true, shiftRight);
 
-        if (waitingObjectsAreUpdated()) {
-            setOtherObjectsVisible();
-        }
-
-        isUpdatedShapes = false;
         isUpdatedWalls = false;
         isUpdatedBarcodes = false;
 
         getNotVisibleBarcode().empty();
         getNotVisibleWalls().clear();
-        getNotVisibleShapes().removeAllElements();
-
     }
 
     public int getShiftDown() {
@@ -565,15 +458,11 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
         shiftBarcodes(false, shiftDown);
         shiftEndAndCheckTile(false, shiftDown);
 
-        setOtherObjectsVisible();
-
-        isUpdatedShapes = false;
         isUpdatedWalls = false;
         isUpdatedBarcodes = false;
 
         getNotVisibleBarcode().empty();
         getNotVisibleWalls().clear();
-        getNotVisibleShapes().removeAllElements();
     }
 
     private void shiftEndAndCheckTile(boolean shiftHorizontal, int shift) {
@@ -666,48 +555,21 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
     }
 
     private void shiftShapes(boolean shiftHorizontal, int shift) {
+        // TODO shiftShapes(Shape shape)
 
-        Vector<Shape> newShapes = new Vector<Shape>();
-
-        for (Shape shape : getVisibleShapes()) {
-            if (shape instanceof Triangle) {
-
-                double newGravityCenterX = ((Triangle) shape)
-                        .getGravityCenterX();
-                double newGravityCenterY = ((Triangle) shape)
-                        .getGravityCenterY();
-
-                if (shiftHorizontal) {
-                    newGravityCenterX = newGravityCenterX - shift;
-                } else {
-                    newGravityCenterY = newGravityCenterY - shift;
-                }
-
-                ((Triangle) shape).setGravityCenterX(newGravityCenterX);
-                ((Triangle) shape).setGravityCenterY(newGravityCenterY);
-
-                getNotVisibleShapes().add(shape);
-            }
-
-            else {
-                double diam = ((Ellipse2D.Double) shape).getHeight();
-                double newXCoordinate = ((Ellipse2D.Double) shape).getX();
-                double newYCoordinate = ((Ellipse2D.Double) shape).getY();
-
-                if (shiftHorizontal) {
-                    newXCoordinate = newXCoordinate - shift;
-                } else {
-                    newYCoordinate = newYCoordinate - shift;
-                }
-
-                Ellipse2D.Double circle = new Ellipse2D.Double(newXCoordinate,
-                        newYCoordinate, diam, diam);
-
-                getNotVisibleShapes().add(circle);
-            }
-        }
-
-        isUpdatedShapes = true;
+        // double newGravityCenterX = (triangle1).getGravityCenterX();
+        // double newGravityCenterY = (triangle1).getGravityCenterY();
+        //
+        // if (shiftHorizontal) {
+        // newGravityCenterX = newGravityCenterX - shift;
+        // } else {
+        // newGravityCenterY = newGravityCenterY - shift;
+        // }
+        //
+        // (triangle1).setGravityCenterX(newGravityCenterX);
+        // (triangle1).setGravityCenterY(newGravityCenterY);
+        //
+        // isUpdatedShapes = true;
 
     }
 
@@ -730,16 +592,16 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
         setWall(point, wall);
     }
 
-    public void setBarcode(Barcode barcode) {
-        if (!barcode.isDrawn()) {
-            Rectangle2D[] rect = Barcode.createVisualBarCode(barcode,
-                    getSimulationPilot().getCenterAbsoluteCurrentTile()[0]
-                            - getShiftToTheRight(),
-                    getSimulationPilot().getCenterAbsoluteCurrentTile()[1]
-                            - getShiftDown(), getSizeTile());
-            simulationPilot.addBarcode(this, barcode, rect);
-            barcode.setDrawn(true);
-        }
+    public void setBarcode(Barcode barcode, double absoluteX, double absoluteY) {
+        // TODO drawBarcodes, drawBarcode
+
+        // if (!barcode.isDrawn()) {
+        // Rectangle2D[] rect = Barcode.createVisualBarCode(barcode, absoluteX
+        // - getShiftToTheRight(), absoluteY - getShiftDown(),
+        // getSizeTile());
+        // simulationPilot.addBarcode(this, barcode, rect);
+        // barcode.setDrawn(true);
+        // }
     }
 
     public void setWall(Point2D point, Wall wall) {
@@ -751,13 +613,16 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
     }
 
     public void removeWallFromTile(int x, int y, Orientation orientation) {
-        if (simulationPilot.getMapGraphConstructed().getTileWithCoordinates(x,
-                y) == null)
-            throw new IllegalArgumentException(
-                    "in simulationPanel bij methode removeWallFromTile "
-                            + "zijn coordinaten meegegeven die de mapgraph niet bevat");
-        simulationPilot.getMapGraphConstructed().getTileWithCoordinates(x, y)
-                .getEdge(orientation).setObstruction(null);
+        // TODO in SimulationPilot removeWall
+
+        // if
+        // (simulationPilot.getMapGraphConstructed().getTileWithCoordinates(x,
+        // y) == null)
+        // throw new IllegalArgumentException(
+        // "in simulationPanel bij methode removeWallFromTile "
+        // + "zijn coordinaten meegegeven die de mapgraph niet bevat");
+        // simulationPilot.getMapGraphConstructed().getTileWithCoordinates(x, y)
+        // .getEdge(orientation).setObstruction(null);
     }
 
     /**

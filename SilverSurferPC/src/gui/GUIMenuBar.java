@@ -253,7 +253,7 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 // TODO clearpath in simulatorpanel
-                gui.getSimulationPanel().clearPath();
+                // gui.getSimulationPanel().clearPath();
             }
         });
         return screenMenu;

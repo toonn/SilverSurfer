@@ -1,5 +1,6 @@
 package communication;
 
+import simulator.SimulationPilot;
 import mapping.Barcode;
 import gui.SilverSurferGUI;
 
@@ -22,7 +23,7 @@ public class StatusInfoBuffer {
     private int startPositionRelativeX;
     private int startPostitionRelativeY;
 
-    private SilverSurferGUI SSG;
+    private SimulationPilot pilot;
     private boolean isBufferUsed = false; // Check if the buffer can be updated
                                           // (can be updated when false).
     private final int BUFFER_SIZE = 300; // Amount of datapoints kept by this
@@ -73,11 +74,7 @@ public class StatusInfoBuffer {
      * Returns the latest info available for the Light Sensor
      */
     public int getLatestLightSensorInfo() {
-        if (getSSG().getCommunicator().getRobotConnected())
-            return lightSensorInfo;
-        else
-            return getSSG().getSimulationPanel().getSimulationPilot()
-                    .getLightSensorValue();
+        return lightSensorInfo;
     }
 
     /**
@@ -196,14 +193,6 @@ public class StatusInfoBuffer {
         // SSG.updateStatus();
     }
 
-    public SilverSurferGUI getSSG() {
-        return SSG;
-    }
-
-    public void setSSG(SilverSurferGUI SSG) {
-        this.SSG = SSG;
-    }
-
     /**
      * Get the head of the LS-infostack.
      */
@@ -232,18 +221,8 @@ public class StatusInfoBuffer {
     }
 
     public void setBarcode(int barcode) {
-        Barcode scanned = new Barcode(barcode, SSG.getSimulationPanel()
-                .getSimulationPilot().getCurrentOrientation());
-        SSG.getCommunicator()
-                .getSimulationPilot()
-                .getMapGraphConstructed()
-                .getTileWithCoordinates(
-                        getSSG().getCommunicator().getSimulationPilot()
-                                .getCurrentPositionRelativeX(),
-                        getSSG().getCommunicator().getSimulationPilot()
-                                .getCurrentPositionRelativeY())
-                .setContent(scanned);
-        SSG.getSimulationPanel().setBarcode(scanned);
+        pilot.setBarcode(barcode);
+
         this.barcode = barcode;
         SSG.getCommunicator().setExecutingBarcodes(true);
         BarcodeExecuterThread BET = new BarcodeExecuterThread("BET", SSG,
@@ -251,91 +230,93 @@ public class StatusInfoBuffer {
         BET.start();
     }
 
-    public double getAngle() {
-        return angle;
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
-        // SSG.updateStatus();
-    }
-
-    public void setStartPositionAbsoluteX(double startPositionAbsoluteX) {
-        this.startPositionAbsoluteX = startPositionAbsoluteX;
-    }
-
-    public void setStartPositionAbsoluteY(double startPositionAbsoluteY) {
-        this.startPositionAbsoluteY = startPositionAbsoluteY;
-    }
-
-    public void setStartPositionRelativeX(int startPositionRelativeX) {
-        this.startPositionRelativeX = startPositionRelativeX;
-    }
-
-    public void setStartPositionRelativeY(int startPositionAbsoluteY) {
-        this.startPositionAbsoluteY = startPositionAbsoluteY;
-    }
-
-    public int getXCoordinateRelative() {
-        return xCoordinateRelative;
-    }
-
-    public void setXCoordinateRelative(int x) {
-        xCoordinateRelative = x;
-    }
-
-    public int getYCoordinateRelative() {
-        return yCoordinateRelative;
-    }
-
-    public void setYCoordinateRelative(int y) {
-        yCoordinateRelative = y;
-    }
-
-    public double[] getCoordinatesAbsolute() {
-        return coordinatesAbsolute;
-    }
-
-    public void setCoordinatesAbsolute(double[] coordinates) {
-        coordinatesAbsolute[0] = coordinates[0];
-        coordinatesAbsolute[1] = coordinates[1];
-        SSG.getSimulationPanel().moveRobot(coordinates[0],
-                coordinates[1], getAngle());
-
-        // SSG.updateStatus();
-    }
-
-    private void setCurrentTileCoordinatesRelative(double xOld, double yOld) {
-        int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        setXCoordinateRelative(relativePosition[0]);
-        setYCoordinateRelative(relativePosition[1]);
-    }
-
-    /**
-     * Deze methode zet de coordinaten van het echte systeem om in de
-     * coordinaten van de matrix
-     */
-    private int[] setAbsoluteToRelative(double x, double y) {
-        double a = x - setToMultipleOf40(startPositionAbsoluteX);
-        double b = y - setToMultipleOf40(startPositionAbsoluteY);
-        int c;
-        int d;
-        c = (int) Math.floor(a / 40);
-        d = (int) Math.floor(b / 40);
-
-        int[] array = new int[2];
-        array[0] = getStartPositionRelativeX() + c;
-        array[1] = getStartPositionRelativeX() + d;
-        return array;
-    }
-
-    private int getStartPositionRelativeX() {
-        return startPositionRelativeX;
-    }
-
-    private int setToMultipleOf40(double a) {
-        return (int) (Math.floor(a / 40) * 40);
-    }
+    //
+    // public double getAngle() {
+    // return angle;
+    // }
+    //
+    // public void setAngle(double angle) {
+    // this.angle = angle;
+    // // SSG.updateStatus();
+    // }
+    //
+    // public void setStartPositionAbsoluteX(double startPositionAbsoluteX) {
+    // this.startPositionAbsoluteX = startPositionAbsoluteX;
+    // }
+    //
+    // public void setStartPositionAbsoluteY(double startPositionAbsoluteY) {
+    // this.startPositionAbsoluteY = startPositionAbsoluteY;
+    // }
+    //
+    // public void setStartPositionRelativeX(int startPositionRelativeX) {
+    // this.startPositionRelativeX = startPositionRelativeX;
+    // }
+    //
+    // public void setStartPositionRelativeY(int startPositionAbsoluteY) {
+    // this.startPositionAbsoluteY = startPositionAbsoluteY;
+    // }
+    //
+    // public int getXCoordinateRelative() {
+    // return xCoordinateRelative;
+    // }
+    //
+    // public void setXCoordinateRelative(int x) {
+    // xCoordinateRelative = x;
+    // }
+    //
+    // public int getYCoordinateRelative() {
+    // return yCoordinateRelative;
+    // }
+    //
+    // public void setYCoordinateRelative(int y) {
+    // yCoordinateRelative = y;
+    // }
+    //
+    // public double[] getCoordinatesAbsolute() {
+    // return coordinatesAbsolute;
+    // }
+    //
+    // public void setCoordinatesAbsolute(double[] coordinates) {
+    // coordinatesAbsolute[0] = coordinates[0];
+    // coordinatesAbsolute[1] = coordinates[1];
+    // SSG.getSimulationPanel().moveRobot(coordinates[0], coordinates[1],
+    // getAngle());
+    //
+    // // SSG.updateStatus();
+    // }
+    //
+    // private void setCurrentTileCoordinatesRelative(double xOld, double yOld)
+    // {
+    // int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
+    // setXCoordinateRelative(relativePosition[0]);
+    // setYCoordinateRelative(relativePosition[1]);
+    // }
+    //
+    // /**
+    // * Deze methode zet de coordinaten van het echte systeem om in de
+    // * coordinaten van de matrix
+    // */
+    // private int[] setAbsoluteToRelative(double x, double y) {
+    // double a = x - setToMultipleOf40(startPositionAbsoluteX);
+    // double b = y - setToMultipleOf40(startPositionAbsoluteY);
+    // int c;
+    // int d;
+    // c = (int) Math.floor(a / 40);
+    // d = (int) Math.floor(b / 40);
+    //
+    // int[] array = new int[2];
+    // array[0] = getStartPositionRelativeX() + c;
+    // array[1] = getStartPositionRelativeX() + d;
+    // return array;
+    // }
+    //
+    // private int getStartPositionRelativeX() {
+    // return startPositionRelativeX;
+    // }
+    //
+    // private int setToMultipleOf40(double a) {
+    // return (int) (Math.floor(a / 40) * 40);
+    // }
 
     public void resetBuffer() {
         xCoordinateRelative = 0;

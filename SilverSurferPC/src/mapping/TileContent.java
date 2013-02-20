@@ -2,14 +2,16 @@ package mapping;
 
 public abstract class TileContent {
 
+    protected Tile tile;
 
-	
-	
-	/*
-	 * TODO: kunnen meegeven of de barcode een finishbarcode is.
-	 * 
-	 */
+    protected TileContent(Tile tile) {
+        this.tile = tile;
+    }
 
-	public abstract int getColorValue(double x, double y);
+    /*
+     * TODO: kunnen meegeven of de barcode een finishbarcode is.
+     */
+
+    public abstract int getColorValue(double x, double y);
 
 }
