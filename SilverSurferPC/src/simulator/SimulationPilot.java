@@ -27,7 +27,7 @@ public class SimulationPilot {
     private int speed = 10;
     private File mapFile;
     private MapGraph mapGraphLoaded;
-    private MapGraph mapGraphConstructed;
+    private MapGraph mapGraphConstructed = new MapGraph();
 
     // private int amtToSendToBuffer = 50;
 
