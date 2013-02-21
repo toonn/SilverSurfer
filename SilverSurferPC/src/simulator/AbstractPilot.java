@@ -18,10 +18,12 @@ public abstract class AbstractPilot {
     /**
      * coordinaat in het echte assenstelsel van de robot
      */
-    private double currentPositionAbsoluteX = 5 * sizeTile() + sizeTile() / 2;
-    private double currentPositionAbsoluteY = 5 * sizeTile() + sizeTile() / 2;
+    private double absoluteX = 5 * sizeTile() + sizeTile() / 2;
+    private double absoluteY = 5 * sizeTile() + sizeTile() / 2;
+    private int relativeX;
+    private int relativeY;
 
-    private double alpha = 270;
+    private double angle = 270;
     private int speed = 10;
     private File mapFile;
     private MapGraph mapGraphLoaded;
@@ -37,27 +39,24 @@ public abstract class AbstractPilot {
     private boolean robotControllable = true;
     private boolean robotSimulated = true;
 
-    public AbstractPilot(SimulationViewPort simulationPanel) {
+    public AbstractPilot() {
         barcodes = new HashSet<Barcode>();
-        getSimulationPanel().addPathPoint(getCurrentPositionAbsoluteX(),
-                getCurrentPositionAbsoluteY());
-
     }
 
     public double getCurrentPositionAbsoluteX() {
-        return currentPositionAbsoluteX;
+        return absoluteX;
     }
 
     public void setCurrentPositionAbsoluteX(double x) {
-        this.currentPositionAbsoluteX = x;
+        absoluteX = x;
     }
 
     public double getCurrentPositionAbsoluteY() {
-        return currentPositionAbsoluteY;
+        return absoluteY;
     }
 
     public void setCurrentPositionAbsoluteY(double y) {
-        this.currentPositionAbsoluteY = y;
+        absoluteY = y;
     }
 
     public double getStartPositionAbsoluteX() {
@@ -77,49 +76,52 @@ public abstract class AbstractPilot {
     }
 
     public int getCurrentPositionRelativeX() {
-        if (!isRobotSimulated())
-            return SilverSurferGUI.getStatusInfoBuffer()
-                    .getXCoordinateRelative();
-        return this.getMapGraphLoaded().getCurrentTileCoordinates()[0];
+        return relativeX;
     }
 
     public int getCurrentPositionRelativeY() {
-        if (!isRobotSimulated())
-            return SilverSurferGUI.getStatusInfoBuffer()
-                    .getYCoordinateRelative();
-        return this.getMapGraphLoaded().getCurrentTileCoordinates()[1];
+        return relativeY;
     }
 
     public int getStartPositionRelativeX() {
         if (!isRobotSimulated())
             return 0;
-        return this.getMapGraphLoaded().getStartingTileCoordinates()[0];
+        return getMapGraphLoaded().getStartingTileCoordinates()[0];
     }
 
     public int getStartPositionRelativeY() {
         if (!isRobotSimulated())
             return 0;
-        return this.getMapGraphLoaded().getStartingTileCoordinates()[1];
+        return getMapGraphLoaded().getStartingTileCoordinates()[1];
     }
 
     /**
      * The lightsensor is not attached on the middle point of the robot, but
-     * more in front of that point. This value gives the x-coordinate of the
-     * lightsensor.
+     * more in front of that point. This value gives the distance of the
+     * lightsensor with respect to the center of the drive axle.
      */
-    public double getLightsensorPositionX() {
-        return (this.getCurrentPositionAbsoluteX() + scalingfactor() * 7.5
-                * Math.cos(Math.toRadians(this.getAlpha())));
+    private double[] getLightsensorPlacement() {
+        /*
+         * TODO pilot mag niets weten van absolute coordinaten. Deze methode
+         * geeft de positie van de lichtsensor relatief ten opzichte van het
+         * midden van de aandrijfas als een array [(naar voor positief in cm),
+         * (naar rechts positief in cm)]
+         */
+        // return (getCurrentPositionAbsoluteX() + scalingfactor() * 7.5
+        // * Math.cos(Math.toRadians(getAlpha())));
+        return new double[2];
     }
 
-    /**
-     * The lightsensor is not attached on the middle point of the robot, but
-     * more in front of that point. This value gives they -coordinate of the
-     * lightsensor.
-     */
-    public double getLightsensorPositionY() {
-        return (this.getCurrentPositionAbsoluteY() + scalingfactor() * 7.5
-                * Math.sin(Math.toRadians(this.getAlpha())));
+    public double[] getLightSensorAbsolute() {
+        double[] absLS = new double[2];
+        absLS[0] = getCurrentPositionAbsoluteX()
+                + Math.cos(getLightsensorPlacement()[0])
+                + Math.sin(getLightsensorPlacement()[1]);
+        absLS[1] = getCurrentPositionAbsoluteY()
+                + Math.sin(getLightsensorPlacement()[0])
+                + Math.cos(getLightsensorPlacement()[1]);
+
+        return absLS;
     }
 
     /**
@@ -127,27 +129,36 @@ public abstract class AbstractPilot {
      * but a little behind that point. This value gives the x-coordinate of the
      * ultrasonic sensor.
      */
-    public double getUltrasonicSensorPositionX() {
-        return (this.getCurrentPositionAbsoluteX() - scalingfactor() * 5.5
-                * Math.cos(Math.toRadians(this.getAlpha())));
+    public double[] getUltrasonicSensorPlacement() {
+        /*
+         * TODO pilot mag niets weten van absolute coordinaten. Deze methode
+         * geeft de positie van de lichtsensor relatief ten opzichte van het
+         * midden van de aandrijfas als een array [(naar voor positief in cm),
+         * (naar rechts positief in cm)]
+         */
+        // return (getCurrentPositionAbsoluteX() - scalingfactor() * 5.5
+        // * Math.cos(Math.toRadians(getAlpha())));
+        return new double[2];
     }
 
-    /**
-     * The ultrasonic sensor is not attached on the middle point of the robot,
-     * but a little behind that point. This value gives the y-coordinate of the
-     * ultrasonic sensor.
-     */
-    public double getUltrasonicSensorPositionY() {
-        return (this.getCurrentPositionAbsoluteY() - scalingfactor() * 5.5
-                * Math.sin(Math.toRadians(this.getAlpha())));
+    public double[] getUltrasonicSensorAbsolute() {
+        double[] absUS = new double[2];
+        absUS[0] = getCurrentPositionAbsoluteX()
+                + Math.cos(getUltrasonicSensorPlacement()[0])
+                + Math.sin(getUltrasonicSensorPlacement()[1]);
+        absUS[1] = getCurrentPositionAbsoluteY()
+                + Math.sin(getUltrasonicSensorPlacement()[0])
+                + Math.cos(getUltrasonicSensorPlacement()[1]);
+
+        return absUS;
     }
 
-    public double getAlpha() {
-        return alpha;
+    public double getAngle() {
+        return angle;
     }
 
-    public void setAlpha(double alpha) {
-        this.alpha = alpha;
+    public void setAngle(double angle) {
+        this.angle = angle;
     }
 
     public int getSpeed() {
@@ -163,38 +174,36 @@ public abstract class AbstractPilot {
 
     public void setSpeed(int speed) {
         if (speed == 4)
-            this.speed = 48;
+            speed = 48;
         else if (speed == 3)
-            this.speed = 58;
+            speed = 58;
         else if (speed == 2)
-            this.speed = 86;
+            speed = 86;
         else
-            this.speed = 194;
+            speed = 194;
     }
 
     /**
      * Returns the center of the currentTile in absolutes.
      */
-    public int[] getCenterAbsoluteCurrentTile() {
-
+    public int[] getCenterAbsoluteCurrentTile(double scalingFactor) {
+        // TOON scalingfactor volledig uit pilots houden
         int[] coord = new int[] { 0, 0 };
         coord[0] = (int) (((Double) (getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()
                 % sizeTile())).intValue()
-                * getSimulationPanel().getScalingfactor() + getSimulationPanel()
-                .getSizeTile() / 2);
+                * scalingFactor + (scalingFactor * sizeTile()) / 2);
         coord[1] = (int) (((Double) (getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()
                 % sizeTile())).intValue()
-                * getSimulationPanel().getScalingfactor() + getSimulationPanel()
-                .getSizeTile() / 2);
+                * scalingFactor + (scalingFactor * sizeTile()) / 2);
         return coord;
     }
 
     public File getMapFile() {
-        return this.mapFile;
+        return mapFile;
     }
 
     /*
-     * public void setMapFile(File mapFile) { this.setMapFile(mapFile, 0, 0);
+     * public void setMapFile(File mapFile) { setMapFile(mapFile, 0, 0);
      * SSG.getInformationBuffer().setXCoordinateRelative(0);
      * SSG.getInformationBuffer().setYCoordinateRelative(0);
      * 
@@ -202,30 +211,39 @@ public abstract class AbstractPilot {
      */
 
     public void setMapFile(File mapFile, int xCo, int yCo) {
-        this.mapFile = mapFile;
-        this.setMapGraph(MapReader.createMapFromFile(mapFile, xCo, yCo));
-        this.startPositionAbsoluteX = getCurrentPositionAbsoluteX();
-        this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
-        getSimulationPanel().clearTotal();
+        // TODO Hoort in simulatorPanel(overkoepelende)
+        mapFile = mapFile;
+        setMapGraph(MapReader.createMapFromFile(mapFile, xCo, yCo));
+        startPositionAbsoluteX = getCurrentPositionAbsoluteX();
+        startPositionAbsoluteY = getCurrentPositionAbsoluteY();
+        // getSimulationPanel().clearTotal();
         setTile(xCo, yCo);
-        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(xCo);
-        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(yCo);
+        setRelativeX(xCo);
+        setRelativeY(yCo);
 
+    }
+
+    private void setRelativeX(int xCo) {
+        relativeX = xCo;
+    }
+
+    private void setRelativeY(int yCo) {
+        relativeY = yCo;
     }
 
     public MapGraph getMapGraphLoaded() {
-        return this.mapGraphLoaded;
+        return mapGraphLoaded;
     }
 
     public MapGraph getMapGraphConstructed() {
-        return this.mapGraphConstructed;
+        return mapGraphConstructed;
     }
 
     public String getMapString() {
-        if (this.getMapGraphLoaded() == null) {
+        if (getMapGraphLoaded() == null) {
             return "/";
         }
-        return this.mapFile.getName();
+        return mapFile.getName();
     }
 
     /**
@@ -234,10 +252,10 @@ public abstract class AbstractPilot {
      */
     public void setMapGraph(MapGraph mapGraph) {
         if (mapGraph == null) {
-            this.mapGraphLoaded = null;
-            getSimulationPanel().clearTotal();
+            mapGraphLoaded = null;
+            // getSimulationPanel().clearTotal();
         }
-        this.mapGraphLoaded = mapGraph;
+        mapGraphLoaded = mapGraph;
     }
 
     /**
@@ -247,11 +265,9 @@ public abstract class AbstractPilot {
      * currentPositionAbsolute dit gebeurt in setCurrentTileCoordinates
      */
     private double getEdgeMarge() {
-        return (double) 1.2 * scalingfactor();
-    }
-
-    public SimulationViewPort getSimulationPanel() {
-        return simulationPanel;
+        // TODO dit moet nagekeken worden
+        // return (double) 1.2 * scalingfactor
+        return 0;
     }
 
     /**
@@ -270,17 +286,26 @@ public abstract class AbstractPilot {
     }
 
     public void travel(double distance) {
-        distance = distance * scalingfactor();
+        /*
+         * TODO travel: pilot in panel(viewport) maar panel niet in pilot -> dus
+         * panel moet pollen
+         */
+        /*
+         * TODO pilots mogen niets weten over scalingfactors (1 pilot kan in
+         * verschillende panels met verschillende scalingfactors getoond worden)
+         */
+        // distance = distance * scalingfactor();
+
         // travelledInTotal = travelledInTotal + Math.abs(distance);
         // System.out.println("travelledInTotal : " + travelledInTotal);
-        // double xOriginal = this.getCurrentPositionAbsoluteX();
-        // double yOriginal = this.getCurrentPositionAbsoluteY();
-        double xTemp = this.getCurrentPositionAbsoluteX();
-        double yTemp = this.getCurrentPositionAbsoluteY();
+        // double xOriginal = getCurrentPositionAbsoluteX();
+        // double yOriginal = getCurrentPositionAbsoluteY();
+        double xTemp = getCurrentPositionAbsoluteX();
+        double yTemp = getCurrentPositionAbsoluteY();
 
         double j = 1;
-        Orientation travelOrientation = Orientation.calculateOrientation(xTemp,
-                yTemp, this.getAlpha(), sizeTile());
+        Orientation travelOrientation = Orientation
+                .calculateOrientation(getAngle());
 
         // if you are traveling backwards, the orientation you are facing is the
         // opposite to the orientation you are traveling.
@@ -292,43 +317,38 @@ public abstract class AbstractPilot {
         double distanceToGo = distance;
         double i = j;
 
-        getSimulationPanel().addPathPoint(xTemp, yTemp);
-
         while (distanceToGo != 0)
         // for (double i = j; i*j <= distance*j; i+=j)
         {
-            xTemp = (double) (xTemp + i
-                    * Math.cos(Math.toRadians(this.getAlpha())));
-            yTemp = (double) (yTemp + i
-                    * Math.sin(Math.toRadians(this.getAlpha())));
+            xTemp = (double) (xTemp + i * Math.cos(Math.toRadians(getAngle())));
+            yTemp = (double) (yTemp + i * Math.sin(Math.toRadians(getAngle())));
 
             if (mapGraphLoaded != null) {
 
-                if (robotOnEdge(xTemp, yTemp, this.getAlpha())) {
-                    Orientation edgeOrientation = this.pointOnWichSideOfTile(
-                            xTemp, yTemp, travelOrientation);
+                if (robotOnEdge(xTemp, yTemp, getAngle())) {
+                    Orientation edgeOrientation = pointOnWichSideOfTile(xTemp,
+                            yTemp, travelOrientation);
 
                     // the edge you are standing on contains a wall
                     if (travelOrientation == edgeOrientation
-                            && !this.getMapGraphLoaded().getCurrentTile()
+                            && !getMapGraphLoaded().getCurrentTile()
                                     .getEdge(travelOrientation).isPassable()) {
-                        this.setCurrentPositionAbsoluteX((xTemp - i
-                                * Math.cos(Math.toRadians(this.getAlpha()))));
-                        this.setCurrentPositionAbsoluteY((yTemp - i
-                                * Math.sin(Math.toRadians(this.getAlpha()))));
-                        // this.getSSG().updateStatus();
+                        setCurrentPositionAbsoluteX((xTemp - i
+                                * Math.cos(Math.toRadians(getAngle()))));
+                        setCurrentPositionAbsoluteY((yTemp - i
+                                * Math.sin(Math.toRadians(getAngle()))));
+                        // getSSG().updateStatus();
 
                         System.out.println("Er staat een muur in de weg");
                         return;
                     } else {
-                        this.travelToNextTileIfNeeded(xTemp, yTemp,
+                        travelToNextTileIfNeeded(xTemp, yTemp,
                                 travelOrientation);
                     }
                 }
             }
-            getSimulationPanel().moveRobot(xTemp, yTemp, this.getAlpha());
-            this.setCurrentPositionAbsoluteX(xTemp);
-            this.setCurrentPositionAbsoluteY(yTemp);
+            setCurrentPositionAbsoluteX(xTemp);
+            setCurrentPositionAbsoluteY(yTemp);
 
             distanceToGo = distanceToGo - i;
             if (distanceToGo < 1) {
@@ -351,7 +371,7 @@ public abstract class AbstractPilot {
             }
         }
 
-        // this.getSSG().updateStatus();
+        // getSSG().updateStatus();
     }
 
     /**
@@ -361,7 +381,7 @@ public abstract class AbstractPilot {
     private void travelToNextTileIfNeeded(double xTemp, double yTemp,
             Orientation travelOrientation) {
         if (pointOnEdge(xTemp, yTemp)
-                && this.getMapGraphLoaded().getCurrentTile()
+                && getMapGraphLoaded().getCurrentTile()
                         .getEdge(travelOrientation).isPassable()) {
             setCurrentTileCoordinates(mapGraphLoaded, xTemp, yTemp);
         }
@@ -379,10 +399,7 @@ public abstract class AbstractPilot {
             } else {
                 // removeWall();
                 Orientation currentOrientation = Orientation
-                        .calculateOrientation(
-                                this.getCurrentPositionAbsoluteX(),
-                                this.getCurrentPositionAbsoluteY(),
-                                this.getAlpha(), sizeTile());
+                        .calculateOrientation(getAngle());
                 int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
                 int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
@@ -400,10 +417,8 @@ public abstract class AbstractPilot {
             addWall();
         } else {
             // removeWall();
-            Orientation currentOrientation = Orientation.calculateOrientation(
-                    this.getCurrentPositionAbsoluteX(),
-                    this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                    sizeTile());
+            Orientation currentOrientation = Orientation
+                    .calculateOrientation(getAngle());
             int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
                     + currentOrientation.getArrayToFindNeighbourRelative()[0];
             int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
@@ -426,11 +441,6 @@ public abstract class AbstractPilot {
      */
 
     public boolean checkForObstruction() {
-        /* Orientation currentOrientation = */Orientation
-                .calculateOrientation(this.getCurrentPositionAbsoluteX(),
-                        this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                        sizeTile());
-
         int distance = getUltraSensorValue();
 
         if (distance < detectionDistanceUltrasonicSensorRobot) {
@@ -444,18 +454,14 @@ public abstract class AbstractPilot {
         if (checkForObstruction())
             addWall();
         else {
-            Orientation currentOrientation = Orientation.calculateOrientation(
-                    this.getCurrentPositionAbsoluteX(),
-                    this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                    sizeTile());
+            Orientation currentOrientation = Orientation
+                    .calculateOrientation(getAngle());
             int xCoordinate;
             int yCoordinate;
             if (isRobotControllable()) {
-                xCoordinate = SilverSurferGUI.getStatusInfoBuffer()
-                        .getXCoordinateRelative()
+                xCoordinate = relativeX
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = SilverSurferGUI.getStatusInfoBuffer()
-                        .getYCoordinateRelative()
+                yCoordinate = relativeY
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
             } else {
                 xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
@@ -471,12 +477,11 @@ public abstract class AbstractPilot {
 
     public void addWall() {
         Orientation currentOrientation = Orientation
-                .calculateOrientation(this.getCurrentPositionAbsoluteX(),
-                        this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                        sizeTile());
+                .calculateOrientation(getAngle());
 
-        getSimulationPanel().addWall(currentOrientation,
-                getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
+        /* TODO panel moet pilot pollen voor ALLES(positie, muren...) */
+        // getSimulationPanel().addWall(currentOrientation,
+        // getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
         setWallOnTile(getCurrentPositionRelativeX(),
                 getCurrentPositionRelativeY(), currentOrientation);
     }
@@ -484,8 +489,8 @@ public abstract class AbstractPilot {
     // public void removeWall(){
     //
     // Orientation currentOrientation = Orientation.calculateOrientation(
-    // this.getCurrentPositionAbsoluteX(),
-    // this.getCurrentPositionAbsoluteY(), this.getAlpha(), sizeTile());
+    // getCurrentPositionAbsoluteX(),
+    // getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
     //
     // // roept addwhiteline op, deze methode verwijdert de muur terug uit
     // // het panel
@@ -501,8 +506,8 @@ public abstract class AbstractPilot {
         // rotatedInTotal = rotatedInTotal + Math.abs(alpha);
         // System.out.println("rotatedInTotal : " + rotatedInTotal);
 
-        double alphaOriginal = this.getAlpha();
-        double alphaTemp = this.getAlpha();
+        double alphaOriginal = getAngle();
+        double alphaTemp = getAngle();
 
         int j = 1;
         if (alpha < 0)
@@ -512,32 +517,29 @@ public abstract class AbstractPilot {
             alphaTemp = (double) ExtMath.addDegree(alphaOriginal, i);
 
             /*
-             * if (this.getMapGraph() != null) { if
-             * (robotOnEdge(this.getCurrentPositionAbsoluteX(),
-             * this.getCurrentPositionAbsoluteY(), alphaTemp)) { // the edge you
-             * are standing on contains a wall // weet niet goed hoe je dit kan
+             * if (getMapGraph() != null) { if
+             * (robotOnEdge(getCurrentPositionAbsoluteX(),
+             * getCurrentPositionAbsoluteY(), alphaTemp)) { // the edge you are
+             * standing on contains a wall // weet niet goed hoe je dit kan
              * checken //
-             * if(!(this.getMapGraph().canMoveTo(Orientation.calculateOrientation
-             * (this.getCurrentPositionAbsoluteX(), //
-             * this.getCurrentPositionAbsoluteY(),
-             * ExtMath.addDegree(alphaTemp,j*30))) // &&
-             * this.getMapGraph().canMoveTo
-             * (Orientation.calculateOrientation(this
-             * .getCurrentPositionAbsoluteX(), //
-             * this.getCurrentPositionAbsoluteY(),
-             * ExtMath.addDegree(alphaTemp,j*210))))) // { //
-             * this.setAlpha((double) ExtMath.addDegree(alphaOriginal,i-j)); //
-             * this.getSSG().updateStatus(); // //
+             * if(!(getMapGraph().canMoveTo(Orientation.calculateOrientation
+             * (getCurrentPositionAbsoluteX(), // getCurrentPositionAbsoluteY(),
+             * ExtMath.addDegree(alphaTemp,j*30))) // && getMapGraph().canMoveTo
+             * (Orientation.calculateOrientation( getCurrentPositionAbsoluteX(),
+             * // getCurrentPositionAbsoluteY(),
+             * ExtMath.addDegree(alphaTemp,j*210))))) // { // setAlpha((double)
+             * ExtMath.addDegree(alphaOriginal,i-j)); //
+             * getSSG().updateStatus(); // //
              * System.out.println("Er staat een muur in de weg"); // return; //
              * } } }
              */
 
-            getSimulationPanel().moveRobot(this.getCurrentPositionAbsoluteX(),
-                    this.getCurrentPositionAbsoluteY(), alphaTemp);
-            this.setAlpha(alphaTemp);
-            SilverSurferGUI.getStatusInfoBuffer().setAngle(alphaTemp);
+            // TODO panel pollt pilot
+            // getSimulationPanel().moveRobot(getCurrentPositionAbsoluteX(),
+            // getCurrentPositionAbsoluteY(), alphaTemp);
+            setAngle(alphaTemp);
 
-            // this.getSSG().updateStatus();
+            // getSSG().updateStatus();
 
             try {
                 if (isRobotControllable())
@@ -561,10 +563,10 @@ public abstract class AbstractPilot {
      * checkt of de robot zich binnen de marge van een edge bevindt
      */
     public boolean pointOnEdge(double x, double y) {
-        return (x % sizeTile()) > sizeTile() - this.getEdgeMarge()
-                || (x % sizeTile()) < this.getEdgeMarge()
-                || (y % sizeTile()) > sizeTile() - this.getEdgeMarge()
-                || (y % sizeTile()) < this.getEdgeMarge();
+        return (x % sizeTile()) > sizeTile() - getEdgeMarge()
+                || (x % sizeTile()) < getEdgeMarge()
+                || (y % sizeTile()) > sizeTile() - getEdgeMarge()
+                || (y % sizeTile()) < getEdgeMarge();
     }
 
     /**
@@ -633,45 +635,18 @@ public abstract class AbstractPilot {
     }
 
     /**
-     * True if the robot is on an edge and this edge is not a wall
-     */
-    public boolean onWhiteLine(double x, double y) {
-        // System.out.println("w: " + (this.onEdge(x,y) && (this.getMapGraph()
-        // == null ||
-        // this.getMapGraph().getObstruction(Orientation.calculateOrientation(x,
-        // y, this.getAlpha())) != Obstruction.WALL)));
-        return this.pointOnEdge(x, y)
-                && (this.getMapGraphLoaded() == null || this
-                        .getMapGraphLoaded().getObstruction(
-                                Orientation.calculateOrientation(x, y,
-                                        this.getAlpha(), sizeTile())) != Obstruction.WALL);
-
-    }
-
-    /**
-     * True if the robot is not on an edge, but on a tile without a content.
-     */
-    public boolean onEmptyTile(double x, double y) {
-
-        return (!this.pointOnEdge(x, y) && this.getMapGraphLoaded() == null)
-                || (!this.pointOnEdge(x, y) && this.getMapGraphLoaded()
-                        .getContentCurrentTile() == null);
-
-    }
-
-    /**
      * True if the robot is not on an edge, but on a tile containing a barcode.
      */
     public boolean onBarcodeTile(double x, double y) {
-        if (this.getMapGraphLoaded() == null) {
+        if (getMapGraphLoaded() == null) {
             // System.out.println("b: /");
             return false;
         } else {
-            // System.out.println("b: " + (!this.onEdge(x,y) &&
-            // (this.getMapGraph().getContentCurrentTile() instanceof
+            // System.out.println("b: " + (!onEdge(x,y) &&
+            // (getMapGraph().getContentCurrentTile() instanceof
             // Barcode)));
-            return !this.pointOnEdge(x, y)
-                    && (this.getMapGraphLoaded().getContentCurrentTile() instanceof Barcode);
+            return !pointOnEdge(x, y)
+                    && (getMapGraphLoaded().getContentCurrentTile() instanceof Barcode);
         }
     }
 
@@ -731,22 +706,22 @@ public abstract class AbstractPilot {
     public void setCurrentTileCoordinates(MapGraph map, double xOld, double yOld) {
         int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
         map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(
-                relativePosition[0]);
-        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(
-                relativePosition[1]);
+        setRelativeX(relativePosition[0]);
+        setRelativeY(relativePosition[1]);
     }
 
     public void setCurrentTileCoordinatesRobot(double xOld, double yOld) {
         int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(
-                relativePosition[0]);
-        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(
-                relativePosition[1]);
+        setRelativeX(relativePosition[0]);
+        setRelativeY(relativePosition[1]);
     }
 
     public void clear() {
-        getSimulationPanel().clearPath();
+        /*
+         * TOON clear hoort niet in pilot maar in simulatorpanel(clear
+         * mapgraphconstructed?)
+         */
+        // getSimulationPanel().clearPath();
     }
 
     /**
@@ -754,166 +729,42 @@ public abstract class AbstractPilot {
      * 220. Resets alpha to 270, speed to 10;
      */
     public void reset() {
-        currentPositionAbsoluteX = 5 * sizeTile() + sizeTile() / 2;
-        currentPositionAbsoluteY = 5 * sizeTile() + sizeTile() / 2;
+        absoluteX = 5 * sizeTile() + sizeTile() / 2;
+        absoluteY = 5 * sizeTile() + sizeTile() / 2;
         startPositionAbsoluteX = 5 * sizeTile() + sizeTile() / 2;
         startPositionAbsoluteY = 5 * sizeTile() + sizeTile() / 2;
-        alpha = 270;
+        angle = 270;
 
     }
 
     public void updateArc(int distance) {
-        getSimulationPanel().updateArc(getCurrentPositionAbsoluteX(),
-                getCurrentPositionAbsoluteY(), getAlpha(), distance);
+        /* TODO panel pollt pilot */
+        // getSimulationPanel().updateArc(getCurrentPositionAbsoluteX(),
+        // getCurrentPositionAbsoluteY(), getAlpha(), distance);
     }
 
     public void setRobotControllable(boolean isRealRobot) {
-        this.robotControllable = isRealRobot;
+        robotControllable = isRealRobot;
     }
 
     /**
      * Returns a number from a normal districution that represents a lightsensor
      * value.
      */
-    public int getLightSensorValue() {
-        if (!this.isRobotSimulated())
-            return SilverSurferGUI.getStatusInfoBuffer()
-                    .getLatestLightSensorInfo();
-        else {
-            // initialisation
-            Random random = new Random();
-            double mean = 0;
-            double standardDeviation = 1;
+    public abstract int getLightSensorValue();
 
-            // check on which sort of underground your are standing
-            // and adjust the mean and standardDeviation accordingly
-            if (onEmptyTile(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
-                mean = SimulationSensorData.getMEmptyPanelLS();
-                standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
-            } else if (onWhiteLine(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
-                mean = SimulationSensorData.getMWhiteLineLS();
-                standardDeviation = SimulationSensorData.getSDWhiteLineLS();
-            } else if (onBarcodeTile(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
-                int color = ((Barcode) this.getMapGraphLoaded()
-                        .getContentCurrentTile()).getColorValue(
-                        getLightsensorPositionX() % 40,
-                        getLightsensorPositionY() % 40);
-                mean = SimulationSensorData.getMBarcodeTileLS(color);
-                standardDeviation = SimulationSensorData
-                        .getSDBarcodeTileLS(color);
-            }
-            return (int) Math.round(mean
-                    + (random.nextGaussian() * standardDeviation));
-
-        }
-    }
-
-    public int getUltraSensorValue() {
-        if (!this.isRobotSimulated()) {
-            return SilverSurferGUI.getStatusInfoBuffer()
-                    .getLatestUltraSensorInfo();
-        } else {
-            Random random = new Random();
-
-            double mean = this.calculateDistanceToWall();
-            double standardDeviation = SimulationSensorData.getSDUS();
-
-            return (int) Math.round(mean
-                    + (random.nextGaussian() * standardDeviation));
-        }
-    }
-
-    /**
-     * Calculates the distance to the first wall the robot will encounter facing
-     * its current orientation. Returns 250 if no map is loaded or no wall is
-     * found whithin the range of the sensor. The maximum range of the sensor is
-     * 120 cm.
-     * 
-     * By virtually moving forward (the temporary coordinates) en on every
-     * border checking whether there is a wall. If so, you calculate the
-     * distance to is. If not, keep om moving (the robot doesn't move!)
-     */
-    private double calculateDistanceToWall() {
-        // current temporary position; to check whether there are walls in the
-        // direction the robot is facing
-        double xTemp = this.getUltrasonicSensorPositionX();
-        double yTemp = this.getUltrasonicSensorPositionY();
-        // keep the last temporary position, so you can compare with the current
-        // temporary position
-        double xTempPrev = this.getUltrasonicSensorPositionX();
-        double yTempPrev = this.getUltrasonicSensorPositionY();
-
-        // there is no map loaded, so the sensor will detect no walls en returns
-        // the maximum value.
-        if (this.getMapGraphLoaded() == null) {
-            return 250;
-        }
-        Tile tileTemp = this.getMapGraphLoaded().getCurrentTile();
-        int i = 1;
-
-        while (i < 148) {
-            while (!(Math.abs(xTempPrev % sizeTile() - xTemp % sizeTile()) > 5)
-                    && !(Math.abs(yTempPrev % sizeTile() - yTemp % sizeTile()) > 5)) {
-                xTempPrev = xTemp;
-                yTempPrev = yTemp;
-
-                xTemp = (double) (this.getUltrasonicSensorPositionX() + i
-                        * Math.cos(Math.toRadians(this.getAlpha())));
-                yTemp = (double) (this.getUltrasonicSensorPositionY() + i
-                        * Math.sin(Math.toRadians(this.getAlpha())));
-                i++;
-            }
-
-            Orientation oriTemp = Orientation.defineBorderCrossed(xTemp, yTemp,
-                    xTempPrev, yTempPrev, sizeTile());
-
-            // the edge you have found, does not contain a wall, you can look
-            // right over it.
-            // change the current tile to the next tile en move a few steps
-            // foreward (with the temporary coordinates).
-            if (tileTemp.getEdge(oriTemp).isPassable()) {
-                tileTemp = tileTemp.getEdge(oriTemp).getNeighbour(tileTemp);
-                for (int j = 0; j < 35; j++) {
-                    xTempPrev = xTemp;
-                    yTempPrev = yTemp;
-
-                    xTemp = (double) (this.getUltrasonicSensorPositionX() + i
-                            * Math.cos(Math.toRadians(this.getAlpha())));
-                    yTemp = (double) (this.getUltrasonicSensorPositionY() + i
-                            * Math.sin(Math.toRadians(this.getAlpha())));
-                    i++;
-                }
-            } else {
-                return Math.sqrt(Math.pow(
-                        xTemp - this.getUltrasonicSensorPositionX(), 2)
-                        + Math.pow(yTemp - this.getUltrasonicSensorPositionY(),
-                                2))
-                        / scalingfactor();
-            }
-        }
-
-        // no wall is found within the range of the ultrasonic sensor
-        return 250;
-    }
+    public abstract int getUltraSensorValue();
 
     public void allignOnWhiteLine() {
+        double[] absLS = getLightSensorAbsolute();
         if (isRobotControllable()) {
-            /* Orientation orientation = */Orientation.calculateOrientation(
-                    getCurrentPositionAbsoluteX(),
-                    getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
-
-            while (!pointOnEdge(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
+            while (!pointOnEdge(absLS[0], absLS[1])) {
                 travel(1);
             }
 
             travel(5);
 
-            while (!pointOnEdge(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
+            while (!pointOnEdge(absLS[0], absLS[1])) {
                 rotate(-1);
             }
 
@@ -921,8 +772,7 @@ public abstract class AbstractPilot {
 
             int i = 0;
 
-            while (!pointOnEdge(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
+            while (!pointOnEdge(absLS[0], absLS[1])) {
                 rotate(1);
                 i++;
             }
@@ -958,16 +808,11 @@ public abstract class AbstractPilot {
     }
 
     public Orientation getCurrentOrientation() {
-        return Orientation.calculateOrientation(getCurrentPositionAbsoluteX(),
-                getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
+        return Orientation.calculateOrientation(getAngle());
     }
 
     public double sizeTile() {
         return 40;
-    }
-
-    public double scalingfactor() {
-        return 1;
     }
 
     /**

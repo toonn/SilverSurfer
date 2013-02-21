@@ -339,12 +339,8 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
 
         for (Tuple t : storeBarcodes) {
             Barcode barcode = (Barcode) t.getItem1();
-            int newX = (int) ((barcode.getDrawnCenterX() + getShiftToTheRight())
-                    * scalingfactor / getScalingfactor() - getShiftToTheRight());
-            int newY = (int) ((barcode.getDrawnCenterY() + getShiftDown())
-                    * scalingfactor / getScalingfactor() - getShiftDown());
-            Rectangle2D[] rect = Barcode.createVisualBarCode(barcode, newX,
-                    newY, 40 * scalingfactor);
+            Rectangle2D[] rect = barcode
+                    .createVisualBarCode(40 * scalingfactor);
             getNotVisibleBarcode().add(
                     new Tuple<Barcode, Rectangle2D[]>(barcode, rect));
         }
@@ -508,17 +504,7 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
         for (Tuple t : storeBarcodes) {
             Barcode barcode = (Barcode) t.getItem1();
 
-            int newX = (int) (barcode.getDrawnCenterX());
-            int newY = (int) (barcode.getDrawnCenterY());
-
-            if (shiftHorizontal) {
-                newX = newX - shift;
-            } else {
-                newY = newY - shift;
-            }
-
-            Rectangle2D[] rect = Barcode.createVisualBarCode(barcode, newX,
-                    newY, getSizeTile());
+            Rectangle2D[] rect = barcode.createVisualBarCode(getSizeTile());
             getNotVisibleBarcode().add(
                     new Tuple<Barcode, Rectangle2D[]>(barcode, rect));
         }

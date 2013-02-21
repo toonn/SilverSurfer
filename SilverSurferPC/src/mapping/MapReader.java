@@ -51,18 +51,25 @@ public class MapReader {
                             Orientation
                                     .switchStringToOrientation(seperatedInfoIJ[1]));
                 }
-                //a barcode value has been specified
-                if (seperatedInfoIJ.length == 3){
-                	if(seperatedInfoIJ[1].equals("N"))
-                		tileIJ.setContent(new Barcode(Integer.valueOf(seperatedInfoIJ[2]), Orientation.NORTH));
-                	else if(seperatedInfoIJ[1].equals("E"))
-                		tileIJ.setContent(new Barcode(Integer.valueOf(seperatedInfoIJ[2]), Orientation.EAST));
-                	else if(seperatedInfoIJ[1].equals("S"))
-                		tileIJ.setContent(new Barcode(Integer.valueOf(seperatedInfoIJ[2]), Orientation.SOUTH));
-                	else if(seperatedInfoIJ[1].equals("W"))
-                		tileIJ.setContent(new Barcode(Integer.valueOf(seperatedInfoIJ[2]), Orientation.WEST));
+                // a barcode value has been specified
+                if (seperatedInfoIJ.length == 3) {
+                    if (seperatedInfoIJ[1].equals("N"))
+                        tileIJ.setContent(new Barcode(Integer
+                                .valueOf(seperatedInfoIJ[2]),
+                                Orientation.NORTH, tileIJ));
+                    else if (seperatedInfoIJ[1].equals("E"))
+                        tileIJ.setContent(new Barcode(Integer
+                                .valueOf(seperatedInfoIJ[2]), Orientation.EAST,
+                                tileIJ));
+                    else if (seperatedInfoIJ[1].equals("S"))
+                        tileIJ.setContent(new Barcode(Integer
+                                .valueOf(seperatedInfoIJ[2]),
+                                Orientation.SOUTH, tileIJ));
+                    else if (seperatedInfoIJ[1].equals("W"))
+                        tileIJ.setContent(new Barcode(Integer
+                                .valueOf(seperatedInfoIJ[2]), Orientation.WEST,
+                                tileIJ));
                 }
-                    
 
                 map.setTileXY(j, i, tileIJ);
             }

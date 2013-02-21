@@ -1,8 +1,6 @@
 package communication;
 
-import simulator.SimulationPilot;
-import mapping.Barcode;
-import gui.SilverSurferGUI;
+import simulator.AbstractPilot;
 
 public class StatusInfoBuffer {
 
@@ -23,7 +21,8 @@ public class StatusInfoBuffer {
     private int startPositionRelativeX;
     private int startPostitionRelativeY;
 
-    private SimulationPilot pilot;
+    private Communicator communicator;
+
     private boolean isBufferUsed = false; // Check if the buffer can be updated
                                           // (can be updated when false).
     private final int BUFFER_SIZE = 300; // Amount of datapoints kept by this
@@ -221,12 +220,12 @@ public class StatusInfoBuffer {
     }
 
     public void setBarcode(int barcode) {
-        pilot.setBarcode(barcode);
+        communicator.getPilot().setBarcode(barcode);
 
         this.barcode = barcode;
-        SSG.getCommunicator().setExecutingBarcodes(true);
-        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET", SSG,
-                this.barcode);
+        communicator.setExecutingBarcodes(true);
+        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET",
+                communicator, this.barcode);
         BET.start();
     }
 
@@ -235,10 +234,10 @@ public class StatusInfoBuffer {
     // return angle;
     // }
     //
-    // public void setAngle(double angle) {
-    // this.angle = angle;
-    // // SSG.updateStatus();
-    // }
+    public void setAngle(double angle) {
+        communicator.getPilot().setAngle(angle);
+    }
+
     //
     // public void setStartPositionAbsoluteX(double startPositionAbsoluteX) {
     // this.startPositionAbsoluteX = startPositionAbsoluteX;
@@ -276,14 +275,11 @@ public class StatusInfoBuffer {
     // return coordinatesAbsolute;
     // }
     //
-    // public void setCoordinatesAbsolute(double[] coordinates) {
-    // coordinatesAbsolute[0] = coordinates[0];
-    // coordinatesAbsolute[1] = coordinates[1];
-    // SSG.getSimulationPanel().moveRobot(coordinates[0], coordinates[1],
-    // getAngle());
-    //
-    // // SSG.updateStatus();
-    // }
+    public void setCoordinatesAbsolute(double[] coordinates) {
+        communicator.getPilot().setCurrentPositionAbsoluteX(coordinates[0]);
+        communicator.getPilot().setCurrentPositionAbsoluteY(coordinates[1]);
+    }
+
     //
     // private void setCurrentTileCoordinatesRelative(double xOld, double yOld)
     // {
@@ -322,5 +318,13 @@ public class StatusInfoBuffer {
         xCoordinateRelative = 0;
         yCoordinateRelative = 0;
         angle = 0;
+    }
+
+    public Communicator getCommunicator() {
+        return communicator;
+    }
+
+    public void setCommunicator(Communicator communicator) {
+        this.communicator = communicator;
     }
 }

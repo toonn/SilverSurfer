@@ -92,8 +92,8 @@ public class SilverSurferGUI {
         frame.setVisible(true);
 
         statusInfoBuffer = new StatusInfoBuffer();
-        statusInfoBuffer.setSSG(this);
-        communicator = new Communicator(statusInfoBuffer, simulationPilot);
+        communicator = new Communicator(simulationPilot, statusInfoBuffer);
+        statusInfoBuffer.setCommunicator(communicator);
         System.out.println("[CONNECTION] Entered simulator mode.");
 
         addListeners();
@@ -297,26 +297,28 @@ public class SilverSurferGUI {
     }
 
     private JPanel mappingPanel() {
-        simulationPanel = new SimulationViewPort();
-        simulationPanel.setSize(20000, 20000);
-        simulationPanel.setBackground(Color.WHITE);
-        simulationPanel.setBorder(createBorder());
-
-        mappingPanel = new JPanel();
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                "Simulator"));
-        mappingPanel.setOpaque(false);
-
-        GroupLayout mappingLayout = new GroupLayout(mappingPanel);
-        mappingPanel.setLayout(mappingLayout);
-        mappingLayout.setAutoCreateGaps(true);
-        mappingLayout.setAutoCreateContainerGaps(true);
-        mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup()
-                .addComponent(simulationPanel));
-        mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup()
-                .addComponent(simulationPanel));
-
-        return mappingPanel;
+        // TODO vervangen door simulatorpanel
+        // simulationPanel = new SimulationViewPort();
+        // simulationPanel.setSize(20000, 20000);
+        // simulationPanel.setBackground(Color.WHITE);
+        // simulationPanel.setBorder(createBorder());
+        //
+        // mappingPanel = new JPanel();
+        // mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
+        // "Simulator"));
+        // mappingPanel.setOpaque(false);
+        //
+        // GroupLayout mappingLayout = new GroupLayout(mappingPanel);
+        // mappingPanel.setLayout(mappingLayout);
+        // mappingLayout.setAutoCreateGaps(true);
+        // mappingLayout.setAutoCreateContainerGaps(true);
+        // mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup()
+        // .addComponent(simulationPanel));
+        // mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup()
+        // .addComponent(simulationPanel));
+        //
+        // return mappingPanel;
+        return new JPanel();
     }
 
     public void updateCoordinates(String s) {
@@ -356,8 +358,9 @@ public class SilverSurferGUI {
             simulationPanel.resetMap();
             simulationPilot.setRobotControllable(true);
             simulationPilot.setTile(0, 0);
-            statusInfoBuffer.setXCoordinateRelative(0);
-            statusInfoBuffer.setYCoordinateRelative(0);
+            // TOON robotrelativeposition(0,0)
+            // statusInfoBuffer.setXCoordinateRelative(0);
+            // statusInfoBuffer.setYCoordinateRelative(0);
             System.out.println("[CONNECTION] Connection established.");
             changeSpeed(2);
         } catch (Exception e) {

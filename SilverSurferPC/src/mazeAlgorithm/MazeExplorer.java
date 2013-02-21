@@ -5,7 +5,10 @@ import gui.SilverSurferGUI;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import simulator.AbstractPilot;
+
 import commands.Command;
+import communication.Communicator;
 import mapping.ExtMath;
 import mapping.Orientation;
 import mapping.Tile;
@@ -22,7 +25,7 @@ public class MazeExplorer {
      */
     private Vector<Tile> queue = new Vector<Tile>();
     private Tile startTile = null;
-    private SilverSurferGUI gui;
+    private Communicator communicator;
 
     private Tile checkTile = null;
     private Tile endTile = null;
@@ -36,30 +39,29 @@ public class MazeExplorer {
      */
     private boolean mustAllign = false;
 
-    public MazeExplorer(SilverSurferGUI gui) {
-        this.gui = gui;
-        startTile = gui
-                .getCommunicator()
-                .getSimulationPilot()
+    public MazeExplorer(Communicator communicator) {
+        this.communicator = communicator;
+        startTile = communicator
+                .getPilot()
                 .getMapGraphConstructed()
                 .getTileWithCoordinates(
-                        (int) SilverSurferGUI.getStatusInfoBuffer()
-                                .getXCoordinateRelative(),
-                        (int) SilverSurferGUI.getStatusInfoBuffer()
-                                .getYCoordinateRelative());
+                        (int) communicator.getPilot()
+                                .getCurrentPositionRelativeX(),
+                        (int) communicator.getPilot()
+                                .getCurrentPositionRelativeY());
     }
 
     /**
      * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
      */
     public void startExploringMaze() {
-        gui.getCommunicator().setTilesBeforeAllign(3);
-        gui.getCommunicator().mustAllign(mustAllign);
+        communicator.setTilesBeforeAllign(3);
+        communicator.mustAllign(mustAllign);
         allTiles.add(startTile);
         algorithm(startTile);
         // TODO test shortestPath op't einde.
         // if (getCheckTile() != null && getEndTile() != null) {
-        // gui.getCommunicator().sendCommand(
+        // communicator.sendCommand(
         // Command.PERMA_STOP_READING_BARCODES);
         // SilverSurferGUI.changeSpeed(3);
         // // Drive to checkpoint.
@@ -87,7 +89,7 @@ public class MazeExplorer {
         for (Object tile : allTiles) {
             ((Tile) tile).setMarkingExploreMaze(false);
         }
-        gui.getCommunicator().mustAllign(false);
+        communicator.mustAllign(false);
 
     }
 
@@ -139,11 +141,10 @@ public class MazeExplorer {
 
         checkForNeighboursNotYetExplored(currentTile);
 
-        currentOrientation = gui.getCommunicator().getSimulationPilot()
-                .getCurrentOrientation();
+        currentOrientation = communicator.getPilot().getCurrentOrientation();
 
         // update robot tilecoordinates
-        if (gui.getCommunicator().getRobotConnected()) {
+        if (communicator.getRobotConnected()) {
             updateRobotTileCoordinates();
         }
 
@@ -155,9 +156,9 @@ public class MazeExplorer {
         // .getSimulationPilot()
         // .getMapGraphConstructed()
         // .getTileWithCoordinates(
-        // gui.getCommunicator().getSimulationPilot()
+        // communicator.getSimulationPilot()
         // .getCurrentPositionRelativeX(),
-        // gui.getCommunicator().getSimulationPilot()
+        // communicator.getSimulationPilot()
         // .getCurrentPositionRelativeY()));
         // setCheckTileFound(false);
         // }
@@ -167,9 +168,9 @@ public class MazeExplorer {
         // .getSimulationPilot()
         // .getMapGraphConstructed()
         // .getTileWithCoordinates(
-        // gui.getCommunicator().getSimulationPilot()
+        // communicator.getSimulationPilot()
         // .getCurrentPositionRelativeX(),
-        // gui.getCommunicator().getSimulationPilot()
+        // communicator.getSimulationPilot()
         // .getCurrentPositionRelativeY()));
         // setEndTileFound(false);
         // }
@@ -213,7 +214,7 @@ public class MazeExplorer {
         goToNextTile(currentTile, nextTile);
 
         // wachten tot de barcode is uitgevoerd.
-        while (gui.getCommunicator().getExecutingBarcodes()) {
+        while (communicator.getExecutingBarcodes()) {
             try {
                 Thread.sleep(100);
             } catch (Exception e) {
@@ -248,8 +249,8 @@ public class MazeExplorer {
      */
     private void checkForNeighboursNotYetExplored(Tile currentTile) {
 
-        Orientation currentOrientation = gui.getCommunicator()
-                .getSimulationPilot().getCurrentOrientation();
+        Orientation currentOrientation = communicator.getPilot()
+                .getCurrentOrientation();
         int numberVariable = currentOrientation.getNumberArray();
 
         for (int i = 0; i < 4; i++) {
@@ -261,11 +262,11 @@ public class MazeExplorer {
                 double angle = (((numberVariable - currentOrientation
                         .getNumberArray()) * 90) + 360) % 360;
                 angle = ExtMath.getSmallestAngle(angle);
-                gui.getCommunicator().sendCommand(
-                        (int) (angle * 10) * 10 + Command.AUTOMATIC_TURN_ANGLE);
-                gui.getCommunicator().sendCommand(
-                        Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
-                currentOrientation = gui.getCommunicator().getSimulationPilot()
+                communicator.sendCommand((int) (angle * 10) * 10
+                        + Command.AUTOMATIC_TURN_ANGLE);
+                communicator
+                        .sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
+                currentOrientation = communicator.getPilot()
                         .getCurrentOrientation();
             }
 
@@ -276,19 +277,14 @@ public class MazeExplorer {
     }
 
     private void updateRobotTileCoordinates() {
-        gui.getCommunicator()
-                .getSimulationPilot()
-                .setCurrentTileCoordinatesRobot(
-                        gui.getCommunicator().getSimulationPilot()
-                                .getCurrentPositionAbsoluteX(),
-                        gui.getCommunicator().getSimulationPilot()
-                                .getCurrentPositionAbsoluteY());
+        communicator.getPilot().setCurrentTileCoordinatesRobot(
+                communicator.getPilot().getCurrentPositionAbsoluteX(),
+                communicator.getPilot().getCurrentPositionAbsoluteY());
     }
 
     private Tile getPriorityNextTile(Tile currentTile) {
 
-        currentOrientation = gui.getCommunicator().getSimulationPilot()
-                .getCurrentOrientation();
+        currentOrientation = communicator.getPilot().getCurrentOrientation();
 
         if (isGoodNextTile(currentTile, currentOrientation))
             return currentTile.getEdge(currentOrientation).getNeighbour(
@@ -334,7 +330,7 @@ public class MazeExplorer {
 
     public void goToNextTile(Tile currentTile, Tile nextTile) {
         // voert een shortestPath uit om van currentTile naar nextTile te gaan.
-        ShortestPath shortestPath = new ShortestPath(gui, currentTile,
+        ShortestPath shortestPath = new ShortestPath(communicator, currentTile,
                 nextTile, allTiles);
         shortestPath.goShortestPath();
     }

@@ -341,7 +341,7 @@ public class GUIMenuBar extends JMenuBar {
                         + prompt.getFile()); // Load and display selection
                 prompt.dispose(); // Get rid of the dialog box
 
-                gui.getCommunicator().getSimulationPilot()
+                gui.getCommunicator().getPilot()
                         .setMapFile(mapFile, 0, 0);
 
                 System.out.println("[I/O] Map succesfully loaded!");
@@ -358,10 +358,11 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                MazeExplorer exp = new MazeExplorer(gui);
-                ExploreThread explorer = new ExploreThread(exp);
-                gui.getCommunicator().setExplorer(exp);
-                explorer.start();
+                /* TOON mazexplorer moet een pilot hebben */
+                // MazeExplorer exp = new MazeExplorer(gui);
+                // ExploreThread explorer = new ExploreThread(exp);
+                // gui.getCommunicator().setExplorer(exp);
+                // explorer.start();
             }
         });
 

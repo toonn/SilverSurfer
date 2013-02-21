@@ -1,6 +1,5 @@
 package mapping;
 
-import java.io.File;
 import java.util.*;
 
 public class MapGraph {

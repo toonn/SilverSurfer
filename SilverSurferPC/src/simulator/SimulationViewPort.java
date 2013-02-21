@@ -20,11 +20,12 @@ public class SimulationViewPort extends ViewPort {
     private Ellipse2D undergroundCircle = new Ellipse2D.Double();
     private List<Point> pathCoordinates;
 
-    public SimulationViewPort() {
+    public SimulationViewPort(AbstractPilot pilot) {
         super();
         pathCoordinates = new ArrayList<Point>();
-
-        pilots.add(new SimulationPilot(this));
+        addPathPoint(pilot.getStartPositionAbsoluteX(),
+                pilot.getStartPositionAbsoluteY());
+        pilots.add(pilot);
     }
 
     public void updateArc(double robotX, double robotY, double robotAngle,
@@ -55,13 +56,14 @@ public class SimulationViewPort extends ViewPort {
      */
 
     private void paintBeamComponent(Graphics graph) {
-        for (SimulationPilot pilot : pilots) {
-
-            this.updateArc(pilot.getUltrasonicSensorPositionX() * scalingfactor
-                    - getShiftToTheRight(),
-                    pilot.getUltrasonicSensorPositionY() * scalingfactor
-                            - getShiftDown(), pilot.getAlpha(),
-                    pilot.getUltraSensorValue() * getScalingfactor());
+        for (AbstractPilot pilot : pilots) {
+            pilot = (SimulationPilot) pilot;
+            /* TODO updateArc herschrijven */
+            // updateArc(pilot.getUltrasonicSensorPositionX() * scalingfactor
+            // - getShiftToTheRight(),
+            // pilot.getUltrasonicSensorPositionY() * scalingfactor
+            // - getShiftDown(), pilot.getAlpha(),
+            // pilot.getUltraSensorValue() * getScalingfactor());
 
             ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.4f));
@@ -103,11 +105,13 @@ public class SimulationViewPort extends ViewPort {
      * Draws a dot in the color of the underground
      */
     private void paintUndergroundComponent(Graphics graph) {
-        for (SimulationPilot pilot : pilots) {
-            this.updateUndergroundCircle(pilot.getLightsensorPositionX()
-                    * scalingfactor - getShiftToTheRight(),
-                    pilot.getLightsensorPositionY() * scalingfactor
-                            - getShiftDown(), pilot.getLightSensorValue());
+        for (AbstractPilot pilot : pilots) {
+            pilot = (SimulationPilot) pilot;
+            /* TODO lightsensor tekenen herschrijven */
+            // updateUndergroundCircle(pilot.getLightsensorPositionX()
+            // * scalingfactor - getShiftToTheRight(),
+            // pilot.getLightsensorPositionY() * scalingfactor
+            // - getShiftDown(), pilot.getLightSensorValue());
             if (pilot.getLightSensorValue() < 45)
                 ((Graphics2D) graph).setColor(Color.black);
             else if (pilot.getLightSensorValue() > 53)
@@ -130,7 +134,7 @@ public class SimulationViewPort extends ViewPort {
 
     public void clearPath() {
         pathCoordinates = new ArrayList<Point>();
-        for (SimulationPilot pilot : pilots)
+        for (AbstractPilot pilot : pilots)
             addPathPoint(pilot.getCurrentPositionAbsoluteX(),
                     pilot.getCurrentPositionAbsoluteY());
     }

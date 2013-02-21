@@ -53,7 +53,7 @@ public class InfoReceiverThread extends Thread {
                                 .substring(11).trim()));
                     }
                 } else if (a.startsWith("[B]")) {
-                    statusInfoBuffer.getSSG().getCommunicator().setBusy(false);
+                    statusInfoBuffer.getCommunicator().setBusy(false);
                     statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4)
                             .trim()));
                 } else if (a.startsWith("[X]"))
@@ -70,8 +70,7 @@ public class InfoReceiverThread extends Thread {
                 else if (a.startsWith("[CH]")) {
                     statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a
                             .substring(5).trim()));
-                    statusInfoBuffer.getSSG().getCommunicator()
-                            .getSimulationPilot()
+                    statusInfoBuffer.getCommunicator().getPilot()
                             .checkForObstructionAndSetTile();
                 }
             } catch (Exception e) {

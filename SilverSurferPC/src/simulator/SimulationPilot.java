@@ -13,7 +13,7 @@ import javax.print.attribute.HashAttributeSet;
 
 import datastructures.Tuple;
 
-public class SimulationPilot {
+public class SimulationPilot extends AbstractPilot {
     private SimulationViewPort simulationPanel;
     /**
      * verandert wanneer een nieuwe map wordt ingeladen naar de positie waar het
@@ -46,175 +46,6 @@ public class SimulationPilot {
         this.simulationPanel = simulationPanel;
         getSimulationPanel().addPathPoint(getCurrentPositionAbsoluteX(),
                 getCurrentPositionAbsoluteY());
-    }
-
-    public double getCurrentPositionAbsoluteX() {
-        return currentPositionAbsoluteX;
-    }
-
-    public void setCurrentPositionAbsoluteX(double x) {
-        this.currentPositionAbsoluteX = x;
-    }
-
-    public double getCurrentPositionAbsoluteY() {
-        return currentPositionAbsoluteY;
-    }
-
-    public void setCurrentPositionAbsoluteY(double y) {
-        this.currentPositionAbsoluteY = y;
-    }
-
-    public double getStartPositionAbsoluteX() {
-        return startPositionAbsoluteX;
-    }
-
-    public void setStartPositionAbsoluteX(double startPositionX) {
-        startPositionAbsoluteX = startPositionX;
-    }
-
-    public double getStartPositionAbsoluteY() {
-        return startPositionAbsoluteY;
-    }
-
-    public void setStartPositionAbsoluteY(double startPositionY) {
-        startPositionAbsoluteY = startPositionY;
-    }
-
-    public int getCurrentPositionRelativeX() {
-        if (!isRobotSimulated())
-            return SilverSurferGUI.getStatusInfoBuffer()
-                    .getXCoordinateRelative();
-        return this.getMapGraphLoaded().getCurrentTileCoordinates()[0];
-    }
-
-    public int getCurrentPositionRelativeY() {
-        if (!isRobotSimulated())
-            return SilverSurferGUI.getStatusInfoBuffer()
-                    .getYCoordinateRelative();
-        return this.getMapGraphLoaded().getCurrentTileCoordinates()[1];
-    }
-
-    public int getStartPositionRelativeX() {
-        if (!isRobotSimulated())
-            return 0;
-        return this.getMapGraphLoaded().getStartingTileCoordinates()[0];
-    }
-
-    public int getStartPositionRelativeY() {
-        if (!isRobotSimulated())
-            return 0;
-        return this.getMapGraphLoaded().getStartingTileCoordinates()[1];
-    }
-
-    /**
-     * The lightsensor is not attached on the middle point of the robot, but
-     * more in front of that point. This value gives the x-coordinate of the
-     * lightsensor.
-     */
-    public double getLightsensorPositionX() {
-        return (this.getCurrentPositionAbsoluteX() + scalingfactor() * 7.5
-                * Math.cos(Math.toRadians(this.getAlpha())));
-    }
-
-    /**
-     * The lightsensor is not attached on the middle point of the robot, but
-     * more in front of that point. This value gives they -coordinate of the
-     * lightsensor.
-     */
-    public double getLightsensorPositionY() {
-        return (this.getCurrentPositionAbsoluteY() + scalingfactor() * 7.5
-                * Math.sin(Math.toRadians(this.getAlpha())));
-    }
-
-    /**
-     * The ultrasonic sensor is not attached on the middle point of the robot,
-     * but a little behind that point. This value gives the x-coordinate of the
-     * ultrasonic sensor.
-     */
-    public double getUltrasonicSensorPositionX() {
-        return (this.getCurrentPositionAbsoluteX() - scalingfactor() * 5.5
-                * Math.cos(Math.toRadians(this.getAlpha())));
-    }
-
-    /**
-     * The ultrasonic sensor is not attached on the middle point of the robot,
-     * but a little behind that point. This value gives the y-coordinate of the
-     * ultrasonic sensor.
-     */
-    public double getUltrasonicSensorPositionY() {
-        return (this.getCurrentPositionAbsoluteY() - scalingfactor() * 5.5
-                * Math.sin(Math.toRadians(this.getAlpha())));
-    }
-
-    public double getAlpha() {
-        return alpha;
-    }
-
-    public void setAlpha(double alpha) {
-        this.alpha = alpha;
-    }
-
-    public int getSpeed() {
-        if (speed == 48)
-            return 4;
-        else if (speed == 58)
-            return 3;
-        else if (speed == 86)
-            return 2;
-        else
-            return 1;
-    }
-
-    public void setSpeed(int speed) {
-        if (speed == 4)
-            this.speed = 48;
-        else if (speed == 3)
-            this.speed = 58;
-        else if (speed == 2)
-            this.speed = 86;
-        else
-            this.speed = 194;
-    }
-
-    /**
-     * Returns the center of the currentTile in absolutes.
-     */
-    public int[] getCenterAbsoluteCurrentTile() {
-
-        int[] coord = new int[] { 0, 0 };
-        coord[0] = (int) (((Double) (getCurrentPositionAbsoluteX() - getCurrentPositionAbsoluteX()
-                % sizeTile())).intValue()
-                * getSimulationPanel().getScalingfactor() + getSimulationPanel()
-                .getSizeTile() / 2);
-        coord[1] = (int) (((Double) (getCurrentPositionAbsoluteY() - getCurrentPositionAbsoluteY()
-                % sizeTile())).intValue()
-                * getSimulationPanel().getScalingfactor() + getSimulationPanel()
-                .getSizeTile() / 2);
-        return coord;
-    }
-
-    public File getMapFile() {
-        return this.mapFile;
-    }
-
-    /*
-     * public void setMapFile(File mapFile) { this.setMapFile(mapFile, 0, 0);
-     * SSG.getInformationBuffer().setXCoordinateRelative(0);
-     * SSG.getInformationBuffer().setYCoordinateRelative(0);
-     * 
-     * }
-     */
-
-    public void setMapFile(File mapFile, int xCo, int yCo) {
-        this.mapFile = mapFile;
-        this.setMapGraph(MapReader.createMapFromFile(mapFile, xCo, yCo));
-        this.startPositionAbsoluteX = getCurrentPositionAbsoluteX();
-        this.startPositionAbsoluteY = getCurrentPositionAbsoluteY();
-        getSimulationPanel().clearTotal();
-        setTile(xCo, yCo);
-        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(xCo);
-        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(yCo);
-
     }
 
     public MapGraph getMapGraphLoaded() {
@@ -283,8 +114,8 @@ public class SimulationPilot {
         double yTemp = this.getCurrentPositionAbsoluteY();
 
         double j = 1;
-        Orientation travelOrientation = Orientation.calculateOrientation(xTemp,
-                yTemp, this.getAlpha(), sizeTile());
+        Orientation travelOrientation = Orientation
+                .calculateOrientation(getAngle());
 
         // if you are traveling backwards, the orientation you are facing is the
         // opposite to the orientation you are traveling.
@@ -302,13 +133,13 @@ public class SimulationPilot {
         // for (double i = j; i*j <= distance*j; i+=j)
         {
             xTemp = (double) (xTemp + i
-                    * Math.cos(Math.toRadians(this.getAlpha())));
+                    * Math.cos(Math.toRadians(this.getAngle())));
             yTemp = (double) (yTemp + i
-                    * Math.sin(Math.toRadians(this.getAlpha())));
+                    * Math.sin(Math.toRadians(this.getAngle())));
 
             if (mapGraphLoaded != null) {
 
-                if (robotOnEdge(xTemp, yTemp, this.getAlpha())) {
+                if (robotOnEdge(xTemp, yTemp, this.getAngle())) {
                     Orientation edgeOrientation = this.pointOnWichSideOfTile(
                             xTemp, yTemp, travelOrientation);
 
@@ -317,9 +148,9 @@ public class SimulationPilot {
                             && !this.getMapGraphLoaded().getCurrentTile()
                                     .getEdge(travelOrientation).isPassable()) {
                         this.setCurrentPositionAbsoluteX((xTemp - i
-                                * Math.cos(Math.toRadians(this.getAlpha()))));
+                                * Math.cos(Math.toRadians(this.getAngle()))));
                         this.setCurrentPositionAbsoluteY((yTemp - i
-                                * Math.sin(Math.toRadians(this.getAlpha()))));
+                                * Math.sin(Math.toRadians(this.getAngle()))));
                         // this.getSSG().updateStatus();
 
                         System.out.println("Er staat een muur in de weg");
@@ -330,7 +161,7 @@ public class SimulationPilot {
                     }
                 }
             }
-            getSimulationPanel().moveRobot(xTemp, yTemp, this.getAlpha());
+            getSimulationPanel().moveRobot(xTemp, yTemp, this.getAngle());
             this.setCurrentPositionAbsoluteX(xTemp);
             this.setCurrentPositionAbsoluteY(yTemp);
 
@@ -383,10 +214,7 @@ public class SimulationPilot {
             } else {
                 // removeWall();
                 Orientation currentOrientation = Orientation
-                        .calculateOrientation(
-                                this.getCurrentPositionAbsoluteX(),
-                                this.getCurrentPositionAbsoluteY(),
-                                this.getAlpha(), sizeTile());
+                        .calculateOrientation(getAngle());
                 int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
                 int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
@@ -404,10 +232,8 @@ public class SimulationPilot {
             addWall();
         } else {
             // removeWall();
-            Orientation currentOrientation = Orientation.calculateOrientation(
-                    this.getCurrentPositionAbsoluteX(),
-                    this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                    sizeTile());
+            Orientation currentOrientation = Orientation
+                    .calculateOrientation(getAngle());
             int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
                     + currentOrientation.getArrayToFindNeighbourRelative()[0];
             int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
@@ -430,11 +256,6 @@ public class SimulationPilot {
      */
 
     public boolean checkForObstruction() {
-        /* Orientation currentOrientation = */Orientation
-                .calculateOrientation(this.getCurrentPositionAbsoluteX(),
-                        this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                        sizeTile());
-
         int distance = getUltraSensorValue();
 
         if (distance < detectionDistanceUltrasonicSensorRobot) {
@@ -448,18 +269,14 @@ public class SimulationPilot {
         if (checkForObstruction())
             addWall();
         else {
-            Orientation currentOrientation = Orientation.calculateOrientation(
-                    this.getCurrentPositionAbsoluteX(),
-                    this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                    sizeTile());
+            Orientation currentOrientation = Orientation
+                    .calculateOrientation(getAngle());
             int xCoordinate;
             int yCoordinate;
             if (isRobotControllable()) {
-                xCoordinate = SilverSurferGUI.getStatusInfoBuffer()
-                        .getXCoordinateRelative()
+                xCoordinate = getCurrentPositionRelativeX()
                         + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = SilverSurferGUI.getStatusInfoBuffer()
-                        .getYCoordinateRelative()
+                yCoordinate = getCurrentPositionRelativeY()
                         + currentOrientation.getArrayToFindNeighbourRelative()[1];
             } else {
                 xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
@@ -475,9 +292,7 @@ public class SimulationPilot {
 
     public void addWall() {
         Orientation currentOrientation = Orientation
-                .calculateOrientation(this.getCurrentPositionAbsoluteX(),
-                        this.getCurrentPositionAbsoluteY(), this.getAlpha(),
-                        sizeTile());
+                .calculateOrientation(getAngle());
 
         getSimulationPanel().addWall(currentOrientation,
                 getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
@@ -505,8 +320,8 @@ public class SimulationPilot {
         // rotatedInTotal = rotatedInTotal + Math.abs(alpha);
         // System.out.println("rotatedInTotal : " + rotatedInTotal);
 
-        double alphaOriginal = this.getAlpha();
-        double alphaTemp = this.getAlpha();
+        double alphaOriginal = this.getAngle();
+        double alphaTemp = this.getAngle();
 
         int j = 1;
         if (alpha < 0)
@@ -538,7 +353,7 @@ public class SimulationPilot {
 
             getSimulationPanel().moveRobot(this.getCurrentPositionAbsoluteX(),
                     this.getCurrentPositionAbsoluteY(), alphaTemp);
-            this.setAlpha(alphaTemp);
+            this.setAngle(alphaTemp);
             SilverSurferGUI.getStatusInfoBuffer().setAngle(alphaTemp);
 
             // this.getSSG().updateStatus();
@@ -640,6 +455,7 @@ public class SimulationPilot {
      * True if the robot is on an edge and this edge is not a wall
      */
     public boolean onWhiteLine(double x, double y) {
+        // TOON deze methode override abstractpilot
         // System.out.println("w: " + (this.onEdge(x,y) && (this.getMapGraph()
         // == null ||
         // this.getMapGraph().getObstruction(Orientation.calculateOrientation(x,
@@ -647,8 +463,7 @@ public class SimulationPilot {
         return this.pointOnEdge(x, y)
                 && (this.getMapGraphLoaded() == null || this
                         .getMapGraphLoaded().getObstruction(
-                                Orientation.calculateOrientation(x, y,
-                                        this.getAlpha(), sizeTile())) != Obstruction.WALL);
+                                Orientation.calculateOrientation(getAngle())) != Obstruction.WALL);
 
     }
 
@@ -656,7 +471,7 @@ public class SimulationPilot {
      * True if the robot is not on an edge, but on a tile without a content.
      */
     public boolean onEmptyTile(double x, double y) {
-
+        // TOON deze methode override abstractpilot
         return (!this.pointOnEdge(x, y) && this.getMapGraphLoaded() == null)
                 || (!this.pointOnEdge(x, y) && this.getMapGraphLoaded()
                         .getContentCurrentTile() == null);
@@ -679,76 +494,6 @@ public class SimulationPilot {
         }
     }
 
-    // zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
-    // negatief
-    // maar doet normaal niet ter zake aangezien de coordinaten in het echte
-    // coordinatensysteem
-    // niet negatief kunnen zijn
-    public int setToMultipleOfTileSize(double a) {
-        return (int) (Math.floor(a / sizeTile()) * sizeTile());
-    }
-
-    /**
-     * Deze methode zet de coordinaten van het echte systeem om in de
-     * coordinaten van de matrix
-     */
-    public int[] setAbsoluteToRelative(double x, double y) {
-        double a = x - setToMultipleOfTileSize(startPositionAbsoluteX);
-        double b = y - setToMultipleOfTileSize(startPositionAbsoluteY);
-
-        int c;
-        int d;
-        c = (int) Math.floor(a / sizeTile());
-        d = (int) Math.floor(b / sizeTile());
-
-        int[] array = new int[2];
-        array[0] = getStartPositionRelativeX() + c;
-        array[1] = getStartPositionRelativeY() + d;
-
-        return array;
-    }
-
-    /**
-     * Deze methode wordt voor het moment nog nergens gebruikt dus ook niet echt
-     * veel getest kunnen fouten inzitten geeft het middelpunt van het vak weer
-     * da overeenkomt met de coordinaten van de matrix die je moet ingeven als
-     * argumenten
-     */
-    public double[] setRelativeToAbsolute(int x, int y) {
-        int a = x - getStartPositionRelativeX();
-        int b = y - getStartPositionRelativeY();
-        double c = a * 40;
-        double d = b * 40;
-        double[] array = new double[2];
-        array[0] = startPositionAbsoluteX + c;
-        array[1] = startPositionAbsoluteX + d;
-        return array;
-    }
-
-    /**
-     * zet dus de map terug op zijn juiste currenttilecoorinates berekend uit de
-     * xOld en yOld xOld en yOld mogen eig enkel de huidige positie
-     * voorstellen!!!!!!!!!!!!!! moeten hier ingegeven worden omdat bij de
-     * travelmethode je de currentabsoluteposition pas terug juist zet op het
-     * einde van de lus
-     */
-    public void setCurrentTileCoordinates(MapGraph map, double xOld, double yOld) {
-        int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(
-                relativePosition[0]);
-        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(
-                relativePosition[1]);
-    }
-
-    public void setCurrentTileCoordinatesRobot(double xOld, double yOld) {
-        int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        SilverSurferGUI.getStatusInfoBuffer().setXCoordinateRelative(
-                relativePosition[0]);
-        SilverSurferGUI.getStatusInfoBuffer().setYCoordinateRelative(
-                relativePosition[1]);
-    }
-
     public void clear() {
         getSimulationPanel().clearPath();
     }
@@ -768,7 +513,7 @@ public class SimulationPilot {
 
     public void updateArc(int distance) {
         getSimulationPanel().updateArc(getCurrentPositionAbsoluteX(),
-                getCurrentPositionAbsoluteY(), getAlpha(), distance);
+                getCurrentPositionAbsoluteY(), getAngle(), distance);
     }
 
     public void setRobotControllable(boolean isRealRobot) {
@@ -780,39 +525,29 @@ public class SimulationPilot {
      * value.
      */
     public int getLightSensorValue() {
-        if (!this.isRobotSimulated())
-            return SilverSurferGUI.getStatusInfoBuffer()
-                    .getLatestLightSensorInfo();
-        else {
-            // initialisation
-            Random random = new Random();
-            double mean = 0;
-            double standardDeviation = 1;
+        // initialisation
+        Random random = new Random();
+        double mean = 0;
+        double standardDeviation = 1;
+        double[] absLS = getLightSensorAbsolute();
 
-            // check on which sort of underground your are standing
-            // and adjust the mean and standardDeviation accordingly
-            if (onEmptyTile(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
-                mean = SimulationSensorData.getMEmptyPanelLS();
-                standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
-            } else if (onWhiteLine(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
-                mean = SimulationSensorData.getMWhiteLineLS();
-                standardDeviation = SimulationSensorData.getSDWhiteLineLS();
-            } else if (onBarcodeTile(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
-                int color = ((Barcode) this.getMapGraphLoaded()
-                        .getContentCurrentTile()).getColorValue(
-                        getLightsensorPositionX() % 40,
-                        getLightsensorPositionY() % 40);
-                mean = SimulationSensorData.getMBarcodeTileLS(color);
-                standardDeviation = SimulationSensorData
-                        .getSDBarcodeTileLS(color);
-            }
-            return (int) Math.round(mean
-                    + (random.nextGaussian() * standardDeviation));
-
+        // check on which sort of underground your are standing
+        // and adjust the mean and standardDeviation accordingly
+        if (onEmptyTile(absLS[0], absLS[1])) {
+            mean = SimulationSensorData.getMEmptyPanelLS();
+            standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
+        } else if (onWhiteLine(absLS[0], absLS[1])) {
+            mean = SimulationSensorData.getMWhiteLineLS();
+            standardDeviation = SimulationSensorData.getSDWhiteLineLS();
+        } else if (onBarcodeTile(absLS[0], absLS[1])) {
+            int color = ((Barcode) this.getMapGraphLoaded()
+                    .getContentCurrentTile()).getColorValue(absLS[0]
+                    % sizeTile(), absLS[1] % sizeTile());
+            mean = SimulationSensorData.getMBarcodeTileLS(color);
+            standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
         }
+        return (int) Math.round(mean
+                + (random.nextGaussian() * standardDeviation));
     }
 
     public int getUltraSensorValue() {
@@ -843,12 +578,12 @@ public class SimulationPilot {
     private double calculateDistanceToWall() {
         // current temporary position; to check whether there are walls in the
         // direction the robot is facing
-        double xTemp = this.getUltrasonicSensorPositionX();
-        double yTemp = this.getUltrasonicSensorPositionY();
+        double xTemp = getUltrasonicSensorAbsolute()[0];
+        double yTemp = getUltrasonicSensorAbsolute()[1];
         // keep the last temporary position, so you can compare with the current
         // temporary position
-        double xTempPrev = this.getUltrasonicSensorPositionX();
-        double yTempPrev = this.getUltrasonicSensorPositionY();
+        double xTempPrev = xTemp;
+        double yTempPrev = yTemp;
 
         // there is no map loaded, so the sensor will detect no walls en returns
         // the maximum value.
@@ -864,10 +599,10 @@ public class SimulationPilot {
                 xTempPrev = xTemp;
                 yTempPrev = yTemp;
 
-                xTemp = (double) (this.getUltrasonicSensorPositionX() + i
-                        * Math.cos(Math.toRadians(this.getAlpha())));
-                yTemp = (double) (this.getUltrasonicSensorPositionY() + i
-                        * Math.sin(Math.toRadians(this.getAlpha())));
+                xTemp = (double) (getUltrasonicSensorAbsolute()[0] + i
+                        * Math.cos(Math.toRadians(this.getAngle())));
+                yTemp = (double) (getUltrasonicSensorAbsolute()[1] + i
+                        * Math.sin(Math.toRadians(this.getAngle())));
                 i++;
             }
 
@@ -884,17 +619,18 @@ public class SimulationPilot {
                     xTempPrev = xTemp;
                     yTempPrev = yTemp;
 
-                    xTemp = (double) (this.getUltrasonicSensorPositionX() + i
-                            * Math.cos(Math.toRadians(this.getAlpha())));
-                    yTemp = (double) (this.getUltrasonicSensorPositionY() + i
-                            * Math.sin(Math.toRadians(this.getAlpha())));
+                    xTemp = (double) (getUltrasonicSensorAbsolute()[0] + i
+                            * Math.cos(Math.toRadians(this.getAngle())));
+                    yTemp = (double) (getUltrasonicSensorAbsolute()[1] + i
+                            * Math.sin(Math.toRadians(this.getAngle())));
                     i++;
                 }
             } else {
-                return Math.sqrt(Math.pow(
-                        xTemp - this.getUltrasonicSensorPositionX(), 2)
-                        + Math.pow(yTemp - this.getUltrasonicSensorPositionY(),
-                                2))
+                return Math
+                        .sqrt(Math.pow(
+                                xTemp - getUltrasonicSensorAbsolute()[0], 2)
+                                + Math.pow(yTemp
+                                        - getUltrasonicSensorAbsolute()[1], 2))
                         / scalingfactor();
             }
         }
@@ -904,20 +640,16 @@ public class SimulationPilot {
     }
 
     public void allignOnWhiteLine() {
-        if (isRobotControllable()) {
-            /* Orientation orientation = */Orientation.calculateOrientation(
-                    getCurrentPositionAbsoluteX(),
-                    getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
+        double[] absLS = getLightSensorAbsolute();
 
-            while (!pointOnEdge(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
+        if (isRobotControllable()) {
+            while (!pointOnEdge(absLS[0], absLS[1])) {
                 travel(1);
             }
 
             travel(5);
 
-            while (!pointOnEdge(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
+            while (!pointOnEdge(absLS[0], absLS[1])) {
                 rotate(-1);
             }
 
@@ -925,15 +657,15 @@ public class SimulationPilot {
 
             int i = 0;
 
-            while (!pointOnEdge(getLightsensorPositionX(),
-                    getLightsensorPositionY())) {
+            while (!pointOnEdge(absLS[0], absLS[1])) {
                 rotate(1);
                 i++;
             }
 
             rotate(-(90 + i) / 2);
-        } else
-            travel(16);
+        }/*
+          * Geen idee waarvoor dit diende? else travel(16);
+          */
     }
 
     // checkt deze afstand ook en doet hetzelfde (alleen als de afstand kleiner
@@ -962,8 +694,7 @@ public class SimulationPilot {
     }
 
     public Orientation getCurrentOrientation() {
-        return Orientation.calculateOrientation(getCurrentPositionAbsoluteX(),
-                getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
+        return Orientation.calculateOrientation(getAngle());
     }
 
     public double sizeTile() {
