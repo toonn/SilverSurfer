@@ -6,9 +6,11 @@ import lejos.nxt.Motor;
 public class MoveThread extends Thread {
 	
 	private boolean quit = false;
+	private int command = 0;
 
-	public MoveThread(String str) {
+	public MoveThread(String str, int command) {
 		super(str);
+		this.command = command;
 	}
 
 	@Override
@@ -18,8 +20,14 @@ public class MoveThread extends Thread {
 		} catch (Exception e) {
             System.out.println("Error in MoveThread.run()!");
 		}
-		Motor.A.forward();
-		Motor.B.forward();
+		if(command == 0) {
+			Motor.A.forward();
+			Motor.B.forward();
+		}
+		else if(command == 1) {
+			Motor.A.backward();
+			Motor.B.backward();
+		}
 		while(!quit);
         Motor.A.stop(true);
         Motor.B.stop();
