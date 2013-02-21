@@ -1,4 +1,4 @@
-package communication;
+package threads;
 
 import lejos.nxt.Motor;
 
@@ -18,15 +18,15 @@ public class MoveThread extends Thread {
 		try {
 			Thread.sleep(500);
 		} catch (Exception e) {
-			
+            System.out.println("Error in MoveThread.run()!");
 		}
-		if(command == 0) { //Move forward
+		if(command == 0) {
 			Motor.A.forward();
 			Motor.B.forward();
 		}
-		else { //Turn right
+		else if(command == 1) {
 			Motor.A.backward();
-			Motor.B.forward();
+			Motor.B.backward();
 		}
 		while(!quit);
         Motor.A.stop(true);
