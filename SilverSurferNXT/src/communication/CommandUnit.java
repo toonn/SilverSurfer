@@ -11,28 +11,31 @@ public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
 	private static final double ANGLE_COEF = 710; //Amount of degrees needed for a 360 degree turn.
-    private static int NORMAL_SPEED = 180;
+    private static int SPEED = 180;
+    
+    private double x = 220;
+    private double y = 220;
+    private double angle = 270; //Northside of the screen
+    
     private NXTConnection pcConnection;
     private DataInputStream dis;
     private DataOutputStream dos;
-    private SensorThread ST;
-	private BarcodeThread BT;
-    private boolean quit = false;
     private UltrasonicSensor ultrasonicSensor;
     private LightSensor lightSensor;
-    private boolean busy = false; //Boolean to show if robot is busy (turning, ...)
-    private boolean readBarcodes = true;
-    private boolean permaBarcodeStop = false;
-    private double x = 220;
-    private double y = 220;
-    private double angle = 270;
+    private SensorThread ST;
+	private BarcodeThread BT;
+	
+    private boolean quit = false; //Stop de program when this is true.
+    private boolean busy = false; //Boolean to show if robot is busy (turning, ...).
+    private boolean readBarcodes = true; //Only read barcodes when this is true.
+    private boolean permaBarcodeStop = false; //Do not read any barcode when this is true.
 
     public CommandUnit() {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
         lightSensor = new LightSensor(SensorPort.S2, false);
-        Motor.A.setSpeed(CommandUnit.NORMAL_SPEED);
-        Motor.B.setSpeed(CommandUnit.NORMAL_SPEED);
-        Motor.C.setSpeed(CommandUnit.NORMAL_SPEED);
+        Motor.A.setSpeed(CommandUnit.SPEED);
+        Motor.B.setSpeed(CommandUnit.SPEED);
+        Motor.C.setSpeed(45);
 
         waiting();
         System.out.println("Waiting...");
@@ -92,11 +95,11 @@ public class CommandUnit {
                 case (Command.CHECK_OBSTRUCTIONS_AND_SET_TILE):
                     CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
                 	break;
-                case (Command.STOP_READING_BARCODES):
-                    CU.readBarcodes = false;
-                	break;
                 case (Command.START_READING_BARCODES):
                     CU.readBarcodes = true;
+                	break;
+                case (Command.STOP_READING_BARCODES):
+                    CU.readBarcodes = false;
                 	break;
                 case (Command.PERMA_STOP_READING_BARCODES):
                     CU.permaBarcodeStop = true;
@@ -124,37 +127,8 @@ public class CommandUnit {
         CU.dos.close();
         CU.pcConnection.close();
     }
-    
-    private void waiting() {
-        Motor.A.stop(true);
-        Motor.B.stop();
-    }
 
-    public int getSpeed() {
-        if (NORMAL_SPEED == 360)
-            return 4;
-        else if (NORMAL_SPEED == 270)
-            return 3;
-        else if (NORMAL_SPEED == 180)
-            return 2;
-        else
-            return 1;
-    }
-
-    public void setSpeed(int speed) {
-        if (speed == 1)
-            NORMAL_SPEED = 90;
-        else if (speed == 2)
-            NORMAL_SPEED = 180;
-        else if (speed == 3)
-            NORMAL_SPEED = 270;
-        else
-            NORMAL_SPEED = 360;
-		Motor.A.setSpeed(NORMAL_SPEED);
-		Motor.B.setSpeed(NORMAL_SPEED);
-    }
-
-    public void sendStringToUnit(String info) {
+    private void sendStringToUnit(String info) {
         try {
             byte[] byteArray = info.getBytes();
             pcConnection.write(byteArray, byteArray.length);
@@ -163,7 +137,36 @@ public class CommandUnit {
         }
     }
     
-    public void updateCoordinates(double length, double angle) {
+    private void waiting() {
+        Motor.A.stop(true);
+        Motor.B.stop();
+    }
+
+    public int getSpeed() {
+        if (SPEED == 360)
+            return 4;
+        else if (SPEED == 270)
+            return 3;
+        else if (SPEED == 180)
+            return 2;
+        else
+            return 1;
+    }
+
+    public void setSpeed(int speed) {
+        if (speed == 1)
+            SPEED = 90;
+        else if (speed == 2)
+            SPEED = 180;
+        else if (speed == 3)
+            SPEED = 270;
+        else
+            SPEED = 360;
+		Motor.A.setSpeed(SPEED);
+		Motor.B.setSpeed(SPEED);
+    }
+    
+    private void updateCoordinates(double length, double angle) {
     	if(angle == 0) {
     		x = x + length*Math.cos(Math.toRadians(this.angle));
     		y = y - length*Math.sin(Math.toRadians(this.angle));
@@ -181,6 +184,22 @@ public class CommandUnit {
         sendStringToUnit("[LS] " + lightSensor.getLightValue());
         sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
         sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
+    }
+
+    private void turnAngle(int angle) {
+    	if (SPEED > 180) {
+    		Motor.A.setSpeed(180);
+    		Motor.B.setSpeed(180);
+    	}
+        Motor.A.rotate(-angle, true);
+        Motor.B.rotate(angle);
+		Motor.A.setSpeed(SPEED);
+		Motor.B.setSpeed(SPEED);
+    }
+    
+    private void moveForwardWithoutBarcode(int angle) {
+        Motor.A.rotate(angle, true);
+        Motor.B.rotate(angle);
     }
     
     private int moveForward(int angle) {
@@ -212,7 +231,7 @@ public class CommandUnit {
     	String result = "";
     	if(lightSensor.getLightValue() < 40) {
         	moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
-        	for(int i = 0; i<3; i++) {
+        	for(int i = 0; i < 6; i++) {
         		if(lightSensor.getLightValue() < 40) 
         			result = result + "0";
         		else
@@ -226,35 +245,19 @@ public class CommandUnit {
     	Byte byteResult = Byte.valueOf(result, 2);
     	return Integer.valueOf(byteResult.intValue());
     }
-    
-    private void moveForwardWithoutBarcode(int angle) {
-        Motor.A.rotate(angle, true);
-        Motor.B.rotate(angle);
-    }
-
-    private void turnAngle(int angle) {
-    	if (NORMAL_SPEED > 180) {
-    		Motor.A.setSpeed(180);
-    		Motor.B.setSpeed(180);
-    	}
-        Motor.A.rotate(-angle, true);
-        Motor.B.rotate(angle);
-		Motor.A.setSpeed(NORMAL_SPEED);
-		Motor.B.setSpeed(NORMAL_SPEED);
-    }
 
     private void alignOnWhiteLine() {
     	int treshold = 51;
     	int angle = 0;
         
-		MoveThread MT = new MoveThread("MT", 0);
+		MoveThread MT = new MoveThread("MT");
 		MT.start();
 		
 		for(int i = 0; i < 7; i++) {
 			try {
 				Thread.sleep(100);
 			} catch(Exception e) {
-				
+	        	System.out.println("Error in CommandUnit.alignOnWhiteLine()!");
 			}
 			while(lightSensor.getLightValue() > treshold || lightSensor.getLightValue() < 40);
 		}
@@ -265,7 +268,7 @@ public class CommandUnit {
 		try {
 			Thread.sleep(500);
 		} catch(Exception e) {
-			
+        	System.out.println("Error in CommandUnit.alignOnWhiteLine()!");
 		}
 		moveForwardWithoutBarcode((int)Math.round(3*LENGTH_COEF));
 
