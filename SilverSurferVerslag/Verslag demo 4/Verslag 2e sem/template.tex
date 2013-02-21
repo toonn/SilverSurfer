@@ -63,23 +63,30 @@ Nu is er voor gekozen om het voorwerp langs voor, met een strip van velcro, op t
 
 
 
-\subsection{\ldots}
-\ldots
-
-
 % == ALGORITMES == %
 \section{Algoritmes}
 
+Het witte lijn algortime van vorig semester wordt nog steeds behouden. De robot zal zich  dus nog steeds kunnen rechtzetten op witte lijnen.
 
 \subsection{Vinden voorwerp}
-\subsection{\ldots}
+
+Het algoritme voor het vinden van het voorwerp zal grotendeels hetzelfde zijn als het algoritme om een doolhof te doorzoeken. Om het doolhof te doorzoeken gebruiken we het verkenalgoritme, dit moet aangepast worden aan de nieuwe opgave. De mogelijke aanpassingen aan het verkenalgoritme zijn:
+\begin{itemize}
+\item Aanpassen dat de robot nu ook dead-ends gaat onderzoeken en dat deze prioriteit krijgen.
+\item Wanneer ergens mogelijke combinatie straight-deadend gesignaleerd, onmiddellijk naartoe gaan. Kans is groot dat daar het voorwerp ligt.\\
+\end{itemize}
+
+\subsection*{Algoritme om zo snel mogelijk naar de andere robot te gaan}
+Hierbij dachten we aan het kortste-pad-algoritme. Dit zal wel nog aangepast moeten worden aan zowel draaien als vooruit rijden (draaien was nog niet in rekening gebracht).\\ Er moet ook nog rekening gehouden worden als de andere robot zou wegrijden. De robot mag hierdoor niet in een loop terechtkomen. Er zou moeten gecommuniceerd worden wie naar wie toerijdt, of dat er naar een gezamenlijke tegel moet gereden worden. \\
+Als de andere robot zou wegrijden zou er een afstand kunnen bijgehouden worden die dan opnieuw berekent wordt als de afstand niet kleiner wordt.
 
 % == SOFTWARE == %
 \section{Software}
-
+\label{secc:softw}
 
 \subsection{RabbitMQ}
-\ldots
+\label{secc:RabbMQ}
+Via RabbitMG wordt de communicatie met de andere robots verzorgt. RabbitMQ werkt via queue's. .. en nog verdere info
 
 \subsection{GUI}
 
