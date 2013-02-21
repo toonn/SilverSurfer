@@ -16,5 +16,4 @@ public class Command {
 	public static final int START_READING_BARCODES = 10; //Starts checking for barcodes and reading them when found
 	public static final int STOP_READING_BARCODES = 11; //Stops checking for barcodes and reading them when found
 	public static final int PERMA_STOP_READING_BARCODES = 12; //Hard stop for reading barcodes
-	public static final int PICKUP_OBJECT = 13;
 }

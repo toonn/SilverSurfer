@@ -6,7 +6,6 @@ import threads.*;
 import java.io.*;
 
 import lejos.nxt.*;
-import lejos.nxt.addon.AngleSensor;
 import lejos.nxt.addon.IRSeekerV2;
 import lejos.nxt.comm.*;
 
@@ -25,9 +24,7 @@ public class CommandUnit {
     private DataOutputStream dos;
     private UltrasonicSensor ultrasonicSensor;
     private LightSensor lightSensor;
-    private TouchSensor touchSensor;
     private IRSeekerV2 infraredSensor;
-    private Shovel shovel;
     private SensorThread ST;
 	private BarcodeThread BT;
 	
@@ -39,13 +36,9 @@ public class CommandUnit {
     public CommandUnit() {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
         lightSensor = new LightSensor(SensorPort.S2, false);
-        touchSensor = new TouchSensor(SensorPort.S3);
-        infraredSensor = new IRSeekerV2(SensorPort.S4, IRSeekerV2.Mode.AC);
+        infraredSensor = new IRSeekerV2(SensorPort.S3, IRSeekerV2.Mode.AC);
         Motor.A.setSpeed(CommandUnit.SPEED);
         Motor.B.setSpeed(CommandUnit.SPEED);
-        Motor.C.setSpeed(45);        
-        shovel = new Shovel();
-        shovel.setCurrentShovelState(Shovel.State.UP);
 
         waiting();
         System.out.println("Waiting...");
@@ -113,9 +106,6 @@ public class CommandUnit {
                 	break;
                 case (Command.PERMA_STOP_READING_BARCODES):
                     CU.permaBarcodeStop = true;
-                	break;
-                case (Command.PICKUP_OBJECT):
-                    CU.pickUpObject();
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
@@ -195,7 +185,6 @@ public class CommandUnit {
     public void updateStatus() {
         sendStringToUnit("[US] " + ultrasonicSensor.getDistance());
         sendStringToUnit("[LS] " + lightSensor.getLightValue());
-        sendStringToUnit("[TS] " + touchSensor.isPressed());
         sendStringToUnit("[IS] " + infraredSensor.getSensorValue(3));
         sendStringToUnit("[LM] " + Motor.B.isMoving() + " " + Motor.B.getSpeed());
         sendStringToUnit("[RM] " + Motor.A.isMoving() + " " + Motor.A.getSpeed());
@@ -327,26 +316,5 @@ public class CommandUnit {
     		else 
         		turnAngle((int)ANGLE_COEF/4);
     	}
-    }
-    
-    private void pickUpObject() {
-    	turnAngle((int)ANGLE_COEF/2);
-        shovel.lower();
-        
-        MoveThread MT = new MoveThread("MT", 1);
-        MT.start();
-        
-        while(!touchSensor.isPressed());
-        
-        MT.setQuit(true);
-		try {
-			Thread.sleep(500);
-		} catch(Exception e) {
-        	System.out.println("Error in CommandUnit.pickUpObject()!");
-		}
-		
-        moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
-        
-        shovel.load();
     }
 }
