@@ -1,40 +1,6 @@
 package communication;
 
-import simulator.AbstractPilot;
-
 public class StatusInfoBuffer {
-
-    private int lightSensorInfo;
-    private int ultraSensorInfo;
-    private boolean leftMotorMoving;
-    private boolean rightMotorMoving;
-    private int leftMotorSpeed;
-    private int rightMotorSpeed;
-    private boolean busy;
-    private int barcode;
-    private double angle;
-    private double[] coordinatesAbsolute = new double[2];
-    private int xCoordinateRelative;
-    private int yCoordinateRelative;
-    private double startPositionAbsoluteX;
-    private double startPositionAbsoluteY;
-    private int startPositionRelativeX;
-    private int startPostitionRelativeY;
-
-    private Communicator communicator;
-
-    private boolean isBufferUsed = false; // Check if the buffer can be updated
-                                          // (can be updated when false).
-    private final int BUFFER_SIZE = 300; // Amount of datapoints kept by this
-                                         // buffer.
-
-    private LSInfoNode startLSInfo = new LSInfoNode();
-    private LSInfoNode endLSInfo = new LSInfoNode();
-    private USInfoNode startUSInfo = new USInfoNode();
-    private USInfoNode endUSInfo = new USInfoNode();
-
-    private int amtLSUpdated = 0;
-    private int amtUSUpdated = 0;
 
     /**
      * Used to make a linked-list stack of LS-information.
@@ -50,6 +16,104 @@ public class StatusInfoBuffer {
     public class USInfoNode {
         public int info;
         public USInfoNode next;
+    }
+
+    private int lightSensorInfo;
+    private int ultraSensorInfo;
+    private boolean leftMotorMoving;
+    private boolean rightMotorMoving;
+    private int leftMotorSpeed;
+    private int rightMotorSpeed;
+    private boolean busy;
+
+    private int barcode;
+    private Communicator communicator;
+
+    private boolean isBufferUsed = false; // Check if the buffer can be updated
+    // (can be updated when false).
+    private final int BUFFER_SIZE = 300; // Amount of datapoints kept by this
+                                         // buffer.
+    private LSInfoNode startLSInfo = new LSInfoNode();
+    private LSInfoNode endLSInfo = new LSInfoNode();
+
+    private USInfoNode startUSInfo = new USInfoNode();
+    private USInfoNode endUSInfo = new USInfoNode();
+
+    private int amtLSUpdated = 0;
+
+    private int amtUSUpdated = 0;
+
+    /**
+     * Add new info for the light Sensor.
+     */
+    public void addLightSensorInfo(final int lightSensorInfo) {
+        this.lightSensorInfo = lightSensorInfo;
+        // SSG.updateStatus();
+        if (!isBufferUsed) {
+            // Voeg toe aan buffer.
+            if (amtLSUpdated < BUFFER_SIZE) {
+                if (amtLSUpdated != 0) {
+                    final LSInfoNode temp = new LSInfoNode();
+                    temp.info = lightSensorInfo;
+                    temp.next = null;
+                    endLSInfo.next = temp;
+                    endLSInfo = temp;
+                } else {
+                    startLSInfo = new LSInfoNode();
+                    startLSInfo.info = lightSensorInfo;
+                    startLSInfo.next = null;
+                    endLSInfo = startLSInfo;
+                }
+            }
+            // Vewijder eerste element en voeg ��n toe.
+            else {
+                startLSInfo = startLSInfo.next;
+                final LSInfoNode temp = new LSInfoNode();
+                temp.info = lightSensorInfo;
+                temp.next = null;
+                endLSInfo.next = temp;
+                endLSInfo = temp;
+            }
+            amtLSUpdated++;
+
+        }
+    }
+
+    /**
+     * Add new info for the Ulstrasonic Sensor.
+     */
+    public void addUltraSensorInfo(final int ultraSensorInfo) {
+        this.ultraSensorInfo = ultraSensorInfo;
+
+        if (!isBufferUsed) {
+            // Voeg toe aan buffer.
+            if (amtUSUpdated < BUFFER_SIZE) {
+                if (amtUSUpdated != 0) {
+                    final USInfoNode temp = new USInfoNode();
+                    temp.info = ultraSensorInfo;
+                    temp.next = null;
+                    endUSInfo.next = temp;
+                    endUSInfo = temp;
+                } else {
+                    startUSInfo = new USInfoNode();
+                    startUSInfo.info = ultraSensorInfo;
+                    startUSInfo.next = null;
+                    endUSInfo = startUSInfo;
+                }
+            }
+            // Vewijder eerste element en voeg ��n toe.
+            else {
+                startUSInfo = startUSInfo.next;
+                final USInfoNode temp = new USInfoNode();
+                temp.info = ultraSensorInfo;
+                temp.next = null;
+                endUSInfo.next = temp;
+                endUSInfo = temp;
+            }
+            amtUSUpdated++;
+        }
+        // SSG.updateStatus();
+
     }
 
     /**
@@ -69,47 +133,23 @@ public class StatusInfoBuffer {
 
     }
 
+    public int getBarcode() {
+        return barcode;
+    }
+
+    public boolean getBusy() {
+        return busy;
+    }
+
+    public Communicator getCommunicator() {
+        return communicator;
+    }
+
     /**
      * Returns the latest info available for the Light Sensor
      */
     public int getLatestLightSensorInfo() {
         return lightSensorInfo;
-    }
-
-    /**
-     * Add new info for the light Sensor.
-     */
-    public void addLightSensorInfo(int lightSensorInfo) {
-        this.lightSensorInfo = lightSensorInfo;
-        // SSG.updateStatus();
-        if (!isBufferUsed) {
-            // Voeg toe aan buffer.
-            if (amtLSUpdated < BUFFER_SIZE) {
-                if (amtLSUpdated != 0) {
-                    LSInfoNode temp = new LSInfoNode();
-                    temp.info = lightSensorInfo;
-                    temp.next = null;
-                    endLSInfo.next = temp;
-                    endLSInfo = temp;
-                } else {
-                    startLSInfo = new LSInfoNode();
-                    startLSInfo.info = lightSensorInfo;
-                    startLSInfo.next = null;
-                    endLSInfo = startLSInfo;
-                }
-            }
-            // Vewijder eerste element en voeg ��n toe.
-            else {
-                startLSInfo = startLSInfo.next;
-                LSInfoNode temp = new LSInfoNode();
-                temp.info = lightSensorInfo;
-                temp.next = null;
-                endLSInfo.next = temp;
-                endLSInfo = temp;
-            }
-            amtLSUpdated++;
-
-        }
     }
 
     /**
@@ -119,77 +159,20 @@ public class StatusInfoBuffer {
         return ultraSensorInfo;
     }
 
-    /**
-     * Add new info for the Ulstrasonic Sensor.
-     */
-    public void addUltraSensorInfo(int ultraSensorInfo) {
-        this.ultraSensorInfo = ultraSensorInfo;
-
-        if (!isBufferUsed) {
-            // Voeg toe aan buffer.
-            if (amtUSUpdated < BUFFER_SIZE) {
-                if (amtUSUpdated != 0) {
-                    USInfoNode temp = new USInfoNode();
-                    temp.info = ultraSensorInfo;
-                    temp.next = null;
-                    endUSInfo.next = temp;
-                    endUSInfo = temp;
-                } else {
-                    startUSInfo = new USInfoNode();
-                    startUSInfo.info = ultraSensorInfo;
-                    startUSInfo.next = null;
-                    endUSInfo = startUSInfo;
-                }
-            }
-            // Vewijder eerste element en voeg ��n toe.
-            else {
-                startUSInfo = startUSInfo.next;
-                USInfoNode temp = new USInfoNode();
-                temp.info = ultraSensorInfo;
-                temp.next = null;
-                endUSInfo.next = temp;
-                endUSInfo = temp;
-            }
-            amtUSUpdated++;
-        }
-        // SSG.updateStatus();
-
-    }
-
     public boolean getLeftMotorMoving() {
         return leftMotorMoving;
-    }
-
-    public void setLeftMotorMoving(boolean leftMotorMoving) {
-        this.leftMotorMoving = leftMotorMoving;
-        // SSG.updateStatus();
-    }
-
-    public boolean getRightMotorMoving() {
-        return rightMotorMoving;
-    }
-
-    public void setRightMotorMoving(boolean rightMotorMoving) {
-        this.rightMotorMoving = rightMotorMoving;
-        // SSG.updateStatus();
     }
 
     public int getLeftMotorSpeed() {
         return leftMotorSpeed;
     }
 
-    public void setLeftMotorSpeed(int leftMotorSpeed) {
-        this.leftMotorSpeed = leftMotorSpeed;
-        // SSG.updateStatus();
+    public boolean getRightMotorMoving() {
+        return rightMotorMoving;
     }
 
     public int getRightMotorSpeed() {
         return rightMotorSpeed;
-    }
-
-    public void setRightMotorSpeed(int rightMotorSpeed) {
-        this.rightMotorSpeed = rightMotorSpeed;
-        // SSG.updateStatus();
     }
 
     /**
@@ -206,27 +189,7 @@ public class StatusInfoBuffer {
         return startUSInfo;
     }
 
-    public boolean getBusy() {
-        return busy;
-    }
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-        // SSG.updateStatus();
-    }
-
-    public int getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(int barcode) {
-        communicator.getPilot().setBarcode(barcode);
-
-        this.barcode = barcode;
-        communicator.setExecutingBarcodes(true);
-        BarcodeExecuterThread BET = new BarcodeExecuterThread("BET",
-                communicator, this.barcode);
-        BET.start();
+    public void resetBuffer() {
     }
 
     //
@@ -234,8 +197,27 @@ public class StatusInfoBuffer {
     // return angle;
     // }
     //
-    public void setAngle(double angle) {
+    public void setAngle(final double angle) {
         communicator.getPilot().setAngle(angle);
+    }
+
+    public void setBarcode(final int barcode) {
+        communicator.getPilot().setBarcode(barcode);
+
+        this.barcode = barcode;
+        communicator.setExecutingBarcodes(true);
+        final BarcodeExecuterThread BET = new BarcodeExecuterThread("BET",
+                communicator, this.barcode);
+        BET.start();
+    }
+
+    public void setBusy(final boolean busy) {
+        this.busy = busy;
+        // SSG.updateStatus();
+    }
+
+    public void setCommunicator(final Communicator communicator) {
+        this.communicator = communicator;
     }
 
     //
@@ -275,9 +257,14 @@ public class StatusInfoBuffer {
     // return coordinatesAbsolute;
     // }
     //
-    public void setCoordinatesAbsolute(double[] coordinates) {
+    public void setCoordinatesAbsolute(final double[] coordinates) {
         communicator.getPilot().setCurrentPositionAbsoluteX(coordinates[0]);
         communicator.getPilot().setCurrentPositionAbsoluteY(coordinates[1]);
+    }
+
+    public void setLeftMotorMoving(final boolean leftMotorMoving) {
+        this.leftMotorMoving = leftMotorMoving;
+        // SSG.updateStatus();
     }
 
     //
@@ -314,17 +301,18 @@ public class StatusInfoBuffer {
     // return (int) (Math.floor(a / 40) * 40);
     // }
 
-    public void resetBuffer() {
-        xCoordinateRelative = 0;
-        yCoordinateRelative = 0;
-        angle = 0;
+    public void setLeftMotorSpeed(final int leftMotorSpeed) {
+        this.leftMotorSpeed = leftMotorSpeed;
+        // SSG.updateStatus();
     }
 
-    public Communicator getCommunicator() {
-        return communicator;
+    public void setRightMotorMoving(final boolean rightMotorMoving) {
+        this.rightMotorMoving = rightMotorMoving;
+        // SSG.updateStatus();
     }
 
-    public void setCommunicator(Communicator communicator) {
-        this.communicator = communicator;
+    public void setRightMotorSpeed(final int rightMotorSpeed) {
+        this.rightMotorSpeed = rightMotorSpeed;
+        // SSG.updateStatus();
     }
 }

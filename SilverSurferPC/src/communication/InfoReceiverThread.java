@@ -1,20 +1,29 @@
 package communication;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 public class InfoReceiverThread extends Thread {
 
     private static DataInputStream dis;
     private static DataOutputStream dos;
-    private StatusInfoBuffer statusInfoBuffer;
+    private final StatusInfoBuffer statusInfoBuffer;
     private boolean quit = false;
-    private double[] coordinates = new double[2];
+    private final double[] coordinates = new double[2];
 
-    public InfoReceiverThread(StatusInfoBuffer statusInfoBuffer,
-            DataInputStream dis, DataOutputStream dos) {
+    public InfoReceiverThread(final StatusInfoBuffer statusInfoBuffer,
+            final DataInputStream dis, final DataOutputStream dos) {
         this.statusInfoBuffer = statusInfoBuffer;
         InfoReceiverThread.dis = dis;
         InfoReceiverThread.dos = dos;
+    }
+
+    public DataInputStream getDis() {
+        return dis;
+    }
+
+    public DataOutputStream getDos() {
+        return dos;
     }
 
     @Override
@@ -25,14 +34,14 @@ public class InfoReceiverThread extends Thread {
             try {
                 b = new byte[500];
                 dis.read(b);
-                String a = new String(b);
-                if (a.startsWith("[LS]"))
+                final String a = new String(b);
+                if (a.startsWith("[LS]")) {
                     statusInfoBuffer.addLightSensorInfo(Integer.parseInt(a
                             .substring(5).trim()));
-                else if (a.startsWith("[US]"))
+                } else if (a.startsWith("[US]")) {
                     statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a
                             .substring(5).trim()));
-                else if (a.startsWith("[LM]")) {
+                } else if (a.startsWith("[LM]")) {
                     if (a.substring(5).startsWith("true")) {
                         statusInfoBuffer.setLeftMotorMoving(true);
                         statusInfoBuffer.setLeftMotorSpeed(Integer.parseInt(a
@@ -56,39 +65,31 @@ public class InfoReceiverThread extends Thread {
                     statusInfoBuffer.getCommunicator().setBusy(false);
                     statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4)
                             .trim()));
-                } else if (a.startsWith("[X]"))
+                } else if (a.startsWith("[X]")) {
                     coordinates[0] = Double.valueOf(a.substring(4).trim());
-                else if (a.startsWith("[Y]")) {
+                } else if (a.startsWith("[Y]")) {
                     coordinates[1] = Double.valueOf(a.substring(4).trim());
                     statusInfoBuffer.setCoordinatesAbsolute(coordinates);
-                } else if (a.startsWith("[ANG]"))
+                } else if (a.startsWith("[ANG]")) {
                     statusInfoBuffer.setAngle(Double.valueOf(a.substring(6)
                             .trim()));
-                else if (a.startsWith("[BC]"))
+                } else if (a.startsWith("[BC]")) {
                     statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5)
                             .trim()));
-                else if (a.startsWith("[CH]")) {
+                } else if (a.startsWith("[CH]")) {
                     statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a
                             .substring(5).trim()));
                     statusInfoBuffer.getCommunicator().getPilot()
                             .checkForObstructionAndSetTile();
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 System.out.println("Error in InfoReceiverThread.run()!");
                 e.printStackTrace();
             }
         }
     }
 
-    public DataInputStream getDis() {
-        return dis;
-    }
-
-    public DataOutputStream getDos() {
-        return dos;
-    }
-
-    public void setQuit(boolean quit) {
+    public void setQuit(final boolean quit) {
         this.quit = quit;
     }
 }

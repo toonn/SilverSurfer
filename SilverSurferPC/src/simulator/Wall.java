@@ -2,20 +2,9 @@ package simulator;
 
 import java.awt.Rectangle;
 
-import mapping.Orientation;
-
 public class Wall extends Rectangle {
 
-    private State state;
-    /**
-     * dit is de x positie van de linkerbovenhoek van de rechthoek
-     */
-    private double xPosition;
-    /**
-     * dit is de y positie van de linkerbovenhoek van de rechthoek
-     */
-    private double yPosition;
-
+    private final State state;
     /**
      * als ge deze standaardbreedte wilt veranderen moet je in de methode
      * hieronder de -1 in xposition-1 en yposition-1 ook aanpassen! ge hebt hier
@@ -26,31 +15,32 @@ public class Wall extends Rectangle {
     private static int standardWidth = 3;
     private static int standardLength = 40;
 
-    public Wall(State state, double xPosition, double yPosition, double scalingfactor) {
+    public static int getStandardWidth() {
+        return standardWidth;
+    }
+
+    public Wall(final State state, final double xPosition,
+            final double yPosition, final double scalingfactor) {
         super(standardWidth, standardLength);
         this.state = state;
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
-        double x;
-        double y;
-        if (state == State.HORIZONTAL)
-            setSize((int) (standardLength * scalingfactor), (int) (standardWidth * scalingfactor));
-        else
-        	setSize((int) (standardWidth * scalingfactor), (int) (standardLength * scalingfactor));
+        if (state == State.HORIZONTAL) {
+            setSize((int) (standardLength * scalingfactor),
+                    (int) (standardWidth * scalingfactor));
+        } else {
+            setSize((int) (standardWidth * scalingfactor),
+                    (int) (standardLength * scalingfactor));
+        }
         setLocation((int) xPosition, (int) yPosition);
     }
-    
-    public Wall(State state, double newXCoordinate, double newYCoordinate, int newWidth, int newHeight){
-    	setLocation((int) newXCoordinate, (int) newYCoordinate);
-    	setSize(newWidth, newHeight);
-    	this.state = state;
+
+    public Wall(final State state, final double newXCoordinate,
+            final double newYCoordinate, final int newWidth, final int newHeight) {
+        setLocation((int) newXCoordinate, (int) newYCoordinate);
+        setSize(newWidth, newHeight);
+        this.state = state;
     }
 
     public State getState() {
         return state;
-    }
-    
-    public static int getStandardWidth(){
-    	return standardWidth;
     }
 }
