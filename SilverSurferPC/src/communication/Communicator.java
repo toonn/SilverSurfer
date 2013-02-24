@@ -1,22 +1,25 @@
 package communication;
 
-import commands.Command;
-import simulator.BarcodeThread;
-import simulator.SimulationPilot;
-import mapping.*;
-import mazeAlgorithm.MazeExplorer;
-
 import gui.SilverSurferGUI;
 
-import java.awt.geom.Rectangle2D;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-import lejos.nxt.Motor;
-import lejos.pc.comm.*;
+import lejos.pc.comm.NXTComm;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
+import mapping.ExtMath;
+import mapping.Orientation;
+import mazeAlgorithm.MazeExplorer;
+import simulator.BarcodeThread;
+import simulator.pilot.AbstractPilot;
+
+import commands.Command;
 
 public class Communicator {
     private StatusInfoBuffer statusInfoBuffer;
-    private SimulationPilot simulationPilot;
+    private final AbstractPilot pilot;
     private boolean robotConnected = false;
     private static DataInputStream dis;
     private static DataOutputStream dos;
@@ -34,44 +37,14 @@ public class Communicator {
     private boolean executingBarcode = false;
     private BarcodeThread BT;
 
-    public Communicator(StatusInfoBuffer statusInfoBuffer,
-            SimulationPilot simulationPilot) {
-        this.statusInfoBuffer = statusInfoBuffer;
-        this.simulationPilot = simulationPilot;
+    public Communicator(final AbstractPilot simulationPilot,
+            final StatusInfoBuffer statusInfoBuffer) {
+        pilot = simulationPilot;
         setSpeed(2);
     }
 
-    public StatusInfoBuffer getStatusInfoBuffer() {
-        return statusInfoBuffer;
-    }
-
-    public SimulationPilot getSimulationPilot() {
-        return simulationPilot;
-    }
-
-    public boolean getRobotConnected() {
-        return robotConnected;
-    }
-
-    public void setRobotConnected(boolean robotConnected) throws Exception {
-        if (robotConnected)
-            openRobotConnection();
-        else
-            closeRobotConnection();
-        this.robotConnected = robotConnected;
-        setSpeed(2);
-    }
-
-    public void openRobotConnection() throws Exception {
-        connection = new NXTConnector();
-        connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH,
-                NXTComm.PACKET);
-        dis = connection.getDataIn();
-        dos = connection.getDataOut();
-        if (dis == null || dos == null)
-            throw new IOException();
-        IRT = new InfoReceiverThread(statusInfoBuffer, dis, dos);
-        IRT.start();
+    public void clear() {
+        pilot.clear();
     }
 
     public void closeRobotConnection() throws Exception {
@@ -83,99 +56,67 @@ public class Communicator {
         connection.close();
     }
 
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
-
-    public void sendCommand(int command) {
-        try {
-            if (robotConnected) {
-                busy = true;
-                dos.writeInt(command);
-                dos.flush();
-            }
-            if (command == Command.SLOW_SPEED)
-                simulationPilot.setSpeed(1);
-            else if (command == Command.NORMAL_SPEED)
-                simulationPilot.setSpeed(2);
-            else if (command == Command.FAST_SPEED)
-                simulationPilot.setSpeed(3);
-            else if (command == Command.VERY_FAST_SPEED)
-                simulationPilot.setSpeed(4);
-            else if (command == Command.ALIGN_PERPENDICULAR)
-                simulationPilot.allignOnWhiteLine();
-            else if (command == Command.ALIGN_WALL)
-                simulationPilot.allignOnWalls();
-            // else if (command == Command.LOOK_AROUND)
-            // simulationPilot.checkForObstructions();
-            else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE
-                    && !robotConnected)
-                simulationPilot.checkForObstructionAndSetTile();
-            else if (command == Command.STOP_READING_BARCODES)
-                this.readBarcodes = false;
-            else if (command == Command.START_READING_BARCODES)
-                this.readBarcodes = true;
-            else if (command == Command.PERMA_STOP_READING_BARCODES)
-                this.permaBarcodeStop = true;
-            else if (command % 100 == Command.AUTOMATIC_MOVE_FORWARD) {
-                if (!getRobotConnected()) {
-                    try {
-                        if (readBarcodes && !permaBarcodeStop) {
-                            BT = new BarcodeThread("BT");
-                            BT.start();
-                        }
-                        int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
-                        simulationPilot.travel(amount);
-                        if (readBarcodes && !permaBarcodeStop) {
-                            boolean found = BT.getFound();
-                            BT.setQuit(true);
-                            if (found)
-                                readBarcode();
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Error in Communicator.sendCommand("
-                                + command + ")!");
-                    }
-                } else {
-                    int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
-                    simulationPilot.travel(amount);
-                }
-            } else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
-                double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
-                while (amount-- > 0)
-                    simulationPilot.rotate(1);
-            } else if (command % 100 == -(100 - Command.AUTOMATIC_TURN_ANGLE)) {
-                double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
-                while (amount++ < 0)
-                    simulationPilot.rotate(-1);
-            }
-            if (robotConnected)
-                while (busy)
-                    Thread.sleep(100);
-        } catch (Exception e) {
-            System.out.println("Error in Communicator.sendCommand(" + command
-                    + ")!");
+    /**
+     * Gets the amount of angles the arrow should turn in one event to be at par
+     * with the robot.
+     */
+    public double getAngularSpeed() {
+        switch (getSpeed()) {
+        case 1:
+            return 1.82;
+        case 2:
+            return 2.74;
+        case 3:
+            return 2.77;
+        case 4:
+            return 1.82;
         }
+        return 2.74;
     }
 
-    private void readBarcode() {
-        int value = ((Barcode) simulationPilot.getMapGraphLoaded()
-                .getCurrentTile().getContent()).getValue();
-        SilverSurferGUI.getStatusInfoBuffer().setBarcode(value);
+    public String getConsoleTag() {
+        if (robotConnected) {
+            return "[ROBOT]";
+        }
+        return "[SIMULATOR]";
     }
 
-    public void setExplorer(MazeExplorer explorer) {
-        this.explorer = explorer;
+    public boolean getExecutingBarcodes() {
+        return executingBarcode;
     }
 
     public MazeExplorer getExplorer() {
         return explorer;
     }
 
-    public void goToNextTile(Orientation orientation) throws IOException {
-        double currentAngle = getStatusInfoBuffer().getAngle();
-        int angleToRotate = (int) ExtMath
-                .getSmallestAngle((int) ((double) orientation.getRightAngle() - currentAngle));
+    public AbstractPilot getPilot() {
+        return pilot;
+    }
+
+    public boolean getRobotConnected() {
+        return robotConnected;
+    }
+
+    public int getSpeed() {
+        return pilot.getSpeed();
+    }
+
+    public StatusInfoBuffer getStatusInfoBuffer() {
+        return statusInfoBuffer;
+    }
+
+    public int getTilesBeforeAllign() {
+        return tilesBeforeAllign;
+    }
+
+    private int getTilesRidden() {
+        return tilesRidden;
+    }
+
+    public void goToNextTile(final Orientation orientation) throws IOException {
+        final double currentAngle = pilot.getAngle();
+        final int angleToRotate = (int) ExtMath
+                .getSmallestAngle((int) (orientation.getRightAngle() - currentAngle));
         sendCommand(angleToRotate * 100 + Command.AUTOMATIC_TURN_ANGLE);
 
         if (mustAllign) {
@@ -184,15 +125,18 @@ public class Communicator {
                 sendCommand(Command.ALIGN_PERPENDICULAR);
                 sendCommand(24 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
                 setTilesRidden(0);
-            } else
+            } else {
                 sendCommand(40 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
-        } else
+            }
+        } else {
             sendCommand(40 * 100 + Command.AUTOMATIC_MOVE_FORWARD);
+        }
 
     }
 
-    public void moveTurn(int lengthInCM, int anglesInDegrees, int amtOfAngles) {
-        int length = lengthInCM * 100 + Command.AUTOMATIC_MOVE_FORWARD;
+    public void moveTurn(final int lengthInCM, final int anglesInDegrees,
+            final int amtOfAngles) {
+        final int length = lengthInCM * 100 + Command.AUTOMATIC_MOVE_FORWARD;
         int angles;
         if (amtOfAngles == 0) {
             angles = anglesInDegrees * 100 + Command.AUTOMATIC_TURN_ANGLE;
@@ -201,84 +145,155 @@ public class Communicator {
         } else {
             angles = (int) Math.round(360.0 / amtOfAngles) * 100
                     + Command.AUTOMATIC_TURN_ANGLE;
-            if (amtOfAngles == 1)
+            if (amtOfAngles == 1) {
                 sendCommand(length);
-            else
+            } else {
                 for (int i = 0; i < amtOfAngles; i++) {
                     sendCommand(length);
                     sendCommand(angles);
                 }
+            }
         }
     }
 
-    public int getSpeed() {
-        return simulationPilot.getSpeed();
-    }
-
-    public void setSpeed(int speed) {
-        if (speed == 1)
-            sendCommand(Command.SLOW_SPEED);
-        else if (speed == 2)
-            sendCommand(Command.NORMAL_SPEED);
-        else if (speed == 3)
-            sendCommand(Command.FAST_SPEED);
-        else
-            sendCommand(Command.VERY_FAST_SPEED);
-    }
-
-    public String getConsoleTag() {
-        if (robotConnected)
-            return "[ROBOT]";
-        return "[SIMULATOR]";
-    }
-
-    public void clear() {
-        simulationPilot.clear();
-    }
-
-    /**
-     * Gets the amount of angles the arrow should turn in one event to be at par
-     * with the robot.
-     */
-    public double getAngularSpeed() {
-        switch (getSpeed()) {
-        case 1:
-            return (double) 1.82;
-        case 2:
-            return (double) 2.74;
-        case 3:
-            return (double) 2.77;
-        case 4:
-            return (double) 1.82;
-        }
-        return (double) 2.74;
-    }
-
-    public int getTilesBeforeAllign() {
-        return tilesBeforeAllign;
-    }
-
-    public void setTilesBeforeAllign(int tilesBeforeAllign) {
-        this.tilesBeforeAllign = tilesBeforeAllign;
-    }
-
-    private int getTilesRidden() {
-        return tilesRidden;
-    }
-
-    private void setTilesRidden(int tilesRidden) {
-        this.tilesRidden = tilesRidden;
-    }
-
-    public void mustAllign(boolean mustAllign) {
+    public void mustAllign(final boolean mustAllign) {
         this.mustAllign = mustAllign;
     }
 
-    public void setExecutingBarcodes(boolean executing) {
-        this.executingBarcode = executing;
+    public void openRobotConnection() throws Exception {
+        connection = new NXTConnector();
+        connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH,
+                NXTComm.PACKET);
+        dis = connection.getDataIn();
+        dos = connection.getDataOut();
+        if (dis == null || dos == null) {
+            throw new IOException();
+        }
+        IRT = new InfoReceiverThread(statusInfoBuffer, dis, dos);
+        IRT.start();
     }
 
-    public boolean getExecutingBarcodes() {
-        return executingBarcode;
+    private void readBarcode() {
+        final int value = pilot.getMapGraphLoaded().getCurrentTile()
+                .getContent().getValue();
+        SilverSurferGUI.getStatusInfoBuffer().setBarcode(value);
     }
+
+    public void sendCommand(final int command) {
+        try {
+            if (robotConnected) {
+                busy = true;
+                dos.writeInt(command);
+                dos.flush();
+            }
+            if (command == Command.SLOW_SPEED) {
+                pilot.setSpeed(1);
+            } else if (command == Command.NORMAL_SPEED) {
+                pilot.setSpeed(2);
+            } else if (command == Command.FAST_SPEED) {
+                pilot.setSpeed(3);
+            } else if (command == Command.VERY_FAST_SPEED) {
+                pilot.setSpeed(4);
+            } else if (command == Command.ALIGN_PERPENDICULAR) {
+                pilot.allignOnWhiteLine();
+            } else if (command == Command.ALIGN_WALL) {
+                pilot.allignOnWalls();
+            } else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE
+                    && !robotConnected) {
+                pilot.checkForObstructionAndSetTile();
+            } else if (command == Command.STOP_READING_BARCODES) {
+                readBarcodes = false;
+            } else if (command == Command.START_READING_BARCODES) {
+                readBarcodes = true;
+            } else if (command == Command.PERMA_STOP_READING_BARCODES) {
+                permaBarcodeStop = true;
+            } else if (command % 100 == Command.AUTOMATIC_MOVE_FORWARD) {
+                if (!getRobotConnected()) {
+                    try {
+                        if (readBarcodes && !permaBarcodeStop) {
+                            BT = new BarcodeThread("BT");
+                            BT.start();
+                        }
+                        final int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
+                        pilot.travel(amount);
+                        if (readBarcodes && !permaBarcodeStop) {
+                            final boolean found = BT.getFound();
+                            BT.setQuit(true);
+                            if (found) {
+                                readBarcode();
+                            }
+                        }
+                    } catch (final Exception e) {
+                        System.out.println("Error in Communicator.sendCommand("
+                                + command + ")!");
+                    }
+                } else {
+                    final int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;
+                    pilot.travel(amount);
+                }
+            } else if (command % 100 == Command.AUTOMATIC_TURN_ANGLE) {
+                double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
+                while (amount-- > 0) {
+                    pilot.rotate(1);
+                }
+            } else if (command % 100 == -(100 - Command.AUTOMATIC_TURN_ANGLE)) {
+                double amount = (double) (command - Command.AUTOMATIC_TURN_ANGLE) / 100;
+                while (amount++ < 0) {
+                    pilot.rotate(-1);
+                }
+            }
+            if (robotConnected) {
+                while (busy) {
+                    Thread.sleep(100);
+                }
+            }
+        } catch (final Exception e) {
+            System.out.println("Error in Communicator.sendCommand(" + command
+                    + ")!");
+        }
+    }
+
+    public void setBusy(final boolean busy) {
+        this.busy = busy;
+    }
+
+    public void setExecutingBarcodes(final boolean executing) {
+        executingBarcode = executing;
+    }
+
+    public void setExplorer(final MazeExplorer explorer) {
+        this.explorer = explorer;
+    }
+
+    public void setRobotConnected(final boolean robotConnected)
+            throws Exception {
+        if (robotConnected) {
+            openRobotConnection();
+        } else {
+            closeRobotConnection();
+        }
+        this.robotConnected = robotConnected;
+        setSpeed(2);
+    }
+
+    public void setSpeed(final int speed) {
+        if (speed == 1) {
+            sendCommand(Command.SLOW_SPEED);
+        } else if (speed == 2) {
+            sendCommand(Command.NORMAL_SPEED);
+        } else if (speed == 3) {
+            sendCommand(Command.FAST_SPEED);
+        } else {
+            sendCommand(Command.VERY_FAST_SPEED);
+        }
+    }
+
+    public void setTilesBeforeAllign(final int tilesBeforeAllign) {
+        this.tilesBeforeAllign = tilesBeforeAllign;
+    }
+
+    private void setTilesRidden(final int tilesRidden) {
+        this.tilesRidden = tilesRidden;
+    }
+
 }

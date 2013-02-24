@@ -1,14 +1,19 @@
 package gui;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.*;
-
-import javax.swing.*;
-
+import java.awt.geom.Line2D;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class SensorGraph extends JPanel {
     private final int numberOfValuesToPlotLS = 100;
@@ -22,7 +27,23 @@ public class SensorGraph extends JPanel {
     private final SilverSurferGUI gui;
     private final int updateValuesPeriodInms = 100;
 
-    public SensorGraph(SilverSurferGUI gui) {
+    ActionListener repaintSensorGraph = new ActionListener() {
+
+        @Override
+        public void actionPerformed(final ActionEvent arg0) {
+            repaint();
+        }
+    };
+
+    ActionListener updateTimerAction = new ActionListener() {
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            gui.updateStatus();
+        }
+    };
+
+    public SensorGraph(final SilverSurferGUI gui) {
         this.gui = gui;
         new Timer(updateValuesPeriodInms, updateTimerAction).start();
 
@@ -35,29 +56,36 @@ public class SensorGraph extends JPanel {
         new Timer(repaintPeriodInms, repaintSensorGraph).start();
     }
 
+    public void addSensorValues(final int USValue, final int LSValue) {
+        LS.poll();
+        LS.offer(LSValue);
+        US.poll();
+        US.offer(USValue);
+    }
+
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
+        final Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int w = getWidth();
-        int h = getHeight();
+        final int w = getWidth();
+        final int h = getHeight();
 
-        int graphWidth = w;
-        int graphHeight = h + 10;
+        final int graphWidth = w;
+        final int graphHeight = h + 10;
 
-        int wLS = graphWidth / 2;
-        int wUS = graphWidth;
+        final int wLS = graphWidth / 2;
+        final int wUS = graphWidth;
 
-        int LSWhite = 54;
-        int LSBlack = 34;
-        int LSMax = 57;
-        int LSMin = 31;
-        int LSScale = LSMax - LSMin;
-        int USMax = 150;
-        int USWall = 28;
+        final int LSWhite = 54;
+        final int LSBlack = 34;
+        final int LSMax = 57;
+        final int LSMin = 31;
+        final int LSScale = LSMax - LSMin;
+        final int USMax = 150;
+        final int USWall = 28;
 
         // Labels on the graph
         g2.setColor(Color.gray);
@@ -103,18 +131,19 @@ public class SensorGraph extends JPanel {
         }
 
         // Sensor values
-        int lineThickness = 3; // in pixels
+        final int lineThickness = 3; // in pixels
         g2.setStroke(new BasicStroke(lineThickness));
 
         int LSIndex = 0;
         int LSValOld = -1;
         int LSValNew = -1;
-        for (int LSValue : LS) {
+        for (final int LSValue : LS) {
             LSValOld = LSValNew;
             LSValNew = LSValue;
 
-            if (LSValOld == -1)
+            if (LSValOld == -1) {
                 continue;
+            }
 
             g2.setColor(Color.orange);
             g2.draw(new Line2D.Double(LSIndex * graphWidth / (2 * LS.size()),
@@ -128,7 +157,7 @@ public class SensorGraph extends JPanel {
         int USIndex = 0;
         int USValOld = -1;
         int USValNew = -1;
-        for (int USValue : US) {
+        for (final int USValue : US) {
             USValOld = USValNew;
             USValNew = USValue;
 
@@ -153,27 +182,4 @@ public class SensorGraph extends JPanel {
         g2.setColor(Color.gray);
         g2.fill(new Rectangle(wLS - 3, 0, 6, h));
     }
-
-    public void addSensorValues(int USValue, int LSValue) {
-        LS.poll();
-        LS.offer(LSValue);
-        US.poll();
-        US.offer(USValue);
-    }
-
-    ActionListener repaintSensorGraph = new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            repaint();
-        }
-    };
-
-    ActionListener updateTimerAction = new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            gui.updateStatus();
-        }
-    };
 }

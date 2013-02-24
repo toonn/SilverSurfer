@@ -1,6 +1,5 @@
 package mapping;
 
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class Barcode extends TileContent {
@@ -11,7 +10,7 @@ public class Barcode extends TileContent {
     /**
      * Creates a barcode with as value 'value'.
      */
-    public Barcode(int value, Orientation direction, Tile tile) {
+    public Barcode(final int value, final Orientation direction, final Tile tile) {
         super(tile);
         setValue(value);
         setDirection(direction);
@@ -20,96 +19,8 @@ public class Barcode extends TileContent {
     /**
      * Creates a default, empty barcode, facing NORTH. (value == 0).
      */
-    public Barcode(Tile tile) {
+    public Barcode(final Tile tile) {
         this(0, Orientation.NORTH, tile);
-    }
-
-    /**
-     * Gets the decimal value this barcode represents. Should be used to perform
-     * the right action.
-     */
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    /**
-     * Returns the direction this barcode is in. (N to S or E to W)
-     * 
-     * @return
-     */
-    public Orientation getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Orientation direction) {
-        this.direction = direction;
-    }
-
-    /**
-     * Gives the color of the barcode on the given x-y-coordinate
-     * 
-     * @param x
-     *            relative to the tile! (0,0 is upper-left corner)
-     * @param y
-     *            relative to the tile!
-     * @param direction
-     *            the orientation the barcode is being crossed over (North =
-     *            from south to North, East = from West to East. We simplify the
-     *            'mirroring' by stating North = South and West = East
-     * @return 0, when standing on a black part of the barcode 1, when standing
-     *         on a white part of the barcode something else, when standing next
-     *         to the barcode but on the same tile (brown underground)
-     */
-    public int getColorValue(double x, double y) {
-        if (getDirection() == Orientation.NORTH
-                || getDirection() == Orientation.SOUTH) {
-
-            if (y < 12)
-                return 2; // TODO COLORVALUE ONDERGROND
-            else if (12 <= y && y < 14)
-                return Character.getNumericValue(toString().charAt(0));
-            else if (14 <= y && y < 16)
-                return Character.getNumericValue(toString().charAt(1));
-            else if (16 <= y && y < 18)
-                return Character.getNumericValue(toString().charAt(2));
-            else if (18 <= y && y < 20)
-                return Character.getNumericValue(toString().charAt(3));
-            else if (20 <= y && y < 22)
-                return Character.getNumericValue(toString().charAt(4));
-            else if (22 <= y && y < 24)
-                return Character.getNumericValue(toString().charAt(5));
-            else if (24 <= y && y < 26)
-                return Character.getNumericValue(toString().charAt(6));
-            else if (26 <= y && y < 28)
-                return Character.getNumericValue(toString().charAt(7));
-            else
-                return 2; // y > 28
-        } else {
-            if (x < 12)
-                return 2; // TODO COLORVALUE ONDERGROND
-            else if (12 <= x && x < 14)
-                return Character.getNumericValue(toString().charAt(0));
-            else if (14 <= x && x < 16)
-                return Character.getNumericValue(toString().charAt(1));
-            else if (16 <= x && x < 18)
-                return Character.getNumericValue(toString().charAt(2));
-            else if (18 <= x && x < 20)
-                return Character.getNumericValue(toString().charAt(3));
-            else if (20 <= x && x < 22)
-                return Character.getNumericValue(toString().charAt(4));
-            else if (22 <= x && x < 24)
-                return Character.getNumericValue(toString().charAt(5));
-            else if (24 <= x && x < 26)
-                return Character.getNumericValue(toString().charAt(6));
-            else if (26 <= x && x < 28)
-                return Character.getNumericValue(toString().charAt(7));
-            else
-                return 2;
-        }
     }
 
     /**
@@ -127,36 +38,38 @@ public class Barcode extends TileContent {
      * 
      * @pre Barcode.orientation should be specified.
      */
-    public Rectangle2D[] createVisualBarCode(double sizeTile) {
-        double heightbarcode = sizeTile / (20.f);
+    public Rectangle2D[] createVisualBarCode(final double sizeTile) {
+        final double heightbarcode = sizeTile / (20.f);
 
         // North or South oriented barcode
         if (getDirection() == Orientation.NORTH
                 || getDirection() == Orientation.SOUTH) {
 
-            Rectangle2D[] visualBarcode = new Rectangle2D[8];
-            for (int i = 0; i < 8; i++)
+            final Rectangle2D[] visualBarcode = new Rectangle2D[8];
+            for (int i = 0; i < 8; i++) {
                 visualBarcode[i] = new Rectangle2D.Double(tile.getxCoordinate()
                         - sizeTile / 2, tile.getyCoordinate() - 8
                         + heightbarcode * i, sizeTile, heightbarcode);
+            }
 
             return visualBarcode;
         }
 
         else {
 
-            Rectangle2D[] visualBarcode = new Rectangle2D[8];
-            for (int i = 0; i < 8; i++)
+            final Rectangle2D[] visualBarcode = new Rectangle2D[8];
+            for (int i = 0; i < 8; i++) {
                 visualBarcode[i] = new Rectangle2D.Double(tile.getxCoordinate()
                         - 8 + heightbarcode * i, tile.getyCoordinate()
                         - sizeTile / 2, heightbarcode, sizeTile);
+            }
 
             return visualBarcode;
         }
     }
 
     public boolean[] getBoolRep() {
-        boolean[] boolRep = new boolean[8];
+        final boolean[] boolRep = new boolean[8];
         for (int i = 0; i < 8; i++) {
             if (toString().charAt(i) == '1') {
                 boolRep[i] = true;
@@ -166,11 +79,103 @@ public class Barcode extends TileContent {
         return boolRep;
     }
 
+    /**
+     * Gives the color of the barcode on the given x-y-coordinate
+     * 
+     * @param x
+     *            relative to the tile! (0,0 is upper-left corner)
+     * @param y
+     *            relative to the tile!
+     * @param direction
+     *            the orientation the barcode is being crossed over (North =
+     *            from south to North, East = from West to East. We simplify the
+     *            'mirroring' by stating North = South and West = East
+     * @return 0, when standing on a black part of the barcode 1, when standing
+     *         on a white part of the barcode something else, when standing next
+     *         to the barcode but on the same tile (brown underground)
+     */
+    @Override
+    public int getColorValue(final double x, final double y) {
+        if (getDirection() == Orientation.NORTH
+                || getDirection() == Orientation.SOUTH) {
+
+            if (y < 12) {
+                return 2; // TODO COLORVALUE ONDERGROND
+            } else if (12 <= y && y < 14) {
+                return Character.getNumericValue(toString().charAt(0));
+            } else if (14 <= y && y < 16) {
+                return Character.getNumericValue(toString().charAt(1));
+            } else if (16 <= y && y < 18) {
+                return Character.getNumericValue(toString().charAt(2));
+            } else if (18 <= y && y < 20) {
+                return Character.getNumericValue(toString().charAt(3));
+            } else if (20 <= y && y < 22) {
+                return Character.getNumericValue(toString().charAt(4));
+            } else if (22 <= y && y < 24) {
+                return Character.getNumericValue(toString().charAt(5));
+            } else if (24 <= y && y < 26) {
+                return Character.getNumericValue(toString().charAt(6));
+            } else if (26 <= y && y < 28) {
+                return Character.getNumericValue(toString().charAt(7));
+            } else {
+                return 2; // y > 28
+            }
+        } else {
+            if (x < 12) {
+                return 2; // TODO COLORVALUE ONDERGROND
+            } else if (12 <= x && x < 14) {
+                return Character.getNumericValue(toString().charAt(0));
+            } else if (14 <= x && x < 16) {
+                return Character.getNumericValue(toString().charAt(1));
+            } else if (16 <= x && x < 18) {
+                return Character.getNumericValue(toString().charAt(2));
+            } else if (18 <= x && x < 20) {
+                return Character.getNumericValue(toString().charAt(3));
+            } else if (20 <= x && x < 22) {
+                return Character.getNumericValue(toString().charAt(4));
+            } else if (22 <= x && x < 24) {
+                return Character.getNumericValue(toString().charAt(5));
+            } else if (24 <= x && x < 26) {
+                return Character.getNumericValue(toString().charAt(6));
+            } else if (26 <= x && x < 28) {
+                return Character.getNumericValue(toString().charAt(7));
+            } else {
+                return 2;
+            }
+        }
+    }
+
+    /**
+     * Returns the direction this barcode is in. (N to S or E to W)
+     * 
+     * @return
+     */
+    public Orientation getDirection() {
+        return direction;
+    }
+
+    /**
+     * Gets the decimal value this barcode represents. Should be used to perform
+     * the right action.
+     */
+    public int getValue() {
+        return value;
+    }
+
+    public void setDirection(final Orientation direction) {
+        this.direction = direction;
+    }
+
+    public void setValue(final int value) {
+        this.value = value;
+    }
+
     @Override
     public String toString() {
         String body = Integer.toBinaryString(getValue());
-        while (body.length() < 6)
+        while (body.length() < 6) {
             body = "0" + body;
+        }
         return 0 + body + 0;
     }
 

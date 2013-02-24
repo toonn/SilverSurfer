@@ -4,7 +4,7 @@ public abstract class TileContent {
 
     protected Tile tile;
 
-    protected TileContent(Tile tile) {
+    protected TileContent(final Tile tile) {
         this.tile = tile;
     }
 
