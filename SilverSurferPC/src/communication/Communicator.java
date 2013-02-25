@@ -195,7 +195,7 @@ public class Communicator {
             } else if (command == Command.VERY_FAST_SPEED) {
                 pilot.setSpeed(4);
             } else if (command == Command.ALIGN_PERPENDICULAR) {
-                pilot.allignOnWhiteLine();
+                pilot.alignOnWhiteLine();
             } else if (command == Command.ALIGN_WALL) {
                 pilot.allignOnWalls();
             } else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE

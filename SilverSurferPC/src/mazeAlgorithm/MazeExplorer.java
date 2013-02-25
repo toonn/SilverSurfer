@@ -37,8 +37,8 @@ public class MazeExplorer {
                 .getPilot()
                 .getMapGraphConstructed()
                 .getTileWithCoordinates(
-                        communicator.getPilot().getCurrentPositionRelativeX(),
-                        communicator.getPilot().getCurrentPositionRelativeY());
+                        communicator.getPilot().getPositionRelativeX(),
+                        communicator.getPilot().getPositionRelativeY());
     }
 
     /**
@@ -53,7 +53,7 @@ public class MazeExplorer {
 
         checkForNeighboursNotYetExplored(currentTile);
 
-        currentOrientation = communicator.getPilot().getCurrentOrientation();
+        currentOrientation = communicator.getPilot().getOrientation();
 
         // update robot tilecoordinates
         if (communicator.getRobotConnected()) {
@@ -181,7 +181,7 @@ public class MazeExplorer {
     private void checkForNeighboursNotYetExplored(final Tile currentTile) {
 
         Orientation currentOrientation = communicator.getPilot()
-                .getCurrentOrientation();
+                .getOrientation();
         int numberVariable = currentOrientation.getNumberArray();
 
         for (int i = 0; i < 4; i++) {
@@ -197,7 +197,7 @@ public class MazeExplorer {
                 communicator
                         .sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
                 currentOrientation = communicator.getPilot()
-                        .getCurrentOrientation();
+                        .getOrientation();
             }
 
             numberVariable = numberVariable + 1;
@@ -229,7 +229,7 @@ public class MazeExplorer {
 
     private Tile getPriorityNextTile(final Tile currentTile) {
 
-        currentOrientation = communicator.getPilot().getCurrentOrientation();
+        currentOrientation = communicator.getPilot().getOrientation();
 
         if (isGoodNextTile(currentTile, currentOrientation)) {
             return currentTile.getEdge(currentOrientation).getNeighbour(
@@ -327,8 +327,8 @@ public class MazeExplorer {
 
     private void updateRobotTileCoordinates() {
         communicator.getPilot().setCurrentTileCoordinatesRobot(
-                communicator.getPilot().getCurrentPositionAbsoluteX(),
-                communicator.getPilot().getCurrentPositionAbsoluteY());
+                communicator.getPilot().getAbsolutePosition().getX(),
+                communicator.getPilot().getAbsolutePosition().getY());
     }
 
 }

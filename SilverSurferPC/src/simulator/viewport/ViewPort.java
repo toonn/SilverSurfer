@@ -388,11 +388,11 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
 
         final Bag<Tuple<Barcode, Rectangle2D[]>> storeBarcodes = new Bag<Tuple<Barcode, Rectangle2D[]>>();
 
-        for (final Tuple t : getVisibleBarcode()) {
+        for (final Tuple<Barcode, Rectangle2D[]> t : getVisibleBarcode()) {
             storeBarcodes.add(t);
         }
 
-        for (final Tuple t : storeBarcodes) {
+        for (final Tuple<Barcode, Rectangle2D[]> t : storeBarcodes) {
             final Barcode barcode = (Barcode) t.getItem1();
             final Rectangle2D[] rect = barcode
                     .createVisualBarCode(40 * scalingfactor);
@@ -445,7 +445,7 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
 
     private void scaleWalls(final double scalingfactor) {
 
-        final Vector oldPoints = new Vector<Point2D>();
+        final Vector<Point2D> oldPoints = new Vector<Point2D>();
         for (final Point2D point : getVisibleWalls().keySet()) {
             oldPoints.add(point);
         }
@@ -568,11 +568,11 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
 
         final Bag<Tuple<Barcode, Rectangle2D[]>> storeBarcodes = new Bag<Tuple<Barcode, Rectangle2D[]>>();
 
-        for (final Tuple t : getVisibleBarcode()) {
+        for (final Tuple<Barcode, Rectangle2D[]> t : getVisibleBarcode()) {
             storeBarcodes.add(t);
         }
 
-        for (final Tuple t : storeBarcodes) {
+        for (final Tuple<Barcode, Rectangle2D[]> t : storeBarcodes) {
             final Barcode barcode = (Barcode) t.getItem1();
 
             final Rectangle2D[] rect = barcode
@@ -636,7 +636,7 @@ public abstract class ViewPort extends JPanel implements MouseMotionListener {
     }
 
     private void shiftWalls(final boolean shiftHorizontal, final int shift) {
-        final Vector oldPoints = new Vector<Point2D>();
+        final Vector<Point2D> oldPoints = new Vector<Point2D>();
         for (final Point2D point : getVisibleWalls().keySet()) {
             oldPoints.add(point);
         }
