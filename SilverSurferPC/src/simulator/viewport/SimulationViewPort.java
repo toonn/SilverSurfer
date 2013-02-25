@@ -71,7 +71,6 @@ public class SimulationViewPort extends ViewPort {
 
     private void paintBeamComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-            pilot = pilot;
             /* TODO updateArc herschrijven */
             // updateArc(pilot.getUltrasonicSensorPositionX() * scalingfactor
             // - getShiftToTheRight(),
@@ -132,7 +131,6 @@ public class SimulationViewPort extends ViewPort {
      */
     private void paintUndergroundComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-            pilot = pilot;
             /* TODO lightsensor tekenen herschrijven */
             // updateUndergroundCircle(pilot.getLightsensorPositionX()
             // * scalingfactor - getShiftToTheRight(),

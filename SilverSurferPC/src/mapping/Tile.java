@@ -145,8 +145,8 @@ public class Tile {
     /**
      * returns all 4 neighbours of this tile, if has 4, otherwise null.
      */
-    public ArrayList getAllNeighbours() {
-        final ArrayList neighbours = new ArrayList(4);
+    public ArrayList<Tile> getAllNeighbours() {
+        final ArrayList<Tile> neighbours = new ArrayList<Tile>(4);
         for (final Orientation orientation : Orientation.values()) {
             neighbours.add(getEdge(orientation).getNeighbour(this));
         }
@@ -212,8 +212,8 @@ public class Tile {
      * 1: east 2: south 3: west als er zich geen tile bevindt in die
      * orientation, wordt er een null in de arraylist opgeslagen.
      */
-    public ArrayList getReachableNeighbours() {
-        final ArrayList neighbours = new ArrayList(4);
+    public ArrayList<Tile> getReachableNeighbours() {
+        final ArrayList<Tile> neighbours = new ArrayList<Tile>(4);
         for (final Orientation orientation : Orientation.values()) {
             if (getEdge(orientation).getObstruction() == null) {
                 neighbours.add(getEdge(orientation).getNeighbour(this));

@@ -97,7 +97,7 @@ public class GUIMenuBar extends JMenuBar {
                 });
 
                 // Display the dialog and wait for the user's response
-                prompt.show();
+                prompt.setVisible(true);
 
                 final File export = new File(prompt.getDirectory()
                         + prompt.getFile());
@@ -153,7 +153,7 @@ public class GUIMenuBar extends JMenuBar {
                 });
 
                 // Display the dialog and wait for the user's response
-                prompt.show();
+                prompt.setVisible(true);
 
                 final File export = new File(prompt.getDirectory()
                         + prompt.getFile());
@@ -217,7 +217,7 @@ public class GUIMenuBar extends JMenuBar {
                 prompt.setDirectory("resources/maze_maps");
 
                 // Display the dialog and wait for the user's response
-                prompt.show();
+                prompt.setVisible(true);
 
                 final File mapFile = new File(prompt.getDirectory()
                         + prompt.getFile()); // Load and display selection

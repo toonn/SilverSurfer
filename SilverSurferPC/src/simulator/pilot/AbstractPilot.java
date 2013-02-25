@@ -31,7 +31,7 @@ public abstract class AbstractPilot {
     private int relativeY;
 
     private double angle = 270;
-    private final int speed = 10;
+    private int speed = 10;
     private File mapFile;
     private MapGraph mapGraphLoaded;
     private MapGraph mapGraphConstructed;
@@ -677,7 +677,6 @@ public abstract class AbstractPilot {
 
     public void setMapFile(File mapFile, final int xCo, final int yCo) {
         // TODO Hoort in simulatorPanel(overkoepelende)
-        mapFile = mapFile;
         setMapGraph(MapReader.createMapFromFile(mapFile, xCo, yCo));
         startPositionAbsoluteX = getCurrentPositionAbsoluteX();
         startPositionAbsoluteY = getCurrentPositionAbsoluteY();
