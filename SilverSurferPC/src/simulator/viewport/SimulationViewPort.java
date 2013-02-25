@@ -38,8 +38,8 @@ public class SimulationViewPort extends ViewPort {
     public void clearPath() {
         pathCoordinates = new ArrayList<Point>();
         for (final AbstractPilot pilot : pilots) {
-            addPathPoint(pilot.getCurrentPositionAbsoluteX(),
-                    pilot.getCurrentPositionAbsoluteY());
+            addPathPoint(pilot.getAbsolutePosition().getX(), pilot
+                    .getAbsolutePosition().getY());
         }
     }
 

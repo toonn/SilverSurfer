@@ -258,8 +258,8 @@ public class StatusInfoBuffer {
     // }
     //
     public void setCoordinatesAbsolute(final double[] coordinates) {
-        communicator.getPilot().setCurrentPositionAbsoluteX(coordinates[0]);
-        communicator.getPilot().setCurrentPositionAbsoluteY(coordinates[1]);
+        communicator.getPilot().setCurrentAbsolutePosition(coordinates[0],
+                coordinates[1]);
     }
 
     public void setLeftMotorMoving(final boolean leftMotorMoving) {
