@@ -26,11 +26,9 @@
 \begin{abstract}
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. De robots moeten hierbij in een onbekende doolhof op zoek naar een bepaald voorwerp. Voor elke robot wordt een ander voorwerp gereserveerd. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet de twee voorwerpen bij elkaar brengen. Wie hier eerst in slaagt, wint. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
-De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. De laatste twee staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De lichtsensor kan wegklappen opdat de robot over de wip kan rijden. Verder is de robot voorzien van een strook klittenband waarmee hij het voorwerp, ook voorzien van klittenband, kan oprapen. Dit gebeurt door het voorwerp te klemmen tussen de muur en de robot zodat de klittenband goed vast zit.\\
+De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. De laatste twee staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De lichtsensor kan wegklappen opdat de robot over een wip kan rijden. Verder is de robot voorzien van een soort schep met klittenband waarmee hij het voorwerp, ook voorzien van klittenband, kan oprapen. Dit gebeurt door het voorwerp te klemmen tussen de muur en de robot zodat het in de schep valt. Met behulp van de klittenband zit het goed vast.\\
 
-De robot kan een doolhof verkennen en er een map van bijhouden. Wanneer een tegel gevonden wordt die mogelijk een voorwerp bevat, zal deze eerst nagekeken worden alvorens verder het doolhof te verkennen.\\
-
-Via RabbitMQ kunnen de robots en simulators met elkaar communiceren. RabbitMQ maakt gebruik van queues waar er berichten naar toe gestuurd worden.\\
+De robot kan een doolhof verkennen en er een map van bijhouden. Wanneer een tegel gevonden wordt die mogelijk een voorwerp bevat, zal deze eerst nagekeken worden alvorens verder het doolhof te verkennen. Via RabbitMQ kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -38,7 +36,7 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 %figuur robot
 \begin{figure}[!hb]
 \begin{flushright}
-    \includegraphics[width=0.8\textwidth]{robotFP2}
+    \includegraphics[width=0.8\textwidth]{robotFP}
     \label{fig:robotFP2}
 \end{flushright}
 \end{figure}
@@ -66,20 +64,51 @@ LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een N
 \subsection{Fysieke bouw}
 \label{ssec:fysb}
 
-De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot aan de passen aan zijn nieuwe opdracht. De robot moet in staat zijn een voorwerp, met name een wc-rolletje, op te nemen en er zullen extra sensoren ingesteld moeten worden voor bijkomende hindernissen zoals het kunnen detecteren van andere robots, het detecteren van de wip, vaststellen of het voorwerp daadwerkelijk is opgepakt,... .  
-Qua sensoren, zijn er twee veranderingen gebeurt ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze waren van nut om te detecteren wanneer er tegen een muur werd opgebotst tijdens het wittelijnalgoritme. Deze zijn echter nooit geimplementeerd en bleken ook niet nodig te zijn dus zijn deze voor dit semester eraf gehaald. 
-
-De tweede aanpassing is een infraroodsensor\footnote{ervan uitgaande dat er een infraroodbal onder de wip ligt, kan deze sensor handig zijn om de stand van de wip te detecteren. Het is echter niet zeker of er gebruik gaat gemaakt worden van deze bal.} bovenop de robot. Deze infraroodsensor dient voor het detecteren van een infrarood balletje. Dit balletje wordt onder de wip geplaatst. Als de wip naar beneden staat zal het balletje achter de wip verdwenen zijn en niet gedetecteerd worden. Hierdoor weet de robot dat de wip naar beneden staat en dat hij doorkan. Als het balletje wel gedetecteerd wordt, weet de robot dat de wip omhoog staat en dat hij er dus niet over kan. \\
-
-Om het voorwerp op te nemen zijn verschillende opstellingen mogelijk. Er moet rekening gehouden worden met de hinder die de extra omvang van het voorwerp teweeg kan brengen bij het voortbewegen van de robot.
-Ook is het nuttig het voorwerp niet over de grond te laten slepen. Dit zorg voor extra wrijving en vergroot de kans dat het voorwerp valt. Ten laatste moet de robot een wip kunnen passeren. 
+De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot geschikt te maken voor de nieuwe opdracht. De robot moet in staat zijn een voorwerp, met name een wc-rolletje, op te nemen. Verder bevat de opdracht enkele aspecten die extra sensoren impliceren: het detecteren van andere robots, het detecteren van de wip, vaststellen of het voorwerp daadwerkelijk is opgepakt,...\\
  
-Deze zaken in beschouwing nemend, werd er aanvankelijk voor gekozen om een schep achteraan de robot te monteren om zo het voorwerp op te nemen. Dit geeft als voordeel de wip zonder probleem te kunnen passeren. Het probleem hiermee is dat de robot dan een te grote lengte krijgt waardoor het onmogelijk werd voor de robot om te draaien op een tegel zonder tegen een muur aan te botsen. \\
+Op vlak van sensoren zijn twee aspecten verandert ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze hadden als doel te detecteren wanneer er tegen een muur werd gebotst tijdens het witte-lijnalgoritme. Ze zijn echter nooit ge\"implementeerd en bleken ook niet nodig te zijn.
 
-Daarom werd de opstelling waarin de schep van de robot vooraan gemonteerd wordt, verkozen. De schep is opgebouwd uit een deel van een wc-rol. Dit heeft namelijk de ideale vorm om het voorwerp, het wc-rolletje, op te nemen. Bijkomend is er een hefboom aan de robot bevestigd die het voorwerp opheft. Dit is voornamelijk belangrijk om de wip op te geraken zonder dat het voorwerp in de weg zit.
-Het voorwerp wordt omringd met velcro. Dit biedt een extra ondersteuning om het voorwerp steviger vast te houden. 
+Een infraroodsensor werd gemonteerd bovenop de robot. Deze infraroodsensor kan infraroodlicht detecteren. Er is een bal beschikbaar die dit infraroodlicht uitzendt. Wanneer deze bal onder een wip geplaatst wordt\footnote{De Scheidsrechtercommissie heeft nog niet besloten of de al hiervoor gebruikt zal worden.}, kan de robot makkelijk detecteren of de wip omhoog staat (en dus niet toegankelijk is) of omlaag. In dat tweede geval blokkeert de wip immers al het licht en detecteert de sensor niets.\\
 
+Verschillende opstellingen zijn mogelijk om het voorwerp mee te nemen. Er moet rekening gehouden worden met de beperking van bewegingsvrijheid die het voorwerp teweeg kan brengen. Het is mogelijk het voorwerp over de grond te laten slepen, maar dit zorgt voor extra wrijving en verhoogt de kans dat het voorwerp losgeraakt. Bovendien moet de robot een wip kunnen passeren, ook wanneer hij het voorwerp bij zich heeft. 
+ 
+Aanvankelijk werd gekozen een schep achteraan de robot te monteren, gebruik makend van een extra motor om het voorwerp `op te scheppen' (zie figuur \ref{fig:robotBouw}). Dit geeft als voordeel dat de wip zonder probleem te gepasseerd kan worden en dat het voorwerp stevig vast zit. De robot krijgt dan echter een te grote lengte waardoor hij onmogelijk kan omkeren zonder tegen een muur aan te botsen. Deze opstelling kon daarom niet behouden worden.
 
+De robot heeft een schep vooraan. De schep is opgebouwd uit een deel van een wc-rol. Dit is immers de ideale vorm om het voorwerp, het wc-rolletje, op te nemen. De schep is, net zoals het voorwerp, voorzien van een strook klittenband (nog niet op de foto). Dit biedt extra zekerheid dat het voorwerp niet verloren geraakt. Figuur \ref{fig:robotBouw} toont een gedetailleerd zicht op de schep en het voorwerp.\\
+
+Net zoals vorig semester zijn de ultrasone- en de infraroodsensor vast gemonteerd op de robot. De lichtsensor~-~en de schep die hieraan vast hangt~-~kunnen echter bewegen ten opzichte van de robot. Dit gebeurt met behulp van een scharnier, er werd geen extra motor gebruikt. Dit is nodig om over een wip te kunnen rijden. Het scharnier zorgt ervoor dat de lichtsensor wegklapt bij contact met de wip en later door de zwaartekracht weer terug op zijn plaats klapt. Zo zit de lichtsensor niet in de weg.
+
+% figuren robot, oud en nieuw
+\begin{figure}
+\centering
+	\begin{subfigure}[hb]{0.48\textwidth}
+	\centering
+		\includegraphics[width=\textwidth]{robotSchepOud}
+		\caption{schep achteraan}
+	\end{subfigure}%
+	\begin{subfigure}[h]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{robotSchepNieuw}
+	\caption{schep vooraan}
+\end{subfigure}
+\caption{Bouw van de robot.}
+\label{fig:robotBouw}
+\end{figure}
+
+% figuren detail schep
+\begin{figure}
+\centering
+	\begin{subfigure}[h]{0.5\textwidth}
+	\centering
+		\includegraphics[width=\textwidth]{schepZonder}
+	\end{subfigure}%
+	\begin{subfigure}[hb]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{schepMet}
+\end{subfigure}
+\caption{Detail van de schep, met en zonder voorwerp.}
+\label{fig:robotSchep}
+\end{figure}
 
 
 % == ALGORITMES == %
@@ -91,6 +120,8 @@ Voor volgende algoritmes wordt verwezen naar het verslag van het eerste semester
 	\item Lezen van een barcode
 	\item Vinden van het kortste pad
 \end{itemize}
+
+Nieuwe en aangepaste algoritmes worden verder beschreven.
 
 % == zoeken van het voorwerp == %
 \subsection{Zoeken van het voorwerp} %
@@ -183,20 +214,20 @@ De Main-methode bevindt zicht in de GUI-klasse. Deze maakt een \textit{Simulator
 In het geval waarbij twee \textit{SimulatorViewports} worden gebruikt, zal \'e\'en van beide aanvankelijk leeg zijn. Deze \textit{Viewport} geeft de wereld van de teamgenoot weer. Wie deze teamgenoot is, wordt echter pas bekend wanneer beide leden van het team hun voorwerp gevonden hebben.\\
 \begin{landscape}
 
-% figuren verkenning doolhof
+% figuren klassendiagramma
 \begin{figure}
 \centering
-	\begin{subfigure}[hb]{0.52\textwidth}
+	\begin{subfigure}[h]{0.52\textwidth}
 	\centering
 		\includegraphics[width=\textwidth]{KlasGUI}
 		\caption{map 1}
 	\end{subfigure}%
-	\begin{subfigure}[hb]{0.52\textwidth}
+	\begin{subfigure}[h]{0.52\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{KlasPilot}
 	\caption{map 2}
 \end{subfigure}%
-\begin{subfigure}[hb]{0.52\textwidth}
+\begin{subfigure}[h]{0.52\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{KlasRobot}
 	\caption{map 2}
