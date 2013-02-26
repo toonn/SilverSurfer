@@ -65,13 +65,18 @@ LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een N
 \subsection{Fysieke bouw}
 \label{ssec:fysb}
 
-De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot aan de passen aan zijn nieuwe opdracht. De robot zal in staat moeten zijn om een voorwerp op te nemen. Er zijn twee veranderingen gebeurt ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze stonden er voor tijdens het witte lijn algortime om te detecteren als de robot tegen de muur zou botsen. Deze werden niet geimplementeerd en bleken ook niet nodig te zijn dus zijn deze voor dit semester eruit gehaald. 
+De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot aan de passen aan zijn nieuwe opdracht. De robot moet in staat zijn een voorwerp, met name een wc-rolletje, op te nemen en er zullen extra sensoren ingesteld moeten worden voor bijkomende hindernissen zoals het kunnen detecteren van andere robots, het detecteren van de wip, vaststellen of het voorwerp daadwerkelijk is opgepakt,... .  
+Qua sensoren, zijn er twee veranderingen gebeurt ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze waren van nut om te detecteren wanneer er tegen een muur werd opgebotst tijdens het wittelijnalgoritme. Deze zijn echter nooit geimplementeerd en bleken ook niet nodig te zijn dus zijn deze voor dit semester eraf gehaald. 
 
-De tweede aanpassing is een infraroodsensor bovenop de robot. Deze infraroodsensor dient voor het detecteren van een infrarood balletje. Dit balletje wordt onder de wip geplaatst. Als de wip naar beneden staat zal het balletje verstopt worden door de wip en niet gedetecteerd worden. Hierdoor weet de robot dat de wip naar beneden staat en dat hij doorkan. Als het balletje wel getecteerd wordt, weet de robot dat de wip omhoog staat en dat hij er dus niet over kan. \\
+De tweede aanpassing is een infraroodsensor\footnote{ervan uitgaande dat er een infraroodbal onder de wip ligt, kan deze sensor handig zijn om de stand van de wip te detecteren. Het is echter niet zeker of er gebruik gaat gemaakt worden van deze bal.} bovenop de robot. Deze infraroodsensor dient voor het detecteren van een infrarood balletje. Dit balletje wordt onder de wip geplaatst. Als de wip naar beneden staat zal het balletje achter de wip verdwenen zijn en niet gedetecteerd worden. Hierdoor weet de robot dat de wip naar beneden staat en dat hij doorkan. Als het balletje wel gedetecteerd wordt, weet de robot dat de wip omhoog staat en dat hij er dus niet over kan. \\
 
-In het begin werd ervoor gekozen om een schep vanachter de robot te monteren om zo het voorwerp op te nemen. Het probleem hiermee is dat de robot dan een te grote lengte krijgt waardoor de robot dus niet meer kan draaien op een tegel zonder te botsen op een muur. \\
+Om het voorwerp op te nemen zijn verschillende opstellingen mogelijk. Er moet rekening gehouden worden met de hinder die de extra omvang van het voorwerp teweeg kan brengen bij het voortbewegen van de robot.
+Ook is het nuttig het voorwerp niet over de grond te laten slepen. Dit zorg voor extra wrijving en vergroot de kans dat het voorwerp valt. Ten laatste moet de robot een wip kunnen passeren. 
+ 
+Deze zaken in beschouwing nemend, werd er aanvankelijk voor gekozen om een schep achteraan de robot te monteren om zo het voorwerp op te nemen. Dit geeft als voordeel de wip zonder probleem te kunnen passeren. Het probleem hiermee is dat de robot dan een te grote lengte krijgt waardoor het onmogelijk werd voor de robot om te draaien op een tegel zonder tegen een muur aan te botsen. \\
 
-Nu is er voor gekozen om het voorwerp langs voor, met een strip van velcro, op te pakken. Het voorwerp ligt het minst in de weg als we het van voor opnemen.
+Daarom werd de opstelling waarin de schep van de robot vooraan gemonteerd wordt, verkozen. De schep is opgebouwd uit een deel van een wc-rol. Dit heeft namelijk de ideale vorm om het voorwerp, het wc-rolletje, op te nemen. 
+Het voorwerp wordt omringd met velcro. Dit biedt een extra ondersteuning om het voorwerp steviger vast te houden. 
 
 
 
@@ -141,7 +146,7 @@ Een extra optimalisatie geeft prioriteit aan het vinden van het voorwerp. Een vo
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. Hierbij wordt nog steeds prioriteit gegeven aan voorwerp-locaties. Deze bevatten immers unieke barcodes die het later makkelijker maken de mappen te combineren.
 
-Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om daar op hem te wachten (niet te dicht bij om niet in de weg te staan). Deze extra optie wordt voorlopig nog niet ge\"implmenteerd omdat nog niet duidelijk is in welke gevallen de strategie het best werkt.
+Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om daar op hem te wachten (niet te dicht bij om niet in de weg te staan). Deze extra optie wordt voorlopig nog niet ge\"implementeerd omdat nog niet duidelijk is in welke gevallen de strategie het best werkt.
 
 % nog niet voor deze demo!
 %\subsection*{Algoritme om zo snel mogelijk naar de andere robot te gaan}
