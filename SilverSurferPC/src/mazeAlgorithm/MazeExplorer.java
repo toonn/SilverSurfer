@@ -40,76 +40,87 @@ public class MazeExplorer {
                         communicator.getPilot().getPositionRelativeX(),
                         communicator.getPilot().getPositionRelativeY());
     }
+    
+    //Nieuw algoritme, equivalent met oud (bijhouden voor later)
+    private void algoritm2(Tile currentTile) {
+        allTiles.add(currentTile);
+        updateQueue(currentTile);
 
-    /**
-     * Deze methode exploreert het doolhof
-     */
+        if (queue.isEmpty())
+            return;
+
+        Tile nextTile = getPriorityNextTile(currentTile);
+        removeTileFromQueue(nextTile);
+        goToNextTile(currentTile, nextTile);
+
+        while (communicator.getExecutingBarcodes()) {
+            try {
+                Thread.sleep(100);
+            } catch (final Exception e) {
+
+            }
+        }
+        algorithm(nextTile);
+    }
+
+    //Gebruikt door nieuw algoritme (bijhouden voor later)
+    private void updateQueue(Tile currentTile) {
+        ArrayList<Tile> array = currentTile.getAllNeighbours();
+    	Orientation currentOrientation = communicator.getPilot().getOrientation();
+        int numberVariable = currentOrientation.getNumberArray();
+        for(int i = 0; i < 4; i++) {
+        	if(!allTiles.contains(array.get(numberVariable))) {
+        		double angle = ExtMath.getSmallestAngle((((numberVariable - currentOrientation.getNumberArray()) * 90) + 360) % 360);
+                communicator.sendCommand((int) (angle * 10) * 10 + Command.AUTOMATIC_TURN_ANGLE);
+                currentOrientation = communicator.getPilot().getOrientation();
+                //TODO: robot checkforobstruction
+                if(communicator.getPilot().checkForObstruction())
+                	communicator.getPilot().addWall();
+                else {
+                    int xCoordinate = 0;
+                    int yCoordinate = 0;
+                    //TODO: find coordinates
+                    if (communicator.getPilot().getMapGraphConstructed().getTileWithCoordinates(xCoordinate, yCoordinate) == null) {
+                    	communicator.getPilot().setTile(xCoordinate, yCoordinate);
+                    }
+                    queue.add(array.get(numberVariable));
+                }
+        	}
+            numberVariable = numberVariable + 1;
+            if (numberVariable == 4)
+                numberVariable = 0;
+        }
+    }
+
     private void algorithm(final Tile currentTile) {
-
-        // kijkt eerst of er muren zijn, deze methode zet ook al tiles waar er
-        // zowiezo liggen
-        // (dus waar geen muur staat),
-        // zodat deze al in de map zitten en de robot er naartoe kan gaan
-
         checkForNeighboursNotYetExplored(currentTile);
 
         currentOrientation = communicator.getPilot().getOrientation();
 
-        // update robot tilecoordinates
+        // update robot tilecoordinates --> Nodig?
         if (communicator.getRobotConnected()) {
             updateRobotTileCoordinates();
         }
 
-        // checkForObstructionsAndSetTile(whichTilesAllreadyBeen);
-
-        // if (checkTileFound) {
-        // setCheckTile(gui
-        // .getCommunicator()
-        // .getSimulationPilot()
-        // .getMapGraphConstructed()
-        // .getTileWithCoordinates(
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeX(),
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeY()));
-        // setCheckTileFound(false);
-        // }
-        // if (endTileFound) {
-        // setEndTile(gui
-        // .getCommunicator()
-        // .getSimulationPilot()
-        // .getMapGraphConstructed()
-        // .getTileWithCoordinates(
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeX(),
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeY()));
-        // setEndTileFound(false);
-        // }
-
         // zet het mark-veld van de currentTile op true zodat deze niet meer
-        // opnieuw in de queu
-        // terecht kan komen
+        // opnieuw in de queue terecht kan komen
         currentTile.setMarkingExploreMaze(true);
 
-        // voegt buurtiles van de currentTile toe aan de queu, enkel als deze
-        // nog niet begaan
-        // zijn (niet gemarkeerd)
+        // voegt buurtiles van de currentTile toe aan de queue, enkel als deze
+        // nog niet begaan zijn (niet gemarkeerd)
         for (final Object neighbourTile : currentTile.getReachableNeighbours()) {
-            if (neighbourTile != null
-                    && !(((Tile) neighbourTile).isMarkedExploreMaze())) {
+            if (neighbourTile != null && !(((Tile) neighbourTile).isMarkedExploreMaze()))
                 queue.add((Tile) neighbourTile);
-            }
         }
 
         // returnt als er geen tiles meer in de wachtrij zitten (algoritme is
         // afgelopen)
-        if (queue.isEmpty()) {
+        if (queue.isEmpty())
             return;
-        }
 
         Tile nextTile = getPriorityNextTile(currentTile);
 
+        //Als de volgende tile geen onontdekte buren heeft, slaag deze tile over --> MAG WEG!
         while (!doesHaveOtherNeighboursToCheck(nextTile)) {
             nextTile.setMarkingExploreMaze(true);
             allTiles.add(nextTile);
@@ -138,72 +149,32 @@ public class MazeExplorer {
         algorithm(nextTile);
     }
 
-    // /**
-    // * Set the endtile that's the ending of the shortest-path algorithm.
-    // */
-    // public void setEndTile(Tile endTile) {
-    // this.endTile = endTile;
-    // }
-    //
-    // /**
-    // * Get the endtile that's the ending of the shortest-path algorithm.
-    // */
-    // public Tile getEndTile() {
-    // return endTile;
-    // }
-    //
-    // /**
-    // * Set the checktile that's the beginning of the shortest-path algorithm.
-    // */
-    // public void setCheckTile(Tile checkTile) {
-    // this.checkTile = checkTile;
-    // }
-    //
-    // /**
-    // * Get the checktile that's the beginning of the shortest-path algorithm.
-    // */
-    // public Tile getCheckTile() {
-    // return checkTile;
-    // }
-    //
-    // public void setCheckTileFound(boolean check) {
-    // checkTileFound = check;
-    // }
-    //
-    // public void setEndTileFound(boolean check) {
-    // endTileFound = check;
-    // }
-
-    /**
-     * Kijkt naar elke neighbourTile van de currentTile: wanneer nog niet
-     * explored en geen obstruction wordt een tile gezet.
-     */
+    //Checkt voor alle neighbours of ze al behandeld zijn. 
+    //Indien niet, checkt of er een muur tussen staat.
+    //Indien wel, plaats een muur.
+    //Indien niet, voeg een nieuwe lege tile toe op de juiste plaats.
     private void checkForNeighboursNotYetExplored(final Tile currentTile) {
 
-        Orientation currentOrientation = communicator.getPilot()
-                .getOrientation();
+        Orientation currentOrientation = communicator.getPilot().getOrientation();
         int numberVariable = currentOrientation.getNumberArray();
-
+        //numbervariable met als inhoud het getal van de orientatie (N = 1, ...)
+    	//Array met alle buren van deze tile
+        final ArrayList<Tile> array = currentTile.getAllNeighbours();
         for (int i = 0; i < 4; i++) {
-            final ArrayList<Tile> array = currentTile.getAllNeighbours();
-            if (array.get(numberVariable) != null
-                    && (array.get(numberVariable).isMarkedExploreMaze())) {
-            } else {
-                double angle = (((numberVariable - currentOrientation
-                        .getNumberArray()) * 90) + 360) % 360;
+            //Do nothing if tile with numbervariable as orientation is already done
+            if (array.get(numberVariable) != null && (array.get(numberVariable).isMarkedExploreMaze()));
+            //Else turn to this direction and check obstruction and set tile
+            else {
+                double angle = (((numberVariable - currentOrientation.getNumberArray()) * 90) + 360) % 360;
                 angle = ExtMath.getSmallestAngle(angle);
-                communicator.sendCommand((int) (angle * 10) * 10
-                        + Command.AUTOMATIC_TURN_ANGLE);
-                communicator
-                        .sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
-                currentOrientation = communicator.getPilot()
-                        .getOrientation();
+                communicator.sendCommand((int) (angle * 10) * 10 + Command.AUTOMATIC_TURN_ANGLE);
+                communicator.sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
+                currentOrientation = communicator.getPilot().getOrientation();
             }
-
+            //Next orientation
             numberVariable = numberVariable + 1;
-            if (numberVariable == 4) {
+            if (numberVariable == 4)
                 numberVariable = 0;
-            }
         }
     }
 
@@ -213,17 +184,12 @@ public class MazeExplorer {
      */
     public boolean doesHaveOtherNeighboursToCheck(final Tile nextTile) {
         int j = 0;
-        if (!nextTile.isStraightTile()) {
-            for (final Object neighbourTile : nextTile.getAllNeighbours()) {
-                if (neighbourTile != null
-                        && ((Tile) neighbourTile).isMarkedExploreMaze()) {
+        if (!nextTile.isStraightTile())
+            for (final Object neighbourTile : nextTile.getAllNeighbours())
+                if (neighbourTile != null && ((Tile) neighbourTile).isMarkedExploreMaze())
                     j++;
-                }
-            }
-        }
-        if (j == 4) {
+        if (j == 4)
             return false;
-        }
         return true;
     }
 
@@ -291,33 +257,6 @@ public class MazeExplorer {
         communicator.mustAllign(mustAllign);
         allTiles.add(startTile);
         algorithm(startTile);
-        // TODO test shortestPath op't einde.
-        // if (getCheckTile() != null && getEndTile() != null) {
-        // communicator.sendCommand(
-        // Command.PERMA_STOP_READING_BARCODES);
-        // SilverSurferGUI.changeSpeed(3);
-        // // Drive to checkpoint.
-        // //TODO
-        // // gui.getSimulationPanel().clearPath();
-        // ShortestPath almostFinalPath = new ShortestPath(gui, gui
-        // .getCommunicator()
-        // .getSimulationPilot()
-        // .getMapGraphConstructed()
-        // .getTileWithCoordinates(
-        // (int) SilverSurferGUI.getStatusInfoBuffer()
-        // .getXCoordinateRelative(),
-        // (int) SilverSurferGUI.getStatusInfoBuffer()
-        // .getYCoordinateRelative()), getCheckTile(),
-        // allTiles);
-        // almostFinalPath.goShortestPath();
-
-        // Drive to endpoint.
-        // TODO
-        // gui.getSimulationPanel().clearPath();
-        // ShortestPath finalPath = new ShortestPath(gui, getCheckTile(),
-        // getEndTile(), allTiles);
-        // finalPath.goShortestPath();
-        // }
         for (final Object tile : allTiles) {
             ((Tile) tile).setMarkingExploreMaze(false);
         }

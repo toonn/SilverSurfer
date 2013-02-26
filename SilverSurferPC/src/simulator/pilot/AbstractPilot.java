@@ -148,6 +148,7 @@ public abstract class AbstractPilot implements PilotInterface {
         return false;
     }
 
+    //voegt ofwel muur toe ofwel tile toe
     public void checkForObstructionAndSetTile() {
         if (checkForObstruction()) {
             addWall();
