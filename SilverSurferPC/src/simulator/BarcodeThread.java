@@ -7,8 +7,12 @@ public class BarcodeThread extends Thread {
     private boolean quit = false;
     private boolean found = false;
 
-    public BarcodeThread(String str) {
+    public BarcodeThread(final String str) {
         super(str);
+    }
+
+    public boolean getFound() {
+        return found;
     }
 
     @Override
@@ -16,21 +20,18 @@ public class BarcodeThread extends Thread {
         while (!quit) {
             try {
                 Thread.sleep(2);
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
             }
-            int lightsensorValue = SilverSurferGUI.getStatusInfoBuffer().getLatestLightSensorInfo();
+            final int lightsensorValue = SilverSurferGUI.getStatusInfoBuffer()
+                    .getLatestLightSensorInfo();
             if (lightsensorValue < 40 && lightsensorValue > 10) {
                 found = true;
             }
         }
     }
 
-    public void setQuit(boolean quit) {
+    public void setQuit(final boolean quit) {
         this.quit = quit;
-    }
-
-    public boolean getFound() {
-        return found;
     }
 }

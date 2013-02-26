@@ -1,4 +1,4 @@
-package communication;
+package threads;
 
 import lejos.nxt.*;
 
@@ -20,7 +20,7 @@ public class BarcodeThread extends Thread {
 			try {
 				Thread.sleep(50);
 			} catch(Exception e) {
-				
+	            System.out.println("Error in BarcodeThread.run()!");
 			}
 			if(lightSensor.getLightValue() < 40) {
 				found = true;
