@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{subcaption}
+\usepackage{lscape}
 
 
 \begin{document}
@@ -65,13 +66,18 @@ LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een N
 \subsection{Fysieke bouw}
 \label{ssec:fysb}
 
-De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot aan de passen aan zijn nieuwe opdracht. De robot zal in staat moeten zijn om een voorwerp op te nemen. Er zijn twee veranderingen gebeurt ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze stonden er voor tijdens het witte lijn algortime om te detecteren als de robot tegen de muur zou botsen. Deze werden niet geimplementeerd en bleken ook niet nodig te zijn dus zijn deze voor dit semester eruit gehaald. 
+De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot aan de passen aan zijn nieuwe opdracht. De robot moet in staat zijn een voorwerp, met name een wc-rolletje, op te nemen en er zullen extra sensoren ingesteld moeten worden voor bijkomende hindernissen zoals het kunnen detecteren van andere robots, het detecteren van de wip, vaststellen of het voorwerp daadwerkelijk is opgepakt,... .  
+Qua sensoren, zijn er twee veranderingen gebeurt ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze waren van nut om te detecteren wanneer er tegen een muur werd opgebotst tijdens het wittelijnalgoritme. Deze zijn echter nooit geimplementeerd en bleken ook niet nodig te zijn dus zijn deze voor dit semester eraf gehaald. 
 
-De tweede aanpassing is een infraroodsensor bovenop de robot. Deze infraroodsensor dient voor het detecteren van een infrarood balletje. Dit balletje wordt onder de wip geplaatst. Als de wip naar beneden staat zal het balletje verstopt worden door de wip en niet gedetecteerd worden. Hierdoor weet de robot dat de wip naar beneden staat en dat hij doorkan. Als het balletje wel getecteerd wordt, weet de robot dat de wip omhoog staat en dat hij er dus niet over kan. \\
+De tweede aanpassing is een infraroodsensor\footnote{ervan uitgaande dat er een infraroodbal onder de wip ligt, kan deze sensor handig zijn om de stand van de wip te detecteren. Het is echter niet zeker of er gebruik gaat gemaakt worden van deze bal.} bovenop de robot. Deze infraroodsensor dient voor het detecteren van een infrarood balletje. Dit balletje wordt onder de wip geplaatst. Als de wip naar beneden staat zal het balletje achter de wip verdwenen zijn en niet gedetecteerd worden. Hierdoor weet de robot dat de wip naar beneden staat en dat hij doorkan. Als het balletje wel gedetecteerd wordt, weet de robot dat de wip omhoog staat en dat hij er dus niet over kan. \\
 
-In het begin werd ervoor gekozen om een schep vanachter de robot te monteren om zo het voorwerp op te nemen. Het probleem hiermee is dat de robot dan een te grote lengte krijgt waardoor de robot dus niet meer kan draaien op een tegel zonder te botsen op een muur. \\
+Om het voorwerp op te nemen zijn verschillende opstellingen mogelijk. Er moet rekening gehouden worden met de hinder die de extra omvang van het voorwerp teweeg kan brengen bij het voortbewegen van de robot.
+Ook is het nuttig het voorwerp niet over de grond te laten slepen. Dit zorg voor extra wrijving en vergroot de kans dat het voorwerp valt. Ten laatste moet de robot een wip kunnen passeren. 
+ 
+Deze zaken in beschouwing nemend, werd er aanvankelijk voor gekozen om een schep achteraan de robot te monteren om zo het voorwerp op te nemen. Dit geeft als voordeel de wip zonder probleem te kunnen passeren. Het probleem hiermee is dat de robot dan een te grote lengte krijgt waardoor het onmogelijk werd voor de robot om te draaien op een tegel zonder tegen een muur aan te botsen. \\
 
-Nu is er voor gekozen om het voorwerp langs voor, met een strip van velcro, op te pakken. Het voorwerp ligt het minst in de weg als we het van voor opnemen.
+Daarom werd de opstelling waarin de schep van de robot vooraan gemonteerd wordt, verkozen. De schep is opgebouwd uit een deel van een wc-rol. Dit heeft namelijk de ideale vorm om het voorwerp, het wc-rolletje, op te nemen. Bijkomend is er een hefboom aan de robot bevestigd die het voorwerp opheft. Dit is voornamelijk belangrijk om de wip op te geraken zonder dat het voorwerp in de weg zit.
+Het voorwerp wordt omringd met velcro. Dit biedt een extra ondersteuning om het voorwerp steviger vast te houden. 
 
 
 
@@ -141,7 +147,7 @@ Een extra optimalisatie geeft prioriteit aan het vinden van het voorwerp. Een vo
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. Hierbij wordt nog steeds prioriteit gegeven aan voorwerp-locaties. Deze bevatten immers unieke barcodes die het later makkelijker maken de mappen te combineren.
 
-Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om daar op hem te wachten (niet te dicht bij om niet in de weg te staan). Deze extra optie wordt voorlopig nog niet ge\"implmenteerd omdat nog niet duidelijk is in welke gevallen de strategie het best werkt.
+Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om daar op hem te wachten (niet te dicht bij om niet in de weg te staan). Deze extra optie wordt voorlopig nog niet ge\"implementeerd omdat nog niet duidelijk is in welke gevallen de strategie het best werkt.
 
 % nog niet voor deze demo!
 %\subsection*{Algoritme om zo snel mogelijk naar de andere robot te gaan}
@@ -151,10 +157,60 @@ Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om
 % == SOFTWARE == %
 \section{Software}
 \label{secc:softw}
+De software bestaat uit twee delen: een project dat op de NXT van de robot loopt (sectie \ref{ssec:robot}) en een project dat op de computer loopt (sectie \ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie \ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Via de GUI kan ook een virtuele robot aangestuurd worden: de simulator (sectie \ref{ssec:simulator}).\\
+
+\subsection{Software design}
+\label{secc:Sdesign}
+Een overzicht van het ontwerp wordt weergegeven in het klassendiagramma van figuur \ref{fig:klasdia}.\\
+
+De Main-methode bevindt zicht in de GUI-klasse. Deze maakt een \textit{SimulatorPanel}-object aan. Dit is een overkoepelend panel waarin meerdere \textit{Viewports} zitten. Een \textit{OverallViewport} geeft de volledige doolhof en alle robots erin weer. Dit kan uiteraard enkel wanneer een gekende virtuele doolhof gebruikt wordt. Een \textit{SimulatorViewport} geeft de wereld van \'e\'en robot (eventueel gesimuleerd) weer: de sensorwaarden en de muren die hij reeds ontdekt heeft. Dit kan echter alleen wanneer deze robot zijn informatie doorgeeft aan de \textit{Viewport}. Een wereld waarvan niets geweten is, kan niet worden weergegeven. Dit is het geval voor robots van andere teams (behalve van de teamgenoot, deze stuurt zijn hele map door). Het aantal \textit{SimulatorViewports} hangt daarom af van het aantal gekende werelden. Deze verdeling wordt weergegeven in tabel \ref{tab:aantViewports}.\\
+
+\begin{table}[h]
+\begin{center}
+    \begin{tabular}{ c | c | c || c | c}
+    wij & wij & anderen & aantal & aantal \\
+    fysiek & gesimuleerd & fysiek/gesimuleerd & OveralViewports & SimulatorViewports\\ \hline \hline
+    1 & 3 & 0 & 1 & 4\\
+    0 & 4 & 0 & 1 & 4\\
+    1 & 0 & 3 & 0 & 2\\
+    0 & 1 & 3 & 0 & 2\\
+    \end{tabular}
+    \caption{Overzicht aantal OveralViewports en aantal SimulatorViewports}
+    \label{tab:aantViewPorts}
+\end{center}
+\end{table}
+
+In het geval waarbij twee \textit{SimulatorViewports} worden gebruikt, zal \'e\'en van beide aanvankelijk leeg zijn. Deze \textit{Viewport} geeft de wereld van de teamgenoot weer. Wie deze teamgenoot is, wordt echter pas bekend wanneer beide leden van het team hun voorwerp gevonden hebben.\\
+\begin{landscape}
+
+% figuren verkenning doolhof
+\begin{figure}
+\centering
+	\begin{subfigure}[hb]{0.52\textwidth}
+	\centering
+		\includegraphics[width=\textwidth]{KlasGUI}
+		\caption{map 1}
+	\end{subfigure}%
+	\begin{subfigure}[hb]{0.52\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{KlasPilot}
+	\caption{map 2}
+\end{subfigure}%
+\begin{subfigure}[hb]{0.52\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{KlasRobot}
+	\caption{map 2}
+\end{subfigure}
+\caption{Klassendiagramma}
+\label{fig:klasDia}
+\end{figure}
+\end{landscape}
+
+Elke \textit{Viewport} maakt een eigen \textit{Pilot} aan. Er zijn verschillende soorten \textit{Pilots} die elk een implementatie van \textit{PilorInterface} zijn. De keuze van \textit{Pilot} hangt af van het type robot. Een robot waarvan de wereld niet kan worden voorgesteld, heeft een \textit{DummyPilot}. Deze bevat enkel get-methodes, want deze robot kan niet worden aangestuurd. Een robot die gesimuleerd wordt, heeft een \textit{SimulatorPilot}. Deze berekent zelf zijn sensorwaarden op basis van een virtuele doolhof. Een fysieke robot krijgt een \textit{RobotPilot} die via de \textit{Communicator} in verbinding staat met de fysieke robot. Deze krijgt zijn sensorwaarden terug van de robot via de \textit{InfoReceiversThread} en de \textit{StatusInfoBuffer}. Deze \textit{Pilots} zijn de `hersenen' van deze robots/simulators. De \textit{Viewports} geven enkel weer wat de robots uitvoeren, zij berekenen en beslissen niets.
 
 \subsection{RabbitMQ}
 \label{secc:RabbMQ}
-Via RabbitMG wordt de communicatie met de andere robots verzorgt. RabbitMQ werkt via queue's. .. en nog verdere info
+Via RabbitMG wordt de communicatie met de andere robots verzorgt. RabbitMQ werkt via queue's. %.. en nog verdere info
 
 \subsection{GUI}
 
@@ -164,10 +220,7 @@ Via RabbitMG wordt de communicatie met de andere robots verzorgt. RabbitMQ werkt
 \item Beschrijving van de simulator.
 \end{itemize}
 
-\subsection{Software design}
-\begin{itemize}
-\item Geef hier een klassediagramma en een overzicht van de verschillende methodes.
-\end{itemize}
+
 
 \subsection{\ldots}
 \ldots

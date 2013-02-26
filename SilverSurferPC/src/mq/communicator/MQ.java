@@ -1,4 +1,4 @@
-package be.kuleuven.cs.peno;
+package mq.communicator;
 
 import java.io.IOException;
 

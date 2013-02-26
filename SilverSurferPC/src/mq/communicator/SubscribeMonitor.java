@@ -1,8 +1,9 @@
-package be.kuleuven.cs.peno;
+package mq.communicator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -17,26 +18,49 @@ import com.rabbitmq.client.Envelope;
  *
  */
 public class SubscribeMonitor {
-	public static final String MONITOR_KEY = "race.*";
 	
-	public static void main(String[] main) {
+	private String monitor_key = "";
+	private Connection conn = null;
+	private Channel channel = null;
+	
+	public String getMonitor_key() {
+		return monitor_key;
+	}
+	
+	public Channel getChannel() {
+		return channel;
+	}
+	
+	public Connection getConn() {
+		return conn;
+	}
+	
+	public SubscribeMonitor(String monitor_key, Channel ch, Connection co){
+		
+		this.monitor_key = monitor_key;
+		conn = co;
+		channel = ch;
+		
+	}
+	
+	/**
+	 * Sets up the monitor so it listens to the queue declared in the constructor.
+	 */
+	public void start(){
 		try {
-			final Connection conn = MQ.createConnection();
-			final Channel channel = MQ.createChannel(conn);
-			BufferedReader stdin = new BufferedReader(new InputStreamReader(
-					System.in));
-
+			
+			
 			System.out.println(String.format("Subscribbed to topic '%s'. Exit with ENTER",
-					MONITOR_KEY));
+					monitor_key));
 			
 			// create a queue for this program
 			final AMQP.Queue.DeclareOk queue = channel.queueDeclare();
 			System.out.println("Create queue " + queue.getQueue());
 			
 			// bind the queue to all routing keys that match MONITOR_KEY
-			channel.queueBind(queue.getQueue(), Config.EXCHANGE_NAME, MONITOR_KEY);
+			getChannel().queueBind(queue.getQueue(), Config.EXCHANGE_NAME, getMonitor_key());
 			System.out.println(String.format("Bound queue %s to all keys that match '%s' on exchange %s",
-					queue.getQueue(), MONITOR_KEY, Config.EXCHANGE_NAME));
+					queue.getQueue(), getMonitor_key(), Config.EXCHANGE_NAME));
 			
 			boolean noAck = false;
 			
@@ -45,7 +69,7 @@ public class SubscribeMonitor {
 			// server so sufficient locking is required. Also do not use any blocking calls to
 			// the server such as queueDeclare, txCommit, or basicCancel. Basicly only "basicAck"
 			// should be called here!!!
-			channel.basicConsume(queue.getQueue(), noAck, new DefaultConsumer(channel) {
+			getChannel().basicConsume(queue.getQueue(), noAck, new DefaultConsumer(getChannel()) {
 				@Override
 				public void handleDelivery(String consumerTag, Envelope envelope, 
 						AMQP.BasicProperties properties, byte[] body) throws IOException {
@@ -62,19 +86,33 @@ public class SubscribeMonitor {
 							envelope.getRoutingKey(),
 							new String(body)));
 					
+					MessageCenter ms = new MessageCenter();
+					ms.sendMessage(Config.EXCHANGE_NAME, "race.bla", "woowoo");
 					// send an ack to the server so it can remove the message from
 					// the queue.	
-					channel.basicAck(deliveryTag, false);
+					getChannel().basicAck(deliveryTag, false);
 				}
 			});
 
-			// wait here until a newline is entered
-			stdin.readLine();
-
-			channel.close();
-			conn.close();
+		
+			
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
+		}
+	
+	}
+	
+	/**
+	 * Quit listening to the queue.
+	 */
+	public void stop(){
+		try {
+			getChannel().close();
+			getConn().close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
