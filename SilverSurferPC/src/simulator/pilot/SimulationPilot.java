@@ -21,9 +21,9 @@ public class SimulationPilot extends AbstractPilot {
      */
     /*
      * TODO Waarom is dit met virtueel bewegen? Dit kan toch berekend worden?
-     * Uit richting en plaats weet ge de zijden (van het grid) die ge gaat
-     * kruisen, die checkt ge dan in de juiste volgorde op de aanwezigheid van
-     * een muur.
+     * (lage prioriteit) Uit richting en plaats weet ge de zijden (van het grid)
+     * die ge gaat kruisen, die checkt ge dan in de juiste volgorde op de
+     * aanwezigheid van een muur.
      */
     private double calculateDistanceToWall() {
         // current temporary position; to check whether there are walls in the
@@ -172,7 +172,22 @@ public class SimulationPilot extends AbstractPilot {
     }
 
     @Override
-    protected int getRotateSleepTime() {
+    protected int getRotateSleepTime(double angle) {
         return 5 - getSpeed();
+    }
+
+    @Override
+    protected int getTravelSleepTime(double distance) {
+        switch (getSpeed()) {
+        case 1:
+            return 10;
+        case 2:
+            return 7;
+        case 3:
+            return 5;
+        case 4:
+            return 3;
+        }
+        return 0;
     }
 }

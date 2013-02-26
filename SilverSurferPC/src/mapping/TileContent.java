@@ -8,10 +8,6 @@ public abstract class TileContent {
         this.tile = tile;
     }
 
-    /*
-     * TODO: kunnen meegeven of de barcode een finishbarcode is.
-     */
-
     public abstract int getColorValue(double x, double y);
 
 }

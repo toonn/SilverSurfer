@@ -208,24 +208,25 @@ public class GUIMenuBar extends JMenuBar {
         loadMapItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                // reset the current map.
-                gui.getSimulationPanel().resetMap();
-
-                // Prompt for a File
-                final FileDialog prompt = new FileDialog(GUIMenuBar.this
-                        .getGui().getFrame(), "Select maze:", FileDialog.LOAD);
-                prompt.setDirectory("resources/maze_maps");
-
-                // Display the dialog and wait for the user's response
-                prompt.setVisible(true);
-
-                final File mapFile = new File(prompt.getDirectory()
-                        + prompt.getFile()); // Load and display selection
-                prompt.dispose(); // Get rid of the dialog box
-
-                gui.getCommunicator().getPilot().setMapFile(mapFile, 0, 0);
-
-                System.out.println("[I/O] Map succesfully loaded!");
+                // // TODO implement
+                // // reset the current map.
+                // gui.getSimulationPanel().resetMap();
+                //
+                // // Prompt for a File
+                // final FileDialog prompt = new FileDialog(GUIMenuBar.this
+                // .getGui().getFrame(), "Select maze:", FileDialog.LOAD);
+                // prompt.setDirectory("resources/maze_maps");
+                //
+                // // Display the dialog and wait for the user's response
+                // prompt.setVisible(true);
+                //
+                // final File mapFile = new File(prompt.getDirectory()
+                // + prompt.getFile()); // Load and display selection
+                // prompt.dispose(); // Get rid of the dialog box
+                //
+                // gui.getCommunicator().getPilot().setMapFile(mapFile, 0, 0);
+                //
+                // System.out.println("[I/O] Map succesfully loaded!");
 
             }
 
@@ -239,7 +240,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                /* TOON mazexplorer moet een pilot hebben */
+                /* TOON pilot moet een mazeexplorer hebben */
                 // MazeExplorer exp = new MazeExplorer(gui);
                 // ExploreThread explorer = new ExploreThread(exp);
                 // gui.getCommunicator().setExplorer(exp);
@@ -340,8 +341,9 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                gui.getSimulationPanel().resetMap();
-                SilverSurferGUI.clearScreen();
+                // TODO implement
+                // gui.getSimulationPanel().resetMap();
+                // SilverSurferGUI.clearScreen();
             }
         });
 
@@ -352,7 +354,8 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                gui.getSimulationPanel().removeWalls();
+                // // TODO implement
+                // gui.getSimulationPanel().removeWalls();
             }
         });
 
@@ -363,7 +366,8 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                gui.getSimulationPanel().removeBarCodes();
+                // // TODO implement
+                // gui.getSimulationPanel().removeBarCodes();
             }
         });
 

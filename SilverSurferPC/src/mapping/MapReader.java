@@ -149,7 +149,7 @@ public class MapReader {
                     }
                 }
 
-                map.setTileXY(j, i, tileIJ);
+                map.addTileXY(j, i, tileIJ);
             }
         }
         return map;

@@ -36,7 +36,7 @@ public class MazeExplorer {
         startTile = communicator
                 .getPilot()
                 .getMapGraphConstructed()
-                .getTileWithCoordinates(
+                .getTile(
                         communicator.getPilot().getPositionRelativeX(),
                         communicator.getPilot().getPositionRelativeY());
     }

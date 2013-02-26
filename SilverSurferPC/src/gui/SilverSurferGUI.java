@@ -15,8 +15,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
-import simulator.pilot.SimulationPilot;
-import simulator.viewport.ViewPort;
+import simulator.pilot.AbstractPilot;
 
 import communication.Communicator;
 import communication.StatusInfoBuffer;
@@ -25,8 +24,7 @@ public class SilverSurferGUI {
 
     private static JFrame frame;
     private static StatusInfoBuffer statusInfoBuffer;
-    private static ViewPort simulationPanel;
-    private static SimulationPilot simulationPilot;
+    private static AbstractPilot simulationPilot;
     private static Communicator communicator;
 
     private static JButton ZoomInButton;
@@ -46,7 +44,7 @@ public class SilverSurferGUI {
     private static JLabel infoLabel6;
     private static JLabel infoLabel7;
 
-    private static JPanel mappingPanel;
+    private static JPanel simulatorPanel;
 
     public static void changeSpeed(final int value) {
         communicator.setSpeed(value);
@@ -57,25 +55,27 @@ public class SilverSurferGUI {
 
     protected static void clearScreen() {
         System.out.println("[GUI] Screen cleared.");
-        simulationPanel.resetMap();
+        // TODO implement
+        // simulatorPanel.resetMap();
     }
 
     protected static void connectBluetooth() {
-        try {
-            communicator.setRobotConnected(true);
-            simulationPanel.resetMap();
-            // TOON Juiste pilot aanmaken
-            // simulationPilot.setRobotControllable(true);
-            simulationPilot.setTile(0, 0);
-            // TOON robotrelativeposition(0,0)
-            // statusInfoBuffer.setXCoordinateRelative(0);
-            // statusInfoBuffer.setYCoordinateRelative(0);
-            System.out.println("[CONNECTION] Connection established.");
-            changeSpeed(2);
-        } catch (final Exception e) {
-            System.out
-                    .println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
-        }
+        // try {
+        // //TODO implement
+        // communicator.setRobotConnected(true);
+        // simulatorPanel.resetMap();
+        // // TOON Juiste pilot aanmaken
+        // // simulationPilot.setRobotControllable(true);
+        // simulationPilot.setTile(0, 0);
+        // // TOON robotrelativeposition(0,0)
+        // // statusInfoBuffer.setXCoordinateRelative(0);
+        // // statusInfoBuffer.setYCoordinateRelative(0);
+        // System.out.println("[CONNECTION] Connection established.");
+        // changeSpeed(2);
+        // } catch (final Exception e) {
+        // System.out
+        // .println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
+        // }
     }
 
     private static javax.swing.border.Border createBorder() {
@@ -83,18 +83,19 @@ public class SilverSurferGUI {
     }
 
     protected static void disconnectBluetooth() {
-        try {
-            communicator.setRobotConnected(false);
-            simulationPanel.resetMap();
-            // TOON pilot vervangen door simpilot i.p.v. robotpilot?
-            // simulationPilot.setRobotControllable(true);
-            System.out
-                    .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
-            changeSpeed(2);
-        } catch (final Exception e) {
-            System.out
-                    .println("[CONNECTION] Oops! Something went wrong disconnecting!");
-        }
+        // try {
+        // // TODO implement
+        // communicator.setRobotConnected(false);
+        // simulatorPanel.resetMap();
+        // // TOON pilot vervangen door simpilot i.p.v. robotpilot?
+        // // simulationPilot.setRobotControllable(true);
+        // System.out
+        // .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
+        // changeSpeed(2);
+        // } catch (final Exception e) {
+        // System.out
+        // .println("[CONNECTION] Oops! Something went wrong disconnecting!");
+        // }
     }
 
     public static StatusInfoBuffer getStatusInfoBuffer() {
@@ -243,7 +244,7 @@ public class SilverSurferGUI {
         final JPanel scalePanel = scalePanel();
         final JPanel directionPanel = directionPanel();
         final JPanel infoPanel = infoPanel();
-        mappingPanel = mappingPanel();
+        simulatorPanel = simulatorPanel();
         // JPanel consolePanel = consolePanel();
         final JPanel sensorPanel = sensorPanel();
 
@@ -265,7 +266,7 @@ public class SilverSurferGUI {
                         frameLayout
                                 .createParallelGroup(
                                         GroupLayout.Alignment.CENTER)
-                                .addComponent(mappingPanel)
+                                .addComponent(simulatorPanel)
                                 .addComponent(sensorPanel)));
         frameLayout.setVerticalGroup(frameLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -276,7 +277,7 @@ public class SilverSurferGUI {
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout.createSequentialGroup()
-                                .addComponent(mappingPanel)
+                                .addComponent(simulatorPanel)
                                 .addComponent(sensorPanel, 170, 170, 170)));
         frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
         frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
@@ -403,14 +404,6 @@ public class SilverSurferGUI {
      * return consolePanel; }
      */
 
-    public ViewPort getSimulationPanel() {
-        return simulationPanel;
-    }
-
-    public SimulationPilot getSimulationPilot() {
-        return simulationPilot;
-    }
-
     private JPanel infoPanel() {
         infoLabel1 = new JLabel("", SwingConstants.CENTER);
         infoLabel2 = new JLabel("", SwingConstants.CENTER);
@@ -443,8 +436,9 @@ public class SilverSurferGUI {
         return outputPanel;
     }
 
-    private JPanel mappingPanel() {
-        // TODO vervangen door simulatorpanel
+    private JPanel simulatorPanel() {
+        simulatorPanel = new 
+        // TOON vervangen door simulatorpanel
         // simulationPanel = new SimulationViewPort();
         // simulationPanel.setSize(20000, 20000);
         // simulationPanel.setBackground(Color.WHITE);
@@ -508,8 +502,8 @@ public class SilverSurferGUI {
     }
 
     public void updateCoordinates(final String s) {
-        mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-                s));
+        simulatorPanel.setBorder(BorderFactory.createTitledBorder(
+                createBorder(), s));
     }
 
     public void updateStatus() {
@@ -518,9 +512,8 @@ public class SilverSurferGUI {
             int lightSensorValue;
 
             if (!getCommunicator().getRobotConnected()) {
-                ultrasonicSensorValue = getSimulationPilot()
-                        .getUltraSensorValue();
-                lightSensorValue = getSimulationPilot().getLightSensorValue();
+                ultrasonicSensorValue = simulationPilot.getUltraSensorValue();
+                lightSensorValue = simulationPilot.getLightSensorValue();
             } else {
                 ultrasonicSensorValue = getStatusInfoBuffer()
                         .getLatestUltraSensorInfo();
@@ -547,12 +540,14 @@ public class SilverSurferGUI {
     }
 
     public void zoomIn() {
-        final ZoomThread ZT = new ZoomThread("ZT", simulationPanel, true);
-        ZT.start();
+        // // TODO implement
+        // final ZoomThread ZT = new ZoomThread("ZT", simulatorPanel, true);
+        // ZT.start();
     }
 
     public void zoomOut() {
-        final ZoomThread ZT = new ZoomThread("ZT", simulationPanel, false);
-        ZT.start();
+        // // TODO implement
+        // final ZoomThread ZT = new ZoomThread("ZT", simulatorPanel, false);
+        // ZT.start();
     }
 }
