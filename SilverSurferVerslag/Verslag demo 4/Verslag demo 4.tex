@@ -29,7 +29,7 @@ De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone s
 
 De robot kan een doolhof verkennen en er een map van bijhouden. Wanneer een tegel gevonden wordt die mogelijk een voorwerp bevat, zal deze eerst nagekeken worden alvorens verder het doolhof te verkennen.\\
 
-Via RabbitMQ kunnen de robots en simulators met elkaar communiceren.\\
+Via RabbitMQ kunnen de robots en simulators met elkaar communiceren. RabbitMQ maakt gebruik van queues waar er berichten naar toe gestuurd worden.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -175,46 +175,9 @@ Via RabbitMG wordt de communicatie met de andere robots verzorgt. RabbitMQ werkt
 
 % == BESLUIT == %
 \section{Besluit}
+De uiteindelijke bouw van de robot bestaat uit een infrarood sensor vanboven op de ultrasone sensor en een schepsysteem voor het voorwerp vooraan de robot. Op het schepsysteem is velcro aangebracht zodat het voorwerp stevig vastzit. De lichtsensor heeft een scharnier gekregen, zodat als de robot over een wip rijdt, de lichtsensor niet in de weg steekt. 
 
 
-
-\newpage
-\makeappendix
-
-\section{Demo 1}
-
-\subsection{Resultaten}
-\ldots
-
-\subsection{Conclusies}
-\ldots
-
-\subsection{Oplijsting aanpassingen verslag}
-Hier komt een summiere weergave van welke secties uit het vorige verslag gewijzigd werden.
-
-
-
-
-
-\section{Beschrijving van het proces}
-\begin{itemize}
-\item Welke moeilijkheden heb je ondervonden tijdens de uitwerking?
-\item Welke lessen heb je getrokken uit de manier waarop je het project hebt aangepakt?
-\item Hoe verliep het werken in team? Op welke manier werd de teamco\"ordinatie en planning aangepakt?
-\end{itemize}
-
-
-\section{Beschrijving van de werkverdeling}
-\begin{itemize}
-\item Geef voor elk van de groepsleden aan aan welke delen ze hebben meegewerkt en welke andere taken ze op zich hebben genomen.
-\item Rapporteer in tabelvorm hoeveel uur elk groepslid elke week aan het project gewerkt heeft, zowel tijdens als buiten de begeleide sessies. Geef ook totalen per groepslid voor het volledige semester.
-\end{itemize}
-
-
-\section{Kritisch analyse}
-\begin{itemize}
-\item Maak een analyse van de sterke en zwakke punten van het project. Welke punten zijn vatbaar voor verbetering. Wat zou je, met je huidige kennis, anders aangepakt hebben?
-\end{itemize}
 
 
 
