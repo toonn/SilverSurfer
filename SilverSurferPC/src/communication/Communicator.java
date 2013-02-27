@@ -174,8 +174,8 @@ public class Communicator {
     }
 
     private void readBarcode() {
-        final int value = pilot.getMapGraphLoaded().getCurrentTile()
-                .getContent().getValue();
+        final int value = pilot.getMapGraphLoaded()
+                .getTile(pilot.getRelativePosition()).getContent().getValue();
         SilverSurferGUI.getStatusInfoBuffer().setBarcode(value);
     }
 

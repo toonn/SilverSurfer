@@ -33,12 +33,8 @@ public class MazeExplorer {
 
     public MazeExplorer(final Communicator communicator) {
         this.communicator = communicator;
-        startTile = communicator
-                .getPilot()
-                .getMapGraphConstructed()
-                .getTile(
-                        communicator.getPilot().getPositionRelativeX(),
-                        communicator.getPilot().getPositionRelativeY());
+        startTile = communicator.getPilot().getMapGraphConstructed()
+                .getTile(communicator.getPilot().getRelativePosition());
     }
 
     /**
@@ -54,11 +50,6 @@ public class MazeExplorer {
         checkForNeighboursNotYetExplored(currentTile);
 
         currentOrientation = communicator.getPilot().getOrientation();
-
-        // update robot tilecoordinates
-        if (communicator.getRobotConnected()) {
-            updateRobotTileCoordinates();
-        }
 
         // checkForObstructionsAndSetTile(whichTilesAllreadyBeen);
 
@@ -196,8 +187,7 @@ public class MazeExplorer {
                         + Command.AUTOMATIC_TURN_ANGLE);
                 communicator
                         .sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
-                currentOrientation = communicator.getPilot()
-                        .getOrientation();
+                currentOrientation = communicator.getPilot().getOrientation();
             }
 
             numberVariable = numberVariable + 1;
@@ -324,11 +314,4 @@ public class MazeExplorer {
         communicator.mustAllign(false);
 
     }
-
-    private void updateRobotTileCoordinates() {
-        communicator.getPilot().setCurrentTileCoordinatesRobot(
-                communicator.getPilot().getAbsolutePosition().getX(),
-                communicator.getPilot().getAbsolutePosition().getY());
-    }
-
 }

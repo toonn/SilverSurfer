@@ -15,17 +15,16 @@ import java.util.List;
 
 import simulator.pilot.AbstractPilot;
 
-public class UnitViewPort extends AbstractViewPort {
+public class UnitViewPort extends DummyViewPort {
     private Arc2D sonarArc = new Arc2D.Double();
     private Ellipse2D undergroundCircle = new Ellipse2D.Double();
     private List<Point> pathCoordinates;
 
     public UnitViewPort(final AbstractPilot pilot) {
-        super();
+        super(pilot);
         pathCoordinates = new ArrayList<Point>();
         addPathPoint(pilot.getAbsolutePosition().getX(), pilot
                 .getAbsolutePosition().getY());
-        pilots.add(pilot);
     }
 
     public void addPathPoint(final double x, final double y) {
@@ -54,10 +53,9 @@ public class UnitViewPort extends AbstractViewPort {
 
     }
 
-    @Override
     public void moveRobot(double x, double y, final double degrees) {
-        x = x * scalingfactor - getShiftToTheRight();
-        y = y * scalingfactor - getShiftDown();
+        x = x * scalingfactor;
+        y = y * scalingfactor;
         // System.out.println("xy = " + x + " " + y);
         pathCoordinates.get(pathCoordinates.size() - 1).setLocation(x, y);
 
@@ -103,6 +101,7 @@ public class UnitViewPort extends AbstractViewPort {
         // paintGridComponent(graph);
         paintUndergroundComponent(graph);
         paintBeamComponent(graph);
+        paintMapGraph(graph);
     }
 
     /**

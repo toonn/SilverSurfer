@@ -1,12 +1,12 @@
 package mapping;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Tile {
 
-    private int xCoordinate = -1000;
-    private int yCoordinate = -1000;
+    private final Point location;
     private Barcode content;
     private boolean isMarkedExploreMaze = false;
     private boolean isMarkedShortestPath = false;
@@ -27,7 +27,8 @@ public class Tile {
      */
     private final HashMap<Orientation, Edge> edges = new HashMap<Orientation, Edge>();
 
-    public Tile() {
+    public Tile(final Point point) {
+        location = point;
         populateEdges();
     }
 
@@ -44,12 +45,14 @@ public class Tile {
      *         getBorder(direction).getNeighbour(this).equals(square) )
      */
     public boolean areNeighbours(final Tile tile) {
-        if (Math.abs(getxCoordinate() - tile.getxCoordinate()) == 1
-                && (getyCoordinate() - tile.getyCoordinate()) == 0) {
+        if (tile == null)
+            return false;
+        if (Math.abs(location.getX() - tile.getPosition().getX()) == 1
+                && (location.getY() - tile.getPosition().getY()) == 0) {
             return true;
         }
-        if (Math.abs(getyCoordinate() - tile.getyCoordinate()) == 1
-                && (getxCoordinate() - tile.getxCoordinate()) == 0) {
+        if (Math.abs(location.getX() - tile.getPosition().getX()) == 1
+                && (location.getY() - tile.getPosition().getY()) == 0) {
             return true;
         } else {
             return false;
@@ -225,18 +228,34 @@ public class Tile {
         return neighbours;
     }
 
-    /**
-     * return -1000 if this tile is not yet set on a mapgraph
-     */
-    public int getxCoordinate() {
-        return xCoordinate;
+    // /**
+    // * return -1000 if this tile is not yet set on a mapgraph
+    // */
+    // public int getxCoordinate() {
+    // return xCoordinate;
+    // }
+    //
+    // /**
+    // * return -1000 if this tile is not yet set on a mapgraph
+    // */
+    // public int getyCoordinate() {
+    // return yCoordinate;
+    // }
+
+    /** return null if this tile is not yet set on a mapgraph */
+    public Point getPosition() {
+        return location;
     }
 
-    /**
-     * return -1000 if this tile is not yet set on a mapgraph
-     */
-    public int getyCoordinate() {
-        return yCoordinate;
+    public Orientation getCommonOrientation(Tile tile) {
+        if (!areNeighbours(tile))
+            return null;
+        for (Orientation orientation : Orientation.values()) {
+            if (getEdge(orientation) == tile.getEdge(orientation)) {
+                return orientation;
+            }
+        }
+        return null;
     }
 
     /**
@@ -404,14 +423,6 @@ public class Tile {
 
     }
 
-    public void setxCoordinate(final int xCoordinate) {
-        this.xCoordinate = xCoordinate;
-    }
-
-    public void setyCoordinate(final int yCoordinate) {
-        this.yCoordinate = yCoordinate;
-    }
-
     /**
      * Terminate this square.
      * 
@@ -444,10 +455,8 @@ public class Tile {
 
     @Override
     public String toString() {
-        return "Content: " + getContent() + " Edges -- North: "
-                + getEdge(Orientation.NORTH) + " East: "
-                + getEdge(Orientation.EAST) + " South: "
-                + getEdge(Orientation.SOUTH) + " West: "
-                + getEdge(Orientation.WEST);
+        return getEdge(Orientation.NORTH) + "\n" + getEdge(Orientation.WEST)
+                + String.format("%2s", getContent().getValue())
+                + getEdge(Orientation.EAST) + "\n" + getEdge(Orientation.SOUTH);
     }
 }

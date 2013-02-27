@@ -1,5 +1,6 @@
 package simulator.pilot;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -11,7 +12,6 @@ import mapping.MapGraph;
 import mapping.MapReader;
 import mapping.Obstruction;
 import mapping.Orientation;
-import mapping.Tile;
 import simulator.ExtMath;
 import simulator.viewport.AbstractViewPort;
 import datastructures.Tuple;
@@ -32,8 +32,6 @@ public abstract class AbstractPilot implements PilotInterface {
             + sizeTile() / 2, 5 * sizeTile() + sizeTile() / 2);
     // private double absoluteX = 5 * sizeTile() + sizeTile() / 2;
     // private double absoluteY = 5 * sizeTile() + sizeTile() / 2;
-    private int relativeX;
-    private int relativeY;
 
     private double angle = 270;
     protected int speed = 10;
@@ -53,18 +51,6 @@ public abstract class AbstractPilot implements PilotInterface {
         barcodes = new HashSet<Barcode>();
     }
 
-    /**
-     * Voegt een barcode toe aan de bag met barcodes.
-     * 
-     * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld
-     *      zijn.
-     */
-    public void addBarcode(final AbstractViewPort simulatorPanel,
-            final Barcode barcode, final Rectangle2D[] visual) {
-        simulatorPanel.getVisibleBarcode().add(
-                new Tuple<Barcode, Rectangle2D[]>(barcode, visual));
-    }
-
     public void addWall() {
         final Orientation currentOrientation = Orientation
                 .calculateOrientation(getAngle());
@@ -72,8 +58,7 @@ public abstract class AbstractPilot implements PilotInterface {
         /* TOON panel moet pilot pollen voor ALLES(positie, muren...) */
         // getSimulationPanel().addWall(currentOrientation,
         // getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-        setWallOnTile(getPositionRelativeX(), getPositionRelativeY(),
-                currentOrientation);
+        setWallOnTile(getRelativePosition(), currentOrientation);
     }
 
     // checkt deze afstand ook en doet hetzelfde (alleen als de afstand kleiner
@@ -149,22 +134,9 @@ public abstract class AbstractPilot implements PilotInterface {
         } else {
             final Orientation currentOrientation = Orientation
                     .calculateOrientation(getAngle());
-            int xCoordinate;
-            int yCoordinate;
-            if (isRobotControllable()) {
-                xCoordinate = relativeX
-                        + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = relativeY
-                        + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            } else {
-                xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            }
-            if (mapGraphConstructed.getTile(xCoordinate,
-                    yCoordinate) == null) {
-                setTile(xCoordinate, yCoordinate);
+            Point nextPoint = currentOrientation.getNext(getRelativePosition());
+            if (mapGraphConstructed.getTile(nextPoint) == null) {
+                getMapGraphConstructed().addTileXY(nextPoint);
             }
         }
     }
@@ -176,43 +148,11 @@ public abstract class AbstractPilot implements PilotInterface {
      */
     public void checkForObstructions() {
         for (int i = 0; i < 3; i++) {
-            if (checkForObstruction()) {
-                addWall();
-            } else {
-                // removeWall();
-                final Orientation currentOrientation = Orientation
-                        .calculateOrientation(getAngle());
-                final int xCoordinate = mapGraphLoaded
-                        .getCurrentTileCoordinates()[0]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                final int yCoordinate = mapGraphLoaded
-                        .getCurrentTileCoordinates()[1]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[1];
-                if (mapGraphConstructed.getTile(xCoordinate,
-                        yCoordinate) == null) {
-                    setTile(xCoordinate, yCoordinate);
-                }
-
-            }
+            checkForObstructionAndSetTile();
             rotate(90);
         }
 
-        if (checkForObstruction()) {
-            addWall();
-        } else {
-            // removeWall();
-            final Orientation currentOrientation = Orientation
-                    .calculateOrientation(getAngle());
-            final int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
-                    + currentOrientation.getArrayToFindNeighbourRelative()[0];
-            final int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
-                    + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            if (mapGraphConstructed.getTile(xCoordinate,
-                    yCoordinate) == null) {
-                setTile(xCoordinate, yCoordinate);
-            }
-
-        }
+        checkForObstructionAndSetTile();
 
         for (int i = 0; i < 3; i++) {
             rotate(-90);
@@ -268,12 +208,8 @@ public abstract class AbstractPilot implements PilotInterface {
         return absolutePosition;
     }
 
-    public int getPositionRelativeX() {
-        return relativeX;
-    }
-
-    public int getPositionRelativeY() {
-        return relativeY;
+    public Point getRelativePosition() {
+        return setAbsoluteToRelative(getAbsolutePosition());
     }
 
     /**
@@ -577,12 +513,12 @@ public abstract class AbstractPilot implements PilotInterface {
      * Deze methode zet de coordinaten van het echte systeem om in de
      * coordinaten van de matrix
      */
-    public int[] setAbsoluteToRelative(final double x, final double y) {
-        final int[] relativeCoordinates = new int[2];
-        relativeCoordinates[0] = (int) (getAbsolutePosition().getX() / sizeTile());
-        relativeCoordinates[1] = (int) (getAbsolutePosition().getY() / sizeTile());
+    public Point setAbsoluteToRelative(Point2D.Double point) {
+        Point relPoint = new Point();
+        relPoint.setLocation((int) (point.getX() / sizeTile()),
+                (int) (point.getY() / sizeTile()));
 
-        return relativeCoordinates;
+        return relPoint;
     }
 
     // zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
@@ -601,10 +537,10 @@ public abstract class AbstractPilot implements PilotInterface {
     public void setBarcode(final int barcode) {
 
         final Barcode scanned = new Barcode(barcode, getOrientation(),
-                mapGraphConstructed.getCurrentTile());
+                mapGraphConstructed.getTile(new Point()));
 
-        getMapGraphConstructed().getTile(getPositionRelativeX(),
-                getPositionRelativeY()).setContent(scanned);
+        getMapGraphConstructed().getTile(getRelativePosition()).setContent(
+                scanned);
 
         barcodes.add(scanned);
     }
@@ -613,38 +549,13 @@ public abstract class AbstractPilot implements PilotInterface {
         absolutePosition.setLocation(x, y);
     }
 
-    /**
-     * zet dus de map terug op zijn juiste currenttilecoorinates berekend uit de
-     * xOld en yOld xOld en yOld mogen eig enkel de huidige positie
-     * voorstellen!!!!!!!!!!!!!! moeten hier ingegeven worden omdat bij de
-     * travelmethode je de currentabsoluteposition pas terug juist zet op het
-     * einde van de lus
-     */
-    public void setCurrentTileCoordinates(final MapGraph map,
-            final double xOld, final double yOld) {
-        final int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-        setRelativeX(relativePosition[0]);
-        setRelativeY(relativePosition[1]);
-    }
-
-    public void setCurrentTileCoordinatesRobot(final double xOld,
-            final double yOld) {
-        final int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        setRelativeX(relativePosition[0]);
-        setRelativeY(relativePosition[1]);
-    }
-
-    public void setMapFile(File mapFile, final int xCo, final int yCo) {
+    public void setMapFile(File mapFile, final Point point) {
         // TOON Hoort in simulatorPanel(overkoepelende)
-        setMapGraph(MapReader.createMapFromFile(mapFile, xCo, yCo));
+        setMapGraph(MapReader.createMapFromFile(mapFile));
         startAbsolutePosition.setLocation(getAbsolutePosition().getX(),
                 getAbsolutePosition().getY());
         // getSimulationPanel().clearTotal();
-        setTile(xCo, yCo);
-        setRelativeX(xCo);
-        setRelativeY(yCo);
-
+        getMapGraphConstructed().addTileXY(point);
     }
 
     /**
@@ -657,14 +568,6 @@ public abstract class AbstractPilot implements PilotInterface {
             // getSimulationPanel().clearTotal();
         }
         mapGraphLoaded = mapGraph;
-    }
-
-    private void setRelativeX(final int xCo) {
-        relativeX = xCo;
-    }
-
-    private void setRelativeY(final int yCo) {
-        relativeY = yCo;
     }
 
     public void setSpeed(int speed) {
@@ -684,20 +587,15 @@ public abstract class AbstractPilot implements PilotInterface {
         startAbsolutePosition.setLocation(startPositionX, startPositionY);
     }
 
-    public void setTile(final int x, final int y) {
-        getMapGraphConstructed().addTileXY(x, y, new Tile());
-    }
-
-    public void setWallOnTile(final int x, final int y,
-            final Orientation orientation) {
-        if (getMapGraphConstructed().getTile(x, y) == null) {
+    public void setWallOnTile(final Point point, final Orientation orientation) {
+        if (getMapGraphConstructed().getTile(point) == null) {
             throw new IllegalArgumentException(
                     "in simulationPanel bij methode SetWallOnTile "
                             + "zijn coordinaten meegegeven die de mapgraph niet bevat nl"
-                            + x + " en " + y);
+                            + point.x + " en " + point.y);
         }
-        getMapGraphConstructed().getTile(x, y)
-                .getEdge(orientation).setObstruction(Obstruction.WALL);
+        getMapGraphConstructed().getTile(point).getEdge(orientation)
+                .setObstruction(Obstruction.WALL);
     }
 
     /*
@@ -757,7 +655,8 @@ public abstract class AbstractPilot implements PilotInterface {
 
                     // the edge you are standing on contains a wall
                     if (travelOrientation == edgeOrientation
-                            && !getMapGraphLoaded().getCurrentTile()
+                            && !getMapGraphLoaded()
+                                    .getTile(getRelativePosition())
                                     .getEdge(travelOrientation).isPassable()) {
                         setCurrentAbsolutePosition(
                                 (xTemp - i
@@ -768,9 +667,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
                         System.out.println("Er staat een muur in de weg");
                         return;
-                    } else {
-                        travelToNextTileIfNeeded(xTemp, yTemp,
-                                travelOrientation);
                     }
                 }
             }
@@ -790,19 +686,6 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     protected abstract int getTravelSleepTime(double distance);
-
-    /**
-     * Checkt of het een edge is gepasseerd zoja past hij zijn
-     * currenttileCoordinates aan
-     */
-    private void travelToNextTileIfNeeded(final double xTemp,
-            final double yTemp, final Orientation travelOrientation) {
-        if (pointOnEdge(xTemp, yTemp)
-                && getMapGraphLoaded().getCurrentTile()
-                        .getEdge(travelOrientation).isPassable()) {
-            setCurrentTileCoordinates(mapGraphLoaded, xTemp, yTemp);
-        }
-    }
 
     @Override
     public boolean isRobotControllable() {

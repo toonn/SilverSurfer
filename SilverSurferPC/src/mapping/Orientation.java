@@ -1,13 +1,9 @@
 package mapping;
 
+import java.awt.Point;
+
 public enum Orientation {
     NORTH {
-        @Override
-        public final int[] getArrayToFindNeighbourRelative() {
-            final int[] north = { 0, -1 };
-            return north;
-        }
-
         @Override
         public final int getNumberArray() {
             return 0;
@@ -33,15 +29,12 @@ public enum Orientation {
             return 270;
         }
 
+        @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x, point.y - 1);
+        }
     },
     EAST {
-        @Override
-        public final int[] getArrayToFindNeighbourRelative() {
-            final int[] east = { 1, 0 };
-            return east;
-
-        }
-
         @Override
         public final int getNumberArray() {
             return 1;
@@ -66,14 +59,13 @@ public enum Orientation {
         public final int getRightAngle() {
             return 0;
         }
+
+        @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x + 1, point.y);
+        }
     },
     SOUTH {
-        @Override
-        public final int[] getArrayToFindNeighbourRelative() {
-            final int[] south = { 0, 1 };
-            return south;
-        }
-
         @Override
         public final int getNumberArray() {
             return 2;
@@ -98,14 +90,13 @@ public enum Orientation {
         public final int getRightAngle() {
             return 90;
         }
+
+        @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x, point.y + 1);
+        }
     },
     WEST {
-        @Override
-        public final int[] getArrayToFindNeighbourRelative() {
-            final int[] west = { -1, 0 };
-            return west;
-        }
-
         @Override
         public final int getNumberArray() {
             return 3;
@@ -129,6 +120,11 @@ public enum Orientation {
         @Override
         public final int getRightAngle() {
             return 180;
+        }
+
+        @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x - 1, point.y);
         }
     };
 
@@ -193,21 +189,22 @@ public enum Orientation {
         return oriTemp;
     }
 
-    /**
-     * hulpmethode die verder niet gebruikt wordt.. is in de setTileMethode van
-     * nut
-     */
-    public static Orientation getOrientationOfArray(final int[] array) {
-        if (array[0] == 1) {
-            return EAST;
-        } else if (array[0] == -1) {
-            return WEST;
-        } else if (array[1] == -1) {
-            return NORTH;
-        } else {
-            return SOUTH;
-        }
-    }
+    // /**
+    // * hulpmethode die verder niet gebruikt wordt.. is in de setTileMethode
+    // van
+    // * nut
+    // */
+    // static Orientation getOrientationOfArray(final int[] array) {
+    // if (array[0] == 1) {
+    // return EAST;
+    // } else if (array[0] == -1) {
+    // return WEST;
+    // } else if (array[1] == -1) {
+    // return NORTH;
+    // } else {
+    // return SOUTH;
+    // }
+    // }
 
     /**
      * enkel gebruikt in mapreader , doet verder niet ter zake
@@ -222,21 +219,6 @@ public enum Orientation {
         } else {
             return WEST;
         }
-    }
-
-    /**
-     * This methode returns an array containing an absolute x- and y-coordinate
-     * for the given orientation. The implementation is orientation specific and
-     * is typed above.
-     * 
-     * er is dus een verschil met getArrayToFindNeighbourRelative die hier onder
-     * staat ook weer door het verschil in coordinatensysteem zie uitleg
-     * simulationpilot bovenaan
-     */
-    public int[] getArrayToFindNeighbourRelative() {
-        // This line will never be reached, each valid direction has a return
-        // statement.
-        return new int[0];
     }
 
     public int getNumberArray() {
@@ -301,4 +283,5 @@ public enum Orientation {
         return -1;
     }
 
+    public abstract Point getNext(Point point);
 }

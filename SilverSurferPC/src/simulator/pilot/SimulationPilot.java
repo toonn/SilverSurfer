@@ -40,7 +40,7 @@ public class SimulationPilot extends AbstractPilot {
         if (getMapGraphLoaded() == null) {
             return 250;
         }
-        Tile tileTemp = getMapGraphLoaded().getCurrentTile();
+        Tile tileTemp = getMapGraphLoaded().getTile(getRelativePosition());
         int i = 1;
 
         while (i < 148) {
@@ -109,8 +109,8 @@ public class SimulationPilot extends AbstractPilot {
             mean = SimulationSensorData.getMWhiteLineLS();
             standardDeviation = SimulationSensorData.getSDWhiteLineLS();
         } else if (onBarcodeTile(absLS[0], absLS[1])) {
-            final int color = ((Barcode) getMapGraphLoaded()
-                    .getContentCurrentTile()).getColorValue(absLS[0]
+            final int color = ((Barcode) getMapGraphLoaded().getTile(
+                    getRelativePosition()).getContent()).getColorValue(absLS[0]
                     % sizeTile(), absLS[1] % sizeTile());
             mean = SimulationSensorData.getMBarcodeTileLS(color);
             standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
@@ -142,7 +142,8 @@ public class SimulationPilot extends AbstractPilot {
             // (this.getMapGraph().getContentCurrentTile() instanceof
             // Barcode)));
             return !pointOnEdge(x, y)
-                    && (getMapGraphLoaded().getContentCurrentTile() instanceof Barcode);
+                    && (getMapGraphLoaded().getTile(getRelativePosition())
+                            .getContent() instanceof Barcode);
         }
     }
 
@@ -151,8 +152,8 @@ public class SimulationPilot extends AbstractPilot {
      */
     private boolean onEmptyTile(final double x, final double y) {
         return (!pointOnEdge(x, y) && getMapGraphLoaded() == null)
-                || (!pointOnEdge(x, y) && getMapGraphLoaded()
-                        .getContentCurrentTile() == null);
+                || (!pointOnEdge(x, y) && getMapGraphLoaded().getTile(
+                        getRelativePosition()).getContent() == null);
 
     }
 
@@ -166,7 +167,7 @@ public class SimulationPilot extends AbstractPilot {
         // y, this.getAlpha())) != Obstruction.WALL)));
         return pointOnEdge(x, y)
                 && (getMapGraphLoaded() == null || getMapGraphLoaded()
-                        .getObstruction(
+                        .getObstruction(getRelativePosition(),
                                 Orientation.calculateOrientation(getAngle())) != Obstruction.WALL);
 
     }

@@ -437,7 +437,7 @@ public class SilverSurferGUI {
     }
 
     private JPanel simulatorPanel() {
-        simulatorPanel = new 
+        // simulatorPanel = new
         // TOON vervangen door simulatorpanel
         // simulationPanel = new SimulationViewPort();
         // simulationPanel.setSize(20000, 20000);

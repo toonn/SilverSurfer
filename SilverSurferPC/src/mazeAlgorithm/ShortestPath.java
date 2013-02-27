@@ -135,13 +135,8 @@ public class ShortestPath {
             return;
         }
         for (int i = 0; i < tilesPath.size() - 1; i++) {
-            final int[] ar = new int[2];
-            ar[0] = tilesPath.get(i + 1).getxCoordinate()
-                    - tilesPath.get(i).getxCoordinate();
-            ar[1] = tilesPath.get(i + 1).getyCoordinate()
-                    - tilesPath.get(i).getyCoordinate();
-            final Orientation orientation = Orientation
-                    .getOrientationOfArray(ar);
+            final Orientation orientation = tilesPath.get(i + 1)
+                    .getCommonOrientation(tilesPath.get(i));
             try {
                 if (tilesPath.size() - i > 2) {
                     communicator.sendCommand(Command.STOP_READING_BARCODES);
@@ -168,10 +163,9 @@ public class ShortestPath {
      */
     private void setHeuristics() {
         for (final Tile tile : tiles) {
-            final int xNextTile = endTile.getxCoordinate();
-            final int yNextTile = endTile.getyCoordinate();
-            final int heuristic = Math.abs(xNextTile - tile.getxCoordinate())
-                    + Math.abs(yNextTile - tile.getyCoordinate());
+            final int heuristic = (int) (Math.abs(endTile.getPosition().getX()
+                    - tile.getPosition().getX()) + Math.abs(endTile
+                    .getPosition().getY() - tile.getPosition().getY()));
             tile.setManhattanValue(heuristic);
         }
     }

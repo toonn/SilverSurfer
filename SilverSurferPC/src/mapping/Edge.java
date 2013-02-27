@@ -229,21 +229,30 @@ public class Edge {
 
     @Override
     public String toString() {
-        String t1 = "T1: null";
-        String t2 = "T2: null";
-        String obstr = "Free Edge";
-        if (getObstruction() != null) {
-            obstr = getObstruction().toString();
-        }
-        if (getTile1() != null) {
-            t1 = "T1:(" + getTile1().getxCoordinate()
-                    + getTile1().getyCoordinate() + ")";
-        }
-        if (getTile2() != null) {
-            t2 = "T2:(" + getTile2().getxCoordinate()
-                    + getTile2().getyCoordinate() + ")";
-        }
-        return t1 + " " + t2 + " Obstr:" + obstr;
+        if (getTile1().getCommonOrientation(tile2) == Orientation.NORTH
+                || getTile1().getCommonOrientation(tile2) == Orientation.SOUTH)
+            if (getObstruction() != null)
+                return "----";
+            else
+                return "~~~~";
+        else if (getObstruction() != null)
+            return "|";
+        else
+            return "/";
+        // String t1 = "T1: null";
+        // String t2 = "T2: null";
+        // String obstr = "Free Edge";
+        // if (getObstruction() != null) {
+        // obstr = getObstruction().toString();
+        // }
+        // if (getTile1() != null) {
+        // t1 = "T1:(" + getTile1().getPosition().getX()
+        // + getTile1().getPosition().getY() + ")";
+        // }
+        // if (getTile2() != null) {
+        // t2 = "T2:(" + getTile2().getPosition().getX()
+        // + getTile2().getPosition().getY() + ")";
+        // }
+        // return t1 + " " + t2 + " Obstr:" + obstr;
     }
-
 }
