@@ -27,13 +27,13 @@
 \maketitlepage
 
 \begin{abstract}
-Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. De robots moeten hierbij in een onbekende doolhof op zoek naar een bepaald voorwerp. Voor elke robot wordt een ander voorwerp gereserveerd. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet de twee voorwerpen bij elkaar brengen. Wie hier eerst in slaagt, wint. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
+Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. De robots moeten hierbij in een onbekend doolhof op zoek naar een bepaald voorwerp. Elke robot krijgt zijn eigen voorwerp toegewezen. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moeten hun voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
-De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. De laatste twee staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De lichtsensor kan wegklappen opdat de robot over een wip kan rijden. Verder is de robot voorzien van een soort schep met klittenband waarmee hij het voorwerp, ook voorzien van klittenband, kan oprapen. Dit gebeurt door het voorwerp te klemmen tussen de muur en de robot zodat het in de schep valt. Met behulp van de klittenband zit het goed vast.\\
+De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. De twee laatste sensoren staan vast gemonteerd en kunnen niet onafhankelijk van de robot bewegen. De lichtsensor kan wegklappen opdat de robot over een wip kan rijden. Verder is de robot voorzien van een soort schep met klittenband waarmee hij het voorwerp, dat ook voorzien is van klittenband, kan oprapen. Dit gebeurt door het voorwerp te klemmen tussen de muur en de robot zodat het in de schep valt.\\
 
-De robot kan een doolhof verkennen en er een map van bijhouden. Wanneer een tegel gevonden wordt die mogelijk een voorwerp bevat, zal deze eerst nagekeken worden alvorens verder het doolhof te verkennen. Via RabbitMQ \cite{RabbitMQ} kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
+De robot kan een doolhof verkennen en hiervan een map van bijhouden. Wanneer een tegel gevonden wordt die mogelijk een voorwerp bevat, zal deze tegel eerst nagekeken worden alvorens de robot verder het doolhof verkend. Via RabbitMQ \cite{RabbitMQ} kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
 
-Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
+Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich dan volledig analoog aan de fysieke robot.
 \end{abstract}
 
 \setcounter{tocdepth}{2}
@@ -141,6 +141,9 @@ Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om
 % == SOFTWARE == %
 \section{Software}
 \label{secc:softw}
+
+Bij het aanvatten van het 2e P\&O-seizoen bleek dat het project qua code toch niet al te eenduidig en leesbaar was.
+Het project is dan ook grondig herbouwd en gerefactord, zoals de aandachtige lezer die zowel dit als vorig verslag heeft gelezen, zal opmerken.\\
 De software bestaat uit twee delen: een project dat op de NXT van de robot loopt (sectie \ref{ssec:Robot}) en een project dat op de computer loopt (sectie \ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie \ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Robots kunnen met elkaar communiceren via RabbitMQ (sectie \ref{ssec:RabbMQ}). Via de GUI kunnen ook een virtuele robots aangestuurd worden: de simulators (sectie \ref{ssec:Sim}).\\
 
 Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
@@ -251,7 +254,12 @@ De \textit{AbstractPilot} bepaalt hoe de gesimuleerde robot moet reageren in de 
 
 % == BESLUIT == %
 \section{Besluit}
-De uiteindelijke bouw van de robot bestaat uit een infrarood sensor vanboven op de ultrasone sensor en een schepsysteem voor het voorwerp vooraan de robot. Op het schepsysteem is velcro aangebracht zodat het voorwerp stevig vastzit. De lichtsensor heeft een scharnier gekregen, zodat als de robot over een wip rijdt, de lichtsensor niet in de weg steekt. 
+De uiteindelijke bouw van de robot bestaat uit een infrarood sensor vanboven op de ultrasone sensor en een schepsysteem voor het voorwerp vooraan de robot. Op het schepsysteem is velcro aangebracht zodat het voorwerp stevig vastzit. De lichtsensor heeft een scharnier gekregen, zodat als de robot over een wip rijdt, de lichtsensor niet in de weg zit. \\
+
+De GUI heeft vele verandering ondergaan ten opzichte van het vorige semester. Zo is het aangepast dat het nu ook de tegenstanders kan simuleren en de teamgenoot. Dit wordt gedaan via viewports.\\
+Verder moest ook de communicatie geimplementeerd worden zodat de robot een bericht kon uitsturen dat het zijn voorwerp gevonden had. 
+De robot communiceert met de andere robotten via RabbitMQ. Hiermee kan de robot afspraken maken met de andere robot en zo ook te weten komen wie zijn teamgenoot is.
+ 
 
 
 
