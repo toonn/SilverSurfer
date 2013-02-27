@@ -217,9 +217,13 @@ Elke \textit{Viewport} maakt een eigen \textit{Pilot} aan. Er zijn verschillende
 
 De GUI zal er wat anders uitzien dan van vorig semester. Het moet nu immers mogelijk zijn de wereld van meerdere robots tegelijk weer te geven. Deze werelden verschillen van elkaar: zeker in het begin verkennen de verschillende robots een ander deel van het doolhof. Omdat zowel beginpositie als -ori\"entatie niet gekend zijn, is het niet mogelijk al deze werelden in \'e\'en paneel weer te geven. Het \textit{SimulatorPanel} wordt opgedeeld in verschillende \textit{Viewports}. Zoals uitgelegd in sectie \ref{ssec:Sdesign} hangt het aantal \textit{Viewports} af van de situatie.\\
 
+Wanneer de robot een pad aflegt, tekent de \textit{UnitViewport} dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijnen worden als lijnen opgeslagen in de \textit{UnitViewport}. Wanneer de robot een rechte weg aflegt, wordt het eindpunt van de gedefinieerde lijn steeds verlegt. Dit zorgt ervoor dat de weg die de robot aflegt continu bijgewerkt wordt. De huidige positie en de huidige ori\"entatie van de robot wordt weergegeven door een driehoek die draait met de ori\"entatie. Het bereik van de gesimuleerde ultrasone sensor wordt grafisch weergegeven door een blauwe boog. De lichtsensor wordt voorgesteld als een bol die van kleur verandert wanneer de ondergrond wijzigt. 
+Een \textit{DummyViewport} geeft geen pad of sensorwaarden weer, enkel een map. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt.\\
+
 Al deze \textit{Viewports} nemen plaats in, waardoor andere functionaliteiten van de GUI naar de achtergrond moeten verdwijnen. De sensorgrafieken, bijvoorbeeld, zullen nog beschikbaar zijn, maar worden enkel zichtbaar wanneer deze via een menu expliciet geopend worden. Zo kunnen ze nog steeds gebruikt worden voor testen.\\
 
 De nieuwe GUI is nog niet volledig klaar, dus is een figuur van de GUI bijgevoegd zoals deze er in het eerste semester uit zag: figuur \ref{fig:GUI}.
+
 
 % -- RabbitMQ -- %
 \subsection{RabbitMQ}
@@ -236,6 +240,13 @@ Elke \textit{AbstractPilot} moet kunnen interageren met een RabbitMQ-kanaal. De 
 % -- Simulator -- %
 \subsection{Simulator}
 \label{ssec:Sim}
+De \textit{Simulator} bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot en berekent sensorwaarden die een echte robot zou genereren wanneer deze zich in een soortgelijke situatie bevindt.\\
+
+De \textit{SimulatorPilot} bepaalt de positie van de `robot' ten opzichte van het virtuele doolhof: hoe ver van de muur en op welke ondergrond. Tests op de echte robot in gelijkaardige situaties laten toe een waarde te simuleren die dicht aansluit bij de echte waarde. De \textit{SimulatorPilot} haalt zijn referenties uit de klasse \textit{SimulationSensorData} die meetresultaten van de echte robot bijhoudt. De sensorwaarden worden niet nauwkeurig gegenereerd: er werd ruis toegevoegd. De echte robot geeft immers ook geen exacte waarden.\\
+
+De \textit{AbstractPilot} bepaalt hoe de gesimuleerde robot moet reageren in de gegeven situatie. De klasse bevat methodes als \textit{travel()} en \textit{rotate()}. Ook bouwt de \textit{AbstractPilot} een map op terwijl de robot zich voortbeweegt door het doolhof. De \textit{AbstractPilot} kan zowel de echte robot als een gesimuleerde robot aansturen. De \textit{AbstractPilots} zijn de hersenen van de robots.
+
+
 
 
 % == BESLUIT == %
