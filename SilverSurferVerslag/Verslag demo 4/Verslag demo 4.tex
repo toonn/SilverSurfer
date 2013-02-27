@@ -269,7 +269,7 @@ De uiteindelijke bouw van de robot bestaat uit een infrarood sensor vanboven op 
 \textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
 
 \bibitem{RabbitMQ}
-\textit{RabbitMQ}: RabbitMQ is een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die elk bestaan uit `queues'. Een bericht dat geplaatst wordt op een bepaalde `queue', wordt verstuurt naar de juiste `exchange' die het bericht in de juiste `queue' plaats.
+\textit{RabbitMQ}: RabbitMQ is een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die verdelen de berichten over `queues'. Die queues worden aangemaakt door de clients en luisteren elk naar een bepaald onderwerp. De exchange pushed dus berichten met een bepaald onderwerp naar de juiste queues.
 \mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
 
 
