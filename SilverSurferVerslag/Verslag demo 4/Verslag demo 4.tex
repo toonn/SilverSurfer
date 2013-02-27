@@ -142,8 +142,7 @@ Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om
 \section{Software}
 \label{secc:softw}
 
-Bij het aanvatten van het 2e P\&O-seizoen bleek dat het project qua code toch niet al te eenduidig en leesbaar was.
-Het project is dan ook grondig herbouwd en gerefactord, zoals de aandachtige lezer die zowel dit als vorig verslag heeft gelezen, zal opmerken.\\
+Bij het aanvatten van het tweede semester bleek dat de code van het project niet te eenduidig en leesbaar was. Het project is voor dit semester grondig hervormd en opgeschoond.\\
 De software bestaat uit twee delen: een project dat op de NXT van de robot loopt (sectie \ref{ssec:Robot}) en een project dat op de computer loopt (sectie \ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie \ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Robots kunnen met elkaar communiceren via RabbitMQ (sectie \ref{ssec:RabbMQ}). Via de GUI kunnen ook een virtuele robots aangestuurd worden: de simulators (sectie \ref{ssec:Sim}).\\
 
 Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
@@ -158,10 +157,9 @@ Voor volgende secties wordt verwezen naar het verslag van het eerste semester. D
 % -- Ontwerp -- %
 \subsection{Ontwerp van het computerproject}
 \label{ssec:Sdesign}
-Een overzicht van het ontwerp wordt weergegeven in de klassendiagramma van figuur \ref{fig:klasdia}.\\
+Een overzicht van het ontwerp wordt weergegeven in de klassendiagramma van figuur \ref{fig:klasDia}.\\
 
 De Main-methode bevindt zich in de GUI-klasse. Deze maakt een \textit{SimulatorPanel}-object aan. Dit is een overkoepelend panel waarin meerdere \textit{Viewports} zitten. Een \textit{OverallViewport} geeft de volledige doolhof en alle robots erin weer. Dit kan uiteraard enkel wanneer een gekende virtuele doolhof gebruikt wordt. Een \textit{UnitViewport} geeft de wereld van \'e\'en robot (eventueel gesimuleerd) weer: de sensorwaarden en de muren die hij reeds ontdekt heeft. Dit is enkel mogelijk wanneer deze robot zijn informatie doorgeeft aan de \textit{Viewport}. Een wereld waarvan niets geweten is, kan niet worden weergegeven. Dit is het geval voor robots van andere teams, met uitzondering van de teamgenoot. Deze stuurt zijn map door, maar niet zijn sensorwaarden en wordt gerepresenteerd door een \textit{DummyViewPort}. Het aantal \textit{Viewports} hangt af van het aantal gekende werelden. Deze verdeling wordt weergegeven in tabel \ref{tab:aantViewports}.\\
-
 Een \textit{DummyViewport} zal aanvankelijk niet worden weergeven. Deze \textit{Viewport} geeft de wereld van de teamgenoot weer. Wie deze teamgenoot is, wordt echter pas bekend wanneer beide leden van het team hun voorwerp gevonden hebben. Op dat moment zal het \textit{DummyViewport} verschijnen.\\
 
 % figuren klassendiagramma
