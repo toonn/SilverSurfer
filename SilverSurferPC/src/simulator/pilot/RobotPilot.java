@@ -16,7 +16,12 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    protected int getRotateSleepTime() {
+    protected int getRotateSleepTime(double angle) {
         return speed / 10;
+    }
+
+    @Override
+    protected int getTravelSleepTime(double distance) {
+        return speed / ((int) Math.ceil(Math.abs(distance)));
     }
 }

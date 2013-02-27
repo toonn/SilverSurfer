@@ -1,5 +1,5 @@
 package simulator.viewport;
 
-public class OverallViewPort extends ViewPort {
+public class OverallViewPort extends AbstractViewPort {
 
 }

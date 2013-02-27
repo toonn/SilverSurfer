@@ -21,9 +21,9 @@ public class SimulationPilot extends AbstractPilot {
      */
     /*
      * TODO Waarom is dit met virtueel bewegen? Dit kan toch berekend worden?
-     * Uit richting en plaats weet ge de zijden (van het grid) die ge gaat
-     * kruisen, die checkt ge dan in de juiste volgorde op de aanwezigheid van
-     * een muur.
+     * (lage prioriteit) Uit richting en plaats weet ge de zijden (van het grid)
+     * die ge gaat kruisen, die checkt ge dan in de juiste volgorde op de
+     * aanwezigheid van een muur.
      */
     private double calculateDistanceToWall() {
         // current temporary position; to check whether there are walls in the
@@ -40,7 +40,7 @@ public class SimulationPilot extends AbstractPilot {
         if (getMapGraphLoaded() == null) {
             return 250;
         }
-        Tile tileTemp = getMapGraphLoaded().getCurrentTile();
+        Tile tileTemp = getMapGraphLoaded().getTile(getRelativePosition());
         int i = 1;
 
         while (i < 148) {
@@ -109,8 +109,8 @@ public class SimulationPilot extends AbstractPilot {
             mean = SimulationSensorData.getMWhiteLineLS();
             standardDeviation = SimulationSensorData.getSDWhiteLineLS();
         } else if (onBarcodeTile(absLS[0], absLS[1])) {
-            final int color = ((Barcode) getMapGraphLoaded()
-                    .getContentCurrentTile()).getColorValue(absLS[0]
+            final int color = ((Barcode) getMapGraphLoaded().getTile(
+                    getRelativePosition()).getContent()).getColorValue(absLS[0]
                     % sizeTile(), absLS[1] % sizeTile());
             mean = SimulationSensorData.getMBarcodeTileLS(color);
             standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
@@ -142,7 +142,8 @@ public class SimulationPilot extends AbstractPilot {
             // (this.getMapGraph().getContentCurrentTile() instanceof
             // Barcode)));
             return !pointOnEdge(x, y)
-                    && (getMapGraphLoaded().getContentCurrentTile() instanceof Barcode);
+                    && (getMapGraphLoaded().getTile(getRelativePosition())
+                            .getContent() instanceof Barcode);
         }
     }
 
@@ -151,8 +152,8 @@ public class SimulationPilot extends AbstractPilot {
      */
     private boolean onEmptyTile(final double x, final double y) {
         return (!pointOnEdge(x, y) && getMapGraphLoaded() == null)
-                || (!pointOnEdge(x, y) && getMapGraphLoaded()
-                        .getContentCurrentTile() == null);
+                || (!pointOnEdge(x, y) && getMapGraphLoaded().getTile(
+                        getRelativePosition()).getContent() == null);
 
     }
 
@@ -166,13 +167,28 @@ public class SimulationPilot extends AbstractPilot {
         // y, this.getAlpha())) != Obstruction.WALL)));
         return pointOnEdge(x, y)
                 && (getMapGraphLoaded() == null || getMapGraphLoaded()
-                        .getObstruction(
+                        .getObstruction(getRelativePosition(),
                                 Orientation.calculateOrientation(getAngle())) != Obstruction.WALL);
 
     }
 
     @Override
-    protected int getRotateSleepTime() {
+    protected int getRotateSleepTime(double angle) {
         return 5 - getSpeed();
+    }
+
+    @Override
+    protected int getTravelSleepTime(double distance) {
+        switch (getSpeed()) {
+        case 1:
+            return 10;
+        case 2:
+            return 7;
+        case 3:
+            return 5;
+        case 4:
+            return 3;
+        }
+        return 0;
     }
 }

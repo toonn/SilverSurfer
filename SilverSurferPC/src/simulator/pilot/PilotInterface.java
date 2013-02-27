@@ -15,33 +15,10 @@ public interface PilotInterface {
 
     public abstract Orientation getOrientation();
 
+    // TOON Wat voor position krijgen we door via rabbitMQ?
     public abstract Point2D.Double getAbsolutePosition();
 
-    public abstract int getPositionRelativeX();
-
-    public abstract int getPositionRelativeY();
-
-    /**
-     * Returns a number from a normal distribution that represents a lightsensor
-     * value.
-     */
-    public abstract int getLightSensorValue();
-
     public abstract MapGraph getMapGraphConstructed();
-
-    public abstract String getMapString();
-
-    public abstract int getSpeed();
-
-    public abstract double getStartPositionAbsoluteX();
-
-    public abstract double getStartPositionAbsoluteY();
-
-    public abstract int getStartPositionRelativeX();
-
-    public abstract int getStartPositionRelativeY();
-
-    public abstract int getUltraSensorValue();
 
     /**
      * Moet deze Pilot de 'robot' aansturen? (Is het een echte of

@@ -1,5 +1,6 @@
 package mapping;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -84,13 +85,11 @@ public class MapReader {
 
     }
 
-    public static MapGraph createMapFromFile(final File txtFile,
-            final int relCoX, final int relCoY) {
+    public static MapGraph createMapFromFile(final File txtFile) {
         final String[][] infoMatrix = createInfoMatrixFromFile(txtFile);
 
         // Fill a graph with the information in infoMatrix.
-        MapGraph map = null;
-        map = new MapGraph(relCoX, relCoY);
+        MapGraph map = new MapGraph();
         // This prints out the information row by row
         for (int i = 0; i < infoMatrix.length; i++) {
             for (int j = 0; j < infoMatrix[i].length; j++) {
@@ -100,7 +99,8 @@ public class MapReader {
 
                 // Create the desired tile form first
                 // connect it to the graph in a right way later!
-                tileIJ = new Tile();
+                Point pointIJ = new Point(i, j);
+                tileIJ = new Tile(pointIJ);
 
                 if (seperatedInfoIJ[0].equals("Cross")) {
                     createCrossFromTile(tileIJ);
@@ -149,7 +149,7 @@ public class MapReader {
                     }
                 }
 
-                map.setTileXY(j, i, tileIJ);
+                map.loadTile(pointIJ, tileIJ);
             }
         }
         return map;

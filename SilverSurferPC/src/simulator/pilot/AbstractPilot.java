@@ -1,5 +1,6 @@
 package simulator.pilot;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -11,9 +12,8 @@ import mapping.MapGraph;
 import mapping.MapReader;
 import mapping.Obstruction;
 import mapping.Orientation;
-import mapping.Tile;
 import simulator.ExtMath;
-import simulator.viewport.ViewPort;
+import simulator.viewport.AbstractViewPort;
 import datastructures.Tuple;
 
 public abstract class AbstractPilot implements PilotInterface {
@@ -32,8 +32,6 @@ public abstract class AbstractPilot implements PilotInterface {
             + sizeTile() / 2, 5 * sizeTile() + sizeTile() / 2);
     // private double absoluteX = 5 * sizeTile() + sizeTile() / 2;
     // private double absoluteY = 5 * sizeTile() + sizeTile() / 2;
-    private int relativeX;
-    private int relativeY;
 
     private double angle = 270;
     protected int speed = 10;
@@ -53,33 +51,14 @@ public abstract class AbstractPilot implements PilotInterface {
         barcodes = new HashSet<Barcode>();
     }
 
-    /**
-     * Voegt een barcode toe aan de bag met barcodes.
-     * 
-     * @param simulatorPanel
-     *            TODO
-     * @param barcode
-     *            TODO
-     * @param visual
-     *            TODO
-     * @pre De posities van de rectangles etc moeten nu al helemaal ingevuld
-     *      zijn.
-     */
-    public void addBarcode(final ViewPort simulatorPanel,
-            final Barcode barcode, final Rectangle2D[] visual) {
-        simulatorPanel.getVisibleBarcode().add(
-                new Tuple<Barcode, Rectangle2D[]>(barcode, visual));
-    }
-
     public void addWall() {
         final Orientation currentOrientation = Orientation
                 .calculateOrientation(getAngle());
 
-        /* TODO panel moet pilot pollen voor ALLES(positie, muren...) */
+        /* TOON panel moet pilot pollen voor ALLES(positie, muren...) */
         // getSimulationPanel().addWall(currentOrientation,
         // getCurrentPositionAbsoluteX(), getCurrentPositionAbsoluteY());
-        setWallOnTile(getPositionRelativeX(), getPositionRelativeY(),
-                currentOrientation);
+        setWallOnTile(getRelativePosition(), currentOrientation);
     }
 
     // checkt deze afstand ook en doet hetzelfde (alleen als de afstand kleiner
@@ -108,7 +87,8 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void alignOnWhiteLine() {
-        // TODO Commando geven aan de robot om alignOnWhiteLine() te doen?
+        // TOON Commando geven aan de robot om alignOnWhiteLine() te doen?
+        // Momenteel wordt er in communicator gecheckt hoelang het geleden is.
         while (!pointOnEdge(getLightSensorAbsolute()[0],
                 getLightSensorAbsolute()[1])) {
             travel(1);
@@ -155,22 +135,9 @@ public abstract class AbstractPilot implements PilotInterface {
         } else {
             final Orientation currentOrientation = Orientation
                     .calculateOrientation(getAngle());
-            int xCoordinate;
-            int yCoordinate;
-            if (isRobotControllable()) {
-                xCoordinate = relativeX
-                        + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = relativeY
-                        + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            } else {
-                xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            }
-            if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
-                    yCoordinate) == null) {
-                setTile(xCoordinate, yCoordinate);
+            Point nextPoint = currentOrientation.getNext(getRelativePosition());
+            if (mapGraphConstructed.getTile(nextPoint) == null) {
+                getMapGraphConstructed().addTileXY(nextPoint);
             }
         }
     }
@@ -182,43 +149,11 @@ public abstract class AbstractPilot implements PilotInterface {
      */
     public void checkForObstructions() {
         for (int i = 0; i < 3; i++) {
-            if (checkForObstruction()) {
-                addWall();
-            } else {
-                // removeWall();
-                final Orientation currentOrientation = Orientation
-                        .calculateOrientation(getAngle());
-                final int xCoordinate = mapGraphLoaded
-                        .getCurrentTileCoordinates()[0]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[0];
-                final int yCoordinate = mapGraphLoaded
-                        .getCurrentTileCoordinates()[1]
-                        + currentOrientation.getArrayToFindNeighbourRelative()[1];
-                if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
-                        yCoordinate) == null) {
-                    setTile(xCoordinate, yCoordinate);
-                }
-
-            }
+            checkForObstructionAndSetTile();
             rotate(90);
         }
 
-        if (checkForObstruction()) {
-            addWall();
-        } else {
-            // removeWall();
-            final Orientation currentOrientation = Orientation
-                    .calculateOrientation(getAngle());
-            final int xCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[0]
-                    + currentOrientation.getArrayToFindNeighbourRelative()[0];
-            final int yCoordinate = mapGraphLoaded.getCurrentTileCoordinates()[1]
-                    + currentOrientation.getArrayToFindNeighbourRelative()[1];
-            if (mapGraphConstructed.getTileWithCoordinates(xCoordinate,
-                    yCoordinate) == null) {
-                setTile(xCoordinate, yCoordinate);
-            }
-
-        }
+        checkForObstructionAndSetTile();
 
         for (int i = 0; i < 3; i++) {
             rotate(-90);
@@ -254,25 +189,6 @@ public abstract class AbstractPilot implements PilotInterface {
         return barcodes;
     }
 
-    // /* (non-Javadoc)
-    // * @see
-    // simulator.pilot.PilotInterface#getCenterAbsoluteCurrentTile(double)
-    // */
-    // @Override
-    // public int[] getCenterAbsoluteCurrentTile(final double scalingFactor) {
-    // // TOON scalingfactor volledig uit pilots houden
-    // final int[] coord = new int[] { 0, 0 };
-    // coord[0] = (int) (((Double) (getCurrentPositionAbsoluteX() -
-    // getCurrentPositionAbsoluteX()
-    // % sizeTile())).intValue()
-    // * scalingFactor + (scalingFactor * sizeTile()) / 2);
-    // coord[1] = (int) (((Double) (getCurrentPositionAbsoluteY() -
-    // getCurrentPositionAbsoluteY()
-    // % sizeTile())).intValue()
-    // * scalingFactor + (scalingFactor * sizeTile()) / 2);
-    // return coord;
-    // }
-
     /*
      * (non-Javadoc)
      * 
@@ -293,24 +209,8 @@ public abstract class AbstractPilot implements PilotInterface {
         return absolutePosition;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getCurrentPositionRelativeX()
-     */
-    @Override
-    public int getPositionRelativeX() {
-        return relativeX;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getCurrentPositionRelativeY()
-     */
-    @Override
-    public int getPositionRelativeY() {
-        return relativeY;
+    public Point getRelativePosition() {
+        return setAbsoluteToRelative(getAbsolutePosition());
     }
 
     /**
@@ -320,9 +220,8 @@ public abstract class AbstractPilot implements PilotInterface {
      * currentPositionAbsolute dit gebeurt in setCurrentTileCoordinates
      */
     private double getEdgeMarge() {
-        // TODO dit moet nagekeken worden
         // return (double) 1.2 * scalingfactor
-        return 0;
+        return 1.2;
     }
 
     public double[] getLightSensorAbsolute() {
@@ -344,7 +243,7 @@ public abstract class AbstractPilot implements PilotInterface {
      */
     private double[] getLightsensorPlacement() {
         /*
-         * TODO pilot mag niets weten van absolute coordinaten. Deze methode
+         * TOON pilot mag niets weten van absolute coordinaten. Deze methode
          * geeft de positie van de lichtsensor relatief ten opzichte van het
          * midden van de aandrijfas als een array [(naar voor positief in cm),
          * (naar rechts positief in cm)]
@@ -354,12 +253,10 @@ public abstract class AbstractPilot implements PilotInterface {
         return new double[2];
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getLightSensorValue()
+    /**
+     * Returns a number from a normal distribution that represents a lightsensor
+     * value.
      */
-    @Override
     public abstract int getLightSensorValue();
 
     public File getMapFile() {
@@ -388,12 +285,7 @@ public abstract class AbstractPilot implements PilotInterface {
         return mapGraphLoaded;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getMapString()
-     */
-    @Override
+    // TOON Dit hoort eerder in mapgraph?
     public String getMapString() {
         if (getMapGraphLoaded() == null) {
             return "/";
@@ -401,12 +293,6 @@ public abstract class AbstractPilot implements PilotInterface {
         return mapFile.getName();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getSpeed()
-     */
-    @Override
     public int getSpeed() {
         if (speed == 48) {
             return 4;
@@ -419,60 +305,10 @@ public abstract class AbstractPilot implements PilotInterface {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getStartPositionAbsoluteX()
+    /**
+     * Returns a number from a normal distribution that represents a lightsensor
+     * value.
      */
-    @Override
-    public double getStartPositionAbsoluteX() {
-        return startAbsolutePosition.getX();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getStartPositionAbsoluteY()
-     */
-    @Override
-    public double getStartPositionAbsoluteY() {
-        return startAbsolutePosition.getY();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getStartPositionRelativeX()
-     */
-    @Override
-    public int getStartPositionRelativeX() {
-        // TOON waarom 0 i.p.v. getstarting... als het gaat over de echte robot?
-        // if (!isRobotSimulated()) {
-        // return 0;
-        // }
-        return getMapGraphLoaded().getStartingTileCoordinates()[0];
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getStartPositionRelativeY()
-     */
-    @Override
-    public int getStartPositionRelativeY() {
-        // TOON waarom 0 i.p.v. getstarting... als het gaat over de echte robot?
-        // if (!isRobotSimulated()) {
-        // return 0;
-        // }
-        return getMapGraphLoaded().getStartingTileCoordinates()[1];
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getUltraSensorValue()
-     */
-    @Override
     public abstract int getUltraSensorValue();
 
     public double[] getUltrasonicSensorAbsolute() {
@@ -494,10 +330,14 @@ public abstract class AbstractPilot implements PilotInterface {
      */
     public double[] getUltrasonicSensorPlacement() {
         /*
-         * TODO pilot mag niets weten van absolute coordinaten. Deze methode
+         * TOON pilot mag niets weten van absolute coordinaten. Deze methode
          * geeft de positie van de lichtsensor relatief ten opzichte van het
          * midden van de aandrijfas als een array [(naar voor positief in cm),
          * (naar rechts positief in cm)]
+         * 
+         * Herziening, pilot heeft 'absolute' coordinaten(die niets met tekenen
+         * te maken hebben.) De relatieve gaan verwijderd worden, die kunnen
+         * immers berekend worden uit de absolute.
          */
         // return (getCurrentPositionAbsoluteX() - scalingfactor() * 5.5
         // * Math.cos(Math.toRadians(getAlpha())));
@@ -549,7 +389,7 @@ public abstract class AbstractPilot implements PilotInterface {
      */
     @Override
     public void reset() {
-        // TOON 5 * sizeTile() komt nog van de versmelting met tekenpanel
+        // TOON 5*sizeTile() komt nog van de versmelting met tekenpanel
         // (gewoon sizetile()/2?)
         absolutePosition.setLocation(5 * sizeTile() + sizeTile() / 2, 5
                 * sizeTile() + sizeTile() / 2);
@@ -654,7 +494,7 @@ public abstract class AbstractPilot implements PilotInterface {
              * } } }
              */
 
-            // TODO panel pollt pilot
+            // TOON panel pollt pilot
             // getSimulationPanel().moveRobot(getCurrentPositionAbsoluteX(),
             // getCurrentPositionAbsoluteY(), alphaTemp);
             setAngle(alphaTemp);
@@ -662,34 +502,33 @@ public abstract class AbstractPilot implements PilotInterface {
             // getSSG().updateStatus();
 
             try {
-                Thread.sleep(getRotateSleepTime());
+                Thread.sleep(getRotateSleepTime(alpha));
             } catch (final InterruptedException e) {
             }
         }
     }
 
-    protected abstract int getRotateSleepTime();
+    protected abstract int getRotateSleepTime(double angle);
 
     /**
      * Deze methode zet de coordinaten van het echte systeem om in de
      * coordinaten van de matrix
      */
-    public int[] setAbsoluteToRelative(final double x, final double y) {
-        final double a = x
-                - setToMultipleOfTileSize(startAbsolutePosition.getX());
-        final double b = y
-                - setToMultipleOfTileSize(startAbsolutePosition.getY());
+    public Point setAbsoluteToRelative(Point2D.Double point) {
+        Point relPoint = new Point();
+        relPoint.setLocation((int) (point.getX() / sizeTile()),
+                (int) (point.getY() / sizeTile()));
 
-        int c;
-        int d;
-        c = (int) Math.floor(a / sizeTile());
-        d = (int) Math.floor(b / sizeTile());
+        return relPoint;
+    }
 
-        final int[] array = new int[2];
-        array[0] = getStartPositionRelativeX() + c;
-        array[1] = getStartPositionRelativeY() + d;
-
-        return array;
+    // zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
+    // negatief
+    // maar doet normaal niet ter zake aangezien de coordinaten in het echte
+    // coordinatensysteem
+    // niet negatief kunnen zijn
+    public int setToMultipleOfTileSize(final double a) {
+        return (int) (Math.floor(a / sizeTile()) * sizeTile());
     }
 
     public void setAngle(final double angle) {
@@ -699,10 +538,10 @@ public abstract class AbstractPilot implements PilotInterface {
     public void setBarcode(final int barcode) {
 
         final Barcode scanned = new Barcode(barcode, getOrientation(),
-                mapGraphConstructed.getCurrentTile());
+                mapGraphConstructed.getTile(new Point()));
 
-        getMapGraphConstructed().getTileWithCoordinates(getPositionRelativeX(),
-                getPositionRelativeY()).setContent(scanned);
+        getMapGraphConstructed().getTile(getRelativePosition()).setContent(
+                scanned);
 
         barcodes.add(scanned);
     }
@@ -711,38 +550,13 @@ public abstract class AbstractPilot implements PilotInterface {
         absolutePosition.setLocation(x, y);
     }
 
-    /**
-     * zet dus de map terug op zijn juiste currenttilecoorinates berekend uit de
-     * xOld en yOld xOld en yOld mogen eig enkel de huidige positie
-     * voorstellen!!!!!!!!!!!!!! moeten hier ingegeven worden omdat bij de
-     * travelmethode je de currentabsoluteposition pas terug juist zet op het
-     * einde van de lus
-     */
-    public void setCurrentTileCoordinates(final MapGraph map,
-            final double xOld, final double yOld) {
-        final int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        map.setCurrentTileCoordinates(relativePosition[0], relativePosition[1]);
-        setRelativeX(relativePosition[0]);
-        setRelativeY(relativePosition[1]);
-    }
-
-    public void setCurrentTileCoordinatesRobot(final double xOld,
-            final double yOld) {
-        final int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-        setRelativeX(relativePosition[0]);
-        setRelativeY(relativePosition[1]);
-    }
-
-    public void setMapFile(File mapFile, final int xCo, final int yCo) {
-        // TODO Hoort in simulatorPanel(overkoepelende)
-        setMapGraph(MapReader.createMapFromFile(mapFile, xCo, yCo));
+    public void setMapFile(File mapFile, final Point point) {
+        // TOON Hoort in simulatorPanel(overkoepelende)
+        setMapGraph(MapReader.createMapFromFile(mapFile));
         startAbsolutePosition.setLocation(getAbsolutePosition().getX(),
                 getAbsolutePosition().getY());
         // getSimulationPanel().clearTotal();
-        setTile(xCo, yCo);
-        setRelativeX(xCo);
-        setRelativeY(yCo);
-
+        getMapGraphConstructed().addTileXY(point);
     }
 
     /**
@@ -755,32 +569,6 @@ public abstract class AbstractPilot implements PilotInterface {
             // getSimulationPanel().clearTotal();
         }
         mapGraphLoaded = mapGraph;
-    }
-
-    /**
-     * Deze methode wordt voor het moment nog nergens gebruikt dus ook niet echt
-     * veel getest kunnen fouten inzitten geeft het middelpunt van het vak weer
-     * da overeenkomt met de coordinaten van de matrix die je moet ingeven als
-     * argumenten
-     */
-    public double[] setRelativeToAbsolute(final int x, final int y) {
-        final int a = x - getStartPositionRelativeX();
-        final int b = y - getStartPositionRelativeY();
-        final double c = a * 40;
-        final double d = b * 40;
-        final double[] array = new double[2];
-        array[0] = startAbsolutePosition.getX() + c;
-        // Moet dit niet getY() zijn?
-        array[1] = startAbsolutePosition.getX() + d;
-        return array;
-    }
-
-    private void setRelativeX(final int xCo) {
-        relativeX = xCo;
-    }
-
-    private void setRelativeY(final int yCo) {
-        relativeY = yCo;
     }
 
     public void setSpeed(int speed) {
@@ -800,29 +588,15 @@ public abstract class AbstractPilot implements PilotInterface {
         startAbsolutePosition.setLocation(startPositionX, startPositionY);
     }
 
-    public void setTile(final int x, final int y) {
-        getMapGraphConstructed().setTileXY(x, y, new Tile());
-    }
-
-    // zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
-    // negatief
-    // maar doet normaal niet ter zake aangezien de coordinaten in het echte
-    // coordinatensysteem
-    // niet negatief kunnen zijn
-    public int setToMultipleOfTileSize(final double a) {
-        return (int) (Math.floor(a / sizeTile()) * sizeTile());
-    }
-
-    public void setWallOnTile(final int x, final int y,
-            final Orientation orientation) {
-        if (getMapGraphConstructed().getTileWithCoordinates(x, y) == null) {
+    public void setWallOnTile(final Point point, final Orientation orientation) {
+        if (getMapGraphConstructed().getTile(point) == null) {
             throw new IllegalArgumentException(
                     "in simulationPanel bij methode SetWallOnTile "
                             + "zijn coordinaten meegegeven die de mapgraph niet bevat nl"
-                            + x + " en " + y);
+                            + point.x + " en " + point.y);
         }
-        getMapGraphConstructed().getTileWithCoordinates(x, y)
-                .getEdge(orientation).setObstruction(Obstruction.WALL);
+        getMapGraphConstructed().getTile(point).getEdge(orientation)
+                .setObstruction(Obstruction.WALL);
     }
 
     /*
@@ -838,11 +612,11 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void travel(final double distance) {
         /*
-         * TODO travel: pilot in panel(viewport) maar panel niet in pilot -> dus
+         * TOON travel: pilot in panel(viewport) maar panel niet in pilot -> dus
          * panel moet pollen
          */
         /*
-         * TODO pilots mogen niets weten over scalingfactors (1 pilot kan in
+         * TOON pilots mogen niets weten over scalingfactors (1 pilot kan in
          * verschillende panels met verschillende scalingfactors getoond worden)
          */
         // distance = distance * scalingfactor();
@@ -882,7 +656,8 @@ public abstract class AbstractPilot implements PilotInterface {
 
                     // the edge you are standing on contains a wall
                     if (travelOrientation == edgeOrientation
-                            && !getMapGraphLoaded().getCurrentTile()
+                            && !getMapGraphLoaded()
+                                    .getTile(getRelativePosition())
                                     .getEdge(travelOrientation).isPassable()) {
                         setCurrentAbsolutePosition(
                                 (xTemp - i
@@ -893,9 +668,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
                         System.out.println("Er staat een muur in de weg");
                         return;
-                    } else {
-                        travelToNextTileIfNeeded(xTemp, yTemp,
-                                travelOrientation);
                     }
                 }
             }
@@ -906,41 +678,15 @@ public abstract class AbstractPilot implements PilotInterface {
                 i = distanceToGo;
             }
             try {
-                if (isRobotControllable()) {
-                    Thread.sleep(speed / ((int) Math.ceil(Math.abs(distance))));
-                } else {
-                    if (getSpeed() == 1) {
-                        Thread.sleep(10);
-                    } else if (getSpeed() == 2) {
-                        Thread.sleep(7);
-                    }
-                    if (getSpeed() == 3) {
-                        Thread.sleep(5);
-                    } else {
-                        Thread.sleep(3);
-                    }
-                }
+                Thread.sleep(getTravelSleepTime(distance));
             } catch (final InterruptedException e) {
             }
         }
 
         // getSSG().updateStatus();
     }
-    
-    
 
-    /**
-     * Checkt of het een edge is gepasseerd zoja past hij zijn
-     * currenttileCoordinates aan
-     */
-    private void travelToNextTileIfNeeded(final double xTemp,
-            final double yTemp, final Orientation travelOrientation) {
-        if (pointOnEdge(xTemp, yTemp)
-                && getMapGraphLoaded().getCurrentTile()
-                        .getEdge(travelOrientation).isPassable()) {
-            setCurrentTileCoordinates(mapGraphLoaded, xTemp, yTemp);
-        }
-    }
+    protected abstract int getTravelSleepTime(double distance);
 
     @Override
     public boolean isRobotControllable() {

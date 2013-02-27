@@ -47,8 +47,8 @@ public class Barcode extends TileContent {
 
             final Rectangle2D[] visualBarcode = new Rectangle2D[8];
             for (int i = 0; i < 8; i++) {
-                visualBarcode[i] = new Rectangle2D.Double(tile.getxCoordinate()
-                        - sizeTile / 2, tile.getyCoordinate() - 8
+                visualBarcode[i] = new Rectangle2D.Double(tile.getPosition()
+                        .getX() - sizeTile / 2, tile.getPosition().getY() - 8
                         + heightbarcode * i, sizeTile, heightbarcode);
             }
 
@@ -59,9 +59,9 @@ public class Barcode extends TileContent {
 
             final Rectangle2D[] visualBarcode = new Rectangle2D[8];
             for (int i = 0; i < 8; i++) {
-                visualBarcode[i] = new Rectangle2D.Double(tile.getxCoordinate()
-                        - 8 + heightbarcode * i, tile.getyCoordinate()
-                        - sizeTile / 2, heightbarcode, sizeTile);
+                visualBarcode[i] = new Rectangle2D.Double(tile.getPosition()
+                        .getX() - 8 + heightbarcode * i, tile.getPosition()
+                        .getY() - sizeTile / 2, heightbarcode, sizeTile);
             }
 
             return visualBarcode;

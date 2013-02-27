@@ -15,17 +15,16 @@ import java.util.List;
 
 import simulator.pilot.AbstractPilot;
 
-public class SimulationViewPort extends ViewPort {
+public class UnitViewPort extends DummyViewPort {
     private Arc2D sonarArc = new Arc2D.Double();
     private Ellipse2D undergroundCircle = new Ellipse2D.Double();
     private List<Point> pathCoordinates;
 
-    public SimulationViewPort(final AbstractPilot pilot) {
-        super();
+    public UnitViewPort(final AbstractPilot pilot) {
+        super(pilot);
         pathCoordinates = new ArrayList<Point>();
-        addPathPoint(pilot.getStartPositionAbsoluteX(),
-                pilot.getStartPositionAbsoluteY());
-        pilots.add(pilot);
+        addPathPoint(pilot.getAbsolutePosition().getX(), pilot
+                .getAbsolutePosition().getY());
     }
 
     public void addPathPoint(final double x, final double y) {
@@ -54,10 +53,9 @@ public class SimulationViewPort extends ViewPort {
 
     }
 
-    @Override
     public void moveRobot(double x, double y, final double degrees) {
-        x = x * scalingfactor - getShiftToTheRight();
-        y = y * scalingfactor - getShiftDown();
+        x = x * scalingfactor;
+        y = y * scalingfactor;
         // System.out.println("xy = " + x + " " + y);
         pathCoordinates.get(pathCoordinates.size() - 1).setLocation(x, y);
 
@@ -71,7 +69,10 @@ public class SimulationViewPort extends ViewPort {
 
     private void paintBeamComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-            /* TODO updateArc herschrijven */
+            /*
+             * TOON updateArc herschrijven hoort niet in viewport
+             * (overallviewport, dummyviewport...)
+             */
             // updateArc(pilot.getUltrasonicSensorPositionX() * scalingfactor
             // - getShiftToTheRight(),
             // pilot.getUltrasonicSensorPositionY() * scalingfactor
@@ -100,6 +101,7 @@ public class SimulationViewPort extends ViewPort {
         // paintGridComponent(graph);
         paintUndergroundComponent(graph);
         paintBeamComponent(graph);
+        paintMapGraph(graph);
     }
 
     /**
@@ -131,7 +133,10 @@ public class SimulationViewPort extends ViewPort {
      */
     private void paintUndergroundComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-            /* TODO lightsensor tekenen herschrijven */
+            /*
+             * TOON lightsensor tekenen herschrijven niet in viewport
+             * (overallviewport, dummyviewport...)
+             */
             // updateUndergroundCircle(pilot.getLightsensorPositionX()
             // * scalingfactor - getShiftToTheRight(),
             // pilot.getLightsensorPositionY() * scalingfactor
