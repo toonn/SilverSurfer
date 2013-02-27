@@ -9,6 +9,9 @@
 \usepackage{listings}
 \usepackage{subcaption}
 \usepackage{lscape}
+\usepackage[absolute]{textpos}
+  \setlength{\TPHorizModule}{1cm}
+  \setlength{\TPVertModule}{1cm}
 
 
 \begin{document}
@@ -35,13 +38,12 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 
 \setcounter{tocdepth}{2}
 \tableofcontents
-
 %figuur robot
 \begin{figure}[!hb]
-\begin{flushright}
+\begin{textblock}{38}(4.5,15.5)
     \includegraphics[width=0.5\textwidth]{robotFP}
     \label{fig:robotFP2}
-\end{flushright}
+\end{textblock}
 \end{figure}
 
 \newpage
