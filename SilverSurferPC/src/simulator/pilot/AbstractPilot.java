@@ -2,19 +2,15 @@ package simulator.pilot;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import mapping.Barcode;
 import mapping.MapGraph;
-import mapping.MapReader;
 import mapping.Obstruction;
 import mapping.Orientation;
 import simulator.ExtMath;
-import simulator.viewport.AbstractViewPort;
-import datastructures.Tuple;
 
 public abstract class AbstractPilot implements PilotInterface {
     /**
@@ -61,31 +57,6 @@ public abstract class AbstractPilot implements PilotInterface {
         setWallOnTile(getRelativePosition(), currentOrientation);
     }
 
-    // checkt deze afstand ook en doet hetzelfde (alleen als de afstand kleiner
-    // is dan 30 en niet tussen 22 en 24 want da zou al goe genoeg zijn), dan
-    // terug 90 graden naar rechts zodat em zoals int begin staat. Als er alleen
-    // links een muur staat, doet em dus niks rechts en dan links wat hem anders
-    // eerst rechts zou doen (dus < 30 enige voorwaarde).
-    public void allignOnWalls() {
-        rotate(90);
-        if (getUltraSensorValue() < 30 && getUltraSensorValue() > 23) {
-            while (!(getUltraSensorValue() < 23)) {
-                travel(1);
-            }
-        }
-
-        rotate(-90);
-        rotate(-90);
-
-        if (getUltraSensorValue() < 30 && getUltraSensorValue() > 24) {
-            while (!(getUltraSensorValue() < 23)) {
-                travel(1);
-            }
-        }
-
-        rotate(90);
-    }
-
     public void alignOnWhiteLine() {
         // TOON Commando geven aan de robot om alignOnWhiteLine() te doen?
         // Momenteel wordt er in communicator gecheckt hoelang het geleden is.
@@ -114,6 +85,31 @@ public abstract class AbstractPilot implements PilotInterface {
         rotate(-(90 + i) / 2);
     }
 
+    // checkt deze afstand ook en doet hetzelfde (alleen als de afstand kleiner
+    // is dan 30 en niet tussen 22 en 24 want da zou al goe genoeg zijn), dan
+    // terug 90 graden naar rechts zodat em zoals int begin staat. Als er alleen
+    // links een muur staat, doet em dus niks rechts en dan links wat hem anders
+    // eerst rechts zou doen (dus < 30 enige voorwaarde).
+    public void allignOnWalls() {
+        rotate(90);
+        if (getUltraSensorValue() < 30 && getUltraSensorValue() > 23) {
+            while (!(getUltraSensorValue() < 23)) {
+                travel(1);
+            }
+        }
+
+        rotate(-90);
+        rotate(-90);
+
+        if (getUltraSensorValue() < 30 && getUltraSensorValue() > 24) {
+            while (!(getUltraSensorValue() < 23)) {
+                travel(1);
+            }
+        }
+
+        rotate(90);
+    }
+
     /**
      * checkt of de robot een obstruction ZIET
      */
@@ -128,7 +124,7 @@ public abstract class AbstractPilot implements PilotInterface {
         return false;
     }
 
-    //voegt ofwel muur toe ofwel tile toe
+    // voegt ofwel muur toe ofwel tile toe
     public void checkForObstructionAndSetTile() {
         if (checkForObstruction()) {
             addWall();
@@ -172,6 +168,16 @@ public abstract class AbstractPilot implements PilotInterface {
     /*
      * (non-Javadoc)
      * 
+     * @see simulator.pilot.PilotInterface#getCurrentPositionAbsolute()
+     */
+    @Override
+    public Point2D.Double getAbsolutePosition() {
+        return absolutePosition;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see simulator.pilot.PilotInterface#getAngle()
      */
     @Override
@@ -189,29 +195,7 @@ public abstract class AbstractPilot implements PilotInterface {
         return barcodes;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getCurrentOrientation()
-     */
-    @Override
-    public Orientation getOrientation() {
-        return Orientation.calculateOrientation(getAngle());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see simulator.pilot.PilotInterface#getCurrentPositionAbsolute()
-     */
-    @Override
-    public Point2D.Double getAbsolutePosition() {
-        return absolutePosition;
-    }
-
-    public Point getRelativePosition() {
-        return setAbsoluteToRelative(getAbsolutePosition());
-    }
+    public abstract String getConsoleTag();
 
     /**
      * Dit is de marge ten opzichte van de edge wordt gebruikt in travel :
@@ -273,14 +257,6 @@ public abstract class AbstractPilot implements PilotInterface {
         return mapGraphConstructed;
     }
 
-    /*
-     * public void setMapFile(File mapFile) { setMapFile(mapFile, 0, 0);
-     * SSG.getInformationBuffer().setXCoordinateRelative(0);
-     * SSG.getInformationBuffer().setYCoordinateRelative(0);
-     * 
-     * }
-     */
-
     public MapGraph getMapGraphLoaded() {
         return mapGraphLoaded;
     }
@@ -293,6 +269,30 @@ public abstract class AbstractPilot implements PilotInterface {
         return mapFile.getName();
     }
 
+    /*
+     * public void setMapFile(File mapFile) { setMapFile(mapFile, 0, 0);
+     * SSG.getInformationBuffer().setXCoordinateRelative(0);
+     * SSG.getInformationBuffer().setYCoordinateRelative(0);
+     * 
+     * }
+     */
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see simulator.pilot.PilotInterface#getCurrentOrientation()
+     */
+    @Override
+    public Orientation getOrientation() {
+        return Orientation.calculateOrientation(getAngle());
+    }
+
+    public Point getRelativePosition() {
+        return absToRelPosition(getAbsolutePosition());
+    }
+
+    protected abstract int getRotateSleepTime(double angle);
+
     public int getSpeed() {
         if (speed == 48) {
             return 4;
@@ -304,6 +304,8 @@ public abstract class AbstractPilot implements PilotInterface {
             return 1;
         }
     }
+
+    protected abstract int getTravelSleepTime(double distance);
 
     /**
      * Returns a number from a normal distribution that represents a lightsensor
@@ -343,6 +345,26 @@ public abstract class AbstractPilot implements PilotInterface {
         // * Math.cos(Math.toRadians(getAlpha())));
         return new double[2];
     }
+
+    @Override
+    public boolean isRobotControllable() {
+        return true;
+    }
+
+    // public void removeWall(){
+    //
+    // Orientation currentOrientation = Orientation.calculateOrientation(
+    // getCurrentPositionAbsoluteX(),
+    // getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
+    //
+    // // roept addwhiteline op, deze methode verwijdert de muur terug uit
+    // // het panel
+    // SSG.getSimulationPanel().addWhiteLine(currentOrientation,
+    // getCurrentPositionAbsoluteX(),
+    // getCurrentPositionAbsoluteY());
+    // SSG.getSimulationPanel().removeWallFromTile(getCurrentPositionRelativeX(),
+    // getCurrentPositionRelativeY(), currentOrientation);
+    // }
 
     /**
      * checkt of de robot zich binnen de marge van een edge bevindt
@@ -400,21 +422,6 @@ public abstract class AbstractPilot implements PilotInterface {
         angle = 270;
 
     }
-
-    // public void removeWall(){
-    //
-    // Orientation currentOrientation = Orientation.calculateOrientation(
-    // getCurrentPositionAbsoluteX(),
-    // getCurrentPositionAbsoluteY(), getAlpha(), sizeTile());
-    //
-    // // roept addwhiteline op, deze methode verwijdert de muur terug uit
-    // // het panel
-    // SSG.getSimulationPanel().addWhiteLine(currentOrientation,
-    // getCurrentPositionAbsoluteX(),
-    // getCurrentPositionAbsoluteY());
-    // SSG.getSimulationPanel().removeWallFromTile(getCurrentPositionRelativeX(),
-    // getCurrentPositionRelativeY(), currentOrientation);
-    // }
 
     /**
      * Checks whether the robot, standig on the given point, is on the edge of a
@@ -508,27 +515,16 @@ public abstract class AbstractPilot implements PilotInterface {
         }
     }
 
-    protected abstract int getRotateSleepTime(double angle);
-
     /**
      * Deze methode zet de coordinaten van het echte systeem om in de
      * coordinaten van de matrix
      */
-    public Point setAbsoluteToRelative(Point2D.Double point) {
+    public Point absToRelPosition(Point2D.Double point) {
         Point relPoint = new Point();
         relPoint.setLocation((int) (point.getX() / sizeTile()),
                 (int) (point.getY() / sizeTile()));
 
         return relPoint;
-    }
-
-    // zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
-    // negatief
-    // maar doet normaal niet ter zake aangezien de coordinaten in het echte
-    // coordinatensysteem
-    // niet negatief kunnen zijn
-    public int setToMultipleOfTileSize(final double a) {
-        return (int) (Math.floor(a / sizeTile()) * sizeTile());
     }
 
     public void setAngle(final double angle) {
@@ -550,27 +546,6 @@ public abstract class AbstractPilot implements PilotInterface {
         absolutePosition.setLocation(x, y);
     }
 
-    public void setMapFile(File mapFile, final Point point) {
-        // TOON Hoort in simulatorPanel(overkoepelende)
-        setMapGraph(MapReader.createMapFromFile(mapFile));
-        startAbsolutePosition.setLocation(getAbsolutePosition().getX(),
-                getAbsolutePosition().getY());
-        // getSimulationPanel().clearTotal();
-        getMapGraphConstructed().addTileXY(point);
-    }
-
-    /**
-     * Use this method only intern! If you want to change the map, use the
-     * setMapFile-method! only used when you delete the map
-     */
-    public void setMapGraph(final MapGraph mapGraph) {
-        if (mapGraph == null) {
-            mapGraphLoaded = null;
-            // getSimulationPanel().clearTotal();
-        }
-        mapGraphLoaded = mapGraph;
-    }
-
     public void setSpeed(int speed) {
         if (speed == 4) {
             speed = 48;
@@ -586,6 +561,15 @@ public abstract class AbstractPilot implements PilotInterface {
     public void setStartAbsolutePosition(final double startPositionX,
             final double startPositionY) {
         startAbsolutePosition.setLocation(startPositionX, startPositionY);
+    }
+
+    // zet een double om in een veelvoud van 40 kleiner dan de double (ook bij
+    // negatief
+    // maar doet normaal niet ter zake aangezien de coordinaten in het echte
+    // coordinatensysteem
+    // niet negatief kunnen zijn
+    public int setToMultipleOfTileSize(final double a) {
+        return (int) (Math.floor(a / sizeTile()) * sizeTile());
     }
 
     public void setWallOnTile(final Point point, final Orientation orientation) {
@@ -649,7 +633,6 @@ public abstract class AbstractPilot implements PilotInterface {
             yTemp = (yTemp + i * Math.sin(Math.toRadians(getAngle())));
 
             if (mapGraphLoaded != null) {
-
                 if (robotOnEdge(xTemp, yTemp, getAngle())) {
                     final Orientation edgeOrientation = pointOnWichSideOfTile(
                             xTemp, yTemp, travelOrientation);
@@ -684,12 +667,5 @@ public abstract class AbstractPilot implements PilotInterface {
         }
 
         // getSSG().updateStatus();
-    }
-
-    protected abstract int getTravelSleepTime(double distance);
-
-    @Override
-    public boolean isRobotControllable() {
-        return true;
     }
 }

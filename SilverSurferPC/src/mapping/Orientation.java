@@ -5,6 +5,11 @@ import java.awt.Point;
 public enum Orientation {
     NORTH {
         @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x, point.y - 1);
+        }
+
+        @Override
         public final int getNumberArray() {
             return 0;
         }
@@ -28,13 +33,13 @@ public enum Orientation {
         public final int getRightAngle() {
             return 270;
         }
-
-        @Override
-        public final Point getNext(Point point) {
-            return new Point(point.x, point.y - 1);
-        }
     },
     EAST {
+        @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x + 1, point.y);
+        }
+
         @Override
         public final int getNumberArray() {
             return 1;
@@ -59,13 +64,13 @@ public enum Orientation {
         public final int getRightAngle() {
             return 0;
         }
-
-        @Override
-        public final Point getNext(Point point) {
-            return new Point(point.x + 1, point.y);
-        }
     },
     SOUTH {
+        @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x, point.y + 1);
+        }
+
         @Override
         public final int getNumberArray() {
             return 2;
@@ -90,13 +95,13 @@ public enum Orientation {
         public final int getRightAngle() {
             return 90;
         }
-
-        @Override
-        public final Point getNext(Point point) {
-            return new Point(point.x, point.y + 1);
-        }
     },
     WEST {
+        @Override
+        public final Point getNext(Point point) {
+            return new Point(point.x - 1, point.y);
+        }
+
         @Override
         public final int getNumberArray() {
             return 3;
@@ -120,11 +125,6 @@ public enum Orientation {
         @Override
         public final int getRightAngle() {
             return 180;
-        }
-
-        @Override
-        public final Point getNext(Point point) {
-            return new Point(point.x - 1, point.y);
         }
     };
 
@@ -221,6 +221,8 @@ public enum Orientation {
         }
     }
 
+    public abstract Point getNext(Point point);
+
     public int getNumberArray() {
 
         // implementation is orientation dependent
@@ -282,6 +284,4 @@ public enum Orientation {
         // statement.
         return -1;
     }
-
-    public abstract Point getNext(Point point);
 }

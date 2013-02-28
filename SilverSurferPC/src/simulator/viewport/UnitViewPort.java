@@ -11,18 +11,24 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import simulator.pilot.AbstractPilot;
+import simulator.pilot.PilotInterface;
 
 public class UnitViewPort extends DummyViewPort {
-    private Arc2D sonarArc = new Arc2D.Double();
-    private Ellipse2D undergroundCircle = new Ellipse2D.Double();
+    private final Arc2D sonarArc = new Arc2D.Double();
+    private final Ellipse2D undergroundCircle = new Ellipse2D.Double();
     private List<Point> pathCoordinates;
+    private final Set<AbstractPilot> pilots;
 
-    public UnitViewPort(final AbstractPilot pilot) {
-        super(pilot);
+    public UnitViewPort(final Set<AbstractPilot> pilotSet) {
+        super(pilotSet);
+        pilots = new HashSet<AbstractPilot>(pilotSet);
         pathCoordinates = new ArrayList<Point>();
+        AbstractPilot pilot = pilots.iterator().next();
         addPathPoint(pilot.getAbsolutePosition().getX(), pilot
                 .getAbsolutePosition().getY());
     }
@@ -36,21 +42,17 @@ public class UnitViewPort extends DummyViewPort {
 
     public void clearPath() {
         pathCoordinates = new ArrayList<Point>();
-        for (final AbstractPilot pilot : pilots) {
+        for (final PilotInterface pilot : pilots) {
             addPathPoint(pilot.getAbsolutePosition().getX(), pilot
                     .getAbsolutePosition().getY());
         }
     }
 
     /**
-     * Deletes the former path of the robot and all the walls that have been
-     * explored as yet.
+     * Deletes the former path of the robot.
      */
-    @Override
     public void clearTotal() {
-        super.clearTotal();
         clearPath();
-
     }
 
     public void moveRobot(double x, double y, final double degrees) {
@@ -101,7 +103,6 @@ public class UnitViewPort extends DummyViewPort {
         // paintGridComponent(graph);
         paintUndergroundComponent(graph);
         paintBeamComponent(graph);
-        paintMapGraph(graph);
     }
 
     /**
@@ -163,15 +164,15 @@ public class UnitViewPort extends DummyViewPort {
         final double arcExtent = 30;
 
         final double side = 2 * correctedUSDistance;
-        sonarArc = new Arc2D.Double(arcUpperLeftX, arcUpperLeftY, side, side,
-                arcStart, arcExtent, Arc2D.PIE);
+        sonarArc.setArc(arcUpperLeftX, arcUpperLeftY, side, side, arcStart,
+                arcExtent, Arc2D.PIE);
     }
 
-    public void updateUndergroundCircle(final double robotX,
-            final double robotY, final double LSValue) {
-
+    public void updateUndergroundCircle() {
+        final AbstractPilot pilot = pilots.iterator().next();
         final double diam = scalingfactor * 7;
-        undergroundCircle = new Ellipse2D.Double(robotX - (diam / 2), robotY
-                - (diam / 2), diam, diam);
+        undergroundCircle.setFrame(pilot.getAbsolutePosition().getX()
+                - (diam / 2), pilot.getAbsolutePosition().getY() - (diam / 2),
+                diam, diam);
     }
 }

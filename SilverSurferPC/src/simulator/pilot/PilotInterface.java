@@ -9,16 +9,16 @@ import mapping.Orientation;
 
 public interface PilotInterface {
 
+    // TOON Wat voor position krijgen we door via rabbitMQ?
+    public abstract Point2D.Double getAbsolutePosition();
+
     public abstract double getAngle();
 
     public abstract Set<Barcode> getBarcodes();
 
-    public abstract Orientation getOrientation();
-
-    // TOON Wat voor position krijgen we door via rabbitMQ?
-    public abstract Point2D.Double getAbsolutePosition();
-
     public abstract MapGraph getMapGraphConstructed();
+
+    public abstract Orientation getOrientation();
 
     /**
      * Moet deze Pilot de 'robot' aansturen? (Is het een echte of

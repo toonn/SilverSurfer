@@ -1,7 +1,5 @@
 package mapping;
 
-import java.awt.geom.Rectangle2D;
-
 public class Barcode extends TileContent {
 
     private int value;
@@ -21,51 +19,6 @@ public class Barcode extends TileContent {
      */
     public Barcode(final Tile tile) {
         this(0, Orientation.NORTH, tile);
-    }
-
-    /**
-     * Use the result of this on SimulationJPanel.addBarcode(result); to add the
-     * barcode to the drawing stack.
-     * 
-     * @param barcode
-     *            the Barcode you want to visualise.
-     * @param centerX
-     *            : the absolute x coord of the center of the tile this barcode
-     *            should be in.
-     * @param centerY
-     *            : the absolute y coord of the center of the tile this barcode
-     *            should be in.
-     * 
-     * @pre Barcode.orientation should be specified.
-     */
-    public Rectangle2D[] createVisualBarCode(final double sizeTile) {
-        final double heightbarcode = sizeTile / (20.f);
-
-        // North or South oriented barcode
-        if (getDirection() == Orientation.NORTH
-                || getDirection() == Orientation.SOUTH) {
-
-            final Rectangle2D[] visualBarcode = new Rectangle2D[8];
-            for (int i = 0; i < 8; i++) {
-                visualBarcode[i] = new Rectangle2D.Double(tile.getPosition()
-                        .getX() - sizeTile / 2, tile.getPosition().getY() - 8
-                        + heightbarcode * i, sizeTile, heightbarcode);
-            }
-
-            return visualBarcode;
-        }
-
-        else {
-
-            final Rectangle2D[] visualBarcode = new Rectangle2D[8];
-            for (int i = 0; i < 8; i++) {
-                visualBarcode[i] = new Rectangle2D.Double(tile.getPosition()
-                        .getX() - 8 + heightbarcode * i, tile.getPosition()
-                        .getY() - sizeTile / 2, heightbarcode, sizeTile);
-            }
-
-            return visualBarcode;
-        }
     }
 
     public boolean[] getBoolRep() {

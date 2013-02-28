@@ -2,6 +2,7 @@ package mapping;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Tile {
@@ -45,8 +46,9 @@ public class Tile {
      *         getBorder(direction).getNeighbour(this).equals(square) )
      */
     public boolean areNeighbours(final Tile tile) {
-        if (tile == null)
+        if (tile == null) {
             return false;
+        }
         if (Math.abs(location.getX() - tile.getPosition().getX()) == 1
                 && (location.getY() - tile.getPosition().getY()) == 0) {
             return true;
@@ -176,6 +178,18 @@ public class Tile {
         return i;
     }
 
+    public Orientation getCommonOrientation(Tile tile) {
+        if (!areNeighbours(tile)) {
+            return null;
+        }
+        for (Orientation orientation : Orientation.values()) {
+            if (getEdge(orientation) == tile.getEdge(orientation)) {
+                return orientation;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns the content of this tile. Might be a barcode or null.
      * 
@@ -185,11 +199,11 @@ public class Tile {
         return content;
     }
 
+    // Edges
+
     public int getCost() {
         return cost;
     }
-
-    // Edges
 
     /**
      * Return the border in the given direction of this square.
@@ -201,31 +215,16 @@ public class Tile {
         return edges.get(orientation);
     }
 
+    public Collection<Edge> getEdges() {
+        return edges.values();
+    }
+
     /**
      * 
      * @return de heuristiek
      */
     public int getManhattanValue() {
         return manhattanValue;
-    }
-
-    /**
-     * geeft een arraylist weer met neighbourtiles enkel die waar geen muur
-     * tussen staat! de orientation horende bij de index is als volgt: 0: north
-     * 1: east 2: south 3: west als er zich geen tile bevindt in die
-     * orientation, wordt er een null in de arraylist opgeslagen.
-     */
-    public ArrayList<Tile> getReachableNeighbours() {
-        final ArrayList<Tile> neighbours = new ArrayList<Tile>(4);
-        for (final Orientation orientation : Orientation.values()) {
-            if (getEdge(orientation).getObstruction() == null) {
-                neighbours.add(getEdge(orientation).getNeighbour(this));
-            } else {
-                neighbours.add(null);
-            }
-        }
-
-        return neighbours;
     }
 
     // /**
@@ -247,15 +246,23 @@ public class Tile {
         return location;
     }
 
-    public Orientation getCommonOrientation(Tile tile) {
-        if (!areNeighbours(tile))
-            return null;
-        for (Orientation orientation : Orientation.values()) {
-            if (getEdge(orientation) == tile.getEdge(orientation)) {
-                return orientation;
+    /**
+     * geeft een arraylist weer met neighbourtiles enkel die waar geen muur
+     * tussen staat! de orientation horende bij de index is als volgt: 0: north
+     * 1: east 2: south 3: west als er zich geen tile bevindt in die
+     * orientation, wordt er een null in de arraylist opgeslagen.
+     */
+    public ArrayList<Tile> getReachableNeighbours() {
+        final ArrayList<Tile> neighbours = new ArrayList<Tile>(4);
+        for (final Orientation orientation : Orientation.values()) {
+            if (getEdge(orientation).getObstruction() == null) {
+                neighbours.add(getEdge(orientation).getNeighbour(this));
+            } else {
+                neighbours.add(null);
             }
         }
-        return null;
+
+        return neighbours;
     }
 
     /**

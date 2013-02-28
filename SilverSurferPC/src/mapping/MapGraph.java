@@ -2,6 +2,7 @@ package mapping;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,28 +36,6 @@ public class MapGraph {
         getTile(point).getEdge(orientation).setObstruction(obst);
     }
 
-    /**
-     * Returns the obstruction on the given orientation of the current tile.
-     * ofwel wall ofwel null
-     */
-    public Obstruction getObstruction(final Point point,
-            final Orientation orientation) {
-        return getTile(point).getEdge(orientation).getObstruction();
-    }
-
-    public Tile getTile(final Point point) {
-        if (tiles.containsKey(point)) {
-            return tiles.get(point);
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unused")
-    private void removeTile(final Point point) {
-        getTile(point).terminate();
-        tiles.remove(point);
-    }
-
     public void addTileXY(final Point point) {
         Tile tile = new Tile(point);
         tiles.put(point, tile);
@@ -73,63 +52,13 @@ public class MapGraph {
 
         for (final Tile mapTile : neighborTiles) {
             Orientation orientation = tile.getCommonOrientation(mapTile);
-            if (orientation != null)
+            if (orientation != null) {
                 tile.replaceEdge(orientation,
                         mapTile.getEdge(orientation.getOppositeOrientation()));
+            }
         }
         tiles.put(point, tile);
 
-    }
-
-    @Override
-    public String toString() {
-        int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE;
-        int maxY = Integer.MIN_VALUE;
-        for (Point point : tiles.keySet()) {
-            final int x = (int) point.getX();
-            final int y = (int) point.getY();
-            if (x < minX)
-                minX = x;
-            else if (x > maxX)
-                maxX = x;
-            if (y < minY)
-                minY = y;
-            else if (y > maxY)
-                maxY = y;
-        }
-
-        List<List<String>> columnListList = new ArrayList<List<String>>();
-        for (int x = minX; x <= maxX; x++) {
-            List<String> columnStringList = new ArrayList<String>();
-            for (int y = minY; y <= maxY; y++) {
-                Tile tile = getTile(new Point(x, y));
-                if (tile == null) {
-                    columnStringList.add("    ");
-                    columnStringList.add("    ");
-                    columnStringList.add("    ");
-                } else
-                    for (String s : tile.toString().split("\n"))
-                        columnStringList.add(s);
-            }
-            columnListList.add(columnStringList);
-        }
-
-        String mapGraphString = "";
-        for (int row = 0; row < columnListList.get(0).size(); row++) {
-            for (List<String> column : columnListList) {
-                mapGraphString += column.get(row);
-            }
-            mapGraphString += "/n";
-        }
-
-        return mapGraphString;
-    }
-
-    public void loadTile(Point pointIJ, Tile tileIJ) {
-        if (pointIJ != null)
-            tiles.put(pointIJ, tileIJ);
     }
 
     public Point getMapSize() {
@@ -143,17 +72,101 @@ public class MapGraph {
         for (Tile tilee : tiles.values()) {
             int x = tilee.getPosition().x;
             int y = tilee.getPosition().y;
-            if (x < minMax[0])
+            if (x < minMax[0]) {
                 minMax[0] = x;
-            else if (x > minMax[2])
+            } else if (x > minMax[2]) {
                 minMax[2] = x;
-            if (y < minMax[1])
+            }
+            if (y < minMax[1]) {
                 minMax[1] = y;
-            else if (y > minMax[3])
+            } else if (y > minMax[3]) {
                 minMax[3] = y;
+            }
         }
 
         return new Point(Math.abs(minMax[0] - minMax[2]), Math.abs(minMax[1]
                 - minMax[3]));
+    }
+
+    /**
+     * Returns the obstruction on the given orientation of the current tile.
+     * ofwel wall ofwel null
+     */
+    public Obstruction getObstruction(final Point point,
+            final Orientation orientation) {
+        return getTile(point).getEdge(orientation).getObstruction();
+    }
+
+    public Tile getTile(final Point point) {
+        if (tiles.containsKey(point)) {
+            return tiles.get(point);
+        }
+        return null;
+    }
+
+    public Collection<Tile> getTiles() {
+        return tiles.values();
+    }
+
+    public void loadTile(Point pointIJ, Tile tileIJ) {
+        if (pointIJ != null) {
+            tiles.put(pointIJ, tileIJ);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private void removeTile(final Point point) {
+        getTile(point).terminate();
+        tiles.remove(point);
+    }
+
+    @Override
+    public String toString() {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        for (Point point : tiles.keySet()) {
+            final int x = (int) point.getX();
+            final int y = (int) point.getY();
+            if (x < minX) {
+                minX = x;
+            } else if (x > maxX) {
+                maxX = x;
+            }
+            if (y < minY) {
+                minY = y;
+            } else if (y > maxY) {
+                maxY = y;
+            }
+        }
+
+        List<List<String>> columnListList = new ArrayList<List<String>>();
+        for (int x = minX; x <= maxX; x++) {
+            List<String> columnStringList = new ArrayList<String>();
+            for (int y = minY; y <= maxY; y++) {
+                Tile tile = getTile(new Point(x, y));
+                if (tile == null) {
+                    columnStringList.add("    ");
+                    columnStringList.add("    ");
+                    columnStringList.add("    ");
+                } else {
+                    for (String s : tile.toString().split("\n")) {
+                        columnStringList.add(s);
+                    }
+                }
+            }
+            columnListList.add(columnStringList);
+        }
+
+        String mapGraphString = "";
+        for (int row = 0; row < columnListList.get(0).size(); row++) {
+            for (List<String> column : columnListList) {
+                mapGraphString += column.get(row);
+            }
+            mapGraphString += "/n";
+        }
+
+        return mapGraphString;
     }
 }

@@ -5,18 +5,10 @@ import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
-import communication.StatusInfoBuffer;
-import communication.StatusInfoBuffer.LSInfoNode;
-import communication.StatusInfoBuffer.USInfoNode;
 
 //Creates the menubar.
 public class GUIMenuBar extends JMenuBar {
@@ -77,117 +69,118 @@ public class GUIMenuBar extends JMenuBar {
         fileMenu = new JMenu("File");
         // fileMenu.setMnemonic('F');
 
-        final JMenuItem exportLSItem = new JMenuItem("Export Lightsensor data");
-        // exportLSItem.setMnemonic('L');
-        fileMenu.add(exportLSItem);
+        // final JMenuItem exportLSItem = new
+        // JMenuItem("Export Lightsensor data");
+        // // exportLSItem.setMnemonic('L');
+        // fileMenu.add(exportLSItem);
 
-        exportLSItem.addActionListener(new ActionListener() {
+        // exportLSItem.addActionListener(new ActionListener() {
+        //
+        // @Override
+        // public void actionPerformed(final ActionEvent arg0) {
+        // // Prompt for a File
+        // final FileDialog prompt = new FileDialog(GUIMenuBar.this
+        // .getGui().getFrame(), "Select file:", FileDialog.SAVE);
+        // prompt.setFilenameFilter(new FilenameFilter() {
+        //
+        // @Override
+        // public boolean accept(final File dir, final String name) {
+        // return name.endsWith(".txt");
+        // }
+        // });
+        //
+        // // Display the dialog and wait for the user's response
+        // prompt.setVisible(true);
+        //
+        // final File export = new File(prompt.getDirectory()
+        // + prompt.getFile());
+        // try {
+        // // Create file
+        // export.createNewFile();
+        //
+        // // Get buffer
+        // final StatusInfoBuffer buffer = SilverSurferGUI
+        // .getStatusInfoBuffer();
+        // LSInfoNode head = buffer.getStartLSInfo();
+        // // Create data output flow
+        // final FileWriter outFile = new FileWriter(export);
+        // final PrintWriter out = new PrintWriter(outFile);
+        // buffer.claimBuffer();
+        // // Print buffer
+        // if (head != null) {
+        // do {
+        // out.println(head.info);
+        // head = head.next;
+        // } while (head != null);
+        // }
+        // // free buffer and close stream.
+        // buffer.freeBuffer();
+        // out.close();
+        //
+        // } catch (final IOException e) {
+        // System.out
+        // .println("Sorry, something went wrong exporting your data.");
+        // }
+        //
+        // }
+        // });
 
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                // Prompt for a File
-                final FileDialog prompt = new FileDialog(GUIMenuBar.this
-                        .getGui().getFrame(), "Select file:", FileDialog.SAVE);
-                prompt.setFilenameFilter(new FilenameFilter() {
-
-                    @Override
-                    public boolean accept(final File dir, final String name) {
-                        return name.endsWith(".txt");
-                    }
-                });
-
-                // Display the dialog and wait for the user's response
-                prompt.setVisible(true);
-
-                final File export = new File(prompt.getDirectory()
-                        + prompt.getFile());
-                try {
-                    // Create file
-                    export.createNewFile();
-
-                    // Get buffer
-                    final StatusInfoBuffer buffer = SilverSurferGUI
-                            .getStatusInfoBuffer();
-                    LSInfoNode head = buffer.getStartLSInfo();
-                    // Create data output flow
-                    final FileWriter outFile = new FileWriter(export);
-                    final PrintWriter out = new PrintWriter(outFile);
-                    buffer.claimBuffer();
-                    // Print buffer
-                    if (head != null) {
-                        do {
-                            out.println(head.info);
-                            head = head.next;
-                        } while (head != null);
-                    }
-                    // free buffer and close stream.
-                    buffer.freeBuffer();
-                    out.close();
-
-                } catch (final IOException e) {
-                    System.out
-                            .println("Sorry, something went wrong exporting your data.");
-                }
-
-            }
-        });
-
-        final JMenuItem exportUSItem = new JMenuItem(
-                "Export Ultrasonicsensor data");
-        // exportUSItem.setMnemonic('U');
-        fileMenu.add(exportUSItem);
-
-        exportUSItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                // Prompt for a File
-                final FileDialog prompt = new FileDialog(GUIMenuBar.this
-                        .getGui().getFrame(), "Select file:", FileDialog.SAVE);
-                prompt.setFilenameFilter(new FilenameFilter() {
-
-                    @Override
-                    public boolean accept(final File dir, final String name) {
-                        return name.endsWith(".txt");
-                    }
-                });
-
-                // Display the dialog and wait for the user's response
-                prompt.setVisible(true);
-
-                final File export = new File(prompt.getDirectory()
-                        + prompt.getFile());
-                try {
-                    // Create file
-                    export.createNewFile();
-
-                    // Get buffer
-                    final StatusInfoBuffer buffer = SilverSurferGUI
-                            .getStatusInfoBuffer();
-                    USInfoNode head = buffer.getStartUSInfo();
-                    // Create data output flow
-                    final FileWriter outFile = new FileWriter(export);
-                    final PrintWriter out = new PrintWriter(outFile);
-                    buffer.claimBuffer();
-                    // Print buffer
-                    if (head != null) {
-                        do {
-                            System.out.println(head.info);
-                            out.println(head.info);
-                            head = head.next;
-                        } while (head != null);
-                    }
-                    // free buffer and close stream.
-                    buffer.freeBuffer();
-                    out.close();
-
-                } catch (final IOException e) {
-                    System.out
-                            .println("Sorry, something went wrong exporting your data.");
-                }
-
-            }
-        });
+        // final JMenuItem exportUSItem = new JMenuItem(
+        // "Export Ultrasonicsensor data");
+        // // exportUSItem.setMnemonic('U');
+        // fileMenu.add(exportUSItem);
+        //
+        // exportUSItem.addActionListener(new ActionListener() {
+        //
+        // @Override
+        // public void actionPerformed(final ActionEvent arg0) {
+        // // Prompt for a File
+        // final FileDialog prompt = new FileDialog(GUIMenuBar.this
+        // .getGui().getFrame(), "Select file:", FileDialog.SAVE);
+        // prompt.setFilenameFilter(new FilenameFilter() {
+        //
+        // @Override
+        // public boolean accept(final File dir, final String name) {
+        // return name.endsWith(".txt");
+        // }
+        // });
+        //
+        // // Display the dialog and wait for the user's response
+        // prompt.setVisible(true);
+        //
+        // final File export = new File(prompt.getDirectory()
+        // + prompt.getFile());
+        // try {
+        // // Create file
+        // export.createNewFile();
+        //
+        // // Get buffer
+        // final StatusInfoBuffer buffer = SilverSurferGUI
+        // .getStatusInfoBuffer();
+        // USInfoNode head = buffer.getStartUSInfo();
+        // // Create data output flow
+        // final FileWriter outFile = new FileWriter(export);
+        // final PrintWriter out = new PrintWriter(outFile);
+        // buffer.claimBuffer();
+        // // Print buffer
+        // if (head != null) {
+        // do {
+        // System.out.println(head.info);
+        // out.println(head.info);
+        // head = head.next;
+        // } while (head != null);
+        // }
+        // // free buffer and close stream.
+        // buffer.freeBuffer();
+        // out.close();
+        //
+        // } catch (final IOException e) {
+        // System.out
+        // .println("Sorry, something went wrong exporting your data.");
+        // }
+        //
+        // }
+        // });
 
         return fileMenu;
     }
@@ -211,23 +204,22 @@ public class GUIMenuBar extends JMenuBar {
                 // // TODO implement
                 // // reset the current map.
                 // gui.getSimulationPanel().resetMap();
-                //
-                // // Prompt for a File
-                // final FileDialog prompt = new FileDialog(GUIMenuBar.this
-                // .getGui().getFrame(), "Select maze:", FileDialog.LOAD);
-                // prompt.setDirectory("resources/maze_maps");
-                //
-                // // Display the dialog and wait for the user's response
-                // prompt.setVisible(true);
-                //
-                // final File mapFile = new File(prompt.getDirectory()
-                // + prompt.getFile()); // Load and display selection
-                // prompt.dispose(); // Get rid of the dialog box
-                //
-                // gui.getCommunicator().getPilot().setMapFile(mapFile, 0, 0);
-                //
-                // System.out.println("[I/O] Map succesfully loaded!");
 
+                // Prompt for a File
+                final FileDialog prompt = new FileDialog(GUIMenuBar.this
+                        .getGui().getFrame(), "Select maze:", FileDialog.LOAD);
+                prompt.setDirectory("resources/maze_maps");
+
+                // Display the dialog and wait for the user's response
+                prompt.setVisible(true);
+
+                final File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
+                prompt.dispose(); // Get rid of the dialog box
+
+                SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile);
+
+                System.out.println("[I/O] Map succesfully loaded!");
             }
 
         });
@@ -277,21 +269,21 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.changeSpeed(1);
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(1);
             }
         });
         normalSpeedItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.changeSpeed(2);
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(2);
             }
         });
         fastSpeedItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.changeSpeed(3);
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(3);
             }
         });
 
@@ -299,7 +291,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.changeSpeed(4);
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(4);
             }
         });
 

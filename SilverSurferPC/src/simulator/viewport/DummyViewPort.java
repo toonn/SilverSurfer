@@ -1,10 +1,20 @@
 package simulator.viewport;
 
-import simulator.pilot.AbstractPilot;
+import java.util.HashSet;
+import java.util.Set;
+
+import mapping.MapGraph;
+import simulator.pilot.PilotInterface;
 
 public class DummyViewPort extends AbstractViewPort {
-    public DummyViewPort(final AbstractPilot pilot) {
-        super();
-        pilots.add(pilot);
+    public DummyViewPort(Set<? extends PilotInterface> pilotSet) {
+        super(pilotSet);
+    }
+
+    @Override
+    protected Set<MapGraph> getAllMapGraphs() {
+        Set<MapGraph> maps = new HashSet<MapGraph>();
+        maps.add(pilots.iterator().next().getMapGraphConstructed());
+        return maps;
     }
 }

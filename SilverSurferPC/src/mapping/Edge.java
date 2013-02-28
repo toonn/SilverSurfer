@@ -1,5 +1,8 @@
 package mapping;
 
+import java.awt.Point;
+import java.awt.geom.Point2D;
+
 /**
  * A class of edges involving two tiles, a wall and a number to store in which
  * directions the two tiles are attached to the edge.
@@ -107,6 +110,30 @@ public class Edge {
      */
     public Tile getTile2() {
         return tile2;
+    }
+
+    public Point2D.Double[] getEndPoints() {
+        Point point1 = getTile1().getPosition();
+        Point point2 = getTile2().getPosition();
+        Point2D.Double[] points = new Point2D.Double[2];
+
+        points[0] = new Point2D.Double(Math.max(point1.x, point2.x), Math.max(
+                point1.y, point2.y));
+
+        int xInc = 0;
+        int yInc = 0;
+        if (point1.x == point2.x) {
+            xInc = 1;
+        } else if (point1.y == point2.y) {
+            yInc = 1;
+        }
+        points[1] = new Point2D.Double(points[0].x + xInc, points[0].y + yInc);
+
+        return points;
+    }
+
+    public Orientation getOrientation() {
+        return tile1.getCommonOrientation(tile2);
     }
 
     /**
@@ -229,30 +256,32 @@ public class Edge {
 
     @Override
     public String toString() {
-        if (getTile1().getCommonOrientation(tile2) == Orientation.NORTH
-                || getTile1().getCommonOrientation(tile2) == Orientation.SOUTH)
-            if (getObstruction() != null)
+        if (getOrientation() == Orientation.NORTH
+                || getOrientation() == Orientation.SOUTH) {
+            if (getObstruction() != null) {
                 return "----";
-            else
+            } else {
                 return "~~~~";
-        else if (getObstruction() != null)
+            }
+        } else if (getObstruction() != null) {
             return "|";
-        else
+        } else {
             return "/";
-        // String t1 = "T1: null";
-        // String t2 = "T2: null";
-        // String obstr = "Free Edge";
-        // if (getObstruction() != null) {
-        // obstr = getObstruction().toString();
-        // }
-        // if (getTile1() != null) {
-        // t1 = "T1:(" + getTile1().getPosition().getX()
-        // + getTile1().getPosition().getY() + ")";
-        // }
-        // if (getTile2() != null) {
-        // t2 = "T2:(" + getTile2().getPosition().getX()
-        // + getTile2().getPosition().getY() + ")";
-        // }
-        // return t1 + " " + t2 + " Obstr:" + obstr;
+            // String t1 = "T1: null";
+            // String t2 = "T2: null";
+            // String obstr = "Free Edge";
+            // if (getObstruction() != null) {
+            // obstr = getObstruction().toString();
+            // }
+            // if (getTile1() != null) {
+            // t1 = "T1:(" + getTile1().getPosition().getX()
+            // + getTile1().getPosition().getY() + ")";
+            // }
+            // if (getTile2() != null) {
+            // t2 = "T2:(" + getTile2().getPosition().getX()
+            // + getTile2().getPosition().getY() + ")";
+            // }
+            // return t1 + " " + t2 + " Obstr:" + obstr;
+        }
     }
 }

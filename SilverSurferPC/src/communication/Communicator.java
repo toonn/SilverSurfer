@@ -1,7 +1,5 @@
 package communication;
 
-import gui.SilverSurferGUI;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -72,13 +70,6 @@ public class Communicator {
             return 1.82;
         }
         return 2.74;
-    }
-
-    public String getConsoleTag() {
-        if (robotConnected) {
-            return "[ROBOT]";
-        }
-        return "[SIMULATOR]";
     }
 
     public boolean getExecutingBarcodes() {
@@ -176,7 +167,7 @@ public class Communicator {
     private void readBarcode() {
         final int value = pilot.getMapGraphLoaded()
                 .getTile(pilot.getRelativePosition()).getContent().getValue();
-        SilverSurferGUI.getStatusInfoBuffer().setBarcode(value);
+        statusInfoBuffer.setBarcode(value);
     }
 
     public void sendCommand(final int command) {
@@ -211,7 +202,7 @@ public class Communicator {
                 if (!getRobotConnected()) {
                     try {
                         if (readBarcodes && !permaBarcodeStop) {
-                            BT = new BarcodeThread("BT");
+                            BT = new BarcodeThread("BT", pilot);
                             BT.start();
                         }
                         final int amount = (command - Command.AUTOMATIC_MOVE_FORWARD) / 100;

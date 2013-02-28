@@ -109,14 +109,35 @@ public class SimulationPilot extends AbstractPilot {
             mean = SimulationSensorData.getMWhiteLineLS();
             standardDeviation = SimulationSensorData.getSDWhiteLineLS();
         } else if (onBarcodeTile(absLS[0], absLS[1])) {
-            final int color = ((Barcode) getMapGraphLoaded().getTile(
-                    getRelativePosition()).getContent()).getColorValue(absLS[0]
-                    % sizeTile(), absLS[1] % sizeTile());
+            final int color = getMapGraphLoaded()
+                    .getTile(getRelativePosition())
+                    .getContent()
+                    .getColorValue(absLS[0] % sizeTile(), absLS[1] % sizeTile());
             mean = SimulationSensorData.getMBarcodeTileLS(color);
             standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
         }
         return (int) Math.round(mean
                 + (random.nextGaussian() * standardDeviation));
+    }
+
+    @Override
+    protected int getRotateSleepTime(double angle) {
+        return 5 - getSpeed();
+    }
+
+    @Override
+    protected int getTravelSleepTime(double distance) {
+        switch (getSpeed()) {
+        case 1:
+            return 10;
+        case 2:
+            return 7;
+        case 3:
+            return 5;
+        case 4:
+            return 3;
+        }
+        return 0;
     }
 
     @Override
@@ -173,22 +194,7 @@ public class SimulationPilot extends AbstractPilot {
     }
 
     @Override
-    protected int getRotateSleepTime(double angle) {
-        return 5 - getSpeed();
-    }
-
-    @Override
-    protected int getTravelSleepTime(double distance) {
-        switch (getSpeed()) {
-        case 1:
-            return 10;
-        case 2:
-            return 7;
-        case 3:
-            return 5;
-        case 4:
-            return 3;
-        }
-        return 0;
+    public String getConsoleTag() {
+        return "[SIMULATOR]";
     }
 }

@@ -1,14 +1,16 @@
 package simulator;
 
-import gui.SilverSurferGUI;
+import simulator.pilot.AbstractPilot;
 
 public class BarcodeThread extends Thread {
 
     private boolean quit = false;
     private boolean found = false;
+    private AbstractPilot pilot;
 
-    public BarcodeThread(final String str) {
+    public BarcodeThread(final String str, AbstractPilot pilot) {
         super(str);
+        this.pilot = pilot;
     }
 
     public boolean getFound() {
@@ -23,8 +25,7 @@ public class BarcodeThread extends Thread {
             } catch (final Exception e) {
 
             }
-            final int lightsensorValue = SilverSurferGUI.getStatusInfoBuffer()
-                    .getLatestLightSensorInfo();
+            final int lightsensorValue = pilot.getLightSensorValue();
             if (lightsensorValue < 40 && lightsensorValue > 10) {
                 found = true;
             }
