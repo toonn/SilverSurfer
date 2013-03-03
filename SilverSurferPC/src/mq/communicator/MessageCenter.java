@@ -3,29 +3,49 @@ package mq.communicator;
 import java.io.IOException;
 import java.util.Date;
 
+import simulator.pilot.AbstractPilot;
+import simulator.pilot.SimulationPilot;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
+/**
+ * A MessageCenter takes care of all MQ-related issues for an AbstractPilot.
+ * Use the sendMessage(string,string) and subscribeTo(string) methods to do the work for you!
+ */
 public class MessageCenter {
 
     public static void main(String[] args) {
 
-        MessageCenter ms = new MessageCenter();
+        MessageCenter mc = new MessageCenter(new SimulationPilot());
 
-        SubscribeMonitor sm = new SubscribeMonitor("race.*", ms.getChannel(),
-                ms.getConn());
+        SubscribeMonitor sm = new SubscribeMonitor("race.*", mc.getChannel(),
+                mc.getConn(),mc.getClientPilot());
         sm.start();
 
-        ms.sendMessage(Config.EXCHANGE_NAME, "race.bloop", "chatzerverzz");
+        mc.sendMessage(Config.EXCHANGE_NAME, "race.bloop", "chatzerverzz");
 
     }
 
-    private Connection conn = null;
+    private Connection conn;
+    private Channel channel;
+    private AbstractPilot clientPilot;
 
-    private Channel channel = null;
-
-    public MessageCenter() {
+    /**
+     * Creates a MessageCenter for a certain AbstractPilot that takes care of channel/connection creation
+     * and the actual sending/monitoring for that AbstractPilot. 
+     * 
+     * @param pilot
+     * 			: The Pilot incoming messages should be sent to.
+     * @throws NullPointerException
+     * 			: if pilot == null.
+     */
+    public MessageCenter(AbstractPilot pilot) throws NullPointerException{
+    	
+    	if(pilot == null)
+    		throw new NullPointerException("null is not a valid pilot!");
+    	else this.clientPilot = pilot;
 
         try {
             conn = MQ.createConnection();
@@ -36,18 +56,25 @@ public class MessageCenter {
     }
 
     /**
-     * The Channel this MessageSender uses to send messages across.
+     * @return The Channel this MessageSender uses to send messages across.
      */
     public Channel getChannel() {
         return channel;
     }
 
     /**
-     * The Connection this MessageSender uses to send messages across.
+     * @return The Connection this MessageCenter uses to send messages across.
      */
     public Connection getConn() {
         return conn;
     }
+    
+    /**
+     * @return	The abstract Pilot this MessageCenter is working for.
+     */
+    public AbstractPilot getClientPilot() {
+		return clientPilot;
+	}
 
     /**
      * Used to send a message to an exchange with a certain routing key.
@@ -89,7 +116,7 @@ public class MessageCenter {
 
         // TODO: aanvragende Pilot meegeven?
         SubscribeMonitor sm = new SubscribeMonitor(monitor_key, getChannel(),
-                getConn());
+                getConn(),getClientPilot());
         sm.start();
         // TODO: kanaal stopzetten?
 

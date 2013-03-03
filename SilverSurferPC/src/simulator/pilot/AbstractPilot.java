@@ -10,6 +10,7 @@ import mapping.Barcode;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mq.communicator.MessageCenter;
 import simulator.ExtMath;
 
 public abstract class AbstractPilot implements PilotInterface {
@@ -35,6 +36,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private MapGraph mapGraphLoaded;
     private MapGraph mapGraphConstructed;
     private final Set<Barcode> barcodes;
+    private MessageCenter messageCenter;
 
     // private int amtToSendToBuffer = 50;
 
@@ -45,6 +47,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public AbstractPilot() {
         barcodes = new HashSet<Barcode>();
+        messageCenter = new MessageCenter(this); //TODO dit is nieuwe code (12:58 3/3/'13)
     }
 
     public void addWall() {
@@ -268,6 +271,13 @@ public abstract class AbstractPilot implements PilotInterface {
         }
         return mapFile.getName();
     }
+    
+    /**
+     * @return	The MessageCenter taking care of this AP's MQ connection.
+     */
+    public MessageCenter getMessageCenter() {
+		return messageCenter;
+	}
 
     /*
      * public void setMapFile(File mapFile) { setMapFile(mapFile, 0, 0);
@@ -404,6 +414,7 @@ public abstract class AbstractPilot implements PilotInterface {
         }
     }
 
+    public abstract void recieveMessage(String message);
     /*
      * (non-Javadoc)
      * 

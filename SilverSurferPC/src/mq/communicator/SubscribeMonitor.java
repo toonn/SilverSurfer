@@ -2,6 +2,8 @@ package mq.communicator;
 
 import java.io.IOException;
 
+import simulator.pilot.AbstractPilot;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -19,27 +21,47 @@ public class SubscribeMonitor {
     private String monitor_key = "";
     private Connection conn = null;
     private Channel channel = null;
-
-    public SubscribeMonitor(String monitor_key, Channel ch, Connection co) {
-
+    private AbstractPilot clientPilot;
+    
+    public SubscribeMonitor(String monitor_key, Channel ch, Connection co, AbstractPilot client) {
+    	
+    	if(monitor_key == null || ch == null || co == null || client == null)
+    		throw new NullPointerException("Please, don't use null as a parameter? :(");
+    	
         this.monitor_key = monitor_key;
-        conn = co;
-        channel = ch;
+        this.conn = co;
+        this.channel = ch;
+        this.clientPilot = client;
 
     }
-
+    
+    /**
+     * @return	The Monitor's channel.
+     */
     public Channel getChannel() {
         return channel;
     }
 
+    /**
+     * @return	The Monitor's connection.
+     */
     public Connection getConn() {
         return conn;
     }
 
+    /**
+     * @return	The monitor key this monitor is monitoring on.
+     */
     public String getMonitor_key() {
         return monitor_key;
     }
 
+    /**
+     * @return	The AbstractPilot this monitor is working for.
+     */
+    public AbstractPilot getClientPilot() {
+		return clientPilot;
+	}
     /**
      * Sets up the monitor so it listens to the queue declared in the
      * constructor.
@@ -96,14 +118,16 @@ public class SubscribeMonitor {
                             System.out.println(String.format("@%d: %s -> %s",
                                     properties.getTimestamp().getTime(),
                                     envelope.getRoutingKey(), new String(body)));
-
-                            MessageCenter ms = new MessageCenter();
-                            ms.sendMessage(Config.EXCHANGE_NAME, "race.bla",
-                                    "woowoo");
+                            //FW: the message to the right Pilot.
+                            //TODO: process message before forwarding??
+                            getClientPilot().recieveMessage(new String(body));
+                           
+                           
                             // send an ack to the server so it can remove the
                             // message from
                             // the queue.
                             getChannel().basicAck(deliveryTag, false);
+                            //TODO maak échte processcode
                         }
                     });
 
