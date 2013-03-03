@@ -59,4 +59,10 @@ public class RobotPilot extends AbstractPilot {
                 (int) distance, 0, 0, 0);
         MTT.start();
     }
+
+	@Override
+	public void recieveMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
 }

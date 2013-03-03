@@ -197,4 +197,10 @@ public class SimulationPilot extends AbstractPilot {
     public String getConsoleTag() {
         return "[SIMULATOR]";
     }
+
+	@Override
+	public void recieveMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
 }
