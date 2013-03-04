@@ -152,10 +152,10 @@ public class GUIMenuBar extends JMenuBar {
                 
                 final File mapFile = new File(prompt.getDirectory() + prompt.getFile()); // Load and display selection
                 prompt.dispose();
-                
-                SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile);
 
-                System.out.println("[I/O] Map succesfully loaded!");
+                System.out.println("[I/O] Loading map ...");
+                gui.simulatorPanel(mapFile);
+                System.out.println("[I/O] Map loaded!");
             }
 
         });

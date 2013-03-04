@@ -1,5 +1,7 @@
 package simulator.viewport;
 
+import gui.RepaintThread;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -34,7 +36,7 @@ public abstract class AbstractViewPort extends JPanel {
 
     protected Set<PilotInterface> pilots;
     protected double scalingfactor = 1;
-    private ImageIcon robotSprite;
+    private ImageIcon robotSprite = new ImageIcon("resources/robot/NXTrobotsmall.png");;
     private Map<boolean[], Rectangle2D[]> barcodeRectangles;
     private int repaintFPS = 30;
     private ActionListener repaintViewPort = new ActionListener() {
@@ -49,17 +51,21 @@ public abstract class AbstractViewPort extends JPanel {
         pilots = new HashSet<PilotInterface>(pilotSet);
 
         // robotimage herschalen van 60x84 naar ...
+        /*
         robotSprite = new ImageIcon("resources/robot/NXTrobot.png");
         Image img = robotSprite.getImage();
         BufferedImage resizeBI = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics g = resizeBI.createGraphics();
         g.drawImage(img, 0, 0, 60 / 4, 84 / 4, null);
         robotSprite = new ImageIcon(resizeBI);
-
+         */
         barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
         
         // 1000 ~= milliSeconden...
-        new Timer(1000 / repaintFPS, repaintViewPort);
+        RepaintThread RT = new RepaintThread(this);
+        RT.start();
+        //Timer t = new Timer(1000 / repaintFPS, repaintViewPort);
+        //t.start();
     }
 
     public double getSizeTile() {
@@ -86,16 +92,21 @@ public abstract class AbstractViewPort extends JPanel {
 
         g2.setColor(Color.lightGray);
 
-        int mapShiftHor = (getWidth() - pilots.iterator().next()
-                .getMapGraphConstructed().getMapSize().x) / 2;
-        int mapShiftVer = (getHeight() - pilots.iterator().next()
-                .getMapGraphConstructed().getMapSize().y) / 2;
+        /*
+        int mapShiftHor = (getWidth() - pilots.iterator().next().getMapGraphConstructed().getMapSize().x) / 2;
+        int mapShiftVer = (getHeight() - pilots.iterator().next().getMapGraphConstructed().getMapSize().y) / 2;
 
         int minShiftHor = mapShiftHor - getWidth() * 2;
         int maxShiftHor = mapShiftHor + getWidth() * 2;
         int minShiftVer = mapShiftVer - getHeight() * 2;
         int maxShiftVer = mapShiftVer + getHeight() * 2;
+        */
 
+        int minShiftHor = 0;
+        int maxShiftHor = getWidth() * 2;
+        int minShiftVer = 0;
+        int maxShiftVer = getHeight() * 2;
+        
         for (int x = minShiftHor; x < maxShiftHor; x += getSizeTile())
             g2.draw(new Line2D.Double(x, minShiftVer, x, maxShiftVer));
         for (int y = minShiftVer; y < maxShiftVer; y += getSizeTile())
@@ -164,7 +175,8 @@ public abstract class AbstractViewPort extends JPanel {
         for (MapGraph mapGraph : getAllMapGraphs())
             for (Tile tile : mapGraph.getTiles())
                 for (Edge wall : tile.getEdges())
-                    walls.add(wall.getEndPoints());
+                	if(wall.getObstruction() != null && !wall.getObstruction().isPassible())
+                		walls.add(wall.getEndPoints());
 
         final Graphics2D g2 = ((Graphics2D) graph);
         g2.setColor(Color.black);
@@ -183,13 +195,12 @@ public abstract class AbstractViewPort extends JPanel {
     /**
      * Tekent de robot zelf.
      */
-    private void paintRobots(final Graphics graph) {
+    protected void paintRobots(final Graphics graph) {
         Graphics2D g2 = (Graphics2D) graph;
         for (PilotInterface pilot : pilots) {
             AffineTransform oldTransform = g2.getTransform();
-            g2.rotate(Math.toRadians(pilot.getAngle()));
-            g2.drawImage(robotSprite.getImage(), (int) (pilot.getPosition().getX() * scalingfactor),
-                    (int) (pilot.getPosition().getY() * scalingfactor), null);
+            g2.rotate(Math.toRadians(pilot.getAngle()), pilot.getPosition().getX(), pilot.getPosition().getY());
+            g2.drawImage(robotSprite.getImage(), (int) ((pilot.getPosition().getX() - robotSprite.getIconWidth()/2) * scalingfactor), (int) ((pilot.getPosition().getY() - robotSprite.getIconHeight()/2) * scalingfactor), null);
             g2.setTransform(oldTransform);
         }
     }

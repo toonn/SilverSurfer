@@ -117,8 +117,7 @@ public class Edge {
         Point point2 = getTile2().getPosition();
         Point2D.Double[] points = new Point2D.Double[2];
 
-        points[0] = new Point2D.Double(Math.max(point1.x, point2.x), Math.max(
-                point1.y, point2.y));
+        points[0] = new Point2D.Double(Math.max(point1.x, point2.x), Math.max(point1.y, point2.y));
 
         int xInc = 0;
         int yInc = 0;
@@ -128,7 +127,7 @@ public class Edge {
             yInc = 1;
         }
         points[1] = new Point2D.Double(points[0].x + xInc, points[0].y + yInc);
-
+        
         return points;
     }
 

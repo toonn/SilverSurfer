@@ -3,6 +3,7 @@ package gui;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -18,16 +19,19 @@ import simulator.viewport.SimulatorPanel;
 
 public class SilverSurferGUI {
 
-    private static JFrame frame;
+    private static JFrame frame = new JFrame("Silver Surfer Command Center");
     private static JSpinner angle, length;
     private static JButton zoomInButton, zoomOutButton, turnLeftButton, turnRightButton, moveButton;
     private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7;
+    private static JPanel scalePanel, directionPanel, infoPanel;
     private static SimulatorPanel simulatorPanel;
-    private SensorGraph sensorGraph;
+    private SensorGraph sensorPanel;
+    private GUIMenuBar menuBar;
 
     public static void main(final String[] args) {
         final SilverSurferGUI SSG = new SilverSurferGUI();
-        SSG.createAndShowGUI();
+        SSG.initializePanels();
+        SSG.simulatorPanel();
     }
 
     public JFrame getFrame() {
@@ -131,61 +135,18 @@ public class SilverSurferGUI {
         // ZT.start();
     }
 
-    private void createAndShowGUI() {
-        frame = new JFrame("Silver Surfer Command Center");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setBackground(new Color(221, 230, 231));
-
-        final JPanel scalePanel = scalePanel();
-        final JPanel directionPanel = directionPanel();
-        final JPanel infoPanel = infoPanel();
-        simulatorPanel = simulatorPanel();
-        final JPanel sensorPanel = sensorPanel();
-
-        final GUIMenuBar menuBar = new GUIMenuBar(this);
-        frame.setJMenuBar(menuBar);
-
-        final GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
-        frame.getContentPane().setLayout(frameLayout);
-        frameLayout.setHorizontalGroup(frameLayout
-                .createSequentialGroup()
-                .addGroup(
-                        frameLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
-                                .addComponent(scalePanel)
-                                .addComponent(directionPanel)
-                                .addComponent(infoPanel))
-                .addGroup(
-                        frameLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
-                                .addComponent(simulatorPanel)
-                                .addComponent(sensorPanel)));
-        frameLayout.setVerticalGroup(frameLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addGroup(
-                        frameLayout.createSequentialGroup()
-                                .addComponent(scalePanel)
-                                .addComponent(directionPanel)
-                                .addComponent(infoPanel))
-                .addGroup(
-                        frameLayout.createSequentialGroup()
-                                .addComponent(simulatorPanel)
-                                .addComponent(sensorPanel, 170, 170, 170)));
-        frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
-        frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
-
-        frame.pack();
-        frame.setSize(1000, 800);
-        frame.setVisible(true);
-
-        System.out.println("[CONNECTION] Entered simulator mode.");
+    private void initializePanels() {
+        scalePanel();
+        directionPanel();
+        infoPanel();
+        sensorPanel();
+        
+        menuBar = new GUIMenuBar(this);
 
         addListeners();
     }
 
-    private JPanel scalePanel() {
+    private void scalePanel() {
         final ImageIcon MagnifyIcon = new ImageIcon(
                 "resources/magnifiers/Magnify.png", "A magnifier");
         zoomInButton = new JButton(MagnifyIcon);
@@ -199,7 +160,7 @@ public class SilverSurferGUI {
         zoomOutButton.setContentAreaFilled(false);
         zoomOutButton.setBorderPainted(false);
 
-        final JPanel scalePanel = new JPanel();
+        scalePanel = new JPanel();
         scalePanel.setOpaque(false);
 
         final GroupLayout scaleLayout = new GroupLayout(scalePanel);
@@ -211,21 +172,17 @@ public class SilverSurferGUI {
         scaleLayout.setVerticalGroup(scaleLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(zoomInButton).addComponent(zoomOutButton));
-
-        return scalePanel;
     }
 
-    private JPanel directionPanel() {
+    private void directionPanel() {
         final JLabel angleLabel = new JLabel("Angle (degrees)",
                 SwingConstants.CENTER);
 
         final SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0,
                 1080, 1);
         angle = new JSpinner(angleModel);
-
-        final ImageIcon turnLeftIcon = new ImageIcon(
-                "resources/direction_arrows/turnleft.png",
-                "A leftward turning arrow");
+        
+        final ImageIcon turnLeftIcon = new ImageIcon("resources/direction_arrows/turnleft.png", "A leftward turning arrow");
         turnLeftButton = new JButton(turnLeftIcon);
         turnLeftButton.setOpaque(false);
         turnLeftButton.setContentAreaFilled(false);
@@ -251,7 +208,7 @@ public class SilverSurferGUI {
         moveButton.setContentAreaFilled(false);
         moveButton.setBorderPainted(false);
 
-        final JPanel directionPanel = new JPanel();
+        directionPanel = new JPanel();
         directionPanel.setOpaque(false);
 
         final GroupLayout directionLayout = new GroupLayout(directionPanel);
@@ -290,11 +247,9 @@ public class SilverSurferGUI {
                                                 GroupLayout.Alignment.CENTER)
                                         .addComponent(length)
                                         .addComponent(moveButton)));
-
-        return directionPanel;
     }
     
-    private JPanel infoPanel() {
+    private void infoPanel() {
         infoLabel1 = new JLabel("", SwingConstants.CENTER);
         infoLabel2 = new JLabel("", SwingConstants.CENTER);
         infoLabel3 = new JLabel("", SwingConstants.CENTER);
@@ -303,11 +258,11 @@ public class SilverSurferGUI {
         infoLabel6 = new JLabel("", SwingConstants.CENTER);
         infoLabel7 = new JLabel("", SwingConstants.CENTER);
 
-        final JPanel outputPanel = new JPanel();
-        outputPanel.setOpaque(false);
+        infoPanel = new JPanel();
+        infoPanel.setOpaque(false);
 
-        final GroupLayout outputLayout = new GroupLayout(outputPanel);
-        outputPanel.setLayout(outputLayout);
+        final GroupLayout outputLayout = new GroupLayout(infoPanel);
+        infoPanel.setLayout(outputLayout);
         outputLayout.setAutoCreateGaps(true);
         outputLayout.setAutoCreateContainerGaps(true);
         outputLayout.setHorizontalGroup(outputLayout
@@ -321,40 +276,11 @@ public class SilverSurferGUI {
                 .addComponent(infoLabel3).addComponent(infoLabel4)
                 .addComponent(infoLabel5).addComponent(infoLabel6)
                 .addComponent(infoLabel7));
-        return outputPanel;
     }
 
-    private SimulatorPanel simulatorPanel() {
-        // simulatorPanel = new
-        // TOON vervangen door simulatorpanel
-        // simulationPanel = new SimulationViewPort();
-        // simulationPanel.setSize(20000, 20000);
-        // simulationPanel.setBackground(Color.WHITE);
-        // simulationPanel.setBorder(createBorder());
-        //
-        // mappingPanel = new JPanel();
-        // mappingPanel.setBorder(BorderFactory.createTitledBorder(createBorder(),
-        // "Simulator"));
-        // mappingPanel.setOpaque(false);
-        //
-        // GroupLayout mappingLayout = new GroupLayout(mappingPanel);
-        // mappingPanel.setLayout(mappingLayout);
-        // mappingLayout.setAutoCreateGaps(true);
-        // mappingLayout.setAutoCreateContainerGaps(true);
-        // mappingLayout.setHorizontalGroup(mappingLayout.createSequentialGroup()
-        // .addComponent(simulationPanel));
-        // mappingLayout.setVerticalGroup(mappingLayout.createSequentialGroup()
-        // .addComponent(simulationPanel));
-        //
-        // return mappingPanel;
-        return new SimulatorPanel();
-    }
-
-    private JPanel sensorPanel() {
-        sensorGraph = new SensorGraph(this);
-        sensorGraph.setOpaque(false);
-
-        return sensorGraph;
+    private void sensorPanel() {
+        sensorPanel = new SensorGraph(this);
+        sensorPanel.setOpaque(false);
     }
     
     private void addListeners() {
@@ -471,5 +397,103 @@ public class SilverSurferGUI {
             public void mouseReleased(final MouseEvent arg0) {
             }
         });
+    }
+
+    protected void simulatorPanel() {
+    	frame.dispose();
+    	
+        simulatorPanel = new SimulatorPanel();
+        
+        frame = new JFrame("Silver Surfer Command Center");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setBackground(new Color(221, 230, 231));
+        
+        frame.setJMenuBar(menuBar);
+
+        final GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
+        frame.getContentPane().setLayout(frameLayout);
+        frameLayout.setHorizontalGroup(frameLayout
+                .createSequentialGroup()
+                .addGroup(
+                        frameLayout
+                                .createParallelGroup(
+                                        GroupLayout.Alignment.CENTER)
+                                .addComponent(scalePanel)
+                                .addComponent(directionPanel)
+                                .addComponent(infoPanel))
+                .addGroup(
+                        frameLayout
+                                .createParallelGroup(
+                                        GroupLayout.Alignment.CENTER)
+                                .addComponent(simulatorPanel)
+                                .addComponent(sensorPanel)));
+        frameLayout.setVerticalGroup(frameLayout
+                .createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addGroup(
+                        frameLayout.createSequentialGroup()
+                                .addComponent(scalePanel)
+                                .addComponent(directionPanel)
+                                .addComponent(infoPanel))
+                .addGroup(
+                        frameLayout.createSequentialGroup()
+                                .addComponent(simulatorPanel)
+                                .addComponent(sensorPanel, 170, 170, 170)));
+        frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
+        frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
+
+        frame.pack();
+        frame.setSize(1000, 800);
+        frame.setVisible(true);
+
+        System.out.println("[CONNECTION] Entered simulator mode.");
+    }
+    
+    protected void simulatorPanel(File mapFile) {
+    	frame.dispose();
+    	
+        simulatorPanel = new SimulatorPanel(mapFile);
+        
+        frame = new JFrame("Silver Surfer Command Center");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setBackground(new Color(221, 230, 231));
+        
+        frame.setJMenuBar(menuBar);
+
+        final GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
+        frame.getContentPane().setLayout(frameLayout);
+        frameLayout.setHorizontalGroup(frameLayout
+                .createSequentialGroup()
+                .addGroup(
+                        frameLayout
+                                .createParallelGroup(
+                                        GroupLayout.Alignment.CENTER)
+                                .addComponent(scalePanel)
+                                .addComponent(directionPanel)
+                                .addComponent(infoPanel))
+                .addGroup(
+                        frameLayout
+                                .createParallelGroup(
+                                        GroupLayout.Alignment.CENTER)
+                                .addComponent(simulatorPanel)
+                                .addComponent(sensorPanel)));
+        frameLayout.setVerticalGroup(frameLayout
+                .createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addGroup(
+                        frameLayout.createSequentialGroup()
+                                .addComponent(scalePanel)
+                                .addComponent(directionPanel)
+                                .addComponent(infoPanel))
+                .addGroup(
+                        frameLayout.createSequentialGroup()
+                                .addComponent(simulatorPanel)
+                                .addComponent(sensorPanel, 170, 170, 170)));
+        frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
+        frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
+
+        frame.pack();
+        frame.setSize(1000, 800);
+        frame.setVisible(true);
+
+        System.out.println("[CONNECTION] Entered simulator mode.");
     }
 }

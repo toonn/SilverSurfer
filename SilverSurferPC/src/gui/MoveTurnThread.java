@@ -1,32 +1,33 @@
 package gui;
 
-import communication.Communicator;
+import simulator.pilot.AbstractPilot;
 
 //Thread to move and turn real-time, only needed for manual testing with the arrow-buttons (forward, left, right).
 public class MoveTurnThread extends Thread {
 
-    private final Communicator communicator;
+    private final AbstractPilot pilot;
     private final int length;
     private final int angles;
-    private final int amtOfAngles;
-    private final int command;
+    private boolean done = false;
 
-    public MoveTurnThread(final String str, final Communicator communicator,
-            final int length, final int angles, final int amtOfAngles,
-            final int command) {
+    public MoveTurnThread(final String str, final AbstractPilot pilot,
+            final int length, final int angles) {
         super(str);
-        this.communicator = communicator;
+        this.pilot = pilot;
         this.length = length;
         this.angles = angles;
-        this.amtOfAngles = amtOfAngles;
-        this.command = command;
     }
 
     @Override
     public void run() {
-        if (length == 0 && angles == 0 && amtOfAngles == 0)
-            communicator.sendCommand(command);
+        if (length == 0)
+        	pilot.rotate(angles);
         else
-            communicator.moveTurn(length, angles, amtOfAngles);
+        	pilot.travel(length);
+        done = true;
+    }
+    
+    public boolean getDone() {
+    	return done;
     }
 }

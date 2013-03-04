@@ -59,16 +59,22 @@ public class UnitViewPort extends DummyViewPort {
     @Override
     protected void paintComponent(final Graphics graph) {
         super.paintComponent(graph);
+        updatePathComponent();
         paintPathComponent(graph);
-        paintUndergroundComponent(graph);
+        //paintUndergroundComponent(graph);
         paintBeamComponent(graph);
+    }
+    
+    private void updatePathComponent() {
+        for (final PilotInterface pilot : pilots)
+        	if(pilot.getPosition().getX() != pathCoordinates.get(pathCoordinates.size()-1).getX() || pilot.getPosition().getY() != pathCoordinates.get(pathCoordinates.size()-1).getY())
+            	addPathPoint(pilot.getPosition().getX(), pilot.getPosition().getY());
     }
 
     /**
      * Tekent het pad van de robot en de robot zelf met daarachter het grid.
      */
     private void paintPathComponent(final Graphics graph) {
-    	//TODO: geeft error!
         final Graphics2D g2 = ((Graphics2D) graph);
         g2.setColor(Color.RED);
         final Stroke originalStroke = g2.getStroke();
@@ -88,12 +94,12 @@ public class UnitViewPort extends DummyViewPort {
      */
     private void paintUndergroundComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-            /*
-             * TOON lightsensor tekenen herschrijven niet in viewport
-             * (overallviewport, dummyviewport...)
-             */
-            // updateUndergroundCircle(pilot.getLightsensorPositionX() * scalingfactor - getShiftToTheRight(),
-            // pilot.getLightsensorPositionY() * scalingfactor - getShiftDown(), pilot.getLightSensorValue());
+            
+             //TOON lightsensor tekenen herschrijven niet in viewport
+             //(overallviewport, dummyviewport...)
+             
+            //updateUndergroundCircle(pilot.getLightSensorCoordinates()[0] * scalingfactor, pilot.getLightSensorCoordinates()[1] * scalingfactor, pilot.getLightSensorValue());
+        	updateUndergroundCircle();
             if (pilot.getLightSensorValue() < 45)
                 ((Graphics2D) graph).setColor(Color.black);
             else if (pilot.getLightSensorValue() > 53)
@@ -105,20 +111,20 @@ public class UnitViewPort extends DummyViewPort {
         }
     }
 
+    private void updateUndergroundCircle() {
+        final AbstractPilot pilot = pilots.iterator().next();
+        final double diam = scalingfactor * 7;
+        undergroundCircle.setFrame(pilot.getPosition().getX() - (diam / 2), pilot.getPosition().getY() - (diam / 2), diam, diam);
+    }
+
     /**
      * The arc is painted light blue when the measurement is not to be trusted
      * (>200 || <20). Otherwise, it is painted in a darker blue.
      */
     private void paintBeamComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-            /*
-             * TOON updateArc herschrijven hoort niet in viewport
-             * (overallviewport, dummyviewport...)
-             */
-            // updateArc(pilot.getUltrasonicSensorPositionX() * scalingfactor - getShiftToTheRight(),
-            // pilot.getUltrasonicSensorPositionY() * scalingfactor - getShiftDown(), pilot.getAlpha(),
-            // pilot.getUltraSensorValue() * getScalingfactor());
-
+            //TOON updateArc herschrijven hoort niet in viewport (overallviewport, dummyviewport...) --- WAAROM?
+        	updateArc(pilot.getPosition().getX(), pilot.getPosition().getY(), pilot.getAngle(), pilot.getUltraSensorValue());
             ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
             if (pilot.getUltraSensorValue() > 200 || pilot.getUltraSensorValue() < 20)
                 graph.setColor(new Color(12, 168, 244));
@@ -128,25 +134,14 @@ public class UnitViewPort extends DummyViewPort {
         }
     }
 
-    /*public void updateArc(final double robotX, final double robotY,
-            final double robotAngle, final double USDistance) {
-        double correctedUSDistance = USDistance;
-        correctedUSDistance = correctedUSDistance - 5.5;
+    private void updateArc(final double robotX, final double robotY, final double robotAngle, final double USDistance) {
+        double correctedUSDistance = USDistance - 5.5;
         final double arcUpperLeftX = robotX - correctedUSDistance;
         final double arcUpperLeftY = robotY - correctedUSDistance;
         final double arcStart = 360 - robotAngle - 15;
         final double arcExtent = 30;
 
         final double side = 2 * correctedUSDistance;
-        sonarArc.setArc(arcUpperLeftX, arcUpperLeftY, side, side, arcStart,
-                arcExtent, Arc2D.PIE);
+        sonarArc.setArc(arcUpperLeftX, arcUpperLeftY, side, side, arcStart, arcExtent, Arc2D.PIE);
     }
-
-    public void updateUndergroundCircle() {
-        final AbstractPilot pilot = pilots.iterator().next();
-        final double diam = scalingfactor * 7;
-        undergroundCircle.setFrame(pilot.getAbsolutePosition().getX()
-                - (diam / 2), pilot.getAbsolutePosition().getY() - (diam / 2),
-                diam, diam);
-    }*/
 }

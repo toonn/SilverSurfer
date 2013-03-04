@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mapping.Barcode;
+import simulator.ExtMath;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
@@ -31,6 +32,8 @@ public abstract class AbstractPilot implements PilotInterface {
     protected final double detectionDistanceUltrasonicSensorRobot = 28;
 
     public AbstractPilot() {
+    	mapGraphConstructed = new MapGraph();
+    	mapGraphConstructed.addTileXY(new Point(0, 0));
         barcodes = new HashSet<Barcode>();
         //messageCenter = new MessageCenter(this); //TODO dit is nieuwe code (12:58 3/3/'13)
     }
@@ -58,7 +61,7 @@ public abstract class AbstractPilot implements PilotInterface {
     }
     
     public void setAngle(final double angle) {
-        this.angle = angle;
+        this.angle = ExtMath.addDegree(angle, 0);
     }
     
     @Override
@@ -326,7 +329,7 @@ public abstract class AbstractPilot implements PilotInterface {
     			setAngle(angle - i);
             try {
                 Thread.sleep(getRotateSleepTime(alpha));
-            } catch (final InterruptedException e) {
+            } catch (Exception e) {
             	
             }
     	}
@@ -342,20 +345,20 @@ public abstract class AbstractPilot implements PilotInterface {
         	travelOrientation = travelOrientation.getOppositeOrientation();
         for(int i = 1; i <= Math.abs(distance); i++) {
         	if(travelOrientation == Orientation.NORTH) {
-        		x = currentX - i;
-        		y = currentY;
-        	}
-        	else if(travelOrientation == Orientation.SOUTH) {
-        		x = currentX + i;
-        		y = currentY;
-        	}
-        	else if(travelOrientation == Orientation.EAST) {
         		x = currentX;
         		y = currentY - i;
         	}
-        	else {
+        	else if(travelOrientation == Orientation.SOUTH) {
         		x = currentX;
         		y = currentY + i;
+        	}
+        	else if(travelOrientation == Orientation.EAST) {
+        		x = currentX + i;
+        		y = currentY;
+        	}
+        	else {
+        		x = currentX - i;
+        		y = currentY;
         	}
         	if (mapGraphLoaded != null && robotOnEdge(x, y, getAngle())) {
         		final Orientation edgeOrientation = pointOnWichSideOfTile(x, y, travelOrientation);

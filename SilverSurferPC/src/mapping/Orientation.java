@@ -128,8 +128,7 @@ public enum Orientation {
         }
     };
 
-    private static double angleDelta(final Orientation orientation,
-            final double angle) {
+    private static double angleDelta(final Orientation orientation, final double angle) {
         return Math.abs(orientation.getRightAngle() - angle);
     }
 
@@ -138,6 +137,7 @@ public enum Orientation {
      * in the direction alpha, starting from x,y.
      */
     public static Orientation calculateOrientation(final double angle) {
+    	/*
         Orientation orientation = EAST;
         if (angleDelta(WEST, angle) < angleDelta(orientation, angle)) {
             orientation = WEST;
@@ -147,7 +147,16 @@ public enum Orientation {
         }
         if (angleDelta(SOUTH, angle) < angleDelta(orientation, angle)) {
             orientation = SOUTH;
-        }
+        }*/
+    	Orientation orientation;
+    	if(angle >= 315 || angle < 45)
+    		orientation = EAST;
+    	else if(angle >= 45 && angle < 135)
+    		orientation = SOUTH;
+    	else if(angle >= 135 && angle < 225)
+    		orientation = WEST;
+    	else
+    		orientation = NORTH;
 
         return orientation;
     }

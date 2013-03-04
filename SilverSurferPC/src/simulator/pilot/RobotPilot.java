@@ -53,16 +53,16 @@ public class RobotPilot extends AbstractPilot {
 
     @Override
     public void rotate(final double alpha) {
-        final MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0,
+        /*final MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0,
                 (int) alpha, 0, 0);
-        MTT.start();
+        MTT.start();*/
         super.rotate(alpha);
     }
 
     @Override
     public void travel(final double distance) {
-        final MoveTurnThread MTT = new MoveTurnThread("MTT", communicator,
+        /*final MoveTurnThread MTT = new MoveTurnThread("MTT", communicator,
                 (int) distance, 0, 0, 0);
-        MTT.start();
+        MTT.start();*/
     }
 }
