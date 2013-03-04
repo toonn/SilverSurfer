@@ -68,14 +68,11 @@ public class Edge {
      * 
      */
     public Tile getNeighbour(final Tile tile) {
-        if (howManyTilesAttached() == 2) {
-            if (getTile1().equals(tile)) {
-                return getTile2();
-            } else if (getTile2().equals(tile)) {
-                return getTile1();
-            }
+        if (getTile1() != null && getTile1().equals(tile)) {
+            return getTile2();
+        } else {
+            return getTile1();
         }
-        return null;
     }
 
     /**
@@ -113,21 +110,42 @@ public class Edge {
     }
 
     public Point2D.Double[] getEndPoints() {
-        Point point1 = getTile1().getPosition();
-        Point point2 = getTile2().getPosition();
+        Orientation orientation = null;
+        Point point = null;
+        if (getTile1() == null) {
+            for (Orientation orien : Orientation.values())
+                if (this.equals(getTile2().getEdge(orien)))
+                    orientation = orien;
+            point = new Point(getTile2().getPosition());
+            if (orientation == Orientation.EAST)
+                point.setLocation(point.x + 1, point.y);
+            else if (orientation == Orientation.SOUTH)
+                point.setLocation(point.x, point.y + 1);
+        } else {
+            for (Orientation orien : Orientation.values())
+                if (this.equals(getTile1().getEdge(orien)))
+                    orientation = orien;
+            point = new Point(getTile1().getPosition());
+            if (orientation == Orientation.EAST)
+                point.setLocation(point.x + 1, point.y);
+            else if (orientation == Orientation.SOUTH)
+                point.setLocation(point.x, point.y + 1);
+        }
+
         Point2D.Double[] points = new Point2D.Double[2];
 
-        points[0] = new Point2D.Double(Math.max(point1.x, point2.x), Math.max(point1.y, point2.y));
+        Point2D.Double point1 = new Point2D.Double(point.x, point.y);
+        points[0] = point1;
 
-        int xInc = 0;
-        int yInc = 0;
-        if (point1.x == point2.x) {
-            xInc = 1;
-        } else if (point1.y == point2.y) {
-            yInc = 1;
-        }
-        points[1] = new Point2D.Double(points[0].x + xInc, points[0].y + yInc);
-        
+        Point2D.Double point2 = null;
+        if (orientation == Orientation.NORTH
+                || orientation == Orientation.SOUTH)
+            point2 = new Point2D.Double(point.x + 1, point.y);
+        else if (orientation == Orientation.EAST
+                || orientation == Orientation.WEST)
+            point2 = new Point2D.Double(point.x, point.y + 1);
+        points[1] = point2;
+
         return points;
     }
 
@@ -253,17 +271,19 @@ public class Edge {
 
     @Override
     public String toString() {
-        if (getOrientation() == Orientation.NORTH
-                || getOrientation() == Orientation.SOUTH) {
+        if (getNumberPairDirections() == 0) {
             if (getObstruction() != null) {
-                return "----";
+                return "\u2588\u2588\u2588\u2588";
+                // return "\u2588\u2588\u2588\u2588";
             } else {
-                return "~~~~";
+                return "\u2588--\u2588";
             }
         } else if (getObstruction() != null) {
-            return "|";
+            return "\u2588";
         } else {
-            return "/";
+            return "\u00A6";
+            // return "\u00A6";
+            // return ":";
             // String t1 = "T1: null";
             // String t2 = "T2: null";
             // String obstr = "Free Edge";

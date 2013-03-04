@@ -10,8 +10,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import simulator.viewport.SimulatorPanel;
-
 @SuppressWarnings("serial")
 public class GUIMenuBar extends JMenuBar {
 
@@ -53,7 +51,7 @@ public class GUIMenuBar extends JMenuBar {
 
         return blueToothMenu;
     }
-    
+
     private JMenu getScreenMenu() {
         screenMenu = new JMenu("Screen");
 
@@ -86,12 +84,12 @@ public class GUIMenuBar extends JMenuBar {
                 gui.clearScreen();
             }
         });
-        
-        //TODO remove wall/barcode/path terug toevoegen?
-        
+
+        // TODO remove wall/barcode/path terug toevoegen?
+
         return screenMenu;
     }
-    
+
     private JMenu getSpeedMenu() {
         speedMenu = new JMenu("Speed");
 
@@ -148,11 +146,13 @@ public class GUIMenuBar extends JMenuBar {
             public void actionPerformed(final ActionEvent e) {
                 gui.clearScreen();
 
-                final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui.getFrame(), "Select maze:", FileDialog.LOAD);
+                final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui
+                        .getFrame(), "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
                 prompt.setVisible(true);
-                
-                final File mapFile = new File(prompt.getDirectory() + prompt.getFile()); // Load and display selection
+
+                final File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
                 prompt.dispose();
 
                 System.out.println("[I/O] Loading map ...");
@@ -168,12 +168,9 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-            	//TODO explore
+                // TODO explore
                 /* TOON pilot moet een mazeexplorer hebben */
-                // MazeExplorer exp = new MazeExplorer(gui);
-                // ExploreThread explorer = new ExploreThread(exp);
-                // gui.getCommunicator().setExplorer(exp);
-                // explorer.start();
+                SilverSurferGUI.getSimulatorPanel().startSimulation();
             }
         });
 
@@ -182,124 +179,57 @@ public class GUIMenuBar extends JMenuBar {
 }
 
 /*
-private JMenu getFileMenu() {
-
-    fileMenu = new JMenu("File");
-    // fileMenu.setMnemonic('F');
-
-    // final JMenuItem exportLSItem = new
-    // JMenuItem("Export Lightsensor data");
-    // // exportLSItem.setMnemonic('L');
-    // fileMenu.add(exportLSItem);
-
-    // exportLSItem.addActionListener(new ActionListener() {
-    //
-    // @Override
-    // public void actionPerformed(final ActionEvent arg0) {
-    // // Prompt for a File
-    // final FileDialog prompt = new FileDialog(GUIMenuBar.this
-    // .getGui().getFrame(), "Select file:", FileDialog.SAVE);
-    // prompt.setFilenameFilter(new FilenameFilter() {
-    //
-    // @Override
-    // public boolean accept(final File dir, final String name) {
-    // return name.endsWith(".txt");
-    // }
-    // });
-    //
-    // // Display the dialog and wait for the user's response
-    // prompt.setVisible(true);
-    //
-    // final File export = new File(prompt.getDirectory()
-    // + prompt.getFile());
-    // try {
-    // // Create file
-    // export.createNewFile();
-    //
-    // // Get buffer
-    // final StatusInfoBuffer buffer = SilverSurferGUI
-    // .getStatusInfoBuffer();
-    // LSInfoNode head = buffer.getStartLSInfo();
-    // // Create data output flow
-    // final FileWriter outFile = new FileWriter(export);
-    // final PrintWriter out = new PrintWriter(outFile);
-    // buffer.claimBuffer();
-    // // Print buffer
-    // if (head != null) {
-    // do {
-    // out.println(head.info);
-    // head = head.next;
-    // } while (head != null);
-    // }
-    // // free buffer and close stream.
-    // buffer.freeBuffer();
-    // out.close();
-    //
-    // } catch (final IOException e) {
-    // System.out
-    // .println("Sorry, something went wrong exporting your data.");
-    // }
-    //
-    // }
-    // });
-
-    // final JMenuItem exportUSItem = new JMenuItem(
-    // "Export Ultrasonicsensor data");
-    // // exportUSItem.setMnemonic('U');
-    // fileMenu.add(exportUSItem);
-    //
-    // exportUSItem.addActionListener(new ActionListener() {
-    //
-    // @Override
-    // public void actionPerformed(final ActionEvent arg0) {
-    // // Prompt for a File
-    // final FileDialog prompt = new FileDialog(GUIMenuBar.this
-    // .getGui().getFrame(), "Select file:", FileDialog.SAVE);
-    // prompt.setFilenameFilter(new FilenameFilter() {
-    //
-    // @Override
-    // public boolean accept(final File dir, final String name) {
-    // return name.endsWith(".txt");
-    // }
-    // });
-    //
-    // // Display the dialog and wait for the user's response
-    // prompt.setVisible(true);
-    //
-    // final File export = new File(prompt.getDirectory()
-    // + prompt.getFile());
-    // try {
-    // // Create file
-    // export.createNewFile();
-    //
-    // // Get buffer
-    // final StatusInfoBuffer buffer = SilverSurferGUI
-    // .getStatusInfoBuffer();
-    // USInfoNode head = buffer.getStartUSInfo();
-    // // Create data output flow
-    // final FileWriter outFile = new FileWriter(export);
-    // final PrintWriter out = new PrintWriter(outFile);
-    // buffer.claimBuffer();
-    // // Print buffer
-    // if (head != null) {
-    // do {
-    // System.out.println(head.info);
-    // out.println(head.info);
-    // head = head.next;
-    // } while (head != null);
-    // }
-    // // free buffer and close stream.
-    // buffer.freeBuffer();
-    // out.close();
-    //
-    // } catch (final IOException e) {
-    // System.out
-    // .println("Sorry, something went wrong exporting your data.");
-    // }
-    //
-    // }
-    // });
-
-    return fileMenu;
-}
-*/
+ * private JMenu getFileMenu() {
+ * 
+ * fileMenu = new JMenu("File"); // fileMenu.setMnemonic('F');
+ * 
+ * // final JMenuItem exportLSItem = new //
+ * JMenuItem("Export Lightsensor data"); // // exportLSItem.setMnemonic('L'); //
+ * fileMenu.add(exportLSItem);
+ * 
+ * // exportLSItem.addActionListener(new ActionListener() { // // @Override //
+ * public void actionPerformed(final ActionEvent arg0) { // // Prompt for a File
+ * // final FileDialog prompt = new FileDialog(GUIMenuBar.this //
+ * .getGui().getFrame(), "Select file:", FileDialog.SAVE); //
+ * prompt.setFilenameFilter(new FilenameFilter() { // // @Override // public
+ * boolean accept(final File dir, final String name) { // return
+ * name.endsWith(".txt"); // } // }); // // // Display the dialog and wait for
+ * the user's response // prompt.setVisible(true); // // final File export = new
+ * File(prompt.getDirectory() // + prompt.getFile()); // try { // // Create file
+ * // export.createNewFile(); // // // Get buffer // final StatusInfoBuffer
+ * buffer = SilverSurferGUI // .getStatusInfoBuffer(); // LSInfoNode head =
+ * buffer.getStartLSInfo(); // // Create data output flow // final FileWriter
+ * outFile = new FileWriter(export); // final PrintWriter out = new
+ * PrintWriter(outFile); // buffer.claimBuffer(); // // Print buffer // if (head
+ * != null) { // do { // out.println(head.info); // head = head.next; // } while
+ * (head != null); // } // // free buffer and close stream. //
+ * buffer.freeBuffer(); // out.close(); // // } catch (final IOException e) { //
+ * System.out // .println("Sorry, something went wrong exporting your data.");
+ * // } // // } // });
+ * 
+ * // final JMenuItem exportUSItem = new JMenuItem( //
+ * "Export Ultrasonicsensor data"); // // exportUSItem.setMnemonic('U'); //
+ * fileMenu.add(exportUSItem); // // exportUSItem.addActionListener(new
+ * ActionListener() { // // @Override // public void actionPerformed(final
+ * ActionEvent arg0) { // // Prompt for a File // final FileDialog prompt = new
+ * FileDialog(GUIMenuBar.this // .getGui().getFrame(), "Select file:",
+ * FileDialog.SAVE); // prompt.setFilenameFilter(new FilenameFilter() { // //
+ * 
+ * @Override // public boolean accept(final File dir, final String name) { //
+ * return name.endsWith(".txt"); // } // }); // // // Display the dialog and
+ * wait for the user's response // prompt.setVisible(true); // // final File
+ * export = new File(prompt.getDirectory() // + prompt.getFile()); // try { //
+ * // Create file // export.createNewFile(); // // // Get buffer // final
+ * StatusInfoBuffer buffer = SilverSurferGUI // .getStatusInfoBuffer(); //
+ * USInfoNode head = buffer.getStartUSInfo(); // // Create data output flow //
+ * final FileWriter outFile = new FileWriter(export); // final PrintWriter out =
+ * new PrintWriter(outFile); // buffer.claimBuffer(); // // Print buffer // if
+ * (head != null) { // do { // System.out.println(head.info); //
+ * out.println(head.info); // head = head.next; // } while (head != null); // }
+ * // // free buffer and close stream. // buffer.freeBuffer(); // out.close();
+ * // // } catch (final IOException e) { // System.out //
+ * .println("Sorry, something went wrong exporting your data."); // } // // } //
+ * });
+ * 
+ * return fileMenu; }
+ */

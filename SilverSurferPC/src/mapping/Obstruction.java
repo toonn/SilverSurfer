@@ -3,18 +3,18 @@ package mapping;
 public enum Obstruction {
     WALL {
         @Override
-        public boolean isPassible() {
+        public boolean isPasseble() {
             return false;
         }
     },
     WHITE_LINE {
         @Override
-        public boolean isPassible() {
+        public boolean isPasseble() {
             return true;
         }
     };
 
-    public boolean isPassible() {
+    public boolean isPasseble() {
         return true;
     }
 }

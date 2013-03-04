@@ -128,9 +128,10 @@ public enum Orientation {
         }
     };
 
-    private static double angleDelta(final Orientation orientation, final double angle) {
-        return Math.abs(orientation.getRightAngle() - angle);
-    }
+    // private static double angleDelta(final Orientation orientation, final
+    // double angle) {
+    // return Math.abs(orientation.getRightAngle() - angle);
+    // }
 
     /**
      * Calculates the orientation of the edge you will cross first while moving

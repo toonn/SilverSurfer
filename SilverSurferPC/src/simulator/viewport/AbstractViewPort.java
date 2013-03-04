@@ -1,12 +1,9 @@
 package simulator.viewport;
 
-import gui.RepaintThread;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +11,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +32,8 @@ public abstract class AbstractViewPort extends JPanel {
 
     protected Set<PilotInterface> pilots;
     protected double scalingfactor = 1;
-    private ImageIcon robotSprite = new ImageIcon("resources/robot/NXTrobotsmall.png");;
+    private ImageIcon robotSprite = new ImageIcon(
+            "resources/robot/NXTrobotsmall.png");;
     private Map<boolean[], Rectangle2D[]> barcodeRectangles;
     private int repaintFPS = 30;
     private ActionListener repaintViewPort = new ActionListener() {
@@ -50,9 +47,9 @@ public abstract class AbstractViewPort extends JPanel {
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet) {
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
-        
-        //RepaintThread RT = new RepaintThread(this);
-        //RT.start();
+
+        // RepaintThread RT = new RepaintThread(this);
+        // RT.start();
         new Timer(1000 / repaintFPS, repaintViewPort).start();
     }
 
@@ -81,20 +78,22 @@ public abstract class AbstractViewPort extends JPanel {
         g2.setColor(Color.lightGray);
 
         /*
-        int mapShiftHor = (getWidth() - pilots.iterator().next().getMapGraphConstructed().getMapSize().x) / 2;
-        int mapShiftVer = (getHeight() - pilots.iterator().next().getMapGraphConstructed().getMapSize().y) / 2;
-
-        int minShiftHor = mapShiftHor - getWidth() * 2;
-        int maxShiftHor = mapShiftHor + getWidth() * 2;
-        int minShiftVer = mapShiftVer - getHeight() * 2;
-        int maxShiftVer = mapShiftVer + getHeight() * 2;
-        */
+         * int mapShiftHor = (getWidth() -
+         * pilots.iterator().next().getMapGraphConstructed().getMapSize().x) /
+         * 2; int mapShiftVer = (getHeight() -
+         * pilots.iterator().next().getMapGraphConstructed().getMapSize().y) /
+         * 2;
+         * 
+         * int minShiftHor = mapShiftHor - getWidth() * 2; int maxShiftHor =
+         * mapShiftHor + getWidth() * 2; int minShiftVer = mapShiftVer -
+         * getHeight() * 2; int maxShiftVer = mapShiftVer + getHeight() * 2;
+         */
 
         int minShiftHor = 0;
         int maxShiftHor = getWidth() * 2;
         int minShiftVer = 0;
         int maxShiftVer = getHeight() * 2;
-        
+
         for (int x = minShiftHor; x < maxShiftHor; x += getSizeTile())
             g2.draw(new Line2D.Double(x, minShiftVer, x, maxShiftVer));
         for (int y = minShiftVer; y < maxShiftVer; y += getSizeTile())
@@ -118,8 +117,14 @@ public abstract class AbstractViewPort extends JPanel {
             barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
             for (final PilotInterface pilot : pilots)
                 for (final Barcode barcode : pilot.getBarcodes())
-                    if (barcodeRectangles.containsKey(barcode.getBoolRep())) //TODO: Moet dit niet !barcodeRectangles.contains... zijn?
-                        barcodeRectangles.put(barcode.getBoolRep(), createVisualBarCode(barcode));
+                    if (barcodeRectangles.containsKey(barcode.getBoolRep())) // TODO:
+                                                                             // Moet
+                                                                             // dit
+                                                                             // niet
+                                                                             // !barcodeRectangles.contains...
+                                                                             // zijn?
+                        barcodeRectangles.put(barcode.getBoolRep(),
+                                createVisualBarCode(barcode));
         }
 
         final Graphics2D g2 = ((Graphics2D) graph);
@@ -139,19 +144,24 @@ public abstract class AbstractViewPort extends JPanel {
 
     private Rectangle2D[] createVisualBarCode(final Barcode barcode) {
         final Rectangle2D[] visualBarcode = new Rectangle2D[8];
-        final Point2D.Double barcodeLUCorner = new Point2D.Double(barcode.getPosition().getX(), barcode.getPosition().getY());
+        final Point2D.Double barcodeLUCorner = new Point2D.Double(barcode
+                .getPosition().getX(), barcode.getPosition().getY());
         double width = getSizeTile();
         double height = getSizeTile();
 
         // North or South oriented barcode
-        if (barcode.getDirection() == Orientation.NORTH || barcode.getDirection() == Orientation.SOUTH)
+        if (barcode.getDirection() == Orientation.NORTH
+                || barcode.getDirection() == Orientation.SOUTH)
             height = getSizeTile() / 20;
-        else if (barcode.getDirection() == Orientation.EAST || barcode.getDirection() == Orientation.WEST)
+        else if (barcode.getDirection() == Orientation.EAST
+                || barcode.getDirection() == Orientation.WEST)
             width = getSizeTile() / 20;
         for (int i = 0; i < 8; i++) {
-            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX(), barcodeLUCorner.getY(), 
-            		barcodeLUCorner.getX() + width, barcodeLUCorner.getY() + height);
-            barcodeLUCorner.setLocation(barcodeLUCorner.getX() + width, barcodeLUCorner.getY() + height);
+            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX(),
+                    barcodeLUCorner.getY(), barcodeLUCorner.getX() + width,
+                    barcodeLUCorner.getY() + height);
+            barcodeLUCorner.setLocation(barcodeLUCorner.getX() + width,
+                    barcodeLUCorner.getY() + height);
         }
 
         return visualBarcode;
@@ -159,22 +169,24 @@ public abstract class AbstractViewPort extends JPanel {
 
     private void paintWalls(Graphics graph) {
         Set<Point2D[]> walls = new HashSet<Point2D[]>();
-
         for (MapGraph mapGraph : getAllMapGraphs())
             for (Tile tile : mapGraph.getTiles())
                 for (Edge wall : tile.getEdges())
-                	if(wall.getObstruction() != null && !wall.getObstruction().isPassible())
-                		walls.add(wall.getEndPoints());
+                    if (wall.getObstruction() != null
+                            && !wall.getObstruction().isPasseble())
+                        walls.add(wall.getEndPoints());
 
         final Graphics2D g2 = ((Graphics2D) graph);
         g2.setColor(Color.black);
         Stroke originalStroke = g2.getStroke();
-        float strokeWidth = 1;
-        g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+        float strokeWidth = 5;
+        g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER));
 
         for (Point2D[] wall : walls) {
             for (Point2D point : wall)
-                point.setLocation(point.getX() * getSizeTile(), point.getY() * getSizeTile());
+                point.setLocation(point.getX() * getSizeTile(), point.getY()
+                        * getSizeTile());
             g2.draw(new Line2D.Double(wall[0], wall[1]));
         }
         g2.setStroke(originalStroke);
@@ -187,13 +199,14 @@ public abstract class AbstractViewPort extends JPanel {
         Graphics2D g2 = (Graphics2D) graph;
         for (PilotInterface pilot : pilots) {
             AffineTransform oldTransform = g2.getTransform();
-            g2.rotate(Math.toRadians(pilot.getAngle()), pilot.getPosition().getX(), pilot.getPosition().getY());
-            g2.drawImage(robotSprite.getImage(), (int) ((pilot.getPosition().getX() - robotSprite.getIconWidth()/2) * scalingfactor), (int) ((pilot.getPosition().getY() - robotSprite.getIconHeight()/2) * scalingfactor), null);
+            g2.rotate(Math.toRadians(pilot.getAngle()), pilot.getPosition()
+                    .getX(), pilot.getPosition().getY());
+            g2.drawImage(robotSprite.getImage(), (int) ((pilot.getPosition()
+                    .getX() - robotSprite.getIconWidth() / 2) * scalingfactor),
+                    (int) ((pilot.getPosition().getY() - robotSprite
+                            .getIconHeight() / 2) * scalingfactor), null);
             g2.setTransform(oldTransform);
         }
     }
 
-    /*private void paintHighLightComponents(final Graphics graph) {
-    
-    }*/
 }

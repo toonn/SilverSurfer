@@ -73,7 +73,8 @@ public class MapReader {
                     lineNo++;
                 }
             }
-            readbuffer.close(); //toegevoegd om warning weg te werken, geeft geen errors?
+            readbuffer.close(); // toegevoegd om warning weg te werken, geeft
+                                // geen errors?
             return tileTypes;
 
         } catch (final Exception e) {
@@ -90,17 +91,32 @@ public class MapReader {
 
         // Fill a graph with the information in infoMatrix.
         MapGraph map = new MapGraph();
-        // This prints out the information row by row
-        for (int i = 0; i < infoMatrix.length; i++) {
-            for (int j = 0; j < infoMatrix[i].length; j++) {
+        for (int row = 0; row < infoMatrix.length; row++)
+            for (int column = 0; column < infoMatrix[row].length; column++) {
+                map.addTileXY(new Point(column, row));
+            }
 
-                Tile tileIJ = null;
-                final String[] seperatedInfoIJ = infoMatrix[i][j].split("\\.");
+        // // Link all tiles (Al gebeurt in addTileXY)
+        // for (int row = 0; row < infoMatrix.length - 1; row++)
+        // for (int column = 0; column < infoMatrix[row].length - 1; column++) {
+        // Tile tile = map.getTile(new Point(column, row));
+        // // set east tile's edge
+        // map.getTile(new Point(column + 1, row)).replaceEdge(
+        // Orientation.WEST, tile.getEdge(Orientation.EAST));
+        // // set south tile's edge
+        // map.getTile(new Point(column, row + 1)).replaceEdge(
+        // Orientation.NORTH, tile.getEdge(Orientation.SOUTH));
+        // }
+
+        for (int row = 0; row < infoMatrix.length; row++) {
+            for (int column = 0; column < infoMatrix[row].length; column++) {
+                final String[] seperatedInfoIJ = infoMatrix[row][column]
+                        .split("\\.");
 
                 // Create the desired tile form first
                 // connect it to the graph in a right way later!
-                Point pointIJ = new Point(i, j);
-                tileIJ = new Tile(pointIJ);
+                Point pointIJ = new Point(column, row);
+                Tile tileIJ = map.getTile(pointIJ);
 
                 if (seperatedInfoIJ[0].equals("Cross")) {
                     createCrossFromTile(tileIJ);
@@ -148,42 +164,8 @@ public class MapReader {
                                 tileIJ));
                     }
                 }
-
-                map.loadTile(pointIJ, tileIJ);
             }
         }
-
-        for (int row = 0; row < infoMatrix.length; row++) {
-            for (int column = 0; column < infoMatrix[row].length; column++) {
-            	System.out.println("test");
-            	Tile tile = map.getTile(new Point(column, row));
-            	System.out.println("test2");
-            	Edge edgeEast = tile.getEdge(Orientation.EAST);
-            	Tile tileEast = map.getTile(new Point(column+1, row));
-            	if(tileEast != null) {
-            		tileEast.replaceEdge(Orientation.WEST, edgeEast);
-            		System.out.println(tileEast.getEdge(Orientation.WEST).getTile1().getPosition());
-            		System.out.println(tileEast.getEdge(Orientation.WEST).getTile2().getPosition());
-            		if(tileEast.getEdge(Orientation.WEST).getTile1() == (tile))
-            			System.out.println(tileEast.getEdge(Orientation.WEST).getTile2().areNeighbours(tile));
-            		else
-            			System.out.println(tileEast.getEdge(Orientation.WEST).getTile1().areNeighbours(tile));
-            	}
-            	
-            	Edge edgeSouth = tile.getEdge(Orientation.SOUTH);
-            	Tile tileSouth = map.getTile(new Point(column, row+1));
-            	if(tileSouth != null)
-            		tileSouth.replaceEdge(Orientation.NORTH, edgeSouth);
-            }
-        }
-        try{
-        	Thread.sleep(1000);
-        }
-        catch(Exception e) {
-        	
-        }
-        Tile tile11 = map.getTile(new Point(1,1));
-        System.out.println(tile11.areNeighbours(map.getTile(new Point(2,1))));
         return map;
     }
 

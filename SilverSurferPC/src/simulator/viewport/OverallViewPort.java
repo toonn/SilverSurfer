@@ -8,7 +8,7 @@ import mapping.MapGraph;
 
 @SuppressWarnings("serial")
 public class OverallViewPort extends AbstractViewPort {
-	
+
     private MapGraph mapGraphLoaded;
 
     public OverallViewPort(Set<PilotInterface> pilotSet, MapGraph mapGraphLoaded) {

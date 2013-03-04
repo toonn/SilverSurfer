@@ -53,8 +53,8 @@ public class Tile {
                 && (location.getY() - tile.getPosition().getY()) == 0) {
             return true;
         }
-        if (Math.abs(location.getX() - tile.getPosition().getX()) == 1
-                && (location.getY() - tile.getPosition().getY()) == 0) {
+        if ((location.getX() - tile.getPosition().getX()) == 0
+                && Math.abs((location.getY() - tile.getPosition().getY())) == 1) {
             return true;
         } else {
             return false;
@@ -183,7 +183,8 @@ public class Tile {
             return null;
         }
         for (Orientation orientation : Orientation.values()) {
-            if (getEdge(orientation) == tile.getEdge(orientation)) {
+            if (getEdge(orientation) == tile.getEdge(orientation
+                    .getOppositeOrientation())) {
                 return orientation;
             }
         }
@@ -462,8 +463,11 @@ public class Tile {
 
     @Override
     public String toString() {
-        return getEdge(Orientation.NORTH) + "\n" + getEdge(Orientation.WEST)
-                + String.format("%2s", ((getContent() != null) ? getContent().getValue() : ""))
-                + getEdge(Orientation.EAST) + "\n" + getEdge(Orientation.SOUTH);
+        return getEdge(Orientation.NORTH)
+                + "\n"
+                + getEdge(Orientation.WEST)
+                + String.format("%2s", ((getContent() != null) ? getContent()
+                        .getValue() : "")) + getEdge(Orientation.EAST) + "\n"
+                + getEdge(Orientation.SOUTH);
     }
 }

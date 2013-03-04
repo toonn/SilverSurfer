@@ -11,12 +11,13 @@ import simulator.viewport.SimulatorPanel;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mazeAlgorithm.MazeExplorer;
 import mq.communicator.MessageCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-    private Point2D.Double startPosition = new Point2D.Double(0 * sizeTile() + sizeTile() / 2, 0 * sizeTile() + sizeTile() / 2);
-    private Point2D.Double position = new Point2D.Double(0 * sizeTile() + sizeTile() / 2, 0 * sizeTile() + sizeTile() / 2);
+    private Point2D.Double position = new Point2D.Double(sizeTile() / 2,
+            sizeTile() / 2);
     private double angle = 270;
     protected int speed = 10;
     private Set<Barcode> barcodes;
@@ -33,10 +34,11 @@ public abstract class AbstractPilot implements PilotInterface {
     protected final double detectionDistanceUltrasonicSensorRobot = 28;
 
     public AbstractPilot() {
-    	mapGraphConstructed = new MapGraph();
-    	mapGraphConstructed.addTileXY(new Point(0, 0));
+        mapGraphConstructed = new MapGraph();
+        mapGraphConstructed.addTileXY(new Point(0, 0));
         barcodes = new HashSet<Barcode>();
-        //messageCenter = new MessageCenter(this); //TODO dit is nieuwe code (12:58 3/3/'13)
+        // messageCenter = new MessageCenter(this); //TODO dit is nieuwe code
+        // (12:58 3/3/'13)
     }
 
     @Override
@@ -47,29 +49,30 @@ public abstract class AbstractPilot implements PilotInterface {
     public void setPosition(final double x, final double y) {
         position.setLocation(x, y);
     }
-    
+
     public Point getMatrixPosition() {
         return toMatrixPosition(getPosition());
     }
-    
-    public Point toMatrixPosition(Point2D.Double point) { 
-        return new Point((int) (point.getX() / sizeTile()), (int) (point.getY() / sizeTile()));
+
+    public Point toMatrixPosition(Point2D.Double point) {
+        return new Point((int) (point.getX() / sizeTile()),
+                (int) (point.getY() / sizeTile()));
     }
 
     @Override
     public double getAngle() {
         return angle;
     }
-    
+
     public void setAngle(final double angle) {
         this.angle = ExtMath.addDegree(angle, 0);
     }
-    
+
     @Override
     public double sizeTile() {
         return 40;
     }
-    
+
     public int getSpeed() {
         if (speed == 48) {
             return 4;
@@ -81,7 +84,7 @@ public abstract class AbstractPilot implements PilotInterface {
             return 1;
         }
     }
-    
+
     public void setSpeed(int speed) {
         if (speed == 4) {
             speed = 48;
@@ -98,71 +101,70 @@ public abstract class AbstractPilot implements PilotInterface {
     public Set<Barcode> getBarcodes() {
         return barcodes;
     }
-    
+
     public void setBarcode(final int barcode) {
-        final Barcode scanned = new Barcode(barcode, getOrientation(), mapGraphConstructed.getTile(new Point()));
-        getMapGraphConstructed().getTile(getMatrixPosition()).setContent(scanned);
+        final Barcode scanned = new Barcode(barcode, getOrientation(),
+                mapGraphConstructed.getTile(new Point()));
+        getMapGraphConstructed().getTile(getMatrixPosition()).setContent(
+                scanned);
         barcodes.add(scanned);
     }
 
     public MapGraph getMapGraphLoaded() {
-    	//TODO: change back (piloot mag niet aan simulatorpanel)
+        // TODO: change back (piloot mag niet aan simulatorpanel)
         return simulatorPanel.getMapGraphLoaded();
     }
-    
+
     @Override
     public MapGraph getMapGraphConstructed() {
         return mapGraphConstructed;
     }
-    
+
     public void setSimulatorPanel(SimulatorPanel simulatorPanel) {
-    	this.simulatorPanel = simulatorPanel;
+        this.simulatorPanel = simulatorPanel;
     }
-    
+
     @Override
     public boolean isRobotControllable() {
         return true;
     }
-    
+
     public MessageCenter getMessageCenter() {
-		return messageCenter;
-	}
-    
+        return messageCenter;
+    }
+
     public abstract void recieveMessage(String message);
-    
+
     public abstract String getConsoleTag();
-    
+
     @Override
     public void reset() {
-    	//TODO: juist?
-        startPosition.setLocation(0 * sizeTile() + sizeTile() / 2, 5 * sizeTile() + sizeTile() / 2);
-        position.setLocation(0 * sizeTile() + sizeTile() / 2, 5 * sizeTile() + sizeTile() / 2);
+        // TODO: juist?
         angle = 270;
         speed = 10;
-        barcodes = new HashSet<Barcode>();        
+        barcodes = new HashSet<Barcode>();
+        mapGraphConstructed = new MapGraph();
+        mapGraphConstructed.addTileXY(getMatrixPosition());
     }
-    
+
     public Orientation getOrientation() {
         return Orientation.calculateOrientation(getAngle());
     }
 
     public double[] getLightSensorCoordinates() {
         final double[] coordinates = new double[2];
-        if(getOrientation() == Orientation.NORTH) {
-        	coordinates[0] = getPosition().getX() - lightSensorDistanceFromAxis;
-        	coordinates[1] = getPosition().getY();
-        }
-        else if(getOrientation() == Orientation.SOUTH) {
-        	coordinates[0] = getPosition().getX() + lightSensorDistanceFromAxis;
-        	coordinates[1] = getPosition().getY();
-        }
-        else if(getOrientation() == Orientation.EAST) {
-        	coordinates[0] = getPosition().getX();
-        	coordinates[1] = getPosition().getY() - lightSensorDistanceFromAxis;
-        }
-        else if(getOrientation() == Orientation.WEST) {
-        	coordinates[0] = getPosition().getX();
-        	coordinates[1] = getPosition().getY() + lightSensorDistanceFromAxis;
+        if (getOrientation() == Orientation.NORTH) {
+            coordinates[0] = getPosition().getX() - lightSensorDistanceFromAxis;
+            coordinates[1] = getPosition().getY();
+        } else if (getOrientation() == Orientation.SOUTH) {
+            coordinates[0] = getPosition().getX() + lightSensorDistanceFromAxis;
+            coordinates[1] = getPosition().getY();
+        } else if (getOrientation() == Orientation.EAST) {
+            coordinates[0] = getPosition().getX();
+            coordinates[1] = getPosition().getY() - lightSensorDistanceFromAxis;
+        } else if (getOrientation() == Orientation.WEST) {
+            coordinates[0] = getPosition().getX();
+            coordinates[1] = getPosition().getY() + lightSensorDistanceFromAxis;
         }
         return coordinates;
     }
@@ -171,49 +173,53 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public double[] getUltrasonicSensorCoordinates() {
         final double[] coordinates = new double[2];
-        if(getOrientation() == Orientation.NORTH) {
-        	coordinates[0] = getPosition().getX() + ultrasonicSensorDistanceFromAxis;
-        	coordinates[1] = getPosition().getY();
-        }
-        else if(getOrientation() == Orientation.SOUTH) {
-        	coordinates[0] = getPosition().getX() - ultrasonicSensorDistanceFromAxis;
-        	coordinates[1] = getPosition().getY();
-        }
-        else if(getOrientation() == Orientation.EAST) {
-        	coordinates[0] = getPosition().getX();
-        	coordinates[1] = getPosition().getY() + ultrasonicSensorDistanceFromAxis;
-        }
-        else if(getOrientation() == Orientation.WEST) {
-        	coordinates[0] = getPosition().getX();
-        	coordinates[1] = getPosition().getY() - ultrasonicSensorDistanceFromAxis;
+        if (getOrientation() == Orientation.NORTH) {
+            coordinates[0] = getPosition().getX()
+                    + ultrasonicSensorDistanceFromAxis;
+            coordinates[1] = getPosition().getY();
+        } else if (getOrientation() == Orientation.SOUTH) {
+            coordinates[0] = getPosition().getX()
+                    - ultrasonicSensorDistanceFromAxis;
+            coordinates[1] = getPosition().getY();
+        } else if (getOrientation() == Orientation.EAST) {
+            coordinates[0] = getPosition().getX();
+            coordinates[1] = getPosition().getY()
+                    + ultrasonicSensorDistanceFromAxis;
+        } else if (getOrientation() == Orientation.WEST) {
+            coordinates[0] = getPosition().getX();
+            coordinates[1] = getPosition().getY()
+                    - ultrasonicSensorDistanceFromAxis;
         }
         return coordinates;
     }
 
     public abstract int getUltraSensorValue();
-    
+
     public boolean checkForObstruction() {
         if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot)
             return true;
         return false;
     }
-    
+
     public void setObstructionOrTile() {
-        final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
+        final Orientation currentOrientation = Orientation
+                .calculateOrientation(getAngle());
         if (checkForObstruction())
-        	getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(currentOrientation).setObstruction(Obstruction.WALL);
+            getMapGraphConstructed().getTile(getMatrixPosition())
+                    .getEdge(currentOrientation)
+                    .setObstruction(Obstruction.WALL);
         else {
             Point nextPoint = currentOrientation.getNext(getMatrixPosition());
             if (mapGraphConstructed.getTile(nextPoint) == null)
                 getMapGraphConstructed().addTileXY(nextPoint);
         }
     }
-    
+
     /**
      * checkt of het punt zich binnen de marge van een edge bevindt
      */
     protected boolean pointOnEdge(final double x, final double y) {
-    	double edgeMarge = 1.2;
+        double edgeMarge = 1.2;
         return (x % sizeTile()) > sizeTile() - edgeMarge
                 || (x % sizeTile()) < edgeMarge
                 || (y % sizeTile()) > sizeTile() - edgeMarge
@@ -221,164 +227,209 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     /**
-     * Checks whether the robot, standing on the given point, is on the edge of a
-     * tile. The robot is interpreted as a rectangle around the given position.
+     * Checks whether the robot, standing on the given point, is on the edge of
+     * a tile. The robot is interpreted as a rectangle around the given
+     * position.
      */
-    public boolean robotOnEdge(final double x, final double y, final double alpha) {
-    	Orientation orientation = Orientation.calculateOrientation(alpha);
-    	Point backup;
-    	//North
-    	Point leftFront = new Point((int)(x - lengthOfRobot/2), (int)(y - widthOfRobot/2));
-    	Point rightFront = new Point((int)(x - lengthOfRobot/2), (int)(y + widthOfRobot/2));
-    	Point leftBack = new Point((int)(x + lengthOfRobot/2), (int)(y - widthOfRobot/2));
-    	Point rightBack = new Point((int)(x + lengthOfRobot/2), (int)(y + widthOfRobot/2));
-    	if(orientation == Orientation.SOUTH) {
-    		backup = leftFront;
-    		leftFront = rightBack;
-    		rightBack = backup;
-    		backup = rightFront;
-    		rightFront = leftBack;
-    		leftBack = backup;
-    	}
-    	else if(orientation == Orientation.EAST) {
-    		backup = leftFront;
-    		leftFront = rightFront;
-    		rightFront = rightBack;
-    		rightBack = leftBack;
-    		leftBack = backup;
-    	}
-    	else if(orientation == Orientation.WEST) {
-    		backup = leftFront;
-    		leftFront = leftBack;
-    		leftBack = rightBack;
-    		rightBack = rightFront;
-    		rightFront = backup;
-    	}
+    public boolean robotOnEdge(final double x, final double y,
+            final double alpha) {
+        Orientation orientation = Orientation.calculateOrientation(alpha);
+        Point backup;
+        // North
+        Point leftFront = new Point((int) (x - lengthOfRobot / 2),
+                (int) (y - widthOfRobot / 2));
+        Point rightFront = new Point((int) (x - lengthOfRobot / 2),
+                (int) (y + widthOfRobot / 2));
+        Point leftBack = new Point((int) (x + lengthOfRobot / 2),
+                (int) (y - widthOfRobot / 2));
+        Point rightBack = new Point((int) (x + lengthOfRobot / 2),
+                (int) (y + widthOfRobot / 2));
+        if (orientation == Orientation.SOUTH) {
+            backup = leftFront;
+            leftFront = rightBack;
+            rightBack = backup;
+            backup = rightFront;
+            rightFront = leftBack;
+            leftBack = backup;
+        } else if (orientation == Orientation.EAST) {
+            backup = leftFront;
+            leftFront = rightFront;
+            rightFront = rightBack;
+            rightBack = leftBack;
+            leftBack = backup;
+        } else if (orientation == Orientation.WEST) {
+            backup = leftFront;
+            leftFront = leftBack;
+            leftBack = rightBack;
+            rightBack = rightFront;
+            rightFront = backup;
+        }
         return pointOnEdge(leftFront.getX(), leftFront.getY())
                 || pointOnEdge(rightFront.getX(), rightFront.getY())
                 || pointOnEdge(leftBack.getX(), leftBack.getY())
                 || pointOnEdge(rightBack.getX(), rightBack.getY())
-                || (Math.abs(leftFront.getX() % sizeTile() - rightFront.getX() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getX() % sizeTile() - leftBack.getX() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getX() % sizeTile() - rightBack.getX() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getX() % sizeTile() - rightBack.getX() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getX() % sizeTile() - leftBack.getX() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightBack.getX() % sizeTile() - leftBack.getX() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getY() % sizeTile() - rightFront.getY() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getY() % sizeTile() - leftBack.getY() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getY() % sizeTile() - rightBack.getY() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getY() % sizeTile() - rightBack.getY() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getY() % sizeTile() - leftBack.getY() % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightBack.getY() % sizeTile() - leftBack.getY() % sizeTile()) > sizeTile() / 2);
+                || (Math.abs(leftFront.getX() % sizeTile() - rightFront.getX()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(leftFront.getX() % sizeTile() - leftBack.getX()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(leftFront.getX() % sizeTile() - rightBack.getX()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(rightFront.getX() % sizeTile() - rightBack.getX()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(rightFront.getX() % sizeTile() - leftBack.getX()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(rightBack.getX() % sizeTile() - leftBack.getX()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(leftFront.getY() % sizeTile() - rightFront.getY()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(leftFront.getY() % sizeTile() - leftBack.getY()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(leftFront.getY() % sizeTile() - rightBack.getY()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(rightFront.getY() % sizeTile() - rightBack.getY()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(rightFront.getY() % sizeTile() - leftBack.getY()
+                        % sizeTile()) > sizeTile() / 2)
+                || (Math.abs(rightBack.getY() % sizeTile() - leftBack.getY()
+                        % sizeTile()) > sizeTile() / 2);
     }
 
     /**
      * Checks on what side of the tile you are.
      */
-    public Orientation pointOnWichSideOfTile(final double x, final double y, final Orientation travelOrientation) {
-        if (travelOrientation == Orientation.NORTH || travelOrientation == Orientation.SOUTH) {
+    public Orientation pointOnWichSideOfTile(final double x, final double y,
+            final Orientation travelOrientation) {
+        if (travelOrientation == Orientation.NORTH
+                || travelOrientation == Orientation.SOUTH) {
             if ((y % sizeTile()) > sizeTile() / 2)
                 return Orientation.SOUTH;
             // if((y % 40) < 20)
             else
                 return Orientation.NORTH;
-        }
+        } else if ((x % sizeTile()) > sizeTile() / 2)
+            return Orientation.EAST;
+        // if((x % 40) < 20)
         else
-            if ((x % sizeTile()) > sizeTile() / 2)
-                return Orientation.EAST;
-            // if((x % 40) < 20)
-            else
-                return Orientation.WEST;
+            return Orientation.WEST;
     }
 
     public void alignOnWhiteLine() {
-    	//TODO aparte invulling voor sim en robot?
-    	//TODO Commando geven aan de robot om alignOnWhiteLine() te doen? Momenteel wordt er in communicator gecheckt hoelang het geleden is.
-        while (!pointOnEdge(getLightSensorCoordinates()[0], getLightSensorCoordinates()[1]))
+        // TODO aparte invulling voor sim en robot?
+        // TODO Commando geven aan de robot om alignOnWhiteLine() te doen?
+        // Momenteel wordt er in communicator gecheckt hoelang het geleden is.
+        while (!pointOnEdge(getLightSensorCoordinates()[0],
+                getLightSensorCoordinates()[1]))
             travel(1);
         travel(5);
-        while (!pointOnEdge(getLightSensorCoordinates()[0], getLightSensorCoordinates()[1]))
+        while (!pointOnEdge(getLightSensorCoordinates()[0],
+                getLightSensorCoordinates()[1]))
             rotate(-1);
         rotate(90);
         int i = 0;
-        while (!pointOnEdge(getLightSensorCoordinates()[0], getLightSensorCoordinates()[1])) {
+        while (!pointOnEdge(getLightSensorCoordinates()[0],
+                getLightSensorCoordinates()[1])) {
             rotate(1);
             i++;
         }
         rotate(-(90 + i) / 2);
     }
-    
+
     public void allignOnWalls() {
-    	//TODO aparte invulling voor sim en robot?
+        // TODO aparte invulling voor sim en robot?
         rotate(90);
-        if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot && getUltraSensorValue() > 23)
+        if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot
+                && getUltraSensorValue() > 23)
             while (!(getUltraSensorValue() <= 23))
                 travel(1);
         rotate(-90);
         rotate(-90);
-        if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot && getUltraSensorValue() > 23)
+        if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot
+                && getUltraSensorValue() > 23)
             while (!(getUltraSensorValue() <= 23))
                 travel(1);
         rotate(90);
     }
-    
+
     protected abstract int getRotateSleepTime(double angle);
-    
+
     protected abstract int getTravelSleepTime(double distance);
-    
+
     public void rotate(final double alpha) {
-    	double angle = getAngle();
-    	for(int i = 1; i <= Math.abs(alpha); i++) {
-    		if(alpha >= 0)
-    			setAngle(angle + i);
-    		else
-    			setAngle(angle - i);
+        double angle = getAngle();
+        for (int i = 1; i <= Math.abs(alpha); i++) {
+            if (alpha >= 0)
+                setAngle(angle + i);
+            else
+                setAngle(angle - i);
             try {
                 Thread.sleep(getRotateSleepTime(alpha));
             } catch (Exception e) {
-            	
+
             }
-    	}
+        }
     }
-    
+
     public void travel(final double distance) {
         double currentX = getPosition().getX();
         double currentY = getPosition().getY();
         double x;
         double y;
-        Orientation travelOrientation = Orientation.calculateOrientation(getAngle());
-        if(distance < 0)
-        	travelOrientation = travelOrientation.getOppositeOrientation();
-        for(int i = 1; i <= Math.abs(distance); i++) {
-        	if(travelOrientation == Orientation.NORTH) {
-        		x = currentX;
-        		y = currentY - i;
-        	}
-        	else if(travelOrientation == Orientation.SOUTH) {
-        		x = currentX;
-        		y = currentY + i;
-        	}
-        	else if(travelOrientation == Orientation.EAST) {
-        		x = currentX + i;
-        		y = currentY;
-        	}
-        	else {
-        		x = currentX - i;
-        		y = currentY;
-        	}
-        	if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle())) {
-        		final Orientation edgeOrientation = pointOnWichSideOfTile(x, y, travelOrientation);
-        		if (travelOrientation == edgeOrientation && !getMapGraphLoaded().getTile(getMatrixPosition()).getEdge(travelOrientation).isPassable()) {
-        			System.out.println("Er staat een muur in de weg");
-        			return;
-        		}
+        Orientation travelOrientation = Orientation
+                .calculateOrientation(getAngle());
+        if (distance < 0)
+            travelOrientation = travelOrientation.getOppositeOrientation();
+        for (int i = 1; i <= Math.abs(distance); i++) {
+            if (travelOrientation == Orientation.NORTH) {
+                x = currentX;
+                y = currentY - i;
+            } else if (travelOrientation == Orientation.SOUTH) {
+                x = currentX;
+                y = currentY + i;
+            } else if (travelOrientation == Orientation.EAST) {
+                x = currentX + i;
+                y = currentY;
+            } else {
+                x = currentX - i;
+                y = currentY;
             }
-    		setPosition(x, y);
+            if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle())) {
+                final Orientation edgeOrientation = pointOnWichSideOfTile(x, y,
+                        travelOrientation);
+                if (travelOrientation == edgeOrientation
+                        && !getMapGraphLoaded().getTile(getMatrixPosition())
+                                .getEdge(travelOrientation).isPassable()) {
+                    System.out.println("Er staat een muur in de weg");
+                    return;
+                }
+            }
+            setPosition(x, y);
             try {
                 Thread.sleep(getTravelSleepTime(distance));
             } catch (final InterruptedException e) {
-            	
+
             }
         }
+    }
+
+    public void stopReadingBarcodes() {
+        // TODO Deze methode wil ik weg uit pilot.
+    }
+
+    public void startReadingBarcodes() {
+        // TODO Deze methode wil ik weg uit pilot.
+    }
+
+    public boolean getExecutingBarcodes() {
+        return false;
+    }
+
+    public void startExploring() {
+        new Thread() {
+            public void run() {
+                new MazeExplorer(
+                        mapGraphConstructed.getTile(getMatrixPosition()),
+                        AbstractPilot.this).startExploringMaze();
+            }
+        }.start();
     }
 }

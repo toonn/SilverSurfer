@@ -3,12 +3,11 @@ package mazeAlgorithm;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import simulator.pilot.AbstractPilot;
+
 import mapping.ExtMath;
 import mapping.Orientation;
 import mapping.Tile;
-
-import commands.Command;
-import communication.Communicator;
 
 public class MazeExplorer {
 
@@ -22,52 +21,21 @@ public class MazeExplorer {
      */
     private final Vector<Tile> queue = new Vector<Tile>();
     private Tile startTile = null;
-    private final Communicator communicator;
 
-    private Orientation currentOrientation;
+    private AbstractPilot pilot;
 
     /**
      * is true when robot must allign during the algorithm.
      */
-    private final boolean mustAllign = false;
+    // private final boolean mustAllign = false;
 
-    public MazeExplorer(final Communicator communicator) {
-        this.communicator = communicator;
-        startTile = communicator.getPilot().getMapGraphConstructed()
-                .getTile(communicator.getPilot().getMatrixPosition());
+    public MazeExplorer(final Tile startTile, final AbstractPilot pilot) {
+        this.startTile = startTile;
+        this.pilot = pilot;
     }
 
     private void algorithm(final Tile currentTile) {
         checkForNeighboursNotYetExplored(currentTile);
-
-        currentOrientation = communicator.getPilot().getOrientation();
-
-        // checkForObstructionsAndSetTile(whichTilesAllreadyBeen);
-
-        // if (checkTileFound) {
-        // setCheckTile(gui
-        // .getCommunicator()
-        // .getSimulationPilot()
-        // .getMapGraphConstructed()
-        // .getTileWithCoordinates(
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeX(),
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeY()));
-        // setCheckTileFound(false);
-        // }
-        // if (endTileFound) {
-        // setEndTile(gui
-        // .getCommunicator()
-        // .getSimulationPilot()
-        // .getMapGraphConstructed()
-        // .getTileWithCoordinates(
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeX(),
-        // communicator.getSimulationPilot()
-        // .getCurrentPositionRelativeY()));
-        // setEndTileFound(false);
-        // }
 
         // zet het mark-veld van de currentTile op true zodat deze niet meer
         // opnieuw in de queue terecht kan komen
@@ -108,14 +76,8 @@ public class MazeExplorer {
 
         goToNextTile(currentTile, nextTile);
 
-        // wachten tot de barcode is uitgevoerd.
-        while (communicator.getExecutingBarcodes()) {
-            try {
-                Thread.sleep(100);
-            } catch (final Exception e) {
+        // TODO ?wachten tot de barcode is uitgevoerd.
 
-            }
-        }
         // voert methode opnieuw uit met nextTile
         algorithm(nextTile);
     }
@@ -125,10 +87,7 @@ public class MazeExplorer {
     // Indien wel, plaats een muur.
     // Indien niet, voeg een nieuwe lege tile toe op de juiste plaats.
     private void checkForNeighboursNotYetExplored(final Tile currentTile) {
-
-        Orientation currentOrientation = communicator.getPilot()
-                .getOrientation();
-        int numberVariable = currentOrientation.getNumberArray();
+        int numberVariable = pilot.getOrientation().getNumberArray();
         // numbervariable met als inhoud het getal van de orientatie (N = 1,
         // ...)
         // Array met alle buren van deze tile
@@ -140,14 +99,18 @@ public class MazeExplorer {
                     && (array.get(numberVariable).isMarkedExploreMaze())) {
                 ;
             } else {
-                double angle = (((numberVariable - currentOrientation
+                // TODO +360 zinloos?
+                double angle = (((numberVariable - pilot.getOrientation()
                         .getNumberArray()) * 90) + 360) % 360;
                 angle = ExtMath.getSmallestAngle(angle);
-                communicator.sendCommand((int) (angle * 10) * 10
-                        + Command.AUTOMATIC_TURN_ANGLE);
-                communicator
-                        .sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
-                currentOrientation = communicator.getPilot().getOrientation();
+                pilot.rotate(angle);
+                pilot.setObstructionOrTile();
+                // communicator.sendCommand((int) (angle * 10) * 10
+                // + Command.AUTOMATIC_TURN_ANGLE);
+                // communicator
+                // .sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
+                // currentOrientation =
+                // communicator.getPilot().getOrientation();
             }
             // Next orientation
             numberVariable = numberVariable + 1;
@@ -178,28 +141,25 @@ public class MazeExplorer {
     }
 
     private Tile getPriorityNextTile(final Tile currentTile) {
-
-        currentOrientation = communicator.getPilot().getOrientation();
-
-        if (isGoodNextTile(currentTile, currentOrientation)) {
-            return currentTile.getEdge(currentOrientation).getNeighbour(
+        if (isGoodNextTile(currentTile, pilot.getOrientation())) {
+            return currentTile.getEdge(pilot.getOrientation()).getNeighbour(
                     currentTile);
-        } else if (isGoodNextTile(currentTile,
-                currentOrientation.getOtherOrientationCorner())) {
+        } else if (isGoodNextTile(currentTile, pilot.getOrientation()
+                .getOtherOrientationCorner())) {
             return currentTile.getEdge(
-                    currentOrientation.getOtherOrientationCorner())
+                    pilot.getOrientation().getOtherOrientationCorner())
                     .getNeighbour(currentTile);
-        } else if (isGoodNextTile(currentTile, currentOrientation
+        } else if (isGoodNextTile(currentTile, pilot.getOrientation()
                 .getOtherOrientationCorner().getOppositeOrientation())) {
             return currentTile.getEdge(
-                    currentOrientation.getOtherOrientationCorner()
+                    pilot.getOrientation().getOtherOrientationCorner()
                             .getOppositeOrientation())
                     .getNeighbour(currentTile);
-        } else if (isGoodNextTile(currentTile,
-                currentOrientation.getOppositeOrientation())) {
+        } else if (isGoodNextTile(currentTile, pilot.getOrientation()
+                .getOppositeOrientation())) {
             return currentTile.getEdge(
-                    currentOrientation.getOppositeOrientation()).getNeighbour(
-                    currentTile);
+                    pilot.getOrientation().getOppositeOrientation())
+                    .getNeighbour(currentTile);
         } else {
             return queue.lastElement();
         }
@@ -207,8 +167,8 @@ public class MazeExplorer {
 
     public void goToNextTile(final Tile currentTile, final Tile nextTile) {
         // voert een shortestPath uit om van currentTile naar nextTile te gaan.
-        final ShortestPath shortestPath = new ShortestPath(communicator,
-                currentTile, nextTile, allTiles);
+        final ShortestPath shortestPath = new ShortestPath(pilot, currentTile,
+                nextTile, allTiles);
         shortestPath.goShortestPath();
     }
 
@@ -237,14 +197,15 @@ public class MazeExplorer {
      * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
      */
     public void startExploringMaze() {
-        communicator.setTilesBeforeAllign(3);
-        communicator.mustAllign(mustAllign);
+        // TODO aligning
+        // communicator.setTilesBeforeAllign(3);
+        // communicator.mustAllign(mustAllign);
         allTiles.add(startTile);
         algorithm(startTile);
         for (final Object tile : allTiles) {
             ((Tile) tile).setMarkingExploreMaze(false);
         }
-        communicator.mustAllign(false);
+        // communicator.mustAllign(false);
 
     }
 
@@ -252,17 +213,13 @@ public class MazeExplorer {
     @SuppressWarnings("unused")
     private void updateQueue(Tile currentTile) {
         ArrayList<Tile> array = currentTile.getAllNeighbours();
-        Orientation currentOrientation = communicator.getPilot()
-                .getOrientation();
-        int numberVariable = currentOrientation.getNumberArray();
+        int numberVariable = pilot.getOrientation().getNumberArray();
         for (int i = 0; i < 4; i++) {
             if (!allTiles.contains(array.get(numberVariable))) {
                 double angle = ExtMath
-                        .getSmallestAngle((((numberVariable - currentOrientation
-                                .getNumberArray()) * 90) + 360) % 360);
-                communicator.sendCommand((int) (angle * 10) * 10
-                        + Command.AUTOMATIC_TURN_ANGLE);
-                currentOrientation = communicator.getPilot().getOrientation();
+                        .getSmallestAngle((((numberVariable - pilot
+                                .getOrientation().getNumberArray()) * 90) + 360) % 360);
+                pilot.rotate(angle);
                 // // TODO: robot checkforobstruction
                 // if (communicator.getPilot().checkForObstruction())
                 // communicator.getPilot().addWall();

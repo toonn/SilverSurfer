@@ -5,17 +5,16 @@
 
 package mazeAlgorithm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
+import simulator.pilot.AbstractPilot;
+
+import mapping.ExtMath;
 import mapping.Orientation;
 import mapping.Tile;
-
-import commands.Command;
-import communication.Communicator;
 
 public class ShortestPath {
 
@@ -35,11 +34,11 @@ public class ShortestPath {
     Vector<Tile> tiles;
     Tile startTile;
     Tile endTile;
-    Communicator communicator;
+    private AbstractPilot pilot;
 
-    public ShortestPath(final Communicator communicator, final Tile startTile,
+    public ShortestPath(final AbstractPilot pilot, final Tile startTile,
             final Tile endTile, final Vector<Tile> tiles) {
-        this.communicator = communicator;
+        this.pilot = pilot;
         this.tiles = tiles;
         this.startTile = startTile;
         this.endTile = endTile;
@@ -135,20 +134,18 @@ public class ShortestPath {
             return;
         }
         for (int i = 0; i < tilesPath.size() - 1; i++) {
-            final Orientation orientation = tilesPath.get(i + 1)
-                    .getCommonOrientation(tilesPath.get(i));
-            try {
-                if (tilesPath.size() - i > 2) {
-                    communicator.sendCommand(Command.STOP_READING_BARCODES);
-                } else {
-                    communicator.sendCommand(Command.START_READING_BARCODES);
-                }
-                communicator.goToNextTile(orientation);
-            } catch (final IOException e) {
-                System.err
-                        .println("exception in shortestpad gui.getunitcommunicator.goTonextTile");
-                e.printStackTrace();
+            final Orientation orientation = tilesPath.get(i)
+                    .getCommonOrientation(tilesPath.get(i + 1));
+            if (tilesPath.size() - i > 2) {
+                pilot.stopReadingBarcodes();
+            } else {
+                pilot.startReadingBarcodes();
             }
+            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation
+                    .getRightAngle() - pilot.getAngle())));
+            pilot.travel(40);
+            // TODO goToNextTile checkte of er geAligned moest worden.
+            // communicator.goToNextTile(orientation);
         }
 
         for (final Object tile : getTiles()) {
