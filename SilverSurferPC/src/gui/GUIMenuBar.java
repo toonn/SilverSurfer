@@ -15,13 +15,13 @@ public class GUIMenuBar extends JMenuBar {
 
     private SilverSurferGUI gui;
 
-    private JMenu blueToothMenu, screenMenu, robotMenu, mapMenu;
+    private JMenu blueToothMenu, screenMenu, speedMenu, mapMenu;
 
     public GUIMenuBar(final SilverSurferGUI gui) {
         this.gui = gui;
         this.add(getBlueToothMenu());
         this.add(getScreenMenu());
-        this.add(getRobotMenu());
+        this.add(getSpeedMenu());
         this.add(getMapMenu());
         setBackground(new Color(221, 230, 231));
     }
@@ -90,11 +90,11 @@ public class GUIMenuBar extends JMenuBar {
         return screenMenu;
     }
     
-    private JMenu getRobotMenu() {
-        robotMenu = new JMenu("Robot");
+    private JMenu getSpeedMenu() {
+        speedMenu = new JMenu("Speed");
 
         final JMenuItem slowSpeedItem = new JMenuItem("Slow Speed");
-        robotMenu.add(slowSpeedItem);
+        speedMenu.add(slowSpeedItem);
         slowSpeedItem.addActionListener(new ActionListener() {
 
             @Override
@@ -104,7 +104,7 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         final JMenuItem normalSpeedItem = new JMenuItem("Normal Speed");
-        robotMenu.add(normalSpeedItem);
+        speedMenu.add(normalSpeedItem);
         normalSpeedItem.addActionListener(new ActionListener() {
 
             @Override
@@ -114,7 +114,7 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         final JMenuItem fastSpeedItem = new JMenuItem("Fast Speed");
-        robotMenu.add(fastSpeedItem);
+        speedMenu.add(fastSpeedItem);
         fastSpeedItem.addActionListener(new ActionListener() {
 
             @Override
@@ -124,7 +124,7 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         final JMenuItem veryFastSpeedItem = new JMenuItem("Very Fast Speed");
-        robotMenu.add(veryFastSpeedItem);
+        speedMenu.add(veryFastSpeedItem);
         veryFastSpeedItem.addActionListener(new ActionListener() {
 
             @Override
@@ -133,7 +133,7 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        return robotMenu;
+        return speedMenu;
     }
 
     private JMenu getMapMenu() {
@@ -144,9 +144,7 @@ public class GUIMenuBar extends JMenuBar {
         loadMapItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                // TODO clearscreen
-                // reset the current map.
-                // gui.getSimulationPanel().resetMap();
+                gui.clearScreen();
 
                 final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui.getFrame(), "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
@@ -154,7 +152,7 @@ public class GUIMenuBar extends JMenuBar {
                 
                 final File mapFile = new File(prompt.getDirectory() + prompt.getFile()); // Load and display selection
                 prompt.dispose();
-
+                
                 SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile);
 
                 System.out.println("[I/O] Map succesfully loaded!");

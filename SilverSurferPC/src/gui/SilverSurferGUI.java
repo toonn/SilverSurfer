@@ -139,7 +139,7 @@ public class SilverSurferGUI {
         final JPanel scalePanel = scalePanel();
         final JPanel directionPanel = directionPanel();
         final JPanel infoPanel = infoPanel();
-        //simulatorPanel = simulatorPanel();
+        simulatorPanel = simulatorPanel();
         final JPanel sensorPanel = sensorPanel();
 
         final GUIMenuBar menuBar = new GUIMenuBar(this);
@@ -160,7 +160,7 @@ public class SilverSurferGUI {
                         frameLayout
                                 .createParallelGroup(
                                         GroupLayout.Alignment.CENTER)
-                                //.addComponent(simulatorPanel)
+                                .addComponent(simulatorPanel)
                                 .addComponent(sensorPanel)));
         frameLayout.setVerticalGroup(frameLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -171,7 +171,7 @@ public class SilverSurferGUI {
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout.createSequentialGroup()
-                                //.addComponent(simulatorPanel)
+                                .addComponent(simulatorPanel)
                                 .addComponent(sensorPanel, 170, 170, 170)));
         frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
         frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);

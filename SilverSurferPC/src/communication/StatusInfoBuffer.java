@@ -258,7 +258,7 @@ public class StatusInfoBuffer {
     // }
     //
     public void setCoordinatesAbsolute(final double[] coordinates) {
-        communicator.getPilot().setCurrentAbsolutePosition(coordinates[0],
+        communicator.getPilot().setPosition(coordinates[0],
                 coordinates[1]);
     }
 

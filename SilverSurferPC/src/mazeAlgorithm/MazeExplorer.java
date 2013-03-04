@@ -34,7 +34,7 @@ public class MazeExplorer {
     public MazeExplorer(final Communicator communicator) {
         this.communicator = communicator;
         startTile = communicator.getPilot().getMapGraphConstructed()
-                .getTile(communicator.getPilot().getRelativePosition());
+                .getTile(communicator.getPilot().getMatrixPosition());
     }
 
     private void algorithm(final Tile currentTile) {

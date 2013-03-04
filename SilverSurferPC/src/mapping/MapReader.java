@@ -73,7 +73,7 @@ public class MapReader {
                     lineNo++;
                 }
             }
-
+            readbuffer.close(); //toegevoegd om warning weg te werken, geeft geen errors?
             return tileTypes;
 
         } catch (final Exception e) {

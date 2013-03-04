@@ -9,15 +9,17 @@ import javax.swing.JPanel;
 
 import mapping.MapGraph;
 import mapping.MapReader;
-
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.SimulationPilot;
 
+@SuppressWarnings("serial")
 public class SimulatorPanel extends JPanel {
+	
     private GroupLayout simulatorLayout;
     private AbstractPilot principalPilot;
     private UnitViewPort principalViewPort;
     private int speed;
+    private String mapName = "/";
     private MapGraph mapGraphLoaded;
 
     public SimulatorPanel() {
@@ -41,21 +43,23 @@ public class SimulatorPanel extends JPanel {
         return speed;
     }
 
+    public void changeSpeed(final int value) {
+        speed = value;
+        principalPilot.setSpeed(value);
+        System.out.println(principalPilot.getConsoleTag() + " Current Speed Level: " + value + ".");
+    }
+
+    public String getMapName() {
+        return mapName;
+    }
+
     public MapGraph getMapGraphLoaded() {
         return mapGraphLoaded;
     }
 
-    public void changeSpeed(final int value) {
-        speed = value;
-        principalPilot.setSpeed(value);
-        System.out.println(principalPilot.getConsoleTag()
-                + " Current Speed Level: " + value + ".");
-    }
-
     public void setMapFile(File mapFile) {
-        // TOON Hoort in simulatorPanel(overkoepelende)
+        mapName = mapFile.getName();
         mapGraphLoaded = MapReader.createMapFromFile(mapFile);
-        // getSimulationPanel().clearTotal();
     }
 
     public void turnLeftPrincipalPilot(double alpha) {

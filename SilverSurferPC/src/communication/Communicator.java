@@ -41,10 +41,6 @@ public class Communicator {
         setSpeed(2);
     }
 
-    public void clear() {
-        pilot.clear();
-    }
-
     public void closeRobotConnection() throws Exception {
         dos.writeInt(Command.CLOSE_CONNECTION);
         dos.flush();
@@ -166,7 +162,7 @@ public class Communicator {
 
     private void readBarcode() {
         final int value = pilot.getMapGraphLoaded()
-                .getTile(pilot.getRelativePosition()).getContent().getValue();
+                .getTile(pilot.getMatrixPosition()).getContent().getValue();
         statusInfoBuffer.setBarcode(value);
     }
 
@@ -191,7 +187,7 @@ public class Communicator {
                 pilot.allignOnWalls();
             } else if (command == Command.CHECK_OBSTRUCTIONS_AND_SET_TILE
                     && !robotConnected) {
-                pilot.checkForObstructionAndSetTile();
+                pilot.setObstructionOrTile();
             } else if (command == Command.STOP_READING_BARCODES) {
                 readBarcodes = false;
             } else if (command == Command.START_READING_BARCODES) {

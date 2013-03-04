@@ -29,15 +29,13 @@ import mapping.Orientation;
 import mapping.Tile;
 import simulator.pilot.PilotInterface;
 
+@SuppressWarnings("serial")
 public abstract class AbstractViewPort extends JPanel {
 
     protected Set<PilotInterface> pilots;
     protected double scalingfactor = 1;
-
     private ImageIcon robotSprite;
-
     private Map<boolean[], Rectangle2D[]> barcodeRectangles;
-
     private int repaintFPS = 30;
     private ActionListener repaintViewPort = new ActionListener() {
 
@@ -53,20 +51,22 @@ public abstract class AbstractViewPort extends JPanel {
         // robotimage herschalen van 60x84 naar ...
         robotSprite = new ImageIcon("resources/robot/NXTrobot.png");
         Image img = robotSprite.getImage();
-        BufferedImage resizeBI = new BufferedImage(img.getWidth(null),
-                img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage resizeBI = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics g = resizeBI.createGraphics();
         g.drawImage(img, 0, 0, 60 / 4, 84 / 4, null);
         robotSprite = new ImageIcon(resizeBI);
 
         barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
+        
         // 1000 ~= milliSeconden...
         new Timer(1000 / repaintFPS, repaintViewPort);
     }
 
     public double getSizeTile() {
-        return 40 * scalingfactor;
+        return pilots.iterator().next().sizeTile() * scalingfactor;
     }
+
+    protected abstract Set<MapGraph> getAllMapGraphs();
 
     /**
      * Methode die alle paint methodes samenvoegd en uitvoert in het JPanel
@@ -96,42 +96,15 @@ public abstract class AbstractViewPort extends JPanel {
         int minShiftVer = mapShiftVer - getHeight() * 2;
         int maxShiftVer = mapShiftVer + getHeight() * 2;
 
-        for (int x = minShiftHor; x < maxShiftHor; x += getSizeTile()) {
+        for (int x = minShiftHor; x < maxShiftHor; x += getSizeTile())
             g2.draw(new Line2D.Double(x, minShiftVer, x, maxShiftVer));
-        }
-        for (int y = minShiftVer; y < maxShiftVer; y += getSizeTile()) {
+        for (int y = minShiftVer; y < maxShiftVer; y += getSizeTile())
             g2.draw(new Line2D.Double(minShiftHor, y, maxShiftHor, y));
-        }
     }
 
-    @SuppressWarnings("unused")
-    private void paintHighLightComponents(final Graphics graph) {
-    }
-
-    private Rectangle2D[] createVisualBarCode(final Barcode barcode) {
-        final Rectangle2D[] visualBarcode = new Rectangle2D[8];
-        final Point2D.Double barcodeLUCorner = new Point2D.Double(barcode
-                .getPosition().getX(), barcode.getPosition().getY());
-        double width = getSizeTile();
-        double height = getSizeTile();
-
-        // North or South oriented barcode
-        if (barcode.getDirection() == Orientation.NORTH
-                || barcode.getDirection() == Orientation.SOUTH) {
-            height = getSizeTile() / 20;
-        } else if (barcode.getDirection() == Orientation.EAST
-                || barcode.getDirection() == Orientation.WEST) {
-            width = getSizeTile() / 20;
-        }
-        for (int i = 0; i < 8; i++) {
-            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX(),
-                    barcodeLUCorner.getY(), barcodeLUCorner.getX() + width,
-                    barcodeLUCorner.getY() + height);
-            barcodeLUCorner.setLocation(barcodeLUCorner.getX() + width,
-                    barcodeLUCorner.getY() + height);
-        }
-
-        return visualBarcode;
+    private void paintMapGraph(Graphics graph) {
+        paintBarcodes(graph);
+        paintWalls(graph);
     }
 
     private void paintBarcodes(final Graphics graph) {
@@ -139,19 +112,15 @@ public abstract class AbstractViewPort extends JPanel {
         // Omdat barcodeRectangles.size() dan ~nooit overeen komt met
         // pilot.getbarcodes().size()
         int totalBarcodes = 0;
-        for (final PilotInterface pilot : pilots) {
+        for (final PilotInterface pilot : pilots)
             totalBarcodes += pilot.getBarcodes().size();
-        }
         if (totalBarcodes != barcodeRectangles.size()) {
             // In geval van een verkeerd ingelezen barcode, alles weggooien.
             barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
-            for (final PilotInterface pilot : pilots) {
-                for (final Barcode barcode : pilot.getBarcodes()) {
-                    if (barcodeRectangles.containsKey(barcode.getBoolRep()))
-                        barcodeRectangles.put(barcode.getBoolRep(),
-                                createVisualBarCode(barcode));
-                }
-            }
+            for (final PilotInterface pilot : pilots)
+                for (final Barcode barcode : pilot.getBarcodes())
+                    if (barcodeRectangles.containsKey(barcode.getBoolRep())) //TODO: Moet dit niet !barcodeRectangles.contains... zijn?
+                        barcodeRectangles.put(barcode.getBoolRep(), createVisualBarCode(barcode));
         }
 
         final Graphics2D g2 = ((Graphics2D) graph);
@@ -169,96 +138,63 @@ public abstract class AbstractViewPort extends JPanel {
         }
     }
 
+    private Rectangle2D[] createVisualBarCode(final Barcode barcode) {
+        final Rectangle2D[] visualBarcode = new Rectangle2D[8];
+        final Point2D.Double barcodeLUCorner = new Point2D.Double(barcode.getPosition().getX(), barcode.getPosition().getY());
+        double width = getSizeTile();
+        double height = getSizeTile();
+
+        // North or South oriented barcode
+        if (barcode.getDirection() == Orientation.NORTH || barcode.getDirection() == Orientation.SOUTH)
+            height = getSizeTile() / 20;
+        else if (barcode.getDirection() == Orientation.EAST || barcode.getDirection() == Orientation.WEST)
+            width = getSizeTile() / 20;
+        for (int i = 0; i < 8; i++) {
+            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX(), barcodeLUCorner.getY(), 
+            		barcodeLUCorner.getX() + width, barcodeLUCorner.getY() + height);
+            barcodeLUCorner.setLocation(barcodeLUCorner.getX() + width, barcodeLUCorner.getY() + height);
+        }
+
+        return visualBarcode;
+    }
+
     private void paintWalls(Graphics graph) {
         Set<Point2D[]> walls = new HashSet<Point2D[]>();
 
-        for (MapGraph mapGraph : getAllMapGraphs()) {
-            for (Tile tile : mapGraph.getTiles()) {
-                for (Edge wall : tile.getEdges()) {
+        for (MapGraph mapGraph : getAllMapGraphs())
+            for (Tile tile : mapGraph.getTiles())
+                for (Edge wall : tile.getEdges())
                     walls.add(wall.getEndPoints());
-                }
-            }
-        }
 
         final Graphics2D g2 = ((Graphics2D) graph);
         g2.setColor(Color.black);
         Stroke originalStroke = g2.getStroke();
         float strokeWidth = 1;
-        g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE,
-                BasicStroke.JOIN_MITER));
+        g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 
         for (Point2D[] wall : walls) {
-            for (Point2D point : wall) {
-                point.setLocation(point.getX() * getSizeTile(), point.getY()
-                        * getSizeTile());
-            }
+            for (Point2D point : wall)
+                point.setLocation(point.getX() * getSizeTile(), point.getY() * getSizeTile());
             g2.draw(new Line2D.Double(wall[0], wall[1]));
         }
         g2.setStroke(originalStroke);
     }
 
-    protected abstract Set<MapGraph> getAllMapGraphs();
-
-    private void paintMapGraph(Graphics graph) {
-        paintBarcodes(graph);
-        paintWalls(graph);
-    }
-
     /**
      * Tekent de robot zelf.
-     * 
-     * @param graph
      */
     private void paintRobots(final Graphics graph) {
         Graphics2D g2 = (Graphics2D) graph;
         for (PilotInterface pilot : pilots) {
             AffineTransform oldTransform = g2.getTransform();
             g2.rotate(Math.toRadians(pilot.getAngle()));
-            g2.drawImage(robotSprite.getImage(), (int) (pilot
-                    .getAbsolutePosition().getX() * scalingfactor),
-                    (int) (pilot.getAbsolutePosition().getY() * scalingfactor),
-                    null);
+            g2.drawImage(robotSprite.getImage(), (int) (pilot.getPosition().getX() * scalingfactor),
+                    (int) (pilot.getPosition().getY() * scalingfactor), null);
             g2.setTransform(oldTransform);
         }
-        // Vector<Shape> shapesx = new Vector<Shape>();
-        // shapesx.add(getVisibleShapes());
-        //
-        // ((Graphics2D) graph).setColor(Color.red);
-        //
-        // if (isUpdatedTriangle) {
-        // setOtherTriangleVisible();
-        // setUpdated(false);
-        // }
-        //
-        // int count = 50;
-        // int size = (int) getSizeTile();
-        //
-        // ((Graphics2D) graph).setColor(Color.lightGray);
-        //
-        // for (int i = 0; i < count; i++)
-        // for (int j = 0; j < count; j++) {
-        // Rectangle grid = new Rectangle(i * size - getShiftToTheRight(),
-        // j * size - getShiftDown(), size, size);
-        // ((Graphics2D) graph).draw(grid);
-        // }
-        //
-        // ((Graphics2D) graph).setColor(Color.red);
-        // for (Shape s : shapesx)
-        //
-        // {
-        //
-        // int x;
-        // int y;
-        //
-        // if (s instanceof Triangle) {
-        // if (s.equals(getVisibleTriangle()))
-        // ((Graphics2D) graph).fill(s);
-        // x = (int) ((Triangle) s).getGravityCenterX();
-        // y = (int) ((Triangle) s).getGravityCenterY();
-        // } else {
-        // ((Graphics2D) graph).fill(s);
-        // }
-        // }
-
     }
+
+    /*private void paintHighLightComponents(final Graphics graph) {
+    
+    }*/
 }

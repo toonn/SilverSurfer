@@ -80,7 +80,7 @@ public class InfoReceiverThread extends Thread {
                     statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a
                             .substring(5).trim()));
                     statusInfoBuffer.getCommunicator().getPilot()
-                            .checkForObstructionAndSetTile();
+                            .setObstructionOrTile();
                 }
             } catch (final Exception e) {
                 System.out.println("Error in InfoReceiverThread.run()!");

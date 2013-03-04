@@ -4,11 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import simulator.pilot.PilotInterface;
-
 import mapping.MapGraph;
 
+@SuppressWarnings("serial")
 public class OverallViewPort extends AbstractViewPort {
-    MapGraph mapGraphLoaded;
+	
+    private MapGraph mapGraphLoaded;
 
     public OverallViewPort(Set<PilotInterface> pilotSet, MapGraph mapGraphLoaded) {
         super(pilotSet);

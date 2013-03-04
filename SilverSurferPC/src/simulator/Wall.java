@@ -2,6 +2,7 @@ package simulator;
 
 import java.awt.Rectangle;
 
+@SuppressWarnings("serial")
 public class Wall extends Rectangle {
 
     private final State state;

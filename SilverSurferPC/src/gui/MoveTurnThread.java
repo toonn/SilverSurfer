@@ -24,10 +24,9 @@ public class MoveTurnThread extends Thread {
 
     @Override
     public void run() {
-        if (length == 0 && angles == 0 && amtOfAngles == 0) {
+        if (length == 0 && angles == 0 && amtOfAngles == 0)
             communicator.sendCommand(command);
-        } else {
+        else
             communicator.moveTurn(length, angles, amtOfAngles);
-        }
     }
 }

@@ -5,6 +5,7 @@ import communication.Communicator;
 import communication.StatusInfoBuffer;
 
 public class RobotPilot extends AbstractPilot {
+	
     private StatusInfoBuffer statusInfoBuffer;
     private Communicator communicator;
 
@@ -13,6 +14,17 @@ public class RobotPilot extends AbstractPilot {
         communicator = new Communicator(this, statusInfoBuffer);
         statusInfoBuffer.setCommunicator(communicator);
     }
+
+    @Override
+    public void setSpeed(int speed) {
+        super.setSpeed(speed);
+        communicator.setSpeed(speed);
+    }
+
+	@Override
+	public void recieveMessage(String message) {
+		//TODO:
+	}
 
     @Override
     public String getConsoleTag() {
@@ -25,6 +37,11 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
+    public int getUltraSensorValue() {
+        return statusInfoBuffer.getLatestUltraSensorInfo();
+    }
+
+    @Override
     protected int getRotateSleepTime(double angle) {
         return speed / 10;
     }
@@ -32,17 +49,6 @@ public class RobotPilot extends AbstractPilot {
     @Override
     protected int getTravelSleepTime(double distance) {
         return speed / ((int) Math.ceil(Math.abs(distance)));
-    }
-
-    @Override
-    public int getUltraSensorValue() {
-        return statusInfoBuffer.getLatestUltraSensorInfo();
-    }
-
-    @Override
-    public void setSpeed(int speed) {
-        super.setSpeed(speed);
-        communicator.setSpeed(speed);
     }
 
     @Override
@@ -59,10 +65,4 @@ public class RobotPilot extends AbstractPilot {
                 (int) distance, 0, 0, 0);
         MTT.start();
     }
-
-	@Override
-	public void recieveMessage(String message) {
-		// TODO Auto-generated method stub
-		
-	}
 }
