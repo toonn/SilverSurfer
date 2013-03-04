@@ -38,6 +38,13 @@ public abstract class AbstractPilot implements PilotInterface {
         //messageCenter = new MessageCenter(this); //TODO dit is nieuwe code (12:58 3/3/'13)
     }
 
+    public AbstractPilot(MapGraph mapGraphLoaded) {
+    	mapGraphConstructed = new MapGraph();
+    	mapGraphConstructed.addTileXY(new Point(0, 0));
+        barcodes = new HashSet<Barcode>();
+        //messageCenter = new MessageCenter(this); //TODO dit is nieuwe code (12:58 3/3/'13)
+    }
+
     @Override
     public Point2D.Double getPosition() {
         return position;

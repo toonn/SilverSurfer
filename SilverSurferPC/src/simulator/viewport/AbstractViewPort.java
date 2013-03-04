@@ -49,23 +49,11 @@ public abstract class AbstractViewPort extends JPanel {
 
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet) {
         pilots = new HashSet<PilotInterface>(pilotSet);
-
-        // robotimage herschalen van 60x84 naar ...
-        /*
-        robotSprite = new ImageIcon("resources/robot/NXTrobot.png");
-        Image img = robotSprite.getImage();
-        BufferedImage resizeBI = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics g = resizeBI.createGraphics();
-        g.drawImage(img, 0, 0, 60 / 4, 84 / 4, null);
-        robotSprite = new ImageIcon(resizeBI);
-         */
         barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
         
-        // 1000 ~= milliSeconden...
-        RepaintThread RT = new RepaintThread(this);
-        RT.start();
-        //Timer t = new Timer(1000 / repaintFPS, repaintViewPort);
-        //t.start();
+        //RepaintThread RT = new RepaintThread(this);
+        //RT.start();
+        new Timer(1000 / repaintFPS, repaintViewPort).start();
     }
 
     public double getSizeTile() {

@@ -10,6 +10,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import simulator.viewport.SimulatorPanel;
+
 @SuppressWarnings("serial")
 public class GUIMenuBar extends JMenuBar {
 
@@ -154,7 +156,7 @@ public class GUIMenuBar extends JMenuBar {
                 prompt.dispose();
 
                 System.out.println("[I/O] Loading map ...");
-                gui.simulatorPanel(mapFile);
+                SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile);
                 System.out.println("[I/O] Map loaded!");
             }
 

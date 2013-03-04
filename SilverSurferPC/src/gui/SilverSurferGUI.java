@@ -399,59 +399,8 @@ public class SilverSurferGUI {
         });
     }
 
-    protected void simulatorPanel() {
-    	frame.dispose();
-    	
+    private void simulatorPanel() {
         simulatorPanel = new SimulatorPanel();
-        
-        frame = new JFrame("Silver Surfer Command Center");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setBackground(new Color(221, 230, 231));
-        
-        frame.setJMenuBar(menuBar);
-
-        final GroupLayout frameLayout = new GroupLayout(frame.getContentPane());
-        frame.getContentPane().setLayout(frameLayout);
-        frameLayout.setHorizontalGroup(frameLayout
-                .createSequentialGroup()
-                .addGroup(
-                        frameLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
-                                .addComponent(scalePanel)
-                                .addComponent(directionPanel)
-                                .addComponent(infoPanel))
-                .addGroup(
-                        frameLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
-                                .addComponent(simulatorPanel)
-                                .addComponent(sensorPanel)));
-        frameLayout.setVerticalGroup(frameLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addGroup(
-                        frameLayout.createSequentialGroup()
-                                .addComponent(scalePanel)
-                                .addComponent(directionPanel)
-                                .addComponent(infoPanel))
-                .addGroup(
-                        frameLayout.createSequentialGroup()
-                                .addComponent(simulatorPanel)
-                                .addComponent(sensorPanel, 170, 170, 170)));
-        frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
-        frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
-
-        frame.pack();
-        frame.setSize(1000, 800);
-        frame.setVisible(true);
-
-        System.out.println("[CONNECTION] Entered simulator mode.");
-    }
-    
-    protected void simulatorPanel(File mapFile) {
-    	frame.dispose();
-    	
-        simulatorPanel = new SimulatorPanel(mapFile);
         
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

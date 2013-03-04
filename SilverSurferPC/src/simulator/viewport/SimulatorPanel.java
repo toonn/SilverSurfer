@@ -43,27 +43,6 @@ public class SimulatorPanel extends JPanel {
                 .createSequentialGroup().addComponent(principalViewPort));
     }
 
-    public SimulatorPanel(File mapFile) {
-        mapName = mapFile.getName();
-        mapGraphLoaded = MapReader.createMapFromFile(mapFile);
-        
-        principalPilot = new SimulationPilot();
-        Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
-        principalPilotSet.add(principalPilot);
-        principalViewPort = new UnitViewPort(principalPilotSet);
-        overallViewPort = new OverallViewPort(new HashSet<PilotInterface>(), mapGraphLoaded);
-        changeSpeed(2);
-        
-        simulatorLayout = new GroupLayout(this);
-        setLayout(simulatorLayout);
-        simulatorLayout.setAutoCreateGaps(true);
-        simulatorLayout.setAutoCreateContainerGaps(true);
-        simulatorLayout.setHorizontalGroup(simulatorLayout.createParallelGroup(
-                GroupLayout.Alignment.CENTER).addComponent(principalViewPort).addComponent(overallViewPort));
-        simulatorLayout.setVerticalGroup(simulatorLayout
-                .createSequentialGroup().addComponent(principalViewPort).addComponent(overallViewPort));
-    }
-
     public int getSpeed() {
         return speed;
     }
@@ -96,6 +75,7 @@ public class SimulatorPanel extends JPanel {
                 GroupLayout.Alignment.CENTER).addComponent(principalViewPort).addComponent(overallViewPort));
         simulatorLayout.setVerticalGroup(simulatorLayout
                 .createSequentialGroup().addComponent(principalViewPort).addComponent(overallViewPort));
+        this.repaint();
     }
 
     public void turnLeftPrincipalPilot(double alpha) {
@@ -108,8 +88,7 @@ public class SimulatorPanel extends JPanel {
     public void turnRightPrincipalPilot(double alpha) {
     	//MoveTurnThread MTT = new MoveTurnThread("MTT", principalPilot, 0, (int)alpha);
     	//MTT.start();
-    	for(int i = 0; i < alpha; i++)
-    		principalPilot.rotate(1);
+    	principalPilot.rotate(alpha);
     	
     }
 
