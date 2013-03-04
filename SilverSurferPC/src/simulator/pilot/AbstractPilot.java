@@ -7,6 +7,7 @@ import java.util.Set;
 
 import mapping.Barcode;
 import simulator.ExtMath;
+import simulator.viewport.SimulatorPanel;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
@@ -19,8 +20,8 @@ public abstract class AbstractPilot implements PilotInterface {
     private double angle = 270;
     protected int speed = 10;
     private Set<Barcode> barcodes;
-    private MapGraph mapGraphLoaded;
     private MapGraph mapGraphConstructed;
+    private SimulatorPanel simulatorPanel;
     private MessageCenter messageCenter;
 
     // private int amtToSendToBuffer = 50;
@@ -32,13 +33,6 @@ public abstract class AbstractPilot implements PilotInterface {
     protected final double detectionDistanceUltrasonicSensorRobot = 28;
 
     public AbstractPilot() {
-    	mapGraphConstructed = new MapGraph();
-    	mapGraphConstructed.addTileXY(new Point(0, 0));
-        barcodes = new HashSet<Barcode>();
-        //messageCenter = new MessageCenter(this); //TODO dit is nieuwe code (12:58 3/3/'13)
-    }
-
-    public AbstractPilot(MapGraph mapGraphLoaded) {
     	mapGraphConstructed = new MapGraph();
     	mapGraphConstructed.addTileXY(new Point(0, 0));
         barcodes = new HashSet<Barcode>();
@@ -112,12 +106,17 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public MapGraph getMapGraphLoaded() {
-        return mapGraphLoaded;
+    	//TODO: change back (piloot mag niet aan simulatorpanel)
+        return simulatorPanel.getMapGraphLoaded();
     }
     
     @Override
     public MapGraph getMapGraphConstructed() {
         return mapGraphConstructed;
+    }
+    
+    public void setSimulatorPanel(SimulatorPanel simulatorPanel) {
+    	this.simulatorPanel = simulatorPanel;
     }
     
     @Override
@@ -367,7 +366,7 @@ public abstract class AbstractPilot implements PilotInterface {
         		x = currentX - i;
         		y = currentY;
         	}
-        	if (mapGraphLoaded != null && robotOnEdge(x, y, getAngle())) {
+        	if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle())) {
         		final Orientation edgeOrientation = pointOnWichSideOfTile(x, y, travelOrientation);
         		if (travelOrientation == edgeOrientation && !getMapGraphLoaded().getTile(getMatrixPosition()).getEdge(travelOrientation).isPassable()) {
         			System.out.println("Er staat een muur in de weg");

@@ -142,12 +142,10 @@ public class Edge {
      */
     public int howManyTilesAttached() {
         int numberOfSquares = 0;
-        if (getTile1() != null) {
+        if (getTile1() != null)
             numberOfSquares++;
-        }
-        if (getTile2() != null) {
+        if (getTile2() != null)
             numberOfSquares++;
-        }
         return numberOfSquares;
     }
 

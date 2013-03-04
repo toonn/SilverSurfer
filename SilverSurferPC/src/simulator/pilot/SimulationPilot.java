@@ -33,7 +33,7 @@ public class SimulationPilot extends AbstractPilot {
     		distanceToFirstEdge = getUltrasonicSensorCoordinates()[0] % sizeTile();
     	else if(orientation == Orientation.SOUTH)
     		distanceToFirstEdge = sizeTile() - (getUltrasonicSensorCoordinates()[0] % sizeTile());
-    	else if(orientation == Orientation.EAST)
+    	else if(orientation == Orientation.WEST)
     		distanceToFirstEdge = getUltrasonicSensorCoordinates()[1] % sizeTile();
     	else
     		distanceToFirstEdge = sizeTile() - (getUltrasonicSensorCoordinates()[1] % sizeTile());

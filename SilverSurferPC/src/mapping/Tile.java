@@ -463,7 +463,7 @@ public class Tile {
     @Override
     public String toString() {
         return getEdge(Orientation.NORTH) + "\n" + getEdge(Orientation.WEST)
-                + String.format("%2s", getContent().getValue())
+                + String.format("%2s", ((getContent() != null) ? getContent().getValue() : ""))
                 + getEdge(Orientation.EAST) + "\n" + getEdge(Orientation.SOUTH);
     }
 }

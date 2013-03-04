@@ -2,8 +2,11 @@ package simulator.viewport;
 
 import gui.MoveTurnThread;
 
+import java.awt.Point;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.GroupLayout;
@@ -19,18 +22,40 @@ import simulator.pilot.SimulationPilot;
 public class SimulatorPanel extends JPanel {
 	
     private GroupLayout simulatorLayout;
+    
+    private OverallViewPort overallViewPort;
+    
     private AbstractPilot principalPilot;
     private UnitViewPort principalViewPort;
-    private OverallViewPort overallViewPort;
+    
+    private List<AbstractPilot> simulatorPilots;
+    private List<UnitViewPort> simulatorViewPorts;
+    
     private int speed;
     private String mapName = "/";
     private MapGraph mapGraphLoaded;
 
     public SimulatorPanel() {
         principalPilot = new SimulationPilot();
+        principalPilot.setSimulatorPanel(this);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
         principalViewPort = new UnitViewPort(principalPilotSet);
+
+        simulatorPilots = new ArrayList<AbstractPilot>();
+        simulatorViewPorts = new ArrayList<UnitViewPort>();
+        
+        for(int i = 0; i < 3; i++)
+        	simulatorPilots.add(new SimulationPilot());
+        for(AbstractPilot pilot: simulatorPilots) {
+        	Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
+        	simulatorPilotSet.add(pilot);
+        	simulatorViewPorts.add(new UnitViewPort(simulatorPilotSet));
+        }
+
+        for(AbstractPilot pilot: simulatorPilots)
+        	pilot.setSimulatorPanel(this);
+        
         changeSpeed(2);
 
         simulatorLayout = new GroupLayout(this);
@@ -66,23 +91,28 @@ public class SimulatorPanel extends JPanel {
         mapGraphLoaded = MapReader.createMapFromFile(mapFile);
         
         overallViewPort = new OverallViewPort(new HashSet<PilotInterface>(), mapGraphLoaded);
+        //TODO: reset principalpilot && remove setter
         
         simulatorLayout = new GroupLayout(this);
         setLayout(simulatorLayout);
         simulatorLayout.setAutoCreateGaps(true);
         simulatorLayout.setAutoCreateContainerGaps(true);
-        simulatorLayout.setHorizontalGroup(simulatorLayout.createParallelGroup(
-                GroupLayout.Alignment.CENTER).addComponent(principalViewPort).addComponent(overallViewPort));
-        simulatorLayout.setVerticalGroup(simulatorLayout
-                .createSequentialGroup().addComponent(principalViewPort).addComponent(overallViewPort));
-        this.repaint();
+        simulatorLayout.setHorizontalGroup(simulatorLayout.createSequentialGroup().addComponent(overallViewPort)
+        		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+        				.addGroup(simulatorLayout.createSequentialGroup().addComponent(principalViewPort).addComponent(simulatorViewPorts.get(0)))
+        				.addGroup(simulatorLayout.createSequentialGroup().addComponent(simulatorViewPorts.get(1)).addComponent(simulatorViewPorts.get(2)))));
+        simulatorLayout.setVerticalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+        		.addComponent(overallViewPort)
+        		.addGroup(simulatorLayout.createSequentialGroup()
+        				.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(principalViewPort).addComponent(simulatorViewPorts.get(0)))
+        				.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(simulatorViewPorts.get(1)).addComponent(simulatorViewPorts.get(2)))));
+        repaint();
     }
 
     public void turnLeftPrincipalPilot(double alpha) {
     	//MoveTurnThread MTT = new MoveTurnThread("MTT", principalPilot, 0, (int)(-1*alpha));
     	//MTT.start();
-    	for(int i = 0; i < alpha; i++)
-    		principalPilot.rotate(-1);
+    	principalPilot.rotate(-alpha);
     }
 
     public void turnRightPrincipalPilot(double alpha) {
@@ -95,7 +125,6 @@ public class SimulatorPanel extends JPanel {
     public void travelPrincipalPilot(double distance) {
     	//MoveTurnThread MTT = new MoveTurnThread("MTT", principalPilot, (int)distance, 0);
     	//MTT.start();
-    	for(int i = 0; i < distance; i++)
-    		principalPilot.travel(1);
+    	principalPilot.travel(distance);
     }
 }

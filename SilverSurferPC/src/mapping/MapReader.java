@@ -152,6 +152,38 @@ public class MapReader {
                 map.loadTile(pointIJ, tileIJ);
             }
         }
+
+        for (int row = 0; row < infoMatrix.length; row++) {
+            for (int column = 0; column < infoMatrix[row].length; column++) {
+            	System.out.println("test");
+            	Tile tile = map.getTile(new Point(column, row));
+            	System.out.println("test2");
+            	Edge edgeEast = tile.getEdge(Orientation.EAST);
+            	Tile tileEast = map.getTile(new Point(column+1, row));
+            	if(tileEast != null) {
+            		tileEast.replaceEdge(Orientation.WEST, edgeEast);
+            		System.out.println(tileEast.getEdge(Orientation.WEST).getTile1().getPosition());
+            		System.out.println(tileEast.getEdge(Orientation.WEST).getTile2().getPosition());
+            		if(tileEast.getEdge(Orientation.WEST).getTile1() == (tile))
+            			System.out.println(tileEast.getEdge(Orientation.WEST).getTile2().areNeighbours(tile));
+            		else
+            			System.out.println(tileEast.getEdge(Orientation.WEST).getTile1().areNeighbours(tile));
+            	}
+            	
+            	Edge edgeSouth = tile.getEdge(Orientation.SOUTH);
+            	Tile tileSouth = map.getTile(new Point(column, row+1));
+            	if(tileSouth != null)
+            		tileSouth.replaceEdge(Orientation.NORTH, edgeSouth);
+            }
+        }
+        try{
+        	Thread.sleep(1000);
+        }
+        catch(Exception e) {
+        	
+        }
+        Tile tile11 = map.getTile(new Point(1,1));
+        System.out.println(tile11.areNeighbours(map.getTile(new Point(2,1))));
         return map;
     }
 
@@ -186,5 +218,4 @@ public class MapReader {
 
         return false;
     }
-
 }
