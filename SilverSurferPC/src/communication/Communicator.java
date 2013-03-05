@@ -11,17 +11,12 @@ import lejos.pc.comm.NXTConnector;
 import commands.Command;
 
 public class Communicator {
-	
-	private StatusInfoBuffer statusInfoBuffer;
+
     private static DataInputStream dis;
     private static DataOutputStream dos;
     private static NXTConnector connection;
     private static String deviceURL = "00:16:53:0A:04:5A";
     private static String deviceName = "Silver";
-
-    public Communicator(StatusInfoBuffer statusInfoBuffer) {
-        this.statusInfoBuffer = statusInfoBuffer;
-    }
     
     public void sendCommand(final int command) {
     	try {
@@ -32,14 +27,14 @@ public class Communicator {
     	}
     }
 
-    public void openRobotConnection(InfoReceiverThread IRT) throws Exception {
+    public void openRobotConnection(StatusInfoBuffer statusInfoBuffer, InfoReceiverThread IRT) throws Exception {
         connection = new NXTConnector();
         connection.connectTo(deviceName, deviceURL, NXTCommFactory.BLUETOOTH, NXTComm.PACKET);
         dis = connection.getDataIn();
         dos = connection.getDataOut();
         if (dis == null || dos == null)
             throw new IOException();
-        IRT = new InfoReceiverThread(statusInfoBuffer, dis, dos);
+        IRT = new InfoReceiverThread(statusInfoBuffer, dis);
         IRT.start();
     }
 

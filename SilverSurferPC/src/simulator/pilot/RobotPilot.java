@@ -14,9 +14,9 @@ public class RobotPilot extends AbstractPilot {
 
     public RobotPilot() {
         statusInfoBuffer = new StatusInfoBuffer(this);
-        communicator = new Communicator(statusInfoBuffer);
+        communicator = new Communicator();
         try {
-            communicator.openRobotConnection(IRT);
+            communicator.openRobotConnection(statusInfoBuffer, IRT);
         } catch(Exception e) {
         	
         }
@@ -133,6 +133,10 @@ public class RobotPilot extends AbstractPilot {
     	//TODO: barcodes
     	super.travel(distance);
     	waitUntilDone();
+    }
+    
+    public void robotDone() {
+    	busy = false;
     }
     
     private void waitUntilDone() {

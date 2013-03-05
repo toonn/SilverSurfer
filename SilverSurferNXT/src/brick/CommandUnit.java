@@ -95,7 +95,7 @@ public class CommandUnit {
                     CU.alignOnWalls();
                     CU.waiting();
                     break;
-                case (Command.CHECK_OBSTRUCTIONS_AND_SET_TILE):
+                case (Command.CHECK_FOR_OBSTRUCTION):
                     CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
                 	break;
                 case (Command.START_READING_BARCODES):
