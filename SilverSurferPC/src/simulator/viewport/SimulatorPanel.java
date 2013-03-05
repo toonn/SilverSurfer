@@ -62,9 +62,9 @@ public class SimulatorPanel extends JPanel {
         simulatorLayout.setVerticalGroup(simulatorLayout
                 .createSequentialGroup().addComponent(principalViewPort));
     }
-    
+
     public AbstractPilot getPrincipalPilot() {
-    	return principalPilot;
+        return principalPilot;
     }
 
     public int getSpeed() {
@@ -90,6 +90,8 @@ public class SimulatorPanel extends JPanel {
         mapName = mapFile.getName();
         mapGraphLoaded = MapReader.createMapFromFile(mapFile);
 
+        System.out.println(mapGraphLoaded);
+
         simulatorPilots.get(0).setPosition(
                 mapGraphLoaded.getMapSize().x * 40 + 20, 20);
         simulatorPilots.get(1).setPosition(20,
@@ -102,7 +104,8 @@ public class SimulatorPanel extends JPanel {
         for (UnitViewPort viewPort : simulatorViewPorts)
             viewPort.resetPath();
 
-        Set<PilotInterface> allPilots = new HashSet<PilotInterface>(simulatorPilots);
+        Set<PilotInterface> allPilots = new HashSet<PilotInterface>(
+                simulatorPilots);
         allPilots.add(principalPilot);
         overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded);
 

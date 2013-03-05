@@ -146,15 +146,17 @@ public class MapReader {
                 }
                 // a barcode value has been specified
                 if (seperatedInfoIJ.length == 3) {
-                	tileIJ.setContent(new Barcode(tileIJ,
-                                Integer.valueOf(seperatedInfoIJ[2]),
-                                Orientation.switchStringToOrientation(seperatedInfoIJ[1])));
+                    tileIJ.setContent(new Barcode(tileIJ, Integer
+                            .valueOf(seperatedInfoIJ[2]), Orientation
+                            .switchStringToOrientation(seperatedInfoIJ[1])));
                 }
-                
-             // an object has been specified
-                if (seperatedInfoIJ.length == 4 && seperatedInfoIJ[2] == "o") {
-                   tileIJ.setContent(new TreasureObject(tileIJ, Integer
-                                .valueOf(seperatedInfoIJ[3])));
+
+                // an object has been specified
+                if (seperatedInfoIJ.length == 4
+                        && "o".equals(seperatedInfoIJ[2])) {
+                    System.out.println("Treasure!");
+                    tileIJ.setContent(new TreasureObject(tileIJ, Integer
+                            .valueOf(seperatedInfoIJ[3])));
                 }
             }
         }
