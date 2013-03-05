@@ -2,23 +2,64 @@ package simulator.pilot;
 
 import commands.Command;
 import communication.Communicator;
+import communication.InfoReceiverThread;
 import communication.StatusInfoBuffer;
 
 public class RobotPilot extends AbstractPilot {
 
     private StatusInfoBuffer statusInfoBuffer;
     private Communicator communicator;
+    private static InfoReceiverThread IRT;
+    private boolean busy = false;
 
     public RobotPilot() {
-        statusInfoBuffer = new StatusInfoBuffer();
-        communicator = new Communicator(this, statusInfoBuffer);
-        statusInfoBuffer.setCommunicator(communicator);
+        statusInfoBuffer = new StatusInfoBuffer(this);
+        communicator = new Communicator(statusInfoBuffer);
+        try {
+            communicator.openRobotConnection(IRT);
+        } catch(Exception e) {
+        	
+        }
+    }
+    
+    public void endConnection() {
+        try {
+        	communicator.closeRobotConnection(IRT);
+        } catch(Exception e) {
+        	
+        }
     }
 
     @Override
     public void setSpeed(int speed) {
         super.setSpeed(speed);
-        communicator.setSpeed(speed);
+        if (speed == 1)
+        	communicator.sendCommand(Command.SLOW_SPEED);
+        else if (speed == 2)
+        	communicator.sendCommand(Command.NORMAL_SPEED);
+        else if (speed == 3)
+        	communicator.sendCommand(Command.FAST_SPEED);
+        else
+        	communicator.sendCommand(Command.VERY_FAST_SPEED);
+    }
+
+    /**
+     * Gets the amount of angles the arrow should turn in one event to be at par
+     * with the robot.
+     */
+    public double getAngularSpeed() {
+    	//TODO: recalibrate + getrotatesleeptime is hetzelfde?
+        switch (getSpeed()) {
+        case 1:
+            return 1.82;
+        case 2:
+            return 2.74;
+        case 3:
+            return 2.77;
+        case 4:
+            return 1.82;
+        }
+        return 2.74;
     }
 
     @Override
@@ -42,6 +83,32 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
+    protected boolean checkForObstruction() {
+    	busy = true;
+    	communicator.sendCommand(Command.CHECK_FOR_OBSTRUCTION);
+    	waitUntilDone();    	
+        if (statusInfoBuffer.getExtraUltrasonicSensorValue() < detectionDistanceUltrasonicSensorRobot)
+            return true;
+        return false;
+    }
+
+    @Override
+    public void alignOnWhiteLine() {
+    	busy = true;
+    	communicator.sendCommand(Command.ALIGN_PERPENDICULAR);
+    	super.alignOnWhiteLine();
+    	waitUntilDone();
+    }
+
+    @Override
+    public void allignOnWalls() {
+    	busy = true;
+    	communicator.sendCommand(Command.ALIGN_WALL);
+    	super.allignOnWalls();
+    	waitUntilDone();
+    }
+
+    @Override
     protected int getRotateSleepTime(double angle) {
         return speed / 10;
     }
@@ -53,29 +120,45 @@ public class RobotPilot extends AbstractPilot {
 
     @Override
     public void rotate(final double alpha) {
-        /*
-         * final MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0,
-         * (int) alpha, 0, 0); MTT.start();
-         */
+    	busy = true;
+    	communicator.sendCommand((int)(alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
+    	super.rotate(alpha);
+    	waitUntilDone();
     }
 
     @Override
     public void travel(final double distance) {
-        /*
-         * final MoveTurnThread MTT = new MoveTurnThread("MTT", communicator,
-         * (int) distance, 0, 0, 0); MTT.start();
-         */
+    	busy = true;
+    	communicator.sendCommand((int)(distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
+    	//TODO: barcodes
+    	super.travel(distance);
+    	waitUntilDone();
+    }
+    
+    private void waitUntilDone() {
+    	try {
+            while (busy)
+                Thread.sleep(100);    		
+    	} catch(Exception e) {
+    		
+    	}
     }
 
+    @Override
     public void stopReadingBarcodes() {
         communicator.sendCommand(Command.STOP_READING_BARCODES);
+        super.stopReadingBarcodes();
     }
 
+    @Override
     public void startReadingBarcodes() {
         communicator.sendCommand(Command.START_READING_BARCODES);
+        super.startReadingBarcodes();
     }
-
-    public boolean getExecutingBarcodes() {
-        return communicator.getExecutingBarcodes();
+    
+    @Override
+    public void permaStopReadingBarcodes() {
+        communicator.sendCommand(Command.PERMA_STOP_READING_BARCODES);
+        super.permaStopReadingBarcodes();
     }
 }

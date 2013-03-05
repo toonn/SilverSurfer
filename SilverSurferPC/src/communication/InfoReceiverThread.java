@@ -77,10 +77,8 @@ public class InfoReceiverThread extends Thread {
                     statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5)
                             .trim()));
                 } else if (a.startsWith("[CH]")) {
-                    statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a
+                    statusInfoBuffer.setExtraUltrasonicSensorValue(Integer.parseInt(a
                             .substring(5).trim()));
-                    statusInfoBuffer.getCommunicator().getPilot()
-                            .setObstructionOrTile();
                 }
             } catch (final Exception e) {
                 System.out.println("Error in InfoReceiverThread.run()!");

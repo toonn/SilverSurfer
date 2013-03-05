@@ -1,5 +1,7 @@
 package communication;
 
+import simulator.pilot.RobotPilot;
+
 public class StatusInfoBuffer {
 
     /**
@@ -18,6 +20,7 @@ public class StatusInfoBuffer {
         public USInfoNode next;
     }
 
+    private double extraUltrasonicSensorValue;
     private int lightSensorInfo;
     private int ultraSensorInfo;
     private boolean leftMotorMoving;
@@ -27,7 +30,7 @@ public class StatusInfoBuffer {
     private boolean busy;
 
     private int barcode;
-    private Communicator communicator;
+    private RobotPilot pilot;
 
     private boolean isBufferUsed = false; // Check if the buffer can be updated
     // (can be updated when false).
@@ -43,6 +46,10 @@ public class StatusInfoBuffer {
 
     private int amtUSUpdated = 0;
 
+    public StatusInfoBuffer(RobotPilot pilot) {
+    	this.pilot = pilot;
+    }
+    
     /**
      * Add new info for the light Sensor.
      */
@@ -141,10 +148,6 @@ public class StatusInfoBuffer {
         return busy;
     }
 
-    public Communicator getCommunicator() {
-        return communicator;
-    }
-
     /**
      * Returns the latest info available for the Light Sensor
      */
@@ -198,11 +201,11 @@ public class StatusInfoBuffer {
     // }
     //
     public void setAngle(final double angle) {
-        communicator.getPilot().setAngle(angle);
+    	pilot.setAngle(angle);
     }
 
     public void setBarcode(final int barcode) {
-        communicator.getPilot().setBarcode(barcode);
+        pilot.setBarcode(barcode);
 
         this.barcode = barcode;
         communicator.setExecutingBarcodes(true);
@@ -214,10 +217,6 @@ public class StatusInfoBuffer {
     public void setBusy(final boolean busy) {
         this.busy = busy;
         // SSG.updateStatus();
-    }
-
-    public void setCommunicator(final Communicator communicator) {
-        this.communicator = communicator;
     }
 
     //
@@ -258,7 +257,7 @@ public class StatusInfoBuffer {
     // }
     //
     public void setCoordinatesAbsolute(final double[] coordinates) {
-        communicator.getPilot().setPosition(coordinates[0],
+        pilot.setPosition(coordinates[0],
                 coordinates[1]);
     }
 
@@ -314,5 +313,13 @@ public class StatusInfoBuffer {
     public void setRightMotorSpeed(final int rightMotorSpeed) {
         this.rightMotorSpeed = rightMotorSpeed;
         // SSG.updateStatus();
+    }
+    
+    public double getExtraUltrasonicSensorValue() {
+    	return extraUltrasonicSensorValue;
+    }
+    
+    public void setExtraUltrasonicSensorValue(double extraUltrasonicSensorValue) {
+    	this.extraUltrasonicSensorValue = extraUltrasonicSensorValue;
     }
 }

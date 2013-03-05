@@ -15,16 +15,15 @@ import mq.communicator.MessageCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-    private Point2D.Double position = new Point2D.Double(sizeTile() / 2,
-            sizeTile() / 2);
+    private Point2D.Double position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
     private double angle = 270;
     protected int speed = 10;
     private Set<Barcode> barcodes;
     private MapGraph mapGraphConstructed;
     private SimulatorPanel simulatorPanel;
     private MessageCenter messageCenter;
-
-    // private int amtToSendToBuffer = 50;
+    private boolean readBarcodes = true;
+    private boolean permaBarcodeStop = false;
 
     protected final double lengthOfRobot = 24;
     protected final double widthOfRobot = 26;
@@ -90,13 +89,13 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void setSpeed(int speed) {
         if (speed == 4)
-            speed = 48;
+            this.speed = 48;
         else if (speed == 3)
-            speed = 58;
+        	this.speed = 58;
         else if (speed == 2)
-            speed = 86;
+        	this.speed = 86;
         else
-            speed = 194;
+        	this.speed = 194;
     }
 
     @Override
@@ -194,7 +193,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public abstract int getUltraSensorValue();
 
-    public boolean checkForObstruction() {
+    protected boolean checkForObstruction() {
         if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot)
             return true;
         return false;
@@ -413,14 +412,17 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void stopReadingBarcodes() {
         // TODO Deze methode wil ik weg uit pilot.
+    	readBarcodes = false;
     }
 
     public void startReadingBarcodes() {
         // TODO Deze methode wil ik weg uit pilot.
+    	readBarcodes = true;
     }
-
-    public boolean getExecutingBarcodes() {
-        return false;
+    
+    public void permaStopReadingBarcodes() {
+        // TODO Deze methode wil ik weg uit pilot.
+    	permaBarcodeStop = true;
     }
 
     public void startExploring() {

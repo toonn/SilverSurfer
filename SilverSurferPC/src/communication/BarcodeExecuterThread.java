@@ -1,4 +1,4 @@
-package communication;
+/*package communication;
 
 //Executes a barcode in a different thread.
 public class BarcodeExecuterThread extends Thread {
@@ -30,4 +30,4 @@ public class BarcodeExecuterThread extends Thread {
         executeBarcode(barcode);
         communicator.setExecutingBarcodes(false);
     }
-}
+}*/
