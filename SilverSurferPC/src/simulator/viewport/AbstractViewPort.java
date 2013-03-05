@@ -33,7 +33,7 @@ public abstract class AbstractViewPort extends JPanel {
     protected Set<PilotInterface> pilots;
     protected double scalingfactor = 1;
     private ImageIcon robotSprite = new ImageIcon(
-            "resources/robot/NXTrobotsmall.png");;
+            "resources/robot/NXTrobotsmall.png");
     private Map<boolean[], Rectangle2D[]> barcodeRectangles;
     private int repaintFPS = 30;
     private ActionListener repaintViewPort = new ActionListener() {
@@ -48,8 +48,6 @@ public abstract class AbstractViewPort extends JPanel {
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
 
-        // RepaintThread RT = new RepaintThread(this);
-        // RT.start();
         new Timer(1000 / repaintFPS, repaintViewPort).start();
     }
 
@@ -172,8 +170,7 @@ public abstract class AbstractViewPort extends JPanel {
         for (MapGraph mapGraph : getAllMapGraphs())
             for (Tile tile : mapGraph.getTiles())
                 for (Edge wall : tile.getEdges())
-                    if (wall.getObstruction() != null
-                            && !wall.getObstruction().isPasseble())
+                    if (wall.getObstruction() != null && !wall.getObstruction().isPassable())
                         walls.add(wall.getEndPoints());
 
         final Graphics2D g2 = ((Graphics2D) graph);
@@ -185,8 +182,7 @@ public abstract class AbstractViewPort extends JPanel {
 
         for (Point2D[] wall : walls) {
             for (Point2D point : wall)
-                point.setLocation(point.getX() * getSizeTile(), point.getY()
-                        * getSizeTile());
+                point.setLocation(point.getX() * getSizeTile(), point.getY() * getSizeTile());
             g2.draw(new Line2D.Double(wall[0], wall[1]));
         }
         g2.setStroke(originalStroke);
@@ -199,14 +195,10 @@ public abstract class AbstractViewPort extends JPanel {
         Graphics2D g2 = (Graphics2D) graph;
         for (PilotInterface pilot : pilots) {
             AffineTransform oldTransform = g2.getTransform();
-            g2.rotate(Math.toRadians(pilot.getAngle()), pilot.getPosition()
-                    .getX(), pilot.getPosition().getY());
-            g2.drawImage(robotSprite.getImage(), (int) ((pilot.getPosition()
-                    .getX() - robotSprite.getIconWidth() / 2) * scalingfactor),
-                    (int) ((pilot.getPosition().getY() - robotSprite
-                            .getIconHeight() / 2) * scalingfactor), null);
+            g2.rotate(Math.toRadians(pilot.getAngle()), pilot.getPosition().getX(), pilot.getPosition().getY());
+            g2.drawImage(robotSprite.getImage(), (int) ((pilot.getPosition().getX() - robotSprite.getIconWidth() / 2) * scalingfactor),
+                    (int) ((pilot.getPosition().getY() - robotSprite.getIconHeight() / 2) * scalingfactor), null);
             g2.setTransform(oldTransform);
         }
     }
-
 }

@@ -16,6 +16,7 @@ public class MazeExplorer {
      * doolhof
      */
     private final Vector<Tile> allTiles = new Vector<Tile>();
+    
     /**
      * hierin worden de tiles in de wachtrij gezet
      */
@@ -34,51 +35,60 @@ public class MazeExplorer {
         this.pilot = pilot;
     }
 
+    /**
+     * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
+     */
+    public void startExploringMaze() {
+        // TODO aligning
+        // communicator.setTilesBeforeAllign(3);
+        // communicator.mustAllign(mustAllign);
+        allTiles.add(startTile);
+        algorithm(startTile);
+        for (final Object tile : allTiles)
+            ((Tile) tile).setMarkingExploreMaze(false);
+        // communicator.mustAllign(false);
+
+    }
+
     private void algorithm(final Tile currentTile) {
-        checkForNeighboursNotYetExplored(currentTile);
+    	// Explore tile and set current tile on "Explored".
+        exploreTile(currentTile);
 
-        // zet het mark-veld van de currentTile op true zodat deze niet meer
-        // opnieuw in de queue terecht kan komen
-        currentTile.setMarkingExploreMaze(true);
-
-        // voegt buurtiles van de currentTile toe aan de queue, enkel als deze
-        // nog niet begaan zijn (niet gemarkeerd)
-        for (final Object neighbourTile : currentTile.getReachableNeighbours()) {
-            if (neighbourTile != null
-                    && !(((Tile) neighbourTile).isMarkedExploreMaze())) {
+        // Update queue.
+        for (final Object neighbourTile : currentTile.getReachableNeighbours())
+            if (neighbourTile != null && !(((Tile) neighbourTile).isMarkedExploreMaze()))
                 queue.add((Tile) neighbourTile);
-            }
-        }
 
-        // returnt als er geen tiles meer in de wachtrij zitten (algoritme is
-        // afgelopen)
-        if (queue.isEmpty()) {
+        // Algorithm finished?
+        if (queue.isEmpty())
             return;
-        }
 
+        // Get next optimal tile.
         Tile nextTile = getPriorityNextTile(currentTile);
 
-        // Als de volgende tile geen onontdekte buren heeft, slaag deze tile
-        // over --> MAG WEG!
+        // Is the next tile useful?
         while (!doesHaveOtherNeighboursToCheck(nextTile)) {
             nextTile.setMarkingExploreMaze(true);
             allTiles.add(nextTile);
             removeTileFromQueue(nextTile);
 
-            if (queue.isEmpty()) {
+            if (queue.isEmpty())
                 return;
-            }
 
             nextTile = getPriorityNextTile(currentTile);
         }
+        
+        // Add the current tile to the finish-queue and remove it from the todo-queue.
         allTiles.add(nextTile);
         removeTileFromQueue(nextTile);
 
+        // Go to the next tile.
         goToNextTile(currentTile, nextTile);
 
-        // TODO ?wachten tot de barcode is uitgevoerd.
+        // Wait until the barcode is executed
+        // TODO:
 
-        // voert methode opnieuw uit met nextTile
+        // Repeat with next tile.
         algorithm(nextTile);
     }
 
@@ -86,7 +96,7 @@ public class MazeExplorer {
     // Indien niet, checkt of er een muur tussen staat.
     // Indien wel, plaats een muur.
     // Indien niet, voeg een nieuwe lege tile toe op de juiste plaats.
-    private void checkForNeighboursNotYetExplored(final Tile currentTile) {
+    private void exploreTile(final Tile currentTile) {
         int numberVariable = pilot.getOrientation().getNumberArray();
         // numbervariable met als inhoud het getal van de orientatie (N = 1,
         // ...)
@@ -95,48 +105,38 @@ public class MazeExplorer {
         for (int i = 0; i < 4; i++) {
             // Do nothing if tile with numbervariable as orientation is already
             // done
-            if (array.get(numberVariable) != null
-                    && (array.get(numberVariable).isMarkedExploreMaze())) {
+            if (array.get(numberVariable) != null && (array.get(numberVariable).isMarkedExploreMaze()))
                 ;
-            } else {
-                // TODO +360 zinloos?
-                double angle = (((numberVariable - pilot.getOrientation()
-                        .getNumberArray()) * 90) + 360) % 360;
+            else {
+                // TODO +360 zinloos? Zodat angle altijd >= 0 is?
+                double angle = (((numberVariable - pilot.getOrientation() .getNumberArray()) * 90) + 360) % 360;
                 angle = ExtMath.getSmallestAngle(angle);
                 pilot.rotate(angle);
                 pilot.setObstructionOrTile();
-                // communicator.sendCommand((int) (angle * 10) * 10
-                // + Command.AUTOMATIC_TURN_ANGLE);
-                // communicator
-                // .sendCommand(Command.CHECK_OBSTRUCTIONS_AND_SET_TILE);
-                // currentOrientation =
-                // communicator.getPilot().getOrientation();
             }
             // Next orientation
             numberVariable = numberVariable + 1;
-            if (numberVariable == 4) {
+            if (numberVariable == 4)
                 numberVariable = 0;
-            }
         }
+
+        // zet het mark-veld van de currentTile op true zodat deze niet meer
+        // opnieuw in de queue terecht kan komen
+        currentTile.setMarkingExploreMaze(true);
     }
 
     /**
      * checkt of alle neighbourTiles al gecheckt zijn, indien ja niet meer nodig
      * om nextTile nog te checken.
      */
-    public boolean doesHaveOtherNeighboursToCheck(final Tile nextTile) {
+    private boolean doesHaveOtherNeighboursToCheck(final Tile nextTile) {
         int j = 0;
-        if (!nextTile.isStraightTile()) {
-            for (final Object neighbourTile : nextTile.getAllNeighbours()) {
-                if (neighbourTile != null
-                        && ((Tile) neighbourTile).isMarkedExploreMaze()) {
+        if (!nextTile.isStraightTile())
+            for (final Object neighbourTile : nextTile.getAllNeighbours())
+                if (neighbourTile != null && ((Tile) neighbourTile).isMarkedExploreMaze())
                     j++;
-                }
-            }
-        }
-        if (j == 4) {
+        if (j == 4)
             return false;
-        }
         return true;
     }
 
@@ -165,10 +165,9 @@ public class MazeExplorer {
         }
     }
 
-    public void goToNextTile(final Tile currentTile, final Tile nextTile) {
+    private void goToNextTile(final Tile currentTile, final Tile nextTile) {
         // voert een shortestPath uit om van currentTile naar nextTile te gaan.
-        final ShortestPath shortestPath = new ShortestPath(pilot, currentTile,
-                nextTile, allTiles);
+        final ShortestPath shortestPath = new ShortestPath(pilot, currentTile, nextTile, allTiles);
         shortestPath.goShortestPath();
     }
 
@@ -181,32 +180,9 @@ public class MazeExplorer {
     }
 
     private void removeTileFromQueue(final Tile tile) {
-        // verwijdert alle nextTiles uit de queu. De reden waarom deze meermaals
-        // in de queu
-        // voorkomen is omdat het voordeliger is om de laatste versie te pakken
-        // omdat deze
-        // het dichts bij de currentTile ligt, zodat de robot niet voor elke
-        // nextTile massa's
-        // omweg moet doen
-        while (queue.contains(tile)) {
+    	// Multiple times in queue so multiple times remove.
+        while (queue.contains(tile))
             queue.remove(tile);
-        }
-    }
-
-    /**
-     * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
-     */
-    public void startExploringMaze() {
-        // TODO aligning
-        // communicator.setTilesBeforeAllign(3);
-        // communicator.mustAllign(mustAllign);
-        allTiles.add(startTile);
-        algorithm(startTile);
-        for (final Object tile : allTiles) {
-            ((Tile) tile).setMarkingExploreMaze(false);
-        }
-        // communicator.mustAllign(false);
-
     }
 
     // Gebruikt door nieuw algoritme (bijhouden voor later)

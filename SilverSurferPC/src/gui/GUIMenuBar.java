@@ -85,8 +85,6 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        // TODO remove wall/barcode/path terug toevoegen?
-
         return screenMenu;
     }
 
@@ -168,8 +166,6 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                // TODO explore
-                /* TOON pilot moet een mazeexplorer hebben */
                 SilverSurferGUI.getSimulatorPanel().startSimulation();
             }
         });

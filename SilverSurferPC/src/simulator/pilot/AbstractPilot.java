@@ -37,8 +37,8 @@ public abstract class AbstractPilot implements PilotInterface {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTileXY(new Point(0, 0));
         barcodes = new HashSet<Barcode>();
-        // messageCenter = new MessageCenter(this); //TODO dit is nieuwe code
-        // (12:58 3/3/'13)
+        //TODO:
+        //messageCenter = new MessageCenter(this);
     }
 
     @Override
@@ -74,27 +74,25 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public int getSpeed() {
-        if (speed == 48) {
+        if (speed == 48)
             return 4;
-        } else if (speed == 58) {
+        else if (speed == 58)
             return 3;
-        } else if (speed == 86) {
+        else if (speed == 86)
             return 2;
-        } else {
+        else
             return 1;
-        }
     }
 
     public void setSpeed(int speed) {
-        if (speed == 4) {
+        if (speed == 4)
             speed = 48;
-        } else if (speed == 3) {
+        else if (speed == 3)
             speed = 58;
-        } else if (speed == 2) {
+        else if (speed == 2)
             speed = 86;
-        } else {
+        else
             speed = 194;
-        }
     }
 
     @Override
@@ -103,10 +101,8 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void setBarcode(final int barcode) {
-        final Barcode scanned = new Barcode(barcode, getOrientation(),
-                mapGraphConstructed.getTile(new Point()));
-        getMapGraphConstructed().getTile(getMatrixPosition()).setContent(
-                scanned);
+        final Barcode scanned = new Barcode(barcode, getOrientation(), mapGraphConstructed.getTile(new Point()));
+        getMapGraphConstructed().getTile(getMatrixPosition()).setContent(scanned);
         barcodes.add(scanned);
     }
 
@@ -139,7 +135,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
     @Override
     public void reset() {
-        // TODO: juist?
         angle = 270;
         speed = 10;
         barcodes = new HashSet<Barcode>();
@@ -231,7 +226,7 @@ public abstract class AbstractPilot implements PilotInterface {
      * a tile. The robot is interpreted as a rectangle around the given
      * position.
      */
-    public boolean robotOnEdge(final double x, final double y,
+    private boolean robotOnEdge(final double x, final double y,
             final double alpha) {
         Orientation orientation = Orientation.calculateOrientation(alpha);
         Point backup;
@@ -297,7 +292,7 @@ public abstract class AbstractPilot implements PilotInterface {
     /**
      * Checks on what side of the tile you are.
      */
-    public Orientation pointOnWichSideOfTile(final double x, final double y,
+    private Orientation pointOnWichSideOfTile(final double x, final double y,
             final Orientation travelOrientation) {
         if (travelOrientation == Orientation.NORTH
                 || travelOrientation == Orientation.SOUTH) {
@@ -427,8 +422,7 @@ public abstract class AbstractPilot implements PilotInterface {
         new Thread() {
             public void run() {
                 new MazeExplorer(
-                        mapGraphConstructed.getTile(getMatrixPosition()),
-                        AbstractPilot.this).startExploringMaze();
+                        mapGraphConstructed.getTile(getMatrixPosition()), AbstractPilot.this).startExploringMaze();
             }
         }.start();
     }

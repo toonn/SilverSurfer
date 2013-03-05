@@ -45,13 +45,11 @@ public class SimulatorPanel extends JPanel {
         for (int i = 0; i < 3; i++)
             simulatorPilots.add(new SimulationPilot());
         for (AbstractPilot pilot : simulatorPilots) {
+            pilot.setSimulatorPanel(this);
             Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
             simulatorPilotSet.add(pilot);
             simulatorViewPorts.add(new UnitViewPort(simulatorPilotSet));
         }
-
-        for (AbstractPilot pilot : simulatorPilots)
-            pilot.setSimulatorPanel(this);
 
         changeSpeed(2);
 
@@ -97,14 +95,12 @@ public class SimulatorPanel extends JPanel {
                 mapGraphLoaded.getMapSize().y * 40 + 20);
         for (AbstractPilot pilot : simulatorPilots)
             pilot.reset();
-        for (UnitViewPort VP : simulatorViewPorts)
-            VP.resetPath();
+        for (UnitViewPort viewPort : simulatorViewPorts)
+            viewPort.resetPath();
 
-        Set<PilotInterface> allPilots = new HashSet<PilotInterface>(
-                simulatorPilots);
+        Set<PilotInterface> allPilots = new HashSet<PilotInterface>(simulatorPilots);
         allPilots.add(principalPilot);
         overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded);
-        // TODO: reset principalpilot && remove setter
 
         simulatorLayout = new GroupLayout(this);
         setLayout(simulatorLayout);

@@ -18,22 +18,11 @@ import mapping.Tile;
 
 public class ShortestPath {
 
-    /**
-     * hierin worden de tiles in de wachtrij gezet
-     */
     private final ArrayList<Tile> queue = new ArrayList<Tile>();
-    /**
-     * hierin worden de tiles opgeslagen die het uiteindelijk pad vormen van
-     * startdoel tot einddoel, inclusief deze laatste 2
-     */
     private final Vector<Tile> tilesPath = new Vector<Tile>();
-    /**
-     * zijn alle tiles die meegegeven worden wanneer het algoritme opgeroepen
-     * wordt. dus de tiles ter beschikking om van start- naar einddoel te gaan
-     */
-    Vector<Tile> tiles;
-    Tile startTile;
-    Tile endTile;
+    private Vector<Tile> tiles;
+    private Tile startTile;
+    private Tile endTile;
     private AbstractPilot pilot;
 
     public ShortestPath(final AbstractPilot pilot, final Tile startTile,
@@ -56,17 +45,10 @@ public class ShortestPath {
      * is , wordt deze tile verwijderd en checkt men de tile ervoor, enz...
      */
     private void deleteSuperfluousTiles() {
-        if (tilesPath.size() > 1) {
-            for (int i = tilesPath.size() - 2; i != 0; i--) {
-                if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1)
-                        .getCost() - 1)
-                        || !tilesPath.get(i)
-                                .areNeighbours(tilesPath.get(i + 1))) {
+        if (tilesPath.size() > 1)
+            for (int i = tilesPath.size() - 2; i != 0; i--)
+                if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areNeighbours(tilesPath.get(i + 1)))
                     tilesPath.remove(i);
-                }
-            }
-        }
-
     }
 
     /**
@@ -109,9 +91,8 @@ public class ShortestPath {
         currentTile.setMarkingShortestPath(true);
 
         final Tile nextTile = queue.get(queue.size() - 1);
-        while (queue.contains(nextTile)) {
+        while (queue.contains(nextTile))
             queue.remove(nextTile);
-        }
         fillTilesPath(nextTile);
     }
 

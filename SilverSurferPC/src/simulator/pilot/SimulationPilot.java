@@ -65,7 +65,6 @@ public class SimulationPilot extends AbstractPilot {
 
     @Override
     public int getLightSensorValue() {
-        // initialisation
         final Random random = new Random();
         double mean = 0;
         double standardDeviation = 1;

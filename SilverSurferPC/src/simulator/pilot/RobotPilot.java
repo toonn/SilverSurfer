@@ -57,7 +57,6 @@ public class RobotPilot extends AbstractPilot {
          * final MoveTurnThread MTT = new MoveTurnThread("MTT", communicator, 0,
          * (int) alpha, 0, 0); MTT.start();
          */
-        super.rotate(alpha);
     }
 
     @Override

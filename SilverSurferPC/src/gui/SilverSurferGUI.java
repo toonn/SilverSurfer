@@ -3,7 +3,6 @@ package gui;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
