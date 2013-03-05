@@ -1,0 +1,11 @@
+8 8
+
+#test
+Corner.N.50	T.N	T.N	T.N	T.N	T.N	T.N	Corner.E.40
+T.W		Cross	Cross	Cross	Cross	Cross	Cross	T.E
+T.W		Cross	Cross	Cross	Cross	Cross	Cross	T.E
+T.W		Cross	Cross	Cross	Cross	Cross	Cross	T.E
+T.W		Cross	Cross	Cross	Cross	Cross	Cross	T.E
+T.W		Cross	Cross	Cross	Cross	Cross	Cross	T.E
+T.W		Cross	Cross	Cross	Cross	Cross	Cross	T.E	
+Corner.W.2	T.S	T.S	T.S	T.S	T.S	T.S	Corner.S.1
