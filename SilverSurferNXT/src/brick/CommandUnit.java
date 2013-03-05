@@ -15,8 +15,8 @@ public class CommandUnit {
 	private static final double ANGLE_COEF = 710; //Amount of degrees needed for a 360 degree turn.
     private static int SPEED = 180;
     
-    private double x = 220;
-    private double y = 220;
+    private double x = 20;
+    private double y = 20;
     private double angle = 270; //Northside of the screen
     
     private NXTConnection pcConnection;

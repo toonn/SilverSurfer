@@ -15,7 +15,8 @@ import mq.communicator.MessageCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-    private Point2D.Double position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
+    private Point2D.Double position = new Point2D.Double(sizeTile() / 2,
+            sizeTile() / 2);
     private double angle = 270;
     protected int speed = 10;
     private Set<Barcode> barcodes;
@@ -24,6 +25,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private MessageCenter messageCenter;
     private boolean readBarcodes = true;
     private boolean permaBarcodeStop = false;
+    protected PilotActions pilotActions = new PilotActions(this);
 
     protected final double lengthOfRobot = 24;
     protected final double widthOfRobot = 26;
@@ -35,8 +37,8 @@ public abstract class AbstractPilot implements PilotInterface {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTileXY(new Point(0, 0));
         barcodes = new HashSet<Barcode>();
-        //TODO:
-        //messageCenter = new MessageCenter(this);
+        // TODO:
+        // messageCenter = new MessageCenter(this);
     }
 
     @Override
@@ -63,12 +65,12 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void setAngle(final double angle) {
-    	if(angle > 360)
-    		this.angle = angle - 360;
-    	else if(angle < 0)
-    		this.angle = angle + 360;
-    	else
-    		this.angle = angle;
+        if (angle > 360)
+            this.angle = angle - 360;
+        else if (angle < 0)
+            this.angle = angle + 360;
+        else
+            this.angle = angle;
     }
 
     @Override
@@ -91,21 +93,19 @@ public abstract class AbstractPilot implements PilotInterface {
         if (speed == 4)
             this.speed = 48;
         else if (speed == 3)
-        	this.speed = 58;
+            this.speed = 58;
         else if (speed == 2)
-        	this.speed = 86;
+            this.speed = 86;
         else
-        	this.speed = 194;
-    }
-
-    @Override
-    public Set<Barcode> getBarcodes() {
-        return barcodes;
+            this.speed = 194;
     }
 
     public void setBarcode(final int barcode) {
-        final Barcode scanned = new Barcode(barcode, getOrientation(), mapGraphConstructed.getTile(new Point()));
-        getMapGraphConstructed().getTile(getMatrixPosition()).setContent(scanned);
+        final Barcode scanned = new Barcode(
+                mapGraphConstructed.getTile(new Point()), barcode,
+                getOrientation());
+        getMapGraphConstructed().getTile(getMatrixPosition()).setContent(
+                scanned);
         barcodes.add(scanned);
     }
 
@@ -333,7 +333,7 @@ public abstract class AbstractPilot implements PilotInterface {
         rotate(-(90 + i) / 2);
     }
 
-    public void allignOnWalls() {
+    public void alignOnWalls() {
         // TODO aparte invulling voor sim en robot?
         rotate(90);
         if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot
@@ -391,17 +391,16 @@ public abstract class AbstractPilot implements PilotInterface {
                 x = currentX - i;
                 y = currentY;
             }
-            // TODO: niet door muren rijden (maar op betere manier dan hieronder, dit geeft errors)
-            /*if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle())) {
-                final Orientation edgeOrientation = pointOnWichSideOfTile(x, y,
-                        travelOrientation);
-                if (travelOrientation == edgeOrientation
-                        && !getMapGraphLoaded().getTile(getMatrixPosition())
-                                .getEdge(travelOrientation).isPassable()) {
-                    System.out.println("Er staat een muur in de weg");
-                    return;
-                }
-            }*/
+            // TODO: niet door muren rijden (maar op betere manier dan
+            // hieronder, dit geeft errors)
+            /*
+             * if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle()))
+             * { final Orientation edgeOrientation = pointOnWichSideOfTile(x, y,
+             * travelOrientation); if (travelOrientation == edgeOrientation &&
+             * !getMapGraphLoaded().getTile(getMatrixPosition())
+             * .getEdge(travelOrientation).isPassable()) {
+             * System.out.println("Er staat een muur in de weg"); return; } }
+             */
             setPosition(x, y);
             try {
                 Thread.sleep(getTravelSleepTime(distance));
@@ -413,24 +412,25 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void stopReadingBarcodes() {
         // TODO Deze methode wil ik weg uit pilot.
-    	readBarcodes = false;
+        readBarcodes = false;
     }
 
     public void startReadingBarcodes() {
         // TODO Deze methode wil ik weg uit pilot.
-    	readBarcodes = true;
+        readBarcodes = true;
     }
-    
+
     public void permaStopReadingBarcodes() {
         // TODO Deze methode wil ik weg uit pilot.
-    	permaBarcodeStop = true;
+        permaBarcodeStop = true;
     }
 
     public void startExploring() {
         new Thread() {
             public void run() {
                 new MazeExplorer(
-                        mapGraphConstructed.getTile(getMatrixPosition()), AbstractPilot.this).startExploringMaze();
+                        mapGraphConstructed.getTile(getMatrixPosition()),
+                        AbstractPilot.this).startExploringMaze();
             }
         }.start();
     }

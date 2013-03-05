@@ -1,6 +1,5 @@
 package simulator.viewport;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -12,7 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Double;
+import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import mapping.Barcode;
+import mapping.TreasureObject;
 import mapping.Edge;
 import mapping.MapGraph;
 import mapping.Orientation;
@@ -37,6 +37,7 @@ public abstract class AbstractViewPort extends JPanel {
     private ImageIcon robotSprite = new ImageIcon(
             "resources/robot/NXTrobotsmall.png");
     private Map<Barcode, Rectangle2D[]> barcodeRectangles;
+    private HashMap<TreasureObject, Ellipse2D> treasureCircles;
     private int repaintFPS = 30;
     private ActionListener repaintViewPort = new ActionListener() {
 
@@ -49,6 +50,7 @@ public abstract class AbstractViewPort extends JPanel {
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet) {
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<Barcode, Rectangle2D[]>();
+        treasureCircles = new HashMap<TreasureObject, Ellipse2D>();
 
         new Timer(1000 / repaintFPS, repaintViewPort).start();
     }
@@ -101,6 +103,7 @@ public abstract class AbstractViewPort extends JPanel {
     }
 
     private void paintMapGraph(Graphics graph) {
+        paintTreasures(graph);
         paintBarcodes(graph);
         paintWalls(graph);
     }
@@ -109,18 +112,18 @@ public abstract class AbstractViewPort extends JPanel {
         // TODO Werkt niet als er meer dan 1 pilot in pilots zit.
         // Omdat barcodeRectangles.size() dan ~nooit overeen komt met
         // pilot.getbarcodes().size()
-        Set<Barcode> tileContents = new HashSet<Barcode>();
+        Set<Barcode> barcodes = new HashSet<Barcode>();
         for (MapGraph mapGraph : getAllMapGraphs()) {
             for (Tile tile : mapGraph.getTiles()) {
                 if (tile.getContent() instanceof Barcode) {
-                    tileContents.add((Barcode) tile.getContent());
+                    barcodes.add((Barcode) tile.getContent());
                 }
             }
         }
-        if (barcodeRectangles.size() != tileContents.size()) {
+        if (barcodeRectangles.size() != barcodes.size()) {
             // In geval van een verkeerd ingelezen barcode, alles weggooien.
             barcodeRectangles = new HashMap<Barcode, Rectangle2D[]>();
-            for (final Barcode barcode : tileContents)
+            for (final Barcode barcode : barcodes)
                 if (!barcodeRectangles.containsKey(barcode)) // TODO:
                                                              // Moet
                                                              // dit
@@ -176,6 +179,55 @@ public abstract class AbstractViewPort extends JPanel {
         }
 
         return visualBarcode;
+    }
+
+    private void paintTreasures(final Graphics graph) {
+
+        Set<TreasureObject> treasures = new HashSet<TreasureObject>();
+        for (MapGraph mapGraph : getAllMapGraphs()) {
+            for (Tile tile : mapGraph.getTiles()) {
+                if (tile.getContent() instanceof TreasureObject) {
+                    treasures.add((TreasureObject) tile.getContent());
+                }
+            }
+        }
+        if (treasureCircles.size() != treasures.size()) {
+            treasureCircles = new HashMap<TreasureObject, Ellipse2D>();
+            for (final TreasureObject treasure : treasures)
+                if (!treasureCircles.containsKey(treasure))
+                    treasureCircles.put(treasure,
+                            createVisualTreasure(treasure));
+        }
+
+        final Graphics2D g2 = ((Graphics2D) graph);
+        for (final TreasureObject treasure : treasureCircles.keySet()) {
+            if (treasure.getValue() % 4 == 0) {
+                g2.setColor(Color.RED);
+            }
+            if (treasure.getValue() % 4 == 1) {
+                g2.setColor(Color.BLUE);
+            }
+            if (treasure.getValue() % 4 == 2) {
+                g2.setColor(Color.GREEN);
+            }
+            if (treasure.getValue() % 4 == 3) {
+                g2.setColor(Color.YELLOW);
+            }
+            g2.fill(treasureCircles.get(treasure));
+        }
+    }
+
+    private Ellipse2D createVisualTreasure(final TreasureObject treasure) {
+        double diameter = 10;
+        final Ellipse2D visualTreasure = new Ellipse2D.Double(treasure
+                .getPosition().getX()
+                * getSizeTile()
+                + getSizeTile()
+                / 2
+                - diameter / 2, treasure.getPosition().getY() * getSizeTile()
+                + getSizeTile() / 2 - diameter / 2, diameter, diameter);
+
+        return visualTreasure;
     }
 
     private void paintWalls(Graphics graph) {
