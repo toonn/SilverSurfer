@@ -1,7 +1,6 @@
 package communication;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
 public class InfoReceiverThread extends Thread {
 
@@ -14,6 +13,7 @@ public class InfoReceiverThread extends Thread {
         this.statusInfoBuffer = statusInfoBuffer;
         InfoReceiverThread.dis = dis;
     }
+    
     @Override
     public void run() {
         byte[] b;
@@ -47,21 +47,19 @@ public class InfoReceiverThread extends Thread {
                         statusInfoBuffer.setRightMotorSpeed(Integer.parseInt(a.substring(11).trim()));
                     }
                 }
-                else if (a.startsWith("[B]")) {
-                    statusInfoBuffer.getPilot().setBusy(false);
-                    statusInfoBuffer.setBusy(Boolean.valueOf(a.substring(4).trim()));
-                }
+                else if (a.startsWith("[B]"))
+                    statusInfoBuffer.robotDone();
                 else if (a.startsWith("[X]"))
                     coordinates[0] = Double.valueOf(a.substring(4).trim());
                 else if (a.startsWith("[Y]")) {
                     coordinates[1] = Double.valueOf(a.substring(4).trim());
-                    statusInfoBuffer.setCoordinatesAbsolute(coordinates);
+                    statusInfoBuffer.setPosition(coordinates);
                 } 
                 else if (a.startsWith("[ANG]"))
                     statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
                 else if (a.startsWith("[BC]"))
-                    statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
-                else if (a.startsWith("[CH]"))
+                    ; //TODO: statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
+                else if (a.startsWith("[CFO]"))
                     statusInfoBuffer.setExtraUltrasonicSensorValue(Integer.parseInt(a.substring(5).trim()));
             } catch (final Exception e) {
                 System.out.println("Error in InfoReceiverThread.run()!");

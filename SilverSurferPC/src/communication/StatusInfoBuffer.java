@@ -4,322 +4,175 @@ import simulator.pilot.RobotPilot;
 
 public class StatusInfoBuffer {
 
-    /**
-     * Used to make a linked-list stack of LS-information.
-     */
-    public class LSInfoNode {
-        public int info;
-        public LSInfoNode next;
-    }
-
-    /**
-     * Used to make a linked-list stack of US-information.
-     */
-    public class USInfoNode {
-        public int info;
-        public USInfoNode next;
-    }
-
-    private double extraUltrasonicSensorValue;
+    private RobotPilot pilot;
     private int lightSensorInfo;
     private int ultraSensorInfo;
+    private int extraUltraSensorInfo;
     private boolean leftMotorMoving;
-    private boolean rightMotorMoving;
     private int leftMotorSpeed;
+    private boolean rightMotorMoving;
     private int rightMotorSpeed;
-    private boolean busy;
-
-    private int barcode;
-    private RobotPilot pilot;
-
-    private boolean isBufferUsed = false; // Check if the buffer can be updated
-    // (can be updated when false).
-    private final int BUFFER_SIZE = 300; // Amount of datapoints kept by this
-                                         // buffer.
-    private LSInfoNode startLSInfo = new LSInfoNode();
-    private LSInfoNode endLSInfo = new LSInfoNode();
-
-    private USInfoNode startUSInfo = new USInfoNode();
-    private USInfoNode endUSInfo = new USInfoNode();
-
-    private int amtLSUpdated = 0;
-
-    private int amtUSUpdated = 0;
 
     public StatusInfoBuffer(RobotPilot pilot) {
     	this.pilot = pilot;
     }
-    
-    /**
-     * Add new info for the light Sensor.
-     */
-    public void addLightSensorInfo(final int lightSensorInfo) {
-        this.lightSensorInfo = lightSensorInfo;
-        // SSG.updateStatus();
-        if (!isBufferUsed) {
-            // Voeg toe aan buffer.
-            if (amtLSUpdated < BUFFER_SIZE) {
-                if (amtLSUpdated != 0) {
-                    final LSInfoNode temp = new LSInfoNode();
-                    temp.info = lightSensorInfo;
-                    temp.next = null;
-                    endLSInfo.next = temp;
-                    endLSInfo = temp;
-                } else {
-                    startLSInfo = new LSInfoNode();
-                    startLSInfo.info = lightSensorInfo;
-                    startLSInfo.next = null;
-                    endLSInfo = startLSInfo;
-                }
-            }
-            // Vewijder eerste element en voeg ��n toe.
-            else {
-                startLSInfo = startLSInfo.next;
-                final LSInfoNode temp = new LSInfoNode();
-                temp.info = lightSensorInfo;
-                temp.next = null;
-                endLSInfo.next = temp;
-                endLSInfo = temp;
-            }
-            amtLSUpdated++;
 
-        }
-    }
-
-    /**
-     * Add new info for the Ulstrasonic Sensor.
-     */
-    public void addUltraSensorInfo(final int ultraSensorInfo) {
-        this.ultraSensorInfo = ultraSensorInfo;
-
-        if (!isBufferUsed) {
-            // Voeg toe aan buffer.
-            if (amtUSUpdated < BUFFER_SIZE) {
-                if (amtUSUpdated != 0) {
-                    final USInfoNode temp = new USInfoNode();
-                    temp.info = ultraSensorInfo;
-                    temp.next = null;
-                    endUSInfo.next = temp;
-                    endUSInfo = temp;
-                } else {
-                    startUSInfo = new USInfoNode();
-                    startUSInfo.info = ultraSensorInfo;
-                    startUSInfo.next = null;
-                    endUSInfo = startUSInfo;
-                }
-            }
-            // Vewijder eerste element en voeg ��n toe.
-            else {
-                startUSInfo = startUSInfo.next;
-                final USInfoNode temp = new USInfoNode();
-                temp.info = ultraSensorInfo;
-                temp.next = null;
-                endUSInfo.next = temp;
-                endUSInfo = temp;
-            }
-            amtUSUpdated++;
-        }
-        // SSG.updateStatus();
-
-    }
-
-    /**
-     * Set a claim on the buffer so that information in it can be used to
-     * calculate. Buffer won't update as long as claim has been withdraw.
-     */
-    public void claimBuffer() {
-        isBufferUsed = true;
-
-    }
-
-    /**
-     * Makes sure the buffer can be updated again.
-     */
-    public void freeBuffer() {
-        isBufferUsed = false;
-
-    }
-
-    public int getBarcode() {
-        return barcode;
-    }
-
-    public boolean getBusy() {
-        return busy;
-    }
-
-    /**
-     * Returns the latest info available for the Light Sensor
-     */
+    //LIGHT SENSOR
     public int getLatestLightSensorInfo() {
         return lightSensorInfo;
     }
 
-    /**
-     * Returns the latest info available for the Ultrasonic Sensor
-     */
+    public void addLightSensorInfo(int lightSensorInfo) {
+        this.lightSensorInfo = lightSensorInfo;
+    }
+
+    //ULTRASONIC SENSOR
     public int getLatestUltraSensorInfo() {
         return ultraSensorInfo;
     }
 
+    public void addUltraSensorInfo(int ultraSensorInfo) {
+        this.ultraSensorInfo = ultraSensorInfo;
+    }
+    
+    //EXTRAULTRASONICSENSOR
+    public double getExtraUltrasonicSensorValue() {
+    	return extraUltraSensorInfo;
+    }
+    
+    public void setExtraUltrasonicSensorValue(int extraUltrasonicSensorValue) {
+    	this.extraUltraSensorInfo = extraUltrasonicSensorValue;
+    }
+
+    //LEFT MOTOR
     public boolean getLeftMotorMoving() {
         return leftMotorMoving;
+    }
+
+    public void setLeftMotorMoving(final boolean leftMotorMoving) {
+        this.leftMotorMoving = leftMotorMoving;
     }
 
     public int getLeftMotorSpeed() {
         return leftMotorSpeed;
     }
 
+    public void setLeftMotorSpeed(final int leftMotorSpeed) {
+        this.leftMotorSpeed = leftMotorSpeed;
+    }
+
+    //RIGHT MOTOR
     public boolean getRightMotorMoving() {
         return rightMotorMoving;
+    }
+
+    public void setRightMotorMoving(final boolean rightMotorMoving) {
+        this.rightMotorMoving = rightMotorMoving;
     }
 
     public int getRightMotorSpeed() {
         return rightMotorSpeed;
     }
 
-    /**
-     * Get the head of the LS-infostack.
-     */
-    public LSInfoNode getStartLSInfo() {
-        return startLSInfo;
+    public void setRightMotorSpeed(final int rightMotorSpeed) {
+        this.rightMotorSpeed = rightMotorSpeed;
+    }
+    
+    public void robotDone() {
+    	pilot.robotDone();
+    }
+    
+    //POSITION
+    public void setPosition(final double[] coordinates) {
+        pilot.setPosition(coordinates[0],coordinates[1]);
     }
 
-    /**
-     * Get the head of the US-infostack.
-     */
-    public USInfoNode getStartUSInfo() {
-        return startUSInfo;
-    }
-
-    public void resetBuffer() {
-    }
-
-    //
-    // public double getAngle() {
-    // return angle;
-    // }
-    //
+    //ANGLE
     public void setAngle(final double angle) {
     	pilot.setAngle(angle);
     }
-
-    public void setBarcode(final int barcode) {
-        pilot.setBarcode(barcode);
-
-        this.barcode = barcode;
-        communicator.setExecutingBarcodes(true);
-        final BarcodeExecuterThread BET = new BarcodeExecuterThread("BET",
-                communicator, this.barcode);
-        BET.start();
-    }
-
-    public void setBusy(final boolean busy) {
-        this.busy = busy;
-        // SSG.updateStatus();
-    }
-
-    //
-    // public void setStartPositionAbsoluteX(double startPositionAbsoluteX) {
-    // this.startPositionAbsoluteX = startPositionAbsoluteX;
-    // }
-    //
-    // public void setStartPositionAbsoluteY(double startPositionAbsoluteY) {
-    // this.startPositionAbsoluteY = startPositionAbsoluteY;
-    // }
-    //
-    // public void setStartPositionRelativeX(int startPositionRelativeX) {
-    // this.startPositionRelativeX = startPositionRelativeX;
-    // }
-    //
-    // public void setStartPositionRelativeY(int startPositionAbsoluteY) {
-    // this.startPositionAbsoluteY = startPositionAbsoluteY;
-    // }
-    //
-    // public int getXCoordinateRelative() {
-    // return xCoordinateRelative;
-    // }
-    //
-    // public void setXCoordinateRelative(int x) {
-    // xCoordinateRelative = x;
-    // }
-    //
-    // public int getYCoordinateRelative() {
-    // return yCoordinateRelative;
-    // }
-    //
-    // public void setYCoordinateRelative(int y) {
-    // yCoordinateRelative = y;
-    // }
-    //
-    // public double[] getCoordinatesAbsolute() {
-    // return coordinatesAbsolute;
-    // }
-    //
-    public void setCoordinatesAbsolute(final double[] coordinates) {
-        pilot.setPosition(coordinates[0],
-                coordinates[1]);
-    }
-
-    public void setLeftMotorMoving(final boolean leftMotorMoving) {
-        this.leftMotorMoving = leftMotorMoving;
-        // SSG.updateStatus();
-    }
-
-    //
-    // private void setCurrentTileCoordinatesRelative(double xOld, double yOld)
-    // {
-    // int[] relativePosition = setAbsoluteToRelative(xOld, yOld);
-    // setXCoordinateRelative(relativePosition[0]);
-    // setYCoordinateRelative(relativePosition[1]);
-    // }
-    //
-    // /**
-    // * Deze methode zet de coordinaten van het echte systeem om in de
-    // * coordinaten van de matrix
-    // */
-    // private int[] setAbsoluteToRelative(double x, double y) {
-    // double a = x - setToMultipleOf40(startPositionAbsoluteX);
-    // double b = y - setToMultipleOf40(startPositionAbsoluteY);
-    // int c;
-    // int d;
-    // c = (int) Math.floor(a / 40);
-    // d = (int) Math.floor(b / 40);
-    //
-    // int[] array = new int[2];
-    // array[0] = getStartPositionRelativeX() + c;
-    // array[1] = getStartPositionRelativeX() + d;
-    // return array;
-    // }
-    //
-    // private int getStartPositionRelativeX() {
-    // return startPositionRelativeX;
-    // }
-    //
-    // private int setToMultipleOf40(double a) {
-    // return (int) (Math.floor(a / 40) * 40);
-    // }
-
-    public void setLeftMotorSpeed(final int leftMotorSpeed) {
-        this.leftMotorSpeed = leftMotorSpeed;
-        // SSG.updateStatus();
-    }
-
-    public void setRightMotorMoving(final boolean rightMotorMoving) {
-        this.rightMotorMoving = rightMotorMoving;
-        // SSG.updateStatus();
-    }
-
-    public void setRightMotorSpeed(final int rightMotorSpeed) {
-        this.rightMotorSpeed = rightMotorSpeed;
-        // SSG.updateStatus();
-    }
-    
-    public double getExtraUltrasonicSensorValue() {
-    	return extraUltrasonicSensorValue;
-    }
-    
-    public void setExtraUltrasonicSensorValue(double extraUltrasonicSensorValue) {
-    	this.extraUltrasonicSensorValue = extraUltrasonicSensorValue;
-    }
 }
+
+/*
+    private final int BUFFER_SIZE = 300;
+    private boolean isBufferUsed = false;
+    public class LSInfoNode {
+        public int info;
+        public LSInfoNode next;
+    }
+    private LSInfoNode startLSInfo = new LSInfoNode();
+    private LSInfoNode endLSInfo = new LSInfoNode();
+    private int amtLSUpdated = 0;
+    
+    public class USInfoNode {
+        public int info;
+        public USInfoNode next;
+    }
+    private USInfoNode startUSInfo = new USInfoNode();
+    private USInfoNode endUSInfo = new USInfoNode();
+    private int amtUSUpdated = 0;
+    
+    public void claimBuffer() {
+        isBufferUsed = true;
+
+    }
+
+    public void freeBuffer() {
+        isBufferUsed = false;
+
+    }
+    
+
+
+/*if (!isBufferUsed) {
+    if (amtLSUpdated < BUFFER_SIZE) {
+        if (amtLSUpdated != 0) {
+            final LSInfoNode temp = new LSInfoNode();
+            temp.info = lightSensorInfo;
+            temp.next = null;
+            endLSInfo.next = temp;
+            endLSInfo = temp;
+        } else {
+            startLSInfo = new LSInfoNode();
+            startLSInfo.info = lightSensorInfo;
+            startLSInfo.next = null;
+            endLSInfo = startLSInfo;
+        }
+    }
+    else {
+        startLSInfo = startLSInfo.next;
+        final LSInfoNode temp = new LSInfoNode();
+        temp.info = lightSensorInfo;
+        temp.next = null;
+        endLSInfo.next = temp;
+        endLSInfo = temp;
+    }
+    amtLSUpdated++;
+}*/
+
+
+/*if (!isBufferUsed) {
+    if (amtUSUpdated < BUFFER_SIZE) {
+        if (amtUSUpdated != 0) {
+            final USInfoNode temp = new USInfoNode();
+            temp.info = ultraSensorInfo;
+            temp.next = null;
+            endUSInfo.next = temp;
+            endUSInfo = temp;
+        } else {
+            startUSInfo = new USInfoNode();
+            startUSInfo.info = ultraSensorInfo;
+            startUSInfo.next = null;
+            endUSInfo = startUSInfo;
+        }
+    }
+    else {
+        startUSInfo = startUSInfo.next;
+        final USInfoNode temp = new USInfoNode();
+        temp.info = ultraSensorInfo;
+        temp.next = null;
+        endUSInfo.next = temp;
+        endUSInfo = temp;
+    }
+    amtUSUpdated++;
+}*/
