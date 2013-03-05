@@ -24,6 +24,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private MessageCenter messageCenter;
     private boolean readBarcodes = true;
     private boolean permaBarcodeStop = false;
+    private PilotActions pilotActions = new PilotActions(this);
 
     protected final double lengthOfRobot = 24;
     protected final double widthOfRobot = 26;
@@ -119,6 +120,14 @@ public abstract class AbstractPilot implements PilotInterface {
         return mapGraphConstructed;
     }
 
+    /**
+     * @return 	:	The set of actions this Pilot can execute. 
+     * 				e.g.: Pickup(), ...
+     */
+    public PilotActions getPilotActions() {
+		return pilotActions;
+	}
+    
     public void setSimulatorPanel(SimulatorPanel simulatorPanel) {
         this.simulatorPanel = simulatorPanel;
     }
@@ -332,7 +341,7 @@ public abstract class AbstractPilot implements PilotInterface {
         rotate(-(90 + i) / 2);
     }
 
-    public void allignOnWalls() {
+    public void alignOnWalls() {
         // TODO aparte invulling voor sim en robot?
         rotate(90);
         if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot
@@ -347,7 +356,8 @@ public abstract class AbstractPilot implements PilotInterface {
                 travel(1);
         rotate(90);
     }
-
+    
+ 
     protected abstract int getRotateSleepTime(double angle);
 
     protected abstract int getTravelSleepTime(double distance);
