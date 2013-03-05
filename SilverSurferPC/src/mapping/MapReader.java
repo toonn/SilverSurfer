@@ -146,23 +146,16 @@ public class MapReader {
                 }
                 // a barcode value has been specified
                 if (seperatedInfoIJ.length == 3) {
-                    if (seperatedInfoIJ[1].equals("N")) {
-                        tileIJ.setContent(new Barcode(Integer
-                                .valueOf(seperatedInfoIJ[2]),
-                                Orientation.NORTH, tileIJ));
-                    } else if (seperatedInfoIJ[1].equals("E")) {
-                        tileIJ.setContent(new Barcode(Integer
-                                .valueOf(seperatedInfoIJ[2]), Orientation.EAST,
-                                tileIJ));
-                    } else if (seperatedInfoIJ[1].equals("S")) {
-                        tileIJ.setContent(new Barcode(Integer
-                                .valueOf(seperatedInfoIJ[2]),
-                                Orientation.SOUTH, tileIJ));
-                    } else if (seperatedInfoIJ[1].equals("W")) {
-                        tileIJ.setContent(new Barcode(Integer
-                                .valueOf(seperatedInfoIJ[2]), Orientation.WEST,
-                                tileIJ));
-                    }
+                    tileIJ.setContent(new Barcode(tileIJ, Integer
+                            .valueOf(seperatedInfoIJ[2]), Orientation
+                            .switchStringToOrientation(seperatedInfoIJ[1])));
+                }
+
+                // an object has been specified
+                if (seperatedInfoIJ.length == 4
+                        && "o".equals(seperatedInfoIJ[2])) {
+                    tileIJ.setContent(new TreasureObject(tileIJ, Integer
+                            .valueOf(seperatedInfoIJ[3])));
                 }
             }
         }

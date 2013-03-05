@@ -2,15 +2,13 @@ package mapping;
 
 public class Barcode extends TileContent {
 
-    private int value;
     private Orientation direction;
 
     /**
      * Creates a barcode with as value 'value'.
      */
-    public Barcode(final int value, final Orientation direction, final Tile tile) {
-        super(tile);
-        setValue(value);
+    public Barcode(final Tile tile, final int value, final Orientation direction) {
+        super(tile, value);
         setDirection(direction);
     }
 
@@ -18,7 +16,7 @@ public class Barcode extends TileContent {
      * Creates a default, empty barcode, facing NORTH. (value == 0).
      */
     public Barcode(final Tile tile) {
-        this(0, Orientation.NORTH, tile);
+        this(tile, 0, Orientation.NORTH);
     }
 
     public boolean[] getBoolRep() {
@@ -107,21 +105,10 @@ public class Barcode extends TileContent {
         return direction;
     }
 
-    /**
-     * Gets the decimal value this barcode represents. Should be used to perform
-     * the right action.
-     */
-    public int getValue() {
-        return value;
-    }
-
     public void setDirection(final Orientation direction) {
         this.direction = direction;
     }
 
-    public void setValue(final int value) {
-        this.value = value;
-    }
 
     @Override
     public String toString() {

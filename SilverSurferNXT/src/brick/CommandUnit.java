@@ -39,8 +39,6 @@ public class CommandUnit {
         Motor.A.setSpeed(CommandUnit.SPEED);
         Motor.B.setSpeed(CommandUnit.SPEED);
         
-        //testPickup();
-        
         stopRobot();
         System.out.println("Waiting...");
         pcConnection = Bluetooth.waitForConnection();
@@ -55,20 +53,6 @@ public class CommandUnit {
 
         ST = new SensorThread("ST", this);
         ST.start();
-    }
-    
-    private void testPickup() {
-        lightSensor.setFloodlight(true);
-        try {
-        	Thread.sleep(1000);
-        } catch(Exception e) {
-        	
-        }
-        readBarcodes = false;
-        moveForward((int)(32*LENGTH_COEF));
-    	moveForward((int)(-10*LENGTH_COEF));
-    	turnAngle((int)(ANGLE_COEF/2));
-    	readBarcodes = true;
     }
 
     public static void main(String[] args) throws IOException {

@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Tile {
 
     private final Point location;
-    private Barcode content;
+    private TileContent content;
     private boolean isMarkedExploreMaze = false;
     private boolean isMarkedShortestPath = false;
     private int manhattanValue;
@@ -192,11 +192,12 @@ public class Tile {
     }
 
     /**
-     * Returns the content of this tile. Might be a barcode or null.
+     * Returns the content of this tile. Might be a barcode, a treasureObject or
+     * null.
      * 
      * @return
      */
-    public Barcode getContent() {
+    public TileContent getContent() {
         return content;
     }
 
@@ -372,7 +373,7 @@ public class Tile {
         edge.setNumberPairDirections(orientation.getNumberOrientation() % 3);
     }
 
-    public void setContent(final Barcode cont) {
+    public void setContent(final TileContent cont) {
         content = cont;
     }
 
@@ -463,11 +464,13 @@ public class Tile {
 
     @Override
     public String toString() {
-        return getEdge(Orientation.NORTH)
-                + "\n"
-                + getEdge(Orientation.WEST)
-                + String.format("%2s", ((getContent() != null) ? getContent()
-                        .getValue() : "")) + getEdge(Orientation.EAST) + "\n"
-                + getEdge(Orientation.SOUTH);
+        String content = "";
+        if (getContent() instanceof Barcode)
+            content = "" + getContent().getValue();
+        else if (getContent() instanceof TreasureObject)
+            content = "o" + getContent().getValue();
+        return getEdge(Orientation.NORTH) + "\n" + getEdge(Orientation.WEST)
+                + String.format("%2s", (content)) + getEdge(Orientation.EAST)
+                + "\n" + getEdge(Orientation.SOUTH);
     }
 }

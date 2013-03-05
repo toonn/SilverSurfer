@@ -265,7 +265,6 @@ public class SilverSurferGUI {
     }
     
     private void addListeners() {
-    	// TODO geen threads?
         zoomInButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(final MouseEvent arg0) {
