@@ -107,10 +107,10 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    public void allignOnWalls() {
+    public void alignOnWalls() {
     	busy = true;
     	communicator.sendCommand(Command.ALIGN_WALL);
-    	super.allignOnWalls();
+    	super.alignOnWalls();
     	waitUntilDone();
     }
 
