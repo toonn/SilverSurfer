@@ -32,7 +32,7 @@ public class RobotPilot extends AbstractPilot {
 
     @Override
     public void setSpeed(int speed) {
-        super.setSpeed(speed);
+    	busy = true;
         if (speed == 1)
         	communicator.sendCommand(Command.SLOW_SPEED);
         else if (speed == 2)
@@ -41,6 +41,8 @@ public class RobotPilot extends AbstractPilot {
         	communicator.sendCommand(Command.FAST_SPEED);
         else
         	communicator.sendCommand(Command.VERY_FAST_SPEED);
+        super.setSpeed(speed);
+    	waitUntilDone();
     }
 
     /**
@@ -86,7 +88,7 @@ public class RobotPilot extends AbstractPilot {
     protected boolean checkForObstruction() {
     	busy = true;
     	communicator.sendCommand(Command.CHECK_FOR_OBSTRUCTION);
-    	waitUntilDone();    	
+    	waitUntilDone();
         if (statusInfoBuffer.getExtraUltrasonicSensorValue() < detectionDistanceUltrasonicSensorRobot)
             return true;
         return false;
@@ -150,19 +152,25 @@ public class RobotPilot extends AbstractPilot {
 
     @Override
     public void stopReadingBarcodes() {
+    	busy = true;
         communicator.sendCommand(Command.STOP_READING_BARCODES);
         super.stopReadingBarcodes();
+    	waitUntilDone();
     }
 
     @Override
     public void startReadingBarcodes() {
+    	busy = true;
         communicator.sendCommand(Command.START_READING_BARCODES);
         super.startReadingBarcodes();
+    	waitUntilDone();
     }
     
     @Override
     public void permaStopReadingBarcodes() {
+    	busy = true;
         communicator.sendCommand(Command.PERMA_STOP_READING_BARCODES);
         super.permaStopReadingBarcodes();
+    	waitUntilDone();
     }
 }
