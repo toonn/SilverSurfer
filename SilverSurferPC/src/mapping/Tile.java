@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Tile {
 
     private final Point location;
-    private Barcode content;
+    private TileContent content;
     private boolean isMarkedExploreMaze = false;
     private boolean isMarkedShortestPath = false;
     private int manhattanValue;
@@ -192,11 +192,11 @@ public class Tile {
     }
 
     /**
-     * Returns the content of this tile. Might be a barcode or null.
+     * Returns the content of this tile. Might be a barcode, a treasureObject or null.
      * 
      * @return
      */
-    public Barcode getContent() {
+    public TileContent getContent() {
         return content;
     }
 
@@ -372,7 +372,7 @@ public class Tile {
         edge.setNumberPairDirections(orientation.getNumberOrientation() % 3);
     }
 
-    public void setContent(final Barcode cont) {
+    public void setContent(final TileContent cont) {
         content = cont;
     }
 

@@ -104,7 +104,7 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void setBarcode(final int barcode) {
-        final Barcode scanned = new Barcode(barcode, getOrientation(), mapGraphConstructed.getTile(new Point()));
+        final Barcode scanned = new Barcode(mapGraphConstructed.getTile(new Point()), barcode, getOrientation());
         getMapGraphConstructed().getTile(getMatrixPosition()).setContent(scanned);
         barcodes.add(scanned);
     }

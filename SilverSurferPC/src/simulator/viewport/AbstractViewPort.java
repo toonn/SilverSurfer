@@ -11,6 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import mapping.Barcode;
+import mapping.TreasureObject;
 import mapping.Edge;
 import mapping.MapGraph;
 import mapping.Orientation;
@@ -35,6 +37,7 @@ public abstract class AbstractViewPort extends JPanel {
     private ImageIcon robotSprite = new ImageIcon(
             "resources/robot/NXTrobotsmall.png");
     private Map<boolean[], Rectangle2D[]> barcodeRectangles;
+    private HashMap<Integer, Ellipse2D> treasureCircles;
     private int repaintFPS = 30;
     private ActionListener repaintViewPort = new ActionListener() {
 
@@ -47,6 +50,7 @@ public abstract class AbstractViewPort extends JPanel {
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet) {
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<boolean[], Rectangle2D[]>();
+        treasureCircles = new HashMap<Integer, Ellipse2D>();
 
         new Timer(1000 / repaintFPS, repaintViewPort).start();
     }
@@ -140,6 +144,16 @@ public abstract class AbstractViewPort extends JPanel {
         }
     }
 
+    private Ellipse2D createVisualTreasureObject(final TreasureObject treasure)
+    {
+    	double diameter = 10;
+    	final Ellipse2D visualTreasure = new Ellipse2D.Double();
+        visualTreasure.setFrame(treasure.getPosition().getX(), treasure.getPosition().getY(),
+        		diameter, diameter);
+        
+        return visualTreasure;
+    }
+    
     private Rectangle2D[] createVisualBarCode(final Barcode barcode) {
         final Rectangle2D[] visualBarcode = new Rectangle2D[8];
         final Point2D.Double barcodeLUCorner = new Point2D.Double(barcode
