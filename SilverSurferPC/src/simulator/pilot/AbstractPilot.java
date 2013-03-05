@@ -224,92 +224,93 @@ public abstract class AbstractPilot implements PilotInterface {
                 || (y % sizeTile()) < edgeMarge;
     }
 
-    /**
-     * Checks whether the robot, standing on the given point, is on the edge of
-     * a tile. The robot is interpreted as a rectangle around the given
-     * position.
-     */
-    private boolean robotOnEdge(final double x, final double y,
-            final double alpha) {
-        Orientation orientation = Orientation.calculateOrientation(alpha);
-        Point backup;
-        // North
-        Point leftFront = new Point((int) (x - lengthOfRobot / 2),
-                (int) (y - widthOfRobot / 2));
-        Point rightFront = new Point((int) (x - lengthOfRobot / 2),
-                (int) (y + widthOfRobot / 2));
-        Point leftBack = new Point((int) (x + lengthOfRobot / 2),
-                (int) (y - widthOfRobot / 2));
-        Point rightBack = new Point((int) (x + lengthOfRobot / 2),
-                (int) (y + widthOfRobot / 2));
-        if (orientation == Orientation.SOUTH) {
-            backup = leftFront;
-            leftFront = rightBack;
-            rightBack = backup;
-            backup = rightFront;
-            rightFront = leftBack;
-            leftBack = backup;
-        } else if (orientation == Orientation.EAST) {
-            backup = leftFront;
-            leftFront = rightFront;
-            rightFront = rightBack;
-            rightBack = leftBack;
-            leftBack = backup;
-        } else if (orientation == Orientation.WEST) {
-            backup = leftFront;
-            leftFront = leftBack;
-            leftBack = rightBack;
-            rightBack = rightFront;
-            rightFront = backup;
-        }
-        return pointOnEdge(leftFront.getX(), leftFront.getY())
-                || pointOnEdge(rightFront.getX(), rightFront.getY())
-                || pointOnEdge(leftBack.getX(), leftBack.getY())
-                || pointOnEdge(rightBack.getX(), rightBack.getY())
-                || (Math.abs(leftFront.getX() % sizeTile() - rightFront.getX()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getX() % sizeTile() - leftBack.getX()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getX() % sizeTile() - rightBack.getX()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getX() % sizeTile() - rightBack.getX()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getX() % sizeTile() - leftBack.getX()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightBack.getX() % sizeTile() - leftBack.getX()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getY() % sizeTile() - rightFront.getY()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getY() % sizeTile() - leftBack.getY()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(leftFront.getY() % sizeTile() - rightBack.getY()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getY() % sizeTile() - rightBack.getY()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightFront.getY() % sizeTile() - leftBack.getY()
-                        % sizeTile()) > sizeTile() / 2)
-                || (Math.abs(rightBack.getY() % sizeTile() - leftBack.getY()
-                        % sizeTile()) > sizeTile() / 2);
-    }
-
-    /**
-     * Checks on what side of the tile you are.
-     */
-    private Orientation pointOnWichSideOfTile(final double x, final double y,
-            final Orientation travelOrientation) {
-        if (travelOrientation == Orientation.NORTH
-                || travelOrientation == Orientation.SOUTH) {
-            if ((y % sizeTile()) > sizeTile() / 2)
-                return Orientation.SOUTH;
-            // if((y % 40) < 20)
-            else
-                return Orientation.NORTH;
-        } else if ((x % sizeTile()) > sizeTile() / 2)
-            return Orientation.EAST;
-        // if((x % 40) < 20)
-        else
-            return Orientation.WEST;
-    }
+    // /**
+    // * Checks whether the robot, standing on the given point, is on the edge
+    // of
+    // * a tile. The robot is interpreted as a rectangle around the given
+    // * position.
+    // */
+    // private boolean robotOnEdge(final double x, final double y,
+    // final double alpha) {
+    // Orientation orientation = Orientation.calculateOrientation(alpha);
+    // Point backup;
+    // // North
+    // Point leftFront = new Point((int) (x - lengthOfRobot / 2),
+    // (int) (y - widthOfRobot / 2));
+    // Point rightFront = new Point((int) (x - lengthOfRobot / 2),
+    // (int) (y + widthOfRobot / 2));
+    // Point leftBack = new Point((int) (x + lengthOfRobot / 2),
+    // (int) (y - widthOfRobot / 2));
+    // Point rightBack = new Point((int) (x + lengthOfRobot / 2),
+    // (int) (y + widthOfRobot / 2));
+    // if (orientation == Orientation.SOUTH) {
+    // backup = leftFront;
+    // leftFront = rightBack;
+    // rightBack = backup;
+    // backup = rightFront;
+    // rightFront = leftBack;
+    // leftBack = backup;
+    // } else if (orientation == Orientation.EAST) {
+    // backup = leftFront;
+    // leftFront = rightFront;
+    // rightFront = rightBack;
+    // rightBack = leftBack;
+    // leftBack = backup;
+    // } else if (orientation == Orientation.WEST) {
+    // backup = leftFront;
+    // leftFront = leftBack;
+    // leftBack = rightBack;
+    // rightBack = rightFront;
+    // rightFront = backup;
+    // }
+    // return pointOnEdge(leftFront.getX(), leftFront.getY())
+    // || pointOnEdge(rightFront.getX(), rightFront.getY())
+    // || pointOnEdge(leftBack.getX(), leftBack.getY())
+    // || pointOnEdge(rightBack.getX(), rightBack.getY())
+    // || (Math.abs(leftFront.getX() % sizeTile() - rightFront.getX()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(leftFront.getX() % sizeTile() - leftBack.getX()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(leftFront.getX() % sizeTile() - rightBack.getX()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(rightFront.getX() % sizeTile() - rightBack.getX()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(rightFront.getX() % sizeTile() - leftBack.getX()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(rightBack.getX() % sizeTile() - leftBack.getX()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(leftFront.getY() % sizeTile() - rightFront.getY()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(leftFront.getY() % sizeTile() - leftBack.getY()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(leftFront.getY() % sizeTile() - rightBack.getY()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(rightFront.getY() % sizeTile() - rightBack.getY()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(rightFront.getY() % sizeTile() - leftBack.getY()
+    // % sizeTile()) > sizeTile() / 2)
+    // || (Math.abs(rightBack.getY() % sizeTile() - leftBack.getY()
+    // % sizeTile()) > sizeTile() / 2);
+    // }
+    //
+    // /**
+    // * Checks on what side of the tile you are.
+    // */
+    // private Orientation pointOnWichSideOfTile(final double x, final double y,
+    // final Orientation travelOrientation) {
+    // if (travelOrientation == Orientation.NORTH
+    // || travelOrientation == Orientation.SOUTH) {
+    // if ((y % sizeTile()) > sizeTile() / 2)
+    // return Orientation.SOUTH;
+    // // if((y % 40) < 20)
+    // else
+    // return Orientation.NORTH;
+    // } else if ((x % sizeTile()) > sizeTile() / 2)
+    // return Orientation.EAST;
+    // // if((x % 40) < 20)
+    // else
+    // return Orientation.WEST;
+    // }
 
     public void alignOnWhiteLine() {
         // TODO aparte invulling voor sim en robot?

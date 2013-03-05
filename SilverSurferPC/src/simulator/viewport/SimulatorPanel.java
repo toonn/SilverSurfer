@@ -98,7 +98,8 @@ public class SimulatorPanel extends JPanel {
         for (UnitViewPort viewPort : simulatorViewPorts)
             viewPort.resetPath();
 
-        Set<PilotInterface> allPilots = new HashSet<PilotInterface>(simulatorPilots);
+        Set<PilotInterface> allPilots = new HashSet<PilotInterface>(
+                simulatorPilots);
         allPilots.add(principalPilot);
         overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded);
 
