@@ -117,13 +117,11 @@ public class ShortestPath {
         for (int i = 0; i < tilesPath.size() - 1; i++) {
             final Orientation orientation = tilesPath.get(i)
                     .getCommonOrientation(tilesPath.get(i + 1));
-            if (tilesPath.size() - i > 2) {
+            if (tilesPath.size() - i > 2)
                 pilot.stopReadingBarcodes();
-            } else {
+            else
                 pilot.startReadingBarcodes();
-            }
-            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation
-                    .getRightAngle() - pilot.getAngle())));
+            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getRightAngle() - pilot.getAngle())));
             pilot.travel(40);
             // TODO goToNextTile checkte of er geAligned moest worden.
             // communicator.goToNextTile(orientation);

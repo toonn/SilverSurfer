@@ -4,7 +4,13 @@ import java.awt.Rectangle;
 
 @SuppressWarnings("serial")
 public class Wall extends Rectangle {
+	
+	private enum State {
 
+	    HORIZONTAL, VERTICAL;
+
+	}
+	
     private final State state;
     /**
      * als ge deze standaardbreedte wilt veranderen moet je in de methode

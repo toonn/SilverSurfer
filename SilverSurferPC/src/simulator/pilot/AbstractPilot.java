@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mapping.Barcode;
-import simulator.ExtMath;
 import simulator.viewport.SimulatorPanel;
 import mapping.MapGraph;
 import mapping.Obstruction;
@@ -65,7 +64,12 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void setAngle(final double angle) {
-        this.angle = ExtMath.addDegree(angle, 0);
+    	if(angle > 360)
+    		this.angle = angle - 360;
+    	else if(angle < 0)
+    		this.angle = angle + 360;
+    	else
+    		this.angle = angle;
     }
 
     @Override
@@ -387,7 +391,8 @@ public abstract class AbstractPilot implements PilotInterface {
                 x = currentX - i;
                 y = currentY;
             }
-            if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle())) {
+            // TODO: niet door muren rijden (maar op betere manier dan hieronder, dit geeft errors)
+            /*if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle())) {
                 final Orientation edgeOrientation = pointOnWichSideOfTile(x, y,
                         travelOrientation);
                 if (travelOrientation == edgeOrientation
@@ -396,7 +401,7 @@ public abstract class AbstractPilot implements PilotInterface {
                     System.out.println("Er staat een muur in de weg");
                     return;
                 }
-            }
+            }*/
             setPosition(x, y);
             try {
                 Thread.sleep(getTravelSleepTime(distance));
