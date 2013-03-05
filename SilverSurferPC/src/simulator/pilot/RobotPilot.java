@@ -1,5 +1,6 @@
 package simulator.pilot;
 
+import commands.BarcodeCommand;
 import commands.Command;
 import communication.Communicator;
 import communication.InfoReceiverThread;
@@ -11,6 +12,7 @@ public class RobotPilot extends AbstractPilot {
     private Communicator communicator;
     private static InfoReceiverThread IRT;
     private boolean busy = false;
+    private boolean executingBarcode = false;
 
     public RobotPilot() {
         statusInfoBuffer = new StatusInfoBuffer(this);
@@ -147,7 +149,7 @@ public class RobotPilot extends AbstractPilot {
     
     private void waitUntilDone() {
     	try {
-            while (busy)
+            while (busy || executingBarcode)
                 Thread.sleep(100);    		
     	} catch(Exception e) {
     		
@@ -176,5 +178,14 @@ public class RobotPilot extends AbstractPilot {
         communicator.sendCommand(Command.PERMA_STOP_READING_BARCODES);
         super.permaStopReadingBarcodes();
     	waitUntilDone();
+    }
+    
+    public void executeBarcode(int barcode) {
+    	executingBarcode = true;
+    	if(barcode == BarcodeCommand.PICKUP_OBJECT)
+    		pilotActions.pickUpItem();
+    	else
+    		pilotActions.doNotPickUpItem();
+    	executingBarcode = false;
     }
 }

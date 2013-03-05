@@ -91,6 +91,11 @@ public class StatusInfoBuffer {
     public void setAngle(final double angle) {
     	pilot.setAngle(angle);
     }
+    
+    //BARCODE
+    public void executeBarcode(int barcode) {
+    	pilot.executeBarcode(barcode);
+    }
 }
 
 /*

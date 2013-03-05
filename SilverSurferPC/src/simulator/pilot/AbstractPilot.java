@@ -24,7 +24,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private MessageCenter messageCenter;
     private boolean readBarcodes = true;
     private boolean permaBarcodeStop = false;
-    private PilotActions pilotActions = new PilotActions(this);
+    protected PilotActions pilotActions = new PilotActions(this);
 
     protected final double lengthOfRobot = 24;
     protected final double widthOfRobot = 26;
@@ -119,14 +119,6 @@ public abstract class AbstractPilot implements PilotInterface {
     public MapGraph getMapGraphConstructed() {
         return mapGraphConstructed;
     }
-
-    /**
-     * @return 	:	The set of actions this Pilot can execute. 
-     * 				e.g.: Pickup(), ...
-     */
-    public PilotActions getPilotActions() {
-		return pilotActions;
-	}
     
     public void setSimulatorPanel(SimulatorPanel simulatorPanel) {
         this.simulatorPanel = simulatorPanel;
