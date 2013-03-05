@@ -29,6 +29,10 @@ public class RobotPilot extends AbstractPilot {
         	
         }
     }
+    
+    public boolean getBusy() {
+    	return busy;
+    }
 
     @Override
     public void setSpeed(int speed) {
