@@ -38,7 +38,7 @@ public class SensorGraph extends JPanel {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            gui.updateStatus();
+            //gui.updateStatus();
         }
     };
 

@@ -62,38 +62,15 @@ public class SilverSurferGUI {
     }
 
     protected static void connectBluetooth() {
-        // try {
-        // //TODO connect
-        // communicator.setRobotConnected(true);
-        // simulatorPanel.resetMap();
-        // // TOON Juiste pilot aanmaken
-        // // simulationPilot.setRobotControllable(true);
-        // simulationPilot.setTile(0, 0);
-        // // TOON robotrelativeposition(0,0)
-        // // statusInfoBuffer.setXCoordinateRelative(0);
-        // // statusInfoBuffer.setYCoordinateRelative(0);
-        // System.out.println("[CONNECTION] Connection established.");
-        // changeSpeed(2);
-        // } catch (final Exception e) {
-        // System.out
-        // .println("[CONNECTION] Oops! Something went wrong connecting! \n[CONNECTION] Please make sure your robot and bluetooth are turned on.");
-        // }
+    	simulatorPanel.connect();
+    	System.out.println("[CONNECTION] Connection established.");
+    	//TODO: clear screen? reset map?
     }
 
     protected static void disconnectBluetooth() {
-        // try {
-        // // TODO disconnect
-        // communicator.setRobotConnected(false);
-        // simulatorPanel.resetMap();
-        // // TOON pilot vervangen door simpilot i.p.v. robotpilot?
-        // // simulationPilot.setRobotControllable(true);
-        // System.out
-        // .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
-        // changeSpeed(2);
-        // } catch (final Exception e) {
-        // System.out
-        // .println("[CONNECTION] Oops! Something went wrong disconnecting!");
-        // }
+    	simulatorPanel.disconnect();
+        System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
+    	//TODO: clear screen? reset map?
     }
 
     public void updateStatus() {

@@ -36,8 +36,14 @@ public abstract class AbstractPilot implements PilotInterface {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTileXY(new Point(0, 0));
         barcodes = new HashSet<Barcode>();
-        //TODO:
-        //messageCenter = new MessageCenter(this);
+        try {
+        	 messageCenter = new MessageCenter(this);
+        } catch (Exception e) {
+        // TODO: handle exception
+        System.out.println("MessageCenterProblem");
+        }
+        //TODO: verwijder na 1e demo.
+        messageCenter.subscribeTo("demo.silver");
     }
 
     @Override

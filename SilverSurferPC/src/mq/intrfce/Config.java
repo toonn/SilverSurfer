@@ -12,7 +12,7 @@ public interface Config {
 
     // the default exchange that will be used for races during the official
     // demo's
-    public static final String EXCHANGE_NAME = "SilverEx";
+    public static final String EXCHANGE_NAME = "Demo1Silver";
     public static final String LAUNCH_ROUTING_KEY = "race.launch";
 
 }

@@ -28,17 +28,19 @@ public class CommandUnit {
     private SensorThread ST;
 	private BarcodeThread BT;
 	
-    private boolean quit = false; //Stop de program when this is true.
+    private boolean quit = false; //Stop the program when this is true.
     private boolean readBarcodes = true; //Only read barcodes when this is true.
     private boolean permaBarcodeStop = false; //Do not read any barcode when this is true.
 
     public CommandUnit() {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
-        lightSensor = new LightSensor(SensorPort.S2, false);
-        infraredSensor = new IRSeekerV2(SensorPort.S3, IRSeekerV2.Mode.AC);
+        lightSensor = new LightSensor(SensorPort.S4, false);
+        infraredSensor = new IRSeekerV2(SensorPort.S2, IRSeekerV2.Mode.AC);
         Motor.A.setSpeed(CommandUnit.SPEED);
         Motor.B.setSpeed(CommandUnit.SPEED);
-
+        
+        //testPickup();
+        
         stopRobot();
         System.out.println("Waiting...");
         pcConnection = Bluetooth.waitForConnection();
@@ -53,6 +55,20 @@ public class CommandUnit {
 
         ST = new SensorThread("ST", this);
         ST.start();
+    }
+    
+    private void testPickup() {
+        lightSensor.setFloodlight(true);
+        try {
+        	Thread.sleep(1000);
+        } catch(Exception e) {
+        	
+        }
+        readBarcodes = false;
+        moveForward((int)(32*LENGTH_COEF));
+    	moveForward((int)(-10*LENGTH_COEF));
+    	turnAngle((int)(ANGLE_COEF/2));
+    	readBarcodes = true;
     }
 
     public static void main(String[] args) throws IOException {

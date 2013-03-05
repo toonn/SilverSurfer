@@ -17,7 +17,7 @@ import com.rabbitmq.client.Envelope;
  * 
  */
 public class SubscribeMonitor {
-    public static final String MONITOR_KEY = "race.*";
+    public static final String MONITOR_KEY = "demo.silver";
 
     public static void main(String[] main) {
         try {

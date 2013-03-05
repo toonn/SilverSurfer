@@ -20,7 +20,7 @@ public class RobotPilot extends AbstractPilot {
         try {
             communicator.openRobotConnection(statusInfoBuffer, IRT);
         } catch(Exception e) {
-        	
+        	System.out.println("Error connecting the robot!");
         }
     }
     
@@ -28,7 +28,7 @@ public class RobotPilot extends AbstractPilot {
         try {
         	communicator.closeRobotConnection(IRT);
         } catch(Exception e) {
-        	
+        	System.out.println("Error disconnecting the robot!");
         }
     }
     
@@ -70,10 +70,10 @@ public class RobotPilot extends AbstractPilot {
         return 2.74;
     }
 
-    @Override
-    public void recieveMessage(String message) {
-        // TODO:
-    }
+	@Override
+	public void recieveMessage(String message) {
+		System.out.println("Simulator -> Message: \""+message+"\" recieved.");
+	}
 
     @Override
     public String getConsoleTag() {
@@ -133,6 +133,13 @@ public class RobotPilot extends AbstractPilot {
     	super.rotate(alpha);
     	waitUntilDone();
     }
+    
+    public void rotate(final double alpha, boolean stop) {
+    	busy = true;
+    	communicator.sendCommand((int)(alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
+    	super.rotate(alpha);
+    	waitUntilDone(stop);
+    }
 
     @Override
     public void travel(final double distance) {
@@ -141,6 +148,14 @@ public class RobotPilot extends AbstractPilot {
     	//TODO: barcodes
     	super.travel(distance);
     	waitUntilDone();
+    }
+    
+    public void travel(final double distance, boolean stop) {
+    	busy = true;
+    	communicator.sendCommand((int)(distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
+    	//TODO: barcodes
+    	super.travel(distance);
+    	waitUntilDone(stop);
     }
     
     public void robotDone() {
@@ -155,6 +170,14 @@ public class RobotPilot extends AbstractPilot {
     		
     	}
     }
+    
+    private void waitUntilDone(boolean stop) {
+    	try {
+                //Thread.sleep(100);    		
+    	} catch(Exception e) {
+    		
+    	}
+    }
 
     @Override
     public void stopReadingBarcodes() {
@@ -163,6 +186,13 @@ public class RobotPilot extends AbstractPilot {
         super.stopReadingBarcodes();
     	waitUntilDone();
     }
+    
+    public void stopReadingBarcodes(boolean stop) {
+    	busy = true;
+        communicator.sendCommand(Command.STOP_READING_BARCODES);
+        super.stopReadingBarcodes();
+    	waitUntilDone(stop);
+    }
 
     @Override
     public void startReadingBarcodes() {
@@ -170,6 +200,13 @@ public class RobotPilot extends AbstractPilot {
         communicator.sendCommand(Command.START_READING_BARCODES);
         super.startReadingBarcodes();
     	waitUntilDone();
+    }
+    
+    public void startReadingBarcodes(boolean stop) {
+    	busy = true;
+        communicator.sendCommand(Command.START_READING_BARCODES);
+        super.startReadingBarcodes();
+    	waitUntilDone(stop);
     }
     
     @Override
@@ -182,10 +219,10 @@ public class RobotPilot extends AbstractPilot {
     
     public void executeBarcode(int barcode) {
     	executingBarcode = true;
-    	if(barcode == BarcodeCommand.PICKUP_OBJECT)
+    	//if(barcode == BarcodeCommand.PICKUP_OBJECT || barcode == BarcodeCommand.PICKUP_OBJECT_INVERSE)
     		pilotActions.pickUpItem();
-    	else
-    		pilotActions.doNotPickUpItem();
+    	//else
+    		//pilotActions.doNotPickUpItem();
     	executingBarcode = false;
     }
 }
