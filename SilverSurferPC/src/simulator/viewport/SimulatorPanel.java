@@ -62,6 +62,10 @@ public class SimulatorPanel extends JPanel {
         simulatorLayout.setVerticalGroup(simulatorLayout
                 .createSequentialGroup().addComponent(principalViewPort));
     }
+    
+    public AbstractPilot getPrincipalPilot() {
+    	return principalPilot;
+    }
 
     public int getSpeed() {
         return speed;

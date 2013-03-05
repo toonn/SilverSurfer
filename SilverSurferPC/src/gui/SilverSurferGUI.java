@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -13,7 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 
+import simulator.pilot.AbstractPilot;
+import simulator.pilot.RobotPilot;
 import simulator.viewport.SimulatorPanel;
 
 public class SilverSurferGUI {
@@ -21,16 +26,25 @@ public class SilverSurferGUI {
     private static JFrame frame = new JFrame("Silver Surfer Command Center");
     private static JSpinner angle, length;
     private static JButton zoomInButton, zoomOutButton, turnLeftButton, turnRightButton, moveButton;
-    private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7;
+    private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7, infoLabel8, infoLabel9, infoLabel10, infoLabel11;
     private static JPanel scalePanel, directionPanel, infoPanel;
     private static SimulatorPanel simulatorPanel;
     private SensorGraph sensorPanel;
     private GUIMenuBar menuBar;
+    private int updateStatusFPS = 3;
+    private ActionListener updateStatus = new ActionListener() {
+
+        @Override
+        public void actionPerformed(final ActionEvent arg0) {
+            updateStatus();
+        }
+    };
 
     public static void main(final String[] args) {
         final SilverSurferGUI SSG = new SilverSurferGUI();
         SSG.initializePanels();
         SSG.simulatorPanel();
+        new Timer(1000 / SSG.updateStatusFPS, SSG.updateStatus).start();
     }
 
     public JFrame getFrame() {
@@ -82,44 +96,27 @@ public class SilverSurferGUI {
         // }
     }
 
-    public void updateCoordinates(final String s) {
-        // TODO updatecoordinates
-    	//simulatorPanel.setBorder(BorderFactory.createTitledBorder(createBorder(), s));
-    }
-
     public void updateStatus() {
-        // TODO updatestatus
-        // try {
-        // int ultrasonicSensorValue;
-        // int lightSensorValue;
-        //
-        // if (!getCommunicator().getRobotConnected()) {
-        // ultrasonicSensorValue = principalPilot.getUltraSensorValue();
-        // lightSensorValue = principalPilot.getLightSensorValue();
-        // } else {
-        // ultrasonicSensorValue = getStatusInfoBuffer()
-        // .getLatestUltraSensorInfo();
-        // lightSensorValue = getStatusInfoBuffer()
-        // .getLatestLightSensorInfo();
-        // }
-        // sensorGraph
-        // .addSensorValues(ultrasonicSensorValue, lightSensorValue);
-        //
-        // infoLabel1
-        // .setText("Bluetooth: " + communicator.getRobotConnected());
-        // infoLabel2.setText("Speed level: " + simulatorPanel.getSpeed());
-        // infoLabel3.setText("Ultrasonicsensor: " + ultrasonicSensorValue);
-        // infoLabel4.setText("Lightsensor: " + lightSensorValue);
-        // infoLabel5.setText("Left Motor: "
-        // + statusInfoBuffer.getLeftMotorMoving() + " "
-        // + statusInfoBuffer.getLeftMotorSpeed());
-        // infoLabel6.setText("Right Motor: "
-        // + statusInfoBuffer.getRightMotorMoving() + " "
-        // + statusInfoBuffer.getRightMotorSpeed());
-        // infoLabel7.setText("Busy: " + statusInfoBuffer.getBusy());
-        // } catch (final NullPointerException e) {
-        //
-        // }
+    	AbstractPilot pilot = simulatorPanel.getPrincipalPilot();
+    	boolean robotConnected = pilot instanceof RobotPilot;
+    	int ultraSensorValue = pilot.getUltraSensorValue();
+    	int lightSensorValue = pilot.getLightSensorValue();
+    	
+    	sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue);
+        
+        infoLabel1.setText("Bluetooth: " + robotConnected);
+        infoLabel2.setText("Speed level: " + simulatorPanel.getSpeed());
+        infoLabel3.setText(simulatorPanel.getMapName());
+        infoLabel4.setText("-------------------");
+        infoLabel5.setText("Ultrasonicsensor: " + ultraSensorValue);
+        infoLabel6.setText("Lightsensor: " + lightSensorValue);
+        infoLabel7.setText("-------------------");
+        infoLabel8.setText("Coordinates: (" + pilot.getPosition().getX() + ", " +  pilot.getPosition().getY() + ")");
+        infoLabel9.setText("Angle: " + pilot.getAngle());
+        if(robotConnected) {
+            infoLabel10.setText("-------------------");
+        	infoLabel11.setText("Busy: " + ((RobotPilot)pilot).getBusy());
+        }
     }
 
     public void zoomIn() {
@@ -256,6 +253,10 @@ public class SilverSurferGUI {
         infoLabel5 = new JLabel("", SwingConstants.CENTER);
         infoLabel6 = new JLabel("", SwingConstants.CENTER);
         infoLabel7 = new JLabel("", SwingConstants.CENTER);
+        infoLabel8 = new JLabel("", SwingConstants.CENTER);
+        infoLabel9 = new JLabel("", SwingConstants.CENTER);
+        infoLabel10 = new JLabel("", SwingConstants.CENTER);
+        infoLabel11 = new JLabel("", SwingConstants.CENTER);
 
         infoPanel = new JPanel();
         infoPanel.setOpaque(false);
@@ -269,12 +270,16 @@ public class SilverSurferGUI {
                 .addComponent(infoLabel1).addComponent(infoLabel2)
                 .addComponent(infoLabel3).addComponent(infoLabel4)
                 .addComponent(infoLabel5).addComponent(infoLabel6)
-                .addComponent(infoLabel7));
+                .addComponent(infoLabel7).addComponent(infoLabel8)
+                .addComponent(infoLabel9).addComponent(infoLabel10)
+                .addComponent(infoLabel11));
         outputLayout.setVerticalGroup(outputLayout.createSequentialGroup()
                 .addComponent(infoLabel1).addComponent(infoLabel2)
                 .addComponent(infoLabel3).addComponent(infoLabel4)
                 .addComponent(infoLabel5).addComponent(infoLabel6)
-                .addComponent(infoLabel7));
+                .addComponent(infoLabel7).addComponent(infoLabel8)
+                .addComponent(infoLabel9).addComponent(infoLabel10)
+                .addComponent(infoLabel11));
     }
 
     private void sensorPanel() {

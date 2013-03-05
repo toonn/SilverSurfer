@@ -15,8 +15,8 @@ public class CommandUnit {
 	private static final double ANGLE_COEF = 710; //Amount of degrees needed for a 360 degree turn.
     private static int SPEED = 180;
     
-    private double x = 220;
-    private double y = 220;
+    private double x = 20;
+    private double y = 20;
     private double angle = 270; //Northside of the screen
     
     private NXTConnection pcConnection;
@@ -29,7 +29,6 @@ public class CommandUnit {
 	private BarcodeThread BT;
 	
     private boolean quit = false; //Stop de program when this is true.
-    private boolean busy = false; //Boolean to show if robot is busy (turning, ...).
     private boolean readBarcodes = true; //Only read barcodes when this is true.
     private boolean permaBarcodeStop = false; //Do not read any barcode when this is true.
 
@@ -40,7 +39,7 @@ public class CommandUnit {
         Motor.A.setSpeed(CommandUnit.SPEED);
         Motor.B.setSpeed(CommandUnit.SPEED);
 
-        waiting();
+        stopRobot();
         System.out.println("Waiting...");
         pcConnection = Bluetooth.waitForConnection();
         System.out.println("Connected.");
@@ -62,12 +61,9 @@ public class CommandUnit {
         while (!(CU.quit)) {
             try {
                 LCD.clear();
-                CU.busy = false;
-                CU.sendStringToUnit("[B] " + CU.busy);
+                CU.sendStringToUnit("[B]");
                 System.out.println("Waiting for input...");
                 int input = CU.dis.readInt();
-                CU.busy = true;
-                CU.sendStringToUnit("[B] " + CU.busy);
                 switch (input) {
                 case (Command.CLOSE_CONNECTION):
                     CU.ST.setQuit(true);
@@ -87,16 +83,16 @@ public class CommandUnit {
                     CU.setSpeed(4);
                     break;
                 case (Command.ALIGN_PERPENDICULAR):
-                    CU.updateCoordinates(20, 0);
+                    CU.updatePosition(20);
                     CU.alignOnWhiteLine();
-                    CU.waiting();
+                    CU.stopRobot();
                     break;
                 case (Command.ALIGN_WALL):
                     CU.alignOnWalls();
-                    CU.waiting();
+                    CU.stopRobot();
                     break;
                 case (Command.CHECK_FOR_OBSTRUCTION):
-                    CU.sendStringToUnit("[CH] " + CU.ultrasonicSensor.getDistance());
+                    CU.sendStringToUnit("[CFO] " + CU.ultrasonicSensor.getDistance());
                 	break;
                 case (Command.START_READING_BARCODES):
                     CU.readBarcodes = true;
@@ -109,15 +105,15 @@ public class CommandUnit {
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
-                        CU.updateCoordinates((input-Command.AUTOMATIC_MOVE_FORWARD)/100, 0);
+                        CU.updatePosition((input-Command.AUTOMATIC_MOVE_FORWARD)/100);
                         int result = CU.moveForward((int)Math.round(LENGTH_COEF*(input-Command.AUTOMATIC_MOVE_FORWARD)/100));
     	    			if(result != 0)
     	    				CU.sendStringToUnit("[BC] " + result);
-                        CU.waiting();
+                        CU.stopRobot();
                     } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -(100-Command.AUTOMATIC_TURN_ANGLE))) && input != Command.AUTOMATIC_TURN_ANGLE) {
-                        CU.updateCoordinates(0, (input-Command.AUTOMATIC_TURN_ANGLE)/100);
+                        CU.updateAngle((input-Command.AUTOMATIC_TURN_ANGLE)/100);
                         CU.turnAngle((int)Math.round(ANGLE_COEF*(input-Command.AUTOMATIC_TURN_ANGLE)/100/360));
-                        CU.waiting();
+                        CU.stopRobot();
                     }
                 	break;
                 }
@@ -140,12 +136,12 @@ public class CommandUnit {
         }
     }
     
-    private void waiting() {
+    private void stopRobot() {
         Motor.A.stop(true);
         Motor.B.stop();
     }
 
-    public int getSpeed() {
+    private int getSpeed() {
         if (SPEED == 360)
             return 4;
         else if (SPEED == 270)
@@ -156,7 +152,7 @@ public class CommandUnit {
             return 1;
     }
 
-    public void setSpeed(int speed) {
+    private void setSpeed(int speed) {
         if (speed == 1)
             SPEED = 90;
         else if (speed == 2)
@@ -169,17 +165,16 @@ public class CommandUnit {
 		Motor.B.setSpeed(SPEED);
     }
     
-    private void updateCoordinates(double length, double angle) {
-    	if(angle == 0) {
-    		x = x + length*Math.cos(Math.toRadians(this.angle));
-    		y = y - length*Math.sin(Math.toRadians(this.angle));
-            sendStringToUnit("[X] " + x);
-            sendStringToUnit("[Y] " + y);
-    	}    		
-    	else {
-    		this.angle = (this.angle + angle)%360;
-            sendStringToUnit("[ANG] " + this.angle);
-    	}
+    private void updatePosition(double length) {
+    	x = x + length*Math.cos(Math.toRadians(this.angle));
+    	y = y - length*Math.sin(Math.toRadians(this.angle));
+    	sendStringToUnit("[X] " + x);
+    	sendStringToUnit("[Y] " + y);
+    }
+    
+    private void updateAngle(double angle) {
+    	this.angle = (this.angle + angle)%360;
+    	sendStringToUnit("[ANG] " + this.angle);
     }
 
     public void updateStatus() {
