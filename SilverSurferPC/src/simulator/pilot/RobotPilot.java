@@ -179,13 +179,18 @@ public class RobotPilot extends AbstractPilot {
         super.permaStopReadingBarcodes();
     	waitUntilDone();
     }
+//    
+//    public void executeBarcode(int barcode) {
+//    	executingBarcode = true;
+//    	if(barcode == BarcodeCommand.PICKUP_OBJECT || barcode == BarcodeCommand.PICKUP_OBJECT_INVERSE)
+//    		pilotActions.pickUpItem();
+//    	else
+//    		pilotActions.doNotPickUpItem();
+//    	executingBarcode = false;
+//    }
     
-    public void executeBarcode(int barcode) {
-    	executingBarcode = true;
-    	if(barcode == BarcodeCommand.PICKUP_OBJECT || barcode == BarcodeCommand.PICKUP_OBJECT_INVERSE)
-    		pilotActions.pickUpItem();
-    	else
-    		pilotActions.doNotPickUpItem();
-    	executingBarcode = false;
+    protected int readBarcode() {
+    	// TODO: nog implementeren
+    	return 0;
     }
 }

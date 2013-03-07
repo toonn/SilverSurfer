@@ -5,6 +5,8 @@ import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Set;
 
+import commands.BarcodeCommand;
+
 import mapping.Barcode;
 import simulator.viewport.SimulatorPanel;
 import mapping.MapGraph;
@@ -406,6 +408,11 @@ public abstract class AbstractPilot implements PilotInterface {
              * System.out.println("Er staat een muur in de weg"); return; } }
              */
             setPosition(x, y);
+            if(readBarcodes && getLightSensorValue() < 40 && getLightSensorValue() > 10)
+            {
+            	System.out.println("barcode found");
+            	actionBarcodeFound();
+            }
             try {
                 Thread.sleep(getTravelSleepTime(distance));
             } catch (final InterruptedException e) {
@@ -413,7 +420,18 @@ public abstract class AbstractPilot implements PilotInterface {
             }
         }
     }
-
+    
+    protected abstract int readBarcode();
+    
+    private void actionBarcodeFound()
+    {
+    	int value = readBarcode();
+    	Barcode barcode = new Barcode(getMapGraphConstructed().getTile(getMatrixPosition()), value, getOrientation());
+    	getMapGraphConstructed().addContentToCurrentTile(getMatrixPosition(), barcode);
+    	barcodes.add(barcode);
+    	pilotActions.executeBarcode(value);
+    }
+    
     public void stopReadingBarcodes() {
         // TODO Deze methode wil ik weg uit pilot.
         readBarcodes = false;

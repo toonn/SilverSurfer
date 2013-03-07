@@ -3,6 +3,7 @@ package simulator.pilot;
 import java.util.Random;
 
 import mapping.Barcode;
+import mapping.TreasureObject;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Tile;
@@ -18,49 +19,6 @@ public class SimulationPilot extends AbstractPilot {
     @Override
     public String getConsoleTag() {
         return "[SIMULATOR]";
-    }
-
-    private double calculateDistanceToWall() {
-        if (getMapGraphLoaded() == null)
-            return 250;
-        double distanceToFirstEdge;
-        int amountOfTilesVisible;
-        Orientation orientation = getOrientation();
-        Tile tile = getMapGraphLoaded().getTile(getMatrixPosition());
-        // Berekent de afstand van de UltraSensor tot de eerste edge
-        if (orientation == Orientation.NORTH)
-            distanceToFirstEdge = getUltrasonicSensorCoordinates()[0]
-                    % sizeTile();
-        else if (orientation == Orientation.SOUTH)
-            distanceToFirstEdge = sizeTile()
-                    - (getUltrasonicSensorCoordinates()[0] % sizeTile());
-        else if (orientation == Orientation.WEST)
-            distanceToFirstEdge = getUltrasonicSensorCoordinates()[1]
-                    % sizeTile();
-        else
-            distanceToFirstEdge = sizeTile()
-                    - (getUltrasonicSensorCoordinates()[1] % sizeTile());
-
-        // Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een
-        // maximum van 3)
-        if (tile.getEdge(orientation).isPassable()) {
-            tile = tile.getEdge(orientation).getNeighbour(tile);
-            if (tile.getEdge(orientation).isPassable()) {
-                tile = tile.getEdge(orientation).getNeighbour(tile);
-                if (tile.getEdge(orientation).isPassable()) {
-                    tile = tile.getEdge(orientation).getNeighbour(tile);
-                    if (tile.getEdge(orientation).isPassable())
-                        return 250;
-                    else
-                        amountOfTilesVisible = 3;
-                } else
-                    amountOfTilesVisible = 2;
-            } else
-                amountOfTilesVisible = 1;
-        } else
-            amountOfTilesVisible = 0;
-
-        return distanceToFirstEdge + amountOfTilesVisible * sizeTile();
     }
 
     @Override
@@ -91,7 +49,47 @@ public class SimulationPilot extends AbstractPilot {
                 + (random.nextGaussian() * standardDeviation));
     }
 
-    @Override
+    /**
+	 * True if the robot is not on an edge, but on a tile without a content.
+	 */
+	private boolean onEmptyTile(final double x, final double y) {
+	    return !pointOnEdge(x, y)
+	            && (getMapGraphLoaded() == null || getMapGraphLoaded().getTile(
+	                    getMatrixPosition()).getContent() == null);
+	}
+
+	/**
+	 * True if the robot is on an edge and this edge is not a wall
+	 */
+	private boolean onWhiteLine(final double x, final double y) {
+	    return pointOnEdge(x, y)
+	            && (getMapGraphLoaded() == null || getMapGraphLoaded()
+	                    .getObstruction(getMatrixPosition(),
+	                            Orientation.calculateOrientation(getAngle())) != Obstruction.WALL);
+	}
+
+	/**
+	 * True if the robot is not on an edge, but on a tile containing a barcode.
+	 */
+	private boolean onBarcodeTile(final double x, final double y) {
+	    return !pointOnEdge(x, y)
+	            && getMapGraphLoaded() != null
+	            && (getMapGraphLoaded().getTile(getMatrixPosition())
+	                    .getContent() instanceof Barcode);
+	}
+	
+	protected int readBarcode()
+	{
+		if(getMapGraphLoaded().getTile(getMatrixPosition()).getContent() == null
+				|| !(getMapGraphLoaded().getTile(getMatrixPosition()).getContent() instanceof Barcode))
+		{
+			return -1;
+		}
+		System.out.println(getMapGraphLoaded().getTile(getMatrixPosition()).getContent().getValue());
+		return getMapGraphLoaded().getTile(getMatrixPosition()).getContent().getValue();
+	}
+
+	@Override
     public int getUltraSensorValue() {
         final Random random = new Random();
         final double mean = calculateDistanceToWall();
@@ -101,7 +99,50 @@ public class SimulationPilot extends AbstractPilot {
                 + (random.nextGaussian() * standardDeviation));
     }
 
-    @Override
+    private double calculateDistanceToWall() {
+	    if (getMapGraphLoaded() == null)
+	        return 250;
+	    double distanceToFirstEdge;
+	    int amountOfTilesVisible;
+	    Orientation orientation = getOrientation();
+	    Tile tile = getMapGraphLoaded().getTile(getMatrixPosition());
+	    // Berekent de afstand van de UltraSensor tot de eerste edge
+	    if (orientation == Orientation.NORTH)
+	        distanceToFirstEdge = getUltrasonicSensorCoordinates()[0]
+	                % sizeTile();
+	    else if (orientation == Orientation.SOUTH)
+	        distanceToFirstEdge = sizeTile()
+	                - (getUltrasonicSensorCoordinates()[0] % sizeTile());
+	    else if (orientation == Orientation.WEST)
+	        distanceToFirstEdge = getUltrasonicSensorCoordinates()[1]
+	                % sizeTile();
+	    else
+	        distanceToFirstEdge = sizeTile()
+	                - (getUltrasonicSensorCoordinates()[1] % sizeTile());
+	
+	    // Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een
+	    // maximum van 3)
+	    if (tile.getEdge(orientation).isPassable()) {
+	        tile = tile.getEdge(orientation).getNeighbour(tile);
+	        if (tile.getEdge(orientation).isPassable()) {
+	            tile = tile.getEdge(orientation).getNeighbour(tile);
+	            if (tile.getEdge(orientation).isPassable()) {
+	                tile = tile.getEdge(orientation).getNeighbour(tile);
+	                if (tile.getEdge(orientation).isPassable())
+	                    return 250;
+	                else
+	                    amountOfTilesVisible = 3;
+	            } else
+	                amountOfTilesVisible = 2;
+	        } else
+	            amountOfTilesVisible = 1;
+	    } else
+	        amountOfTilesVisible = 0;
+	
+	    return distanceToFirstEdge + amountOfTilesVisible * sizeTile();
+	}
+
+	@Override
     protected int getRotateSleepTime(double angle) {
         return 5 - getSpeed();
     }
@@ -119,34 +160,5 @@ public class SimulationPilot extends AbstractPilot {
             return 3;
         }
         return 0;
-    }
-
-    /**
-     * True if the robot is not on an edge, but on a tile without a content.
-     */
-    private boolean onEmptyTile(final double x, final double y) {
-        return !pointOnEdge(x, y)
-                && (getMapGraphLoaded() == null || getMapGraphLoaded().getTile(
-                        getMatrixPosition()).getContent() == null);
-    }
-
-    /**
-     * True if the robot is on an edge and this edge is not a wall
-     */
-    private boolean onWhiteLine(final double x, final double y) {
-        return pointOnEdge(x, y)
-                && (getMapGraphLoaded() == null || getMapGraphLoaded()
-                        .getObstruction(getMatrixPosition(),
-                                Orientation.calculateOrientation(getAngle())) != Obstruction.WALL);
-    }
-
-    /**
-     * True if the robot is not on an edge, but on a tile containing a barcode.
-     */
-    private boolean onBarcodeTile(final double x, final double y) {
-        return !pointOnEdge(x, y)
-                && getMapGraphLoaded() != null
-                && (getMapGraphLoaded().getTile(getMatrixPosition())
-                        .getContent() instanceof Barcode);
     }
 }

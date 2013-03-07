@@ -280,7 +280,7 @@ public abstract class AbstractViewPort extends JPanel {
 
 		for (PilotInterface pilot : pilots) {
 			AffineTransform oldTransform = g2.getTransform();
-			((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+			//((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
 			g2.setColor(Color.red);
 			g2.fill(new Ellipse2D.Double(((pilot.getPosition().getX() - (diam / 2)) * scalingfactor),
 					((pilot.getPosition().getY() - (diam / 2)) * scalingfactor), diam, diam));
