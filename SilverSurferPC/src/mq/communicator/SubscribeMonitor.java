@@ -18,7 +18,7 @@ import com.rabbitmq.client.Envelope;
  */
 public class SubscribeMonitor {
 
-    private String monitor_key = "";
+    private String monitor_key = "demo.silver";
     private Connection conn = null;
     private Channel channel = null;
     private AbstractPilot clientPilot;

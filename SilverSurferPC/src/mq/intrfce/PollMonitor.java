@@ -18,7 +18,7 @@ import com.rabbitmq.client.GetResponse;
  * 
  */
 public class PollMonitor {
-    public static final String MONITOR_KEY = "race.*";
+    public static final String MONITOR_KEY = "demo.*";
 
     public static void main(String[] main) {
         try {

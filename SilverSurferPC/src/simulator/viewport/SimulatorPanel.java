@@ -14,6 +14,7 @@ import mapping.MapReader;
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 import simulator.pilot.SimulationPilot;
+import simulator.pilot.RobotPilot;
 
 @SuppressWarnings("serial")
 public class SimulatorPanel extends JPanel {
@@ -50,6 +51,122 @@ public class SimulatorPanel extends JPanel {
             simulatorPilotSet.add(pilot);
             simulatorViewPorts.add(new UnitViewPort(simulatorPilotSet));
         }
+
+        changeSpeed(2);
+
+        simulatorLayout = new GroupLayout(this);
+        setLayout(simulatorLayout);
+        simulatorLayout.setAutoCreateGaps(true);
+        simulatorLayout.setAutoCreateContainerGaps(true);
+        simulatorLayout.setHorizontalGroup(simulatorLayout.createParallelGroup(
+                GroupLayout.Alignment.CENTER).addComponent(principalViewPort));
+        simulatorLayout.setVerticalGroup(simulatorLayout
+                .createSequentialGroup().addComponent(principalViewPort));
+    }
+    
+    public void connect() {
+    	principalPilot = new RobotPilot();
+        principalPilot.setSimulatorPanel(this);
+        Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
+        principalPilotSet.add(principalPilot);
+        principalViewPort = new UnitViewPort(principalPilotSet);
+
+        changeSpeed(2);
+        
+        if(mapGraphLoaded != null) {
+        	simulatorPilots.get(0).setPosition(
+                    mapGraphLoaded.getMapSize().x * 40 + 20, 20);
+            simulatorPilots.get(1).setPosition(20,
+                    mapGraphLoaded.getMapSize().y * 40 + 20);
+            simulatorPilots.get(2).setPosition(
+                    mapGraphLoaded.getMapSize().x * 40 + 20,
+                    mapGraphLoaded.getMapSize().y * 40 + 20);
+            for (AbstractPilot pilot : simulatorPilots)
+                pilot.reset();
+            for (UnitViewPort viewPort : simulatorViewPorts)
+                viewPort.resetPath();
+
+            Set<PilotInterface> allPilots = new HashSet<PilotInterface>(simulatorPilots);
+            allPilots.add(principalPilot);
+            overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded);
+
+            simulatorLayout = new GroupLayout(this);
+            setLayout(simulatorLayout);
+            simulatorLayout.setAutoCreateGaps(true);
+            simulatorLayout.setAutoCreateContainerGaps(true);
+            simulatorLayout
+                    .setHorizontalGroup(simulatorLayout
+                            .createSequentialGroup()
+                            .addComponent(overallViewPort)
+                            .addGroup(
+                                    simulatorLayout
+                                            .createParallelGroup(
+                                                    GroupLayout.Alignment.CENTER)
+                                            .addGroup(
+                                                    simulatorLayout
+                                                            .createSequentialGroup()
+                                                            .addComponent(
+                                                                    principalViewPort)
+                                                            .addComponent(
+                                                                    simulatorViewPorts
+                                                                            .get(0)))
+                                            .addGroup(
+                                                    simulatorLayout
+                                                            .createSequentialGroup()
+                                                            .addComponent(
+                                                                    simulatorViewPorts
+                                                                            .get(1))
+                                                            .addComponent(
+                                                                    simulatorViewPorts
+                                                                            .get(2)))));
+            simulatorLayout
+                    .setVerticalGroup(simulatorLayout
+                            .createParallelGroup(GroupLayout.Alignment.CENTER)
+                            .addComponent(overallViewPort)
+                            .addGroup(
+                                    simulatorLayout
+                                            .createSequentialGroup()
+                                            .addGroup(
+                                                    simulatorLayout
+                                                            .createParallelGroup(
+                                                                    GroupLayout.Alignment.CENTER)
+                                                            .addComponent(
+                                                                    principalViewPort)
+                                                            .addComponent(
+                                                                    simulatorViewPorts
+                                                                            .get(0)))
+                                            .addGroup(
+                                                    simulatorLayout
+                                                            .createParallelGroup(
+                                                                    GroupLayout.Alignment.CENTER)
+                                                            .addComponent(
+                                                                    simulatorViewPorts
+                                                                            .get(1))
+                                                            .addComponent(
+                                                                    simulatorViewPorts
+                                                                            .get(2)))));
+            repaint();
+        }
+        else {
+        	simulatorLayout = new GroupLayout(this);
+            setLayout(simulatorLayout);
+            simulatorLayout.setAutoCreateGaps(true);
+            simulatorLayout.setAutoCreateContainerGaps(true);
+            simulatorLayout.setHorizontalGroup(simulatorLayout.createParallelGroup(
+                    GroupLayout.Alignment.CENTER).addComponent(principalViewPort));
+            simulatorLayout.setVerticalGroup(simulatorLayout
+                    .createSequentialGroup().addComponent(principalViewPort));
+            repaint();
+        }
+    }
+    
+    public void disconnect() {
+    	((RobotPilot)principalPilot).endConnection();
+    	principalPilot = new SimulationPilot();
+        principalPilot.setSimulatorPanel(this);
+        Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
+        principalPilotSet.add(principalPilot);
+        principalViewPort = new UnitViewPort(principalPilotSet);
 
         changeSpeed(2);
 
@@ -168,24 +285,14 @@ public class SimulatorPanel extends JPanel {
     }
 
     public void turnLeftPrincipalPilot(double alpha) {
-        // MoveTurnThread MTT = new MoveTurnThread("MTT", principalPilot, 0,
-        // (int)(-1*alpha));
-        // MTT.start();
         principalPilot.rotate(-alpha);
     }
 
     public void turnRightPrincipalPilot(double alpha) {
-        // MoveTurnThread MTT = new MoveTurnThread("MTT", principalPilot, 0,
-        // (int)alpha);
-        // MTT.start();
         principalPilot.rotate(alpha);
-
     }
 
     public void travelPrincipalPilot(double distance) {
-        // MoveTurnThread MTT = new MoveTurnThread("MTT", principalPilot,
-        // (int)distance, 0);
-        // MTT.start();
         principalPilot.travel(distance);
     }
 

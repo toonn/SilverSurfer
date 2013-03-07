@@ -20,7 +20,7 @@ public class RobotPilot extends AbstractPilot {
         try {
             communicator.openRobotConnection(statusInfoBuffer, IRT);
         } catch(Exception e) {
-        	
+        	System.out.println("Error connecting the robot!");
         }
     }
     
@@ -28,7 +28,7 @@ public class RobotPilot extends AbstractPilot {
         try {
         	communicator.closeRobotConnection(IRT);
         } catch(Exception e) {
-        	
+        	System.out.println("Error disconnecting the robot!");
         }
     }
     
@@ -70,10 +70,10 @@ public class RobotPilot extends AbstractPilot {
         return 2.74;
     }
 
-    @Override
-    public void recieveMessage(String message) {
-        // TODO:
-    }
+	@Override
+	public void recieveMessage(String message) {
+		System.out.println("Simulator -> Message: \""+message+"\" recieved.");
+	}
 
     @Override
     public String getConsoleTag() {
@@ -182,7 +182,7 @@ public class RobotPilot extends AbstractPilot {
     
     public void executeBarcode(int barcode) {
     	executingBarcode = true;
-    	if(barcode == BarcodeCommand.PICKUP_OBJECT)
+    	if(barcode == BarcodeCommand.PICKUP_OBJECT || barcode == BarcodeCommand.PICKUP_OBJECT_INVERSE)
     		pilotActions.pickUpItem();
     	else
     		pilotActions.doNotPickUpItem();

@@ -154,7 +154,6 @@ public class MapReader {
                 // an object has been specified
                 if (seperatedInfoIJ.length == 4
                         && "o".equals(seperatedInfoIJ[2])) {
-                    System.out.println("Treasure!");
                     tileIJ.setContent(new TreasureObject(tileIJ, Integer
                             .valueOf(seperatedInfoIJ[3])));
                 }

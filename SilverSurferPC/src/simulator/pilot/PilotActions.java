@@ -27,12 +27,13 @@ public class PilotActions {
     public void pickUpItem() {
     	getPilot().stopReadingBarcodes();
     	getPilot().alignOnWhiteLine();
-    	getPilot().travel(32);
+    	getPilot().travel(48);
+    	getPilot().getMessageCenter().sendMessage("Demo1Silver", "demo.silver", "Object picked up!");
     	getPilot().travel(-10);
     	getPilot().rotate(180);
     	getPilot().travel(17+12+16+5); //17cm tot vorige tegel, 12 tot barcode, 16cm barcode, 5cm speling.
     	getPilot().alignOnWhiteLine();
-    	getPilot().travel(24);
+    	getPilot().travel(29);
     	getPilot().startReadingBarcodes();
     }
     
