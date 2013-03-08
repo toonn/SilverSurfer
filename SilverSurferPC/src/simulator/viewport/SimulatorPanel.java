@@ -34,7 +34,7 @@ public class SimulatorPanel extends JPanel {
     private MapGraph mapGraphLoaded;
 
     public SimulatorPanel() {
-        principalPilot = new SimulationPilot();
+        principalPilot = new SimulationPilot(0);
         principalPilot.setSimulatorPanel(this);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
@@ -44,7 +44,7 @@ public class SimulatorPanel extends JPanel {
         simulatorViewPorts = new ArrayList<UnitViewPort>();
 
         for (int i = 0; i < 3; i++)
-            simulatorPilots.add(new SimulationPilot());
+            simulatorPilots.add(new SimulationPilot(i+1));
         for (AbstractPilot pilot : simulatorPilots) {
             pilot.setSimulatorPanel(this);
             Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
@@ -65,7 +65,7 @@ public class SimulatorPanel extends JPanel {
     }
     
     public void connect() {
-    	principalPilot = new RobotPilot();
+    	principalPilot = new RobotPilot(1);
         principalPilot.setSimulatorPanel(this);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
@@ -162,7 +162,7 @@ public class SimulatorPanel extends JPanel {
     
     public void disconnect() {
     	((RobotPilot)principalPilot).endConnection();
-    	principalPilot = new SimulationPilot();
+    	principalPilot = new SimulationPilot(1);
         principalPilot.setSimulatorPanel(this);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);

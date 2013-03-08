@@ -14,8 +14,9 @@ public class RobotPilot extends AbstractPilot {
     private boolean busy = false;
     private boolean executingBarcode = false;
 
-    public RobotPilot() {
-        statusInfoBuffer = new StatusInfoBuffer(this);
+    public RobotPilot(int teamNumber) {
+        super(teamNumber);
+    	statusInfoBuffer = new StatusInfoBuffer(this);
         communicator = new Communicator();
         try {
             communicator.openRobotConnection(statusInfoBuffer, IRT);

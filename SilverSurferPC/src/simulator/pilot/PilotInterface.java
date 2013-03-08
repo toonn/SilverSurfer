@@ -25,4 +25,11 @@ public interface PilotInterface {
 
     public abstract Orientation getOrientation();
     
+    /**
+     * Returns 0,1,2 or 3 indicating which treasure the pilot is looking for
+     * Returns 4 or 5 when the treasure is found and the pilot knows what team it is in
+     * Returns -1 if no valid team number is available
+     */
+    public abstract int getTeamNumber();
+    
 }

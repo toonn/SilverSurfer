@@ -21,6 +21,7 @@ public abstract class AbstractPilot implements PilotInterface {
             sizeTile() / 2);
     private double angle = 270;
     protected int speed = 10;
+    private int teamNumber;
     private Set<Barcode> barcodes;
     private MapGraph mapGraphConstructed;
     private SimulatorPanel simulatorPanel;
@@ -35,7 +36,8 @@ public abstract class AbstractPilot implements PilotInterface {
     protected final double ultrasonicSensorDistanceFromAxis = 5.5;
     protected final double detectionDistanceUltrasonicSensorRobot = 28;
 
-    public AbstractPilot() {
+    public AbstractPilot(int teamNumber) {
+    	this.teamNumber = teamNumber;
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTileXY(new Point(0, 0));
         barcodes = new HashSet<Barcode>();
@@ -45,6 +47,34 @@ public abstract class AbstractPilot implements PilotInterface {
         } catch (Exception e) {
         	System.out.println("MessageCenter problem!");
         }
+    }
+    
+    /**
+     * Returns 0,1,2 or 3 indicating which treasure the pilot is looking for
+     * Returns 4 or 5 when the treasure is found and the pilot knows what team it is in
+     * Returns -1 if no valid team number is available
+     */
+    @Override
+    public int getTeamNumber()
+    {
+    	if(teamNumber >= 0 && teamNumber <= 5)
+    	{
+    		return teamNumber;
+    	}
+    	return -1;
+    }
+    
+    /**
+     * The team number can only change when a robot has found its treasure and knows what team it is in
+     * This means the team number can only be set to 4 or 5
+     */
+    public void setTeamNumber(int teamNumber)
+    {
+    	if(teamNumber != 4 && teamNumber != 5)
+    	{
+    		System.out.println("the teamnumber can only be set to 4 or 5");;
+    	}
+    	this.teamNumber = teamNumber;;
     }
 
     @Override
@@ -410,7 +440,6 @@ public abstract class AbstractPilot implements PilotInterface {
             setPosition(x, y);
             if(readBarcodes && getLightSensorValue() < 40 && getLightSensorValue() > 10)
             {
-            	System.out.println("barcode found");
             	actionBarcodeFound();
             }
             try {

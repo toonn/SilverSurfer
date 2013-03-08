@@ -52,18 +52,43 @@ public class PilotActions {
 		if(barcode != -1)
 		{
 			executingBarcode = true;
-			if(barcode == BarcodeCommand.PICKUP_OBJECT || barcode == BarcodeCommand.PICKUP_OBJECT_INVERSE)
+			
+			//TODO: alle andere mogelijkheden moeten hiervoor komen (bvb wip) zodat 'kijken of het het voorwerp is' als laatste wordt gedaan
+			
+			// the first bits of the barcode match the teamnumer and the pilot does not yet know what team it is in
+			if(barcode/2 == getPilot().getTeamNumber() && getPilot().getTeamNumber() < 5)
 			{
-				System.out.println("pickup");
+				System.out.println("robot " + getPilot().getTeamNumber() + "vindt barcode " + barcode + " en actie: pickup");
 				// TODO: zorg dat het voorwerp wordt opgeslagen op volgende tegel in MapGraphConstructed!
-				//pickUpItem();
+				// pickUpItem();
+				
+				// the last bit of the barcode matches the new team; the pilot is given its team
+				int i = 0;
+				if(barcode % 2 == 1)
+				{
+					i = 1;
+				}
+				getPilot().setTeamNumber(4 + i);
 			}
 			else
 			{
 				// TODO: zorg dat het voorwerp wordt opgeslagen op volgende tegel in MapGraphConstructed!
-				System.out.println("not pick up");
+				System.out.println("robot " + getPilot().getTeamNumber() + "vindt barcode " + barcode + " en actie: not pickup");
 				//doNotPickUpItem();
 			}
+			
+//			if(barcode == BarcodeCommand.PICKUP_OBJECT || barcode == BarcodeCommand.PICKUP_OBJECT_INVERSE)
+//			{
+//				System.out.println("pickup");
+//				// TODO: zorg dat het voorwerp wordt opgeslagen op volgende tegel in MapGraphConstructed!
+//				//pickUpItem();
+//			}
+//			else
+//			{
+//				// TODO: zorg dat het voorwerp wordt opgeslagen op volgende tegel in MapGraphConstructed!
+//				System.out.println("not pick up");
+//				//doNotPickUpItem();
+//			}
 			executingBarcode = false;
 		}
 		// else the barcode has not been read right and will not be executed

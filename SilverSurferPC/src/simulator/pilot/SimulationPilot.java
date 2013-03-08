@@ -11,6 +11,11 @@ import simulator.SimulationSensorData;
 
 public class SimulationPilot extends AbstractPilot {
 
+	public SimulationPilot(int teamNumber)
+	{
+		super(teamNumber);
+	}
+	
 	@Override
 	public void recieveMessage(String message) {
 		System.out.println("Simulator -> Message: \""+message+"\" recieved.");
@@ -85,7 +90,6 @@ public class SimulationPilot extends AbstractPilot {
 		{
 			return -1;
 		}
-		System.out.println(getMapGraphLoaded().getTile(getMatrixPosition()).getContent().getValue());
 		return getMapGraphLoaded().getTile(getMatrixPosition()).getContent().getValue();
 	}
 

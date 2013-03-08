@@ -40,6 +40,10 @@ public abstract class AbstractViewPort extends JPanel {
     private Map<Barcode, Rectangle2D[]> barcodeRectangles;
     private HashMap<TreasureObject, Ellipse2D> treasureCircles;
     private int repaintFPS = 30;
+    private Color[] teamColors = new Color[]{new Color(249,244,99), new Color(208,246,114), new Color(114,246,160), new Color(114,225,246),
+    									new Color(134,46,250), new Color(255,63,72)};
+    
+    
     private ActionListener repaintViewPort = new ActionListener() {
 
         @Override
@@ -203,18 +207,7 @@ public abstract class AbstractViewPort extends JPanel {
 
         final Graphics2D g2 = ((Graphics2D) graph);
         for (final TreasureObject treasure : treasureCircles.keySet()) {
-            if (treasure.getValue() % 4 == 0) {
-                g2.setColor(Color.RED);
-            }
-            if (treasure.getValue() % 4 == 1) {
-                g2.setColor(Color.BLUE);
-            }
-            if (treasure.getValue() % 4 == 2) {
-                g2.setColor(Color.GREEN);
-            }
-            if (treasure.getValue() % 4 == 3) {
-                g2.setColor(Color.YELLOW);
-            }
+           g2.setColor(teamColors[treasure.getValue() % 4]);
             g2.fill(treasureCircles.get(treasure));
         }
     }
@@ -281,7 +274,7 @@ public abstract class AbstractViewPort extends JPanel {
 		for (PilotInterface pilot : pilots) {
 			AffineTransform oldTransform = g2.getTransform();
 			//((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-			g2.setColor(Color.red);
+			g2.setColor(teamColors[pilot.getTeamNumber()]);
 			g2.fill(new Ellipse2D.Double(((pilot.getPosition().getX() - (diam / 2)) * scalingfactor),
 					((pilot.getPosition().getY() - (diam / 2)) * scalingfactor), diam, diam));
 			g2.setTransform(oldTransform);
