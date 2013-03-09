@@ -9,10 +9,15 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import mapping.MapGraph;
+import mapping.Tile;
+import mapping.TreasureObject;
 
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
@@ -52,6 +57,7 @@ public class UnitViewPort extends DummyViewPort {
         updatePathComponent();
         paintPathComponent(graph);
         paintBeamComponent(graph);
+        paintExploreQueue(graph);
     }
 
     private void updatePathComponent() {
@@ -62,7 +68,7 @@ public class UnitViewPort extends DummyViewPort {
     }
 
     /**
-     * Tekent het pad van de robot en de robot zelf met daarachter het grid.
+     * Tekent het pad van de robot
      */
     private void paintPathComponent(final Graphics graph) {
         final Graphics2D g2 = ((Graphics2D) graph);
@@ -73,6 +79,27 @@ public class UnitViewPort extends DummyViewPort {
             g2.draw(new Line2D.Double(pathCoordinates.get(i), pathCoordinates.get(i + 1)));
         g2.setStroke(originalStroke);
     }
+    
+    /**
+     * Tekent alle tiles in de mapgraph
+     * Handig voor testen
+     */
+    private void paintExploreQueue(final Graphics graph) {
+    	((Graphics2D) graph).setColor(Color.ORANGE);
+    	
+    	for (MapGraph mapGraph : getAllMapGraphs())
+    	{
+            for (Tile tile : mapGraph.getTiles())
+            {
+            	Rectangle2D checkHighlight = new Rectangle2D.Double(tile.getPosition().getX() * 40,
+            														tile.getPosition().getY() * 40,
+            														(int) getSizeTile(),
+            														(int) getSizeTile());
+            	((Graphics2D) graph).fill(checkHighlight);
+            }
+    	}
+    }
+    
 
     /**
      * The arc is painted light blue when the measurement is not to be trusted

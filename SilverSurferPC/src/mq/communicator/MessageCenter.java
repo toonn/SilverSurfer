@@ -18,7 +18,7 @@ public class MessageCenter {
 
     public static void main(String[] args) {
 
-        MessageCenter mc = new MessageCenter(new SimulationPilot());
+        MessageCenter mc = new MessageCenter(new SimulationPilot(0));
 
         SubscribeMonitor sm = new SubscribeMonitor("race.*", mc.getChannel(),
                 mc.getConn(),mc.getClientPilot());

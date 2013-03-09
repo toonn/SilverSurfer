@@ -38,7 +38,7 @@ public abstract class AbstractViewPort extends JPanel {
     private ImageIcon robotSprite = new ImageIcon(
             "resources/robot/NXTrobotsmall.png");
     private Map<Barcode, Rectangle2D[]> barcodeRectangles;
-    private HashMap<TreasureObject, Ellipse2D> treasureCircles;
+    private HashMap<TreasureObject, Ellipse2D[]> treasureCircles;
     private int repaintFPS = 30;
     private Color[] teamColors = new Color[]{new Color(249,244,99), new Color(208,246,114), new Color(114,246,160), new Color(114,225,246),
     									new Color(134,46,250), new Color(255,63,72)};
@@ -55,7 +55,7 @@ public abstract class AbstractViewPort extends JPanel {
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet) {
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<Barcode, Rectangle2D[]>();
-        treasureCircles = new HashMap<TreasureObject, Ellipse2D>();
+        treasureCircles = new HashMap<TreasureObject, Ellipse2D[]>();
 
         new Timer(1000 / repaintFPS, repaintViewPort).start();
     }
@@ -148,9 +148,9 @@ public abstract class AbstractViewPort extends JPanel {
             boolean[] boolRep = barcode.getBoolRep();
             for (int i = 0; i < 8; i++) {
                 if (boolRep[i]) {
-                    g2.setColor(Color.BLACK);
-                } else {
                     g2.setColor(Color.WHITE);
+                } else {
+                    g2.setColor(Color.DARK_GRAY);
                 }
                 g2.fill(barcodeRectangle[i]);
             }
@@ -165,17 +165,25 @@ public abstract class AbstractViewPort extends JPanel {
 
         double width = getSizeTile();
         double height = getSizeTile();
+        double extraX = 0;
+        double extraY = 0;
 
         // North or South oriented barcode
         if (barcode.getDirection() == Orientation.NORTH
                 || barcode.getDirection() == Orientation.SOUTH)
+        {
             height = getSizeTile() / 20;
+            extraY = getSizeTile()/2 - 8;
+        }
         else if (barcode.getDirection() == Orientation.EAST
                 || barcode.getDirection() == Orientation.WEST)
+        {
             width = getSizeTile() / 20;
+            extraX = getSizeTile()/2 - 8;
+        }
         for (int i = 0; i < 8; i++) {
-            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX(),
-                    barcodeLUCorner.getY(), width, height);
+            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX() + extraX,
+                    barcodeLUCorner.getY() + extraY, width, height);
             if (width < height)
                 barcodeLUCorner = new Point2D.Double(barcodeLUCorner.getX()
                         + width, barcodeLUCorner.getY());
@@ -197,23 +205,28 @@ public abstract class AbstractViewPort extends JPanel {
                 }
             }
         }
+        
         if (treasureCircles.size() != treasures.size()) {
-            treasureCircles = new HashMap<TreasureObject, Ellipse2D>();
+            treasureCircles = new HashMap<TreasureObject, Ellipse2D[]>();
             for (final TreasureObject treasure : treasures)
                 if (!treasureCircles.containsKey(treasure))
                     treasureCircles.put(treasure,
-                            createVisualTreasure(treasure));
+                    		new Ellipse2D[]{createVisualTreasure(treasure, 16), 
+                    						createVisualTreasure(treasure, 15)});
         }
 
+        // first draw a black circle and then another, colored, circle
+        // it will look as if the colored circle has a black border
         final Graphics2D g2 = ((Graphics2D) graph);
         for (final TreasureObject treasure : treasureCircles.keySet()) {
-           g2.setColor(teamColors[treasure.getValue() % 4]);
-            g2.fill(treasureCircles.get(treasure));
+        	g2.setColor(Color.BLACK);
+            g2.fill(treasureCircles.get(treasure)[0]);
+        	g2.setColor(teamColors[treasure.getValue() % 4]);
+            g2.fill(treasureCircles.get(treasure)[1]);
         }
     }
 
-    private Ellipse2D createVisualTreasure(final TreasureObject treasure) {
-        double diameter = 10;
+    private Ellipse2D createVisualTreasure(final TreasureObject treasure, double diameter) {
         final Ellipse2D visualTreasure = new Ellipse2D.Double(treasure
                 .getPosition().getX()
                 * getSizeTile()
@@ -227,12 +240,20 @@ public abstract class AbstractViewPort extends JPanel {
 
     private void paintWalls(Graphics graph) {
         Set<Point2D[]> walls = new HashSet<Point2D[]>();
-        for (MapGraph mapGraph : getAllMapGraphs())
+        try
+        {
+        	for (MapGraph mapGraph : getAllMapGraphs())
             for (Tile tile : mapGraph.getTiles())
                 for (Edge wall : tile.getEdges())
                     if (wall.getObstruction() != null
                             && !wall.getObstruction().isPassable())
                         walls.add(wall.getEndPoints());
+        }
+        catch(java.util.ConcurrentModificationException e)
+        {
+        	paintWalls(graph);
+        }
+        
 
         final Graphics2D g2 = ((Graphics2D) graph);
         g2.setColor(Color.black);

@@ -76,13 +76,17 @@ public class ShortestPath {
         Collections.sort(queue, new Comparator<Tile>() {
             @Override
             public int compare(final Tile o1, final Tile o2) {
-                if (o1.getManhattanValue() + o1.getCost() < o2
-                        .getManhattanValue() + o2.getCost()) {
+            	
+                if (o1.getManhattanValue() + o1.getCost() < o2.getManhattanValue() + o2.getCost()) 
+                {
                     return 1;
-                } else if (o1.getManhattanValue() + o1.getCost() == o2
-                        .getManhattanValue() + o2.getCost()) {
+                }
+                else if (o1.getManhattanValue() + o1.getCost() == o2.getManhattanValue() + o2.getCost()) 
+                {
                     return 0;
-                } else {
+                } 
+                else 
+                {
                     return -1;
                 }
             }
@@ -90,10 +94,20 @@ public class ShortestPath {
 
         currentTile.setMarkingShortestPath(true);
 
-        final Tile nextTile = queue.get(queue.size() - 1);
-        while (queue.contains(nextTile))
-            queue.remove(nextTile);
-        fillTilesPath(nextTile);
+        if(queue.size() > 0)
+        {
+        	// remove the last tile from the queue and add it to the path
+        	final Tile nextTile = queue.get(queue.size() - 1);
+        	removeTileFromQueue(nextTile);
+        	fillTilesPath(nextTile);
+        }
+        
+    }
+    
+    private void removeTileFromQueue(final Tile tile) {
+    	// Multiple times in queue so multiple times remove.
+        while (queue.contains(tile))
+            queue.remove(tile);
     }
 
     private Vector<Tile> getTiles() {

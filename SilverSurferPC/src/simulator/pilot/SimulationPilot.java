@@ -90,7 +90,8 @@ public class SimulationPilot extends AbstractPilot {
 		{
 			return -1;
 		}
-		return getMapGraphLoaded().getTile(getMatrixPosition()).getContent().getValue();
+		int value = getMapGraphLoaded().getTile(getMatrixPosition()).getContent().getValue();
+		return value;
 	}
 
 	@Override

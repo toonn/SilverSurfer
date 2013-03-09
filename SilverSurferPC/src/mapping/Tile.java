@@ -148,10 +148,11 @@ public class Tile {
     }
 
     /**
-     * returns all 4 neighbours of this tile, if has 4, otherwise null.
+     * returns all known neighbours of this tile.
      */
     public ArrayList<Tile> getAllNeighbours() {
         final ArrayList<Tile> neighbours = new ArrayList<Tile>(4);
+        
         for (final Orientation orientation : Orientation.values()) {
             neighbours.add(getEdge(orientation).getNeighbour(this));
         }
@@ -243,7 +244,9 @@ public class Tile {
     // return yCoordinate;
     // }
 
-    /** return null if this tile is not yet set on a mapgraph */
+    /** 
+     * Position relative to the mapgraph. Return null if this tile is not yet set on a mapgraph.
+     */
     public Point getPosition() {
         return location;
     }

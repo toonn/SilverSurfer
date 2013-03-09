@@ -13,20 +13,19 @@ public class MapGraph {
 
     private final Map<Point, Tile> tiles = new HashMap<Point, Tile>();
 
-    public void addContentToCurrentTile(final Point point, final Barcode code) {
+    public void addContentToCurrentTile(final Point point, final TileContent content) {
         // TODO Wat als point == null?
-        getTile(point).setContent(code);
+        getTile(point).setContent(content);
     }
 
     /**
-     * Adds a given obstruction to the edge on the given orientation of the
-     * current tile.
+     * Adds a given obstruction to the edge on the given orientation of the tile on the given point
      */
     public void addObstruction(final Point point,
             final Orientation orientation, final Obstruction obst) {
         if (getTile(point) == null) {
             throw new IllegalArgumentException(
-                    "currenttile is null in addobstruction");
+                    "currenttile is null in addObstruction");
         } else if (getTile(point).getEdge(orientation) == null) {
             // TODO ??? Volgens Tile is er een invar Tile.getEdge(direction) !=
             // null

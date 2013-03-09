@@ -19,6 +19,9 @@ public class Barcode extends TileContent {
         this(tile, 0, Orientation.NORTH);
     }
 
+    /**
+     * false = black, true = white
+     */
     public boolean[] getBoolRep() {
         final boolean[] boolRep = new boolean[8];
         for (int i = 0; i < 8; i++) {
@@ -110,6 +113,9 @@ public class Barcode extends TileContent {
     }
 
 
+    /**
+     * 0 = black, 1 = white
+     */
     @Override
     public String toString() {
         String body = Integer.toBinaryString(getValue());

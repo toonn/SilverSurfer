@@ -81,30 +81,67 @@ public class MazeExplorer {
         // Add the current tile to the finish-queue and remove it from the todo-queue.
         allTiles.add(nextTile);
         removeTileFromQueue(nextTile);
-
+        
         // Go to the next tile.
         goToNextTile(currentTile, nextTile);
 
-        // Wait until the barcode is executed
-        // TODO:
+        // Wait until the barcode is executed. This is the barcode on the nextTile you just went to.
+        // Reading a barcode means that you are standing on a straight, these walls are automatically added.
+        while(pilot.isExecutingBarcode())
+        {
+        	try
+        	{
+        		Thread.sleep(100);
+        		checkExploredQueue();
+        	}
+        	catch(Exception e)
+        	{
+
+        	}
+        }
 
         // Repeat with next tile.
         algorithm(nextTile);
     }
+    
+    /**
+     * Checks whether the queue only contains unexplored tiles.
+     * For, it is possible that a pilot explores some tiles by itself.
+     * For example, when he finds a barcode that says that there is a treasure - and a dead-end - on the next tile.
+     */
+    private void checkExploredQueue()
+    {
+    	Tile toDelete = null;
+    	for(Tile tile: queue)
+    	{
+    		if(tile.isMarkedExploreMaze())
+    		{
+    			toDelete = tile;
+    		}
+    	}
+    	if(toDelete != null)
+    	{
+    		allTiles.add(toDelete);
+    		removeTileFromQueue(toDelete);
+    	}
+    }
+   
 
-    // Checkt voor alle neighbours of ze al behandeld zijn.
-    // Indien niet, checkt of er een muur tussen staat.
-    // Indien wel, plaats een muur.
-    // Indien niet, voeg een nieuwe lege tile toe op de juiste plaats.
+    /**
+     * Checkt voor alle neighbours of ze al behandeld zijn.
+     * Indien niet, checkt of er een muur tussen staat.
+     * Indien wel, plaats een muur.
+     * Indien niet, voeg een nieuwe lege tile toe op de juiste plaats.
+     */
     private void exploreTile(final Tile currentTile) {
-        int numberVariable = pilot.getOrientation().getNumberArray();
-        // numbervariable met als inhoud het getal van de orientatie (N = 1,
-        // ...)
+        // numbervariable met als inhoud het getal van de orientatie (N = 1,...)
+    	int numberVariable = pilot.getOrientation().getNumberArray();
+        
         // Array met alle buren van deze tile
         final ArrayList<Tile> array = currentTile.getAllNeighbours();
+        
         for (int i = 0; i < 4; i++) {
-            // Do nothing if tile with numbervariable as orientation is already
-            // done
+            // Do nothing if tile with numbervariable as orientation is already done
             if (array.get(numberVariable) != null && (array.get(numberVariable).isMarkedExploreMaze()))
                 ;
             else {
@@ -171,8 +208,8 @@ public class MazeExplorer {
         shortestPath.goShortestPath();
     }
 
-    private boolean isGoodNextTile(final Tile currentTile,
-            final Orientation orientation) {
+    private boolean isGoodNextTile(final Tile currentTile,final Orientation orientation)
+    {
         return currentTile.getEdge(orientation).isPassable()
                 && currentTile.getEdge(orientation).getNeighbour(currentTile) != null
                 && queue.contains(currentTile.getEdge(orientation)

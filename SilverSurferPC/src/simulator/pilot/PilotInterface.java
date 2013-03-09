@@ -32,4 +32,6 @@ public interface PilotInterface {
      */
     public abstract int getTeamNumber();
     
+    public abstract boolean isExecutingBarcode();
+    
 }
