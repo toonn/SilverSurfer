@@ -48,26 +48,12 @@ public class PilotActions {
 		}
 		getPilot().travel(-50);
 		
-		// TODO: travel en rotate interferreertmet het explore-algoritme!! het verennnen loopt dan mis
-//		getPilot().travel(getPilot().sizeTile());
-//		getPilot().getMessageCenter().sendMessage("Demo1Silver", "demo.silver", "Object picked up!");
-//		getPilot().travel(-getPilot().sizeTile()/4);
-//		getPilot().rotate(180);
-//		getPilot().travel(getPilot().sizeTile() * (1+(3/4))); //17cm tot vorige tegel, 12 tot barcode, 16cm barcode, 5cm speling.
-//		getPilot().alignOnWhiteLine();
-//		getPilot().travel(getPilot().sizeTile() * 29/40); // waarom is dit nodig?
-		
 		getPilot().startReadingBarcodes();
 	}
 	
 	private void doNotPickUpItem() {
 		getPilot().stopReadingBarcodes();
 		System.out.println("Robot " + getPilot().getTeamNumber() + ": not pickup");
-
-		// TODO: travel en rotate interferreert met het explore-algoritme!! het verennnen loopt dan mis
-//		getPilot().rotate(180);
-//		getPilot().alignOnWhiteLine();
-//		getPilot().travel(24);
 		
 		getPilot().startReadingBarcodes();
 	}
@@ -77,31 +63,19 @@ public class PilotActions {
 	 * @param barcode
 	 */
 	public void executeBarcode(int barcode) {
-		if(barcode != -1)
-		{			
-			//TODO: alle andere mogelijkheden moeten hiervoor komen (bvb wip) zodat 'kijken of het het voorwerp is' als laatste wordt gedaan
-			
-			// seesaw (wip)
-			if(barcode == BarcodeCommand.SEESAW || barcode == BarcodeCommand.SEESAW_INVERSE)
-			{
-				
+		if(barcode != -1) {
+			if(barcode == BarcodeCommand.SEESAW || barcode == BarcodeCommand.SEESAW_INVERSE) {
+				//TODO: wip
 			}
-			// if no other barcode, the barcode must represent a treasure
-			else
-			{
+			else {
 				treasureFound(barcode/2);
 
 				// the first bits of the barcode match the teamnumber and the pilot does not yet know what team it is in
 				if(barcode/2 == getPilot().getTeamNumber() && getPilot().getTeamNumber() < 5)
-				{
 					pickUpItem(barcode);
-					
-				}
 				// a treasure is found, but not he right one
 				else
-				{
 					doNotPickUpItem();
-				}
 			}
 			
 		}
@@ -112,19 +86,13 @@ public class PilotActions {
 	 * Change the current tile into a dead-end, mark it as explored and place a barcode on the tile.
 	 * Allign on walls and on the white line behind the barcode, then execute the barcode.
 	 */
-	public void barcodeFound()
-	 {
+	public void barcodeFound() {
 		 getPilot().stopReadingBarcodes();
 		 
 		 // change the current tile into a straight and mark it explored
 		 for(Orientation orientation: Orientation.values())
-			{
-				if(orientation != getPilot().getOrientation()
-					&&	orientation != getPilot().getOrientation().getOppositeOrientation())
-				{
-					getPilot().getMapGraphConstructed().addObstruction(getPilot().getMatrixPosition(), orientation, Obstruction.WALL);
-				}
-			}
+			 if(orientation != getPilot().getOrientation() &&	orientation != getPilot().getOrientation().getOppositeOrientation())
+				 getPilot().getMapGraphConstructed().addObstruction(getPilot().getMatrixPosition(), orientation, Obstruction.WALL);
 		 getPilot().getMapGraphConstructed().getTile(getPilot().getMatrixPosition()).setMarkingExploreMaze(true);
 		 
 		 // add the tile at the end of the straight to the map
@@ -136,10 +104,7 @@ public class PilotActions {
 		 Barcode barcode = new Barcode(getPilot().getMapGraphConstructed().getTile(getPilot().getMatrixPosition()), value, getPilot().getOrientation());
 		 getPilot().getMapGraphConstructed().addContentToCurrentTile(getPilot().getMatrixPosition(), barcode);
 		 
-		 // allign
-		 // TODO: maakt de exploreThread() in de war!
-		 // getPilot().alignOnWalls();
-		 // getPilot().alignOnWhiteLine();
+		 getPilot().alignOnWalls();
 		 
 		 // execute the action the barcode implies
 		 executeBarcode(value);
@@ -157,12 +122,8 @@ public class PilotActions {
 		// change the next tile into a dead end and mark the tile as explored
 		Point nextPoint = getPilot().getOrientation().getNext(getPilot().getMatrixPosition());
 		for(Orientation orientation: Orientation.values())
-		{
 			if(orientation != getPilot().getOrientation().getOppositeOrientation())
-			{
 				getPilot().getMapGraphConstructed().addObstruction(nextPoint, orientation, Obstruction.WALL);
-			}
-		}
 		getPilot().getMapGraphConstructed().getTile(nextPoint).setMarkingExploreMaze(true);
 		
 		// add the found treasure to the map

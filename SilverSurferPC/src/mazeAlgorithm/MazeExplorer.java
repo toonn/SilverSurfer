@@ -24,15 +24,20 @@ public class MazeExplorer {
     private Tile startTile = null;
 
     private AbstractPilot pilot;
+    private boolean align;
+    private int amountUntilAlign = 5;
+    private int amount;
 
     /**
      * is true when robot must allign during the algorithm.
      */
     // private final boolean mustAllign = false;
 
-    public MazeExplorer(final Tile startTile, final AbstractPilot pilot) {
+    public MazeExplorer(final Tile startTile, final AbstractPilot pilot, boolean align) {
         this.startTile = startTile;
         this.pilot = pilot;
+        this.align = align;
+        this.amount = amountUntilAlign;
     }
 
     /**
@@ -87,18 +92,14 @@ public class MazeExplorer {
 
         // Wait until the barcode is executed. This is the barcode on the nextTile you just went to.
         // Reading a barcode means that you are standing on a straight, these walls are automatically added.
-        while(pilot.isExecutingBarcode())
-        {
-        	try
-        	{
+        while(pilot.isExecutingBarcode()) {
+        	try {
         		Thread.sleep(100);
-        		checkExploredQueue();
-        	}
-        	catch(Exception e)
-        	{
+        	} catch(Exception e) {
 
         	}
         }
+		checkExploredQueue();
 
         // Repeat with next tile.
         algorithm(nextTile);
@@ -109,18 +110,12 @@ public class MazeExplorer {
      * For, it is possible that a pilot explores some tiles by itself.
      * For example, when he finds a barcode that says that there is a treasure - and a dead-end - on the next tile.
      */
-    private void checkExploredQueue()
-    {
+    private void checkExploredQueue() {
     	Tile toDelete = null;
     	for(Tile tile: queue)
-    	{
     		if(tile.isMarkedExploreMaze())
-    		{
     			toDelete = tile;
-    		}
-    	}
-    	if(toDelete != null)
-    	{
+    	if(toDelete != null) {
     		allTiles.add(toDelete);
     		removeTileFromQueue(toDelete);
     	}
@@ -197,19 +192,18 @@ public class MazeExplorer {
             return currentTile.getEdge(
                     pilot.getOrientation().getOppositeOrientation())
                     .getNeighbour(currentTile);
-        } else {
-            return queue.lastElement();
         }
+        else
+            return queue.lastElement();
     }
 
     private void goToNextTile(final Tile currentTile, final Tile nextTile) {
         // voert een shortestPath uit om van currentTile naar nextTile te gaan.
         final ShortestPath shortestPath = new ShortestPath(pilot, currentTile, nextTile, allTiles);
-        shortestPath.goShortestPath();
+        amount = shortestPath.goShortestPath(align, amount, amountUntilAlign);
     }
 
-    private boolean isGoodNextTile(final Tile currentTile,final Orientation orientation)
-    {
+    private boolean isGoodNextTile(final Tile currentTile,final Orientation orientation) {
         return currentTile.getEdge(orientation).isPassable()
                 && currentTile.getEdge(orientation).getNeighbour(currentTile) != null
                 && queue.contains(currentTile.getEdge(orientation)

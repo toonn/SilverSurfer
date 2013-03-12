@@ -121,13 +121,13 @@ public class ShortestPath {
      * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
      * alle tiles terug op hun initiele waarde gezet.
      */
-    public void goShortestPath() {
+    public int goShortestPath(boolean align, int amount, int alignAfterXTiles) {
+        int amountUntilAlign = amount;
         setHeuristics();
         startTile.setCost(0);
         fillTilesPath(startTile);
-        if (tilesPath.size() == 1) {
-            return;
-        }
+        if (tilesPath.size() == 1)
+            return amountUntilAlign;
         for (int i = 0; i < tilesPath.size() - 1; i++) {
             final Orientation orientation = tilesPath.get(i)
                     .getCommonOrientation(tilesPath.get(i + 1));
@@ -136,15 +136,22 @@ public class ShortestPath {
             else
                 pilot.startReadingBarcodes();
             pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getRightAngle() - pilot.getAngle())));
-            pilot.travel(40);
+            if(align && amountUntilAlign == 0) {
+            	pilot.alignOnWhiteLine();
+            	pilot.travel(22);
+            	amountUntilAlign = alignAfterXTiles;
+            }
+            else {
+                pilot.travel(40);
+                amountUntilAlign--;
+            }
             // TODO goToNextTile checkte of er geAligned moest worden.
             // communicator.goToNextTile(orientation);
         }
 
-        for (final Object tile : getTiles()) {
+        for (final Object tile : getTiles())
             ((Tile) tile).setCostBackToInitiatedValue();
-        }
-
+        return amountUntilAlign;
     }
 
     /**
