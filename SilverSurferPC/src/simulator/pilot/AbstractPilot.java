@@ -223,10 +223,7 @@ public abstract class AbstractPilot implements PilotInterface {
 				|| (y % sizeTile()) < edgeMarge;
 	}
 
-	 public void alignOnWhiteLine() {
-		 // TODO Commando geven aan de robot om alignOnWhiteLine() te doen?
-		 // Momenteel wordt er in communicator gecheckt hoelang het geleden is.
-		 
+	 public void alignOnWhiteLine() {		 
 		 //TODO: express fouten brengen op simulator?
 		 /*while (!pointOnEdge(getLightSensorCoordinates()[0],
 				 getLightSensorCoordinates()[1]))

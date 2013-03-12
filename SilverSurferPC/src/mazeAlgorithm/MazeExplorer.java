@@ -24,20 +24,16 @@ public class MazeExplorer {
     private Tile startTile = null;
 
     private AbstractPilot pilot;
+    
     private boolean align;
-    private int amountUntilAlign = 5;
-    private int amount;
-
-    /**
-     * is true when robot must allign during the algorithm.
-     */
-    // private final boolean mustAllign = false;
+    private final int amountOfTilesUntilAlign = 5;
+    private int currentAmount;
 
     public MazeExplorer(final Tile startTile, final AbstractPilot pilot, boolean align) {
         this.startTile = startTile;
         this.pilot = pilot;
         this.align = align;
-        this.amount = amountUntilAlign;
+        this.currentAmount = amountOfTilesUntilAlign;
     }
 
     /**
@@ -200,7 +196,7 @@ public class MazeExplorer {
     private void goToNextTile(final Tile currentTile, final Tile nextTile) {
         // voert een shortestPath uit om van currentTile naar nextTile te gaan.
         final ShortestPath shortestPath = new ShortestPath(pilot, currentTile, nextTile, allTiles);
-        amount = shortestPath.goShortestPath(align, amount, amountUntilAlign);
+        currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
     }
 
     private boolean isGoodNextTile(final Tile currentTile,final Orientation orientation) {
