@@ -453,12 +453,6 @@ public abstract class AbstractPilot implements PilotInterface {
 			  * System.out.println("Er staat een muur in de weg"); return; } }
 			  */
 			 setPosition(x, y);
-			 if(readBarcodes && !(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
-					&& getLightSensorValue() < 40 && getLightSensorValue() > 10)
-			 {
-				 setBusyExecutingBarcode(true);
-				 pilotActions.barcodeFound();
-			 }
 			 
 			 try {
 				 Thread.sleep(getTravelSleepTime(distance));
@@ -466,6 +460,12 @@ public abstract class AbstractPilot implements PilotInterface {
 
 			 }
 		 }
+		 if(readBarcodes && !(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
+					&& getLightSensorValue() < 40 && getLightSensorValue() > 10)
+			 {
+				 setBusyExecutingBarcode(true);
+				 pilotActions.barcodeFound();
+			 }
 	 }
 
 	 protected abstract int readBarcode();
