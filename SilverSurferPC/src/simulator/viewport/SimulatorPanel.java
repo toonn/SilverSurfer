@@ -18,7 +18,6 @@ import simulator.pilot.RobotPilot;
 
 @SuppressWarnings("serial")
 public class SimulatorPanel extends JPanel {
-
     private GroupLayout simulatorLayout;
 
     private OverallViewPort overallViewPort;
@@ -44,7 +43,7 @@ public class SimulatorPanel extends JPanel {
         simulatorViewPorts = new ArrayList<UnitViewPort>();
 
         for (int i = 0; i < 3; i++)
-            simulatorPilots.add(new SimulationPilot(i+1));
+            simulatorPilots.add(new SimulationPilot(i + 1));
         for (AbstractPilot pilot : simulatorPilots) {
             pilot.setSimulatorPanel(this);
             Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
@@ -63,18 +62,21 @@ public class SimulatorPanel extends JPanel {
         simulatorLayout.setVerticalGroup(simulatorLayout
                 .createSequentialGroup().addComponent(principalViewPort));
     }
-    
+
     public void connect() {
-    	principalPilot = new RobotPilot(1);
+        principalPilot = new RobotPilot(1);
         principalPilot.setSimulatorPanel(this);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
         principalViewPort = new UnitViewPort(principalPilotSet);
 
         changeSpeed(2);
-        
-        if(mapGraphLoaded != null) {
-        	simulatorPilots.get(0).setPosition(
+
+        removeAll();
+        invalidate();
+
+        if (mapGraphLoaded != null) {
+            simulatorPilots.get(0).setPosition(
                     mapGraphLoaded.getMapSize().x * 40 + 20, 20);
             simulatorPilots.get(1).setPosition(20,
                     mapGraphLoaded.getMapSize().y * 40 + 20);
@@ -86,39 +88,35 @@ public class SimulatorPanel extends JPanel {
             for (UnitViewPort viewPort : simulatorViewPorts)
                 viewPort.resetPath();
 
-            Set<PilotInterface> allPilots = new HashSet<PilotInterface>(simulatorPilots);
+            Set<PilotInterface> allPilots = new HashSet<PilotInterface>(
+                    simulatorPilots);
             allPilots.add(principalPilot);
             overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded);
 
-            simulatorLayout = new GroupLayout(this);
-            setLayout(simulatorLayout);
-            simulatorLayout.setAutoCreateGaps(true);
-            simulatorLayout.setAutoCreateContainerGaps(true);
-            simulatorLayout
-                    .setHorizontalGroup(simulatorLayout
-                            .createSequentialGroup()
-                            .addComponent(overallViewPort)
-                            .addGroup(
-                                    simulatorLayout
-                                            .createParallelGroup(
-                                                    GroupLayout.Alignment.CENTER)
-                                            .addGroup(
-                                                    simulatorLayout
-                                                            .createSequentialGroup()
-                                                            .addComponent(
-                                                                    principalViewPort)
-                                                            .addComponent(
-                                                                    simulatorViewPorts
-                                                                            .get(0)))
-                                            .addGroup(
-                                                    simulatorLayout
-                                                            .createSequentialGroup()
-                                                            .addComponent(
-                                                                    simulatorViewPorts
-                                                                            .get(1))
-                                                            .addComponent(
-                                                                    simulatorViewPorts
-                                                                            .get(2)))));
+            simulatorLayout.setHorizontalGroup(simulatorLayout
+                    .createSequentialGroup()
+                    .addComponent(overallViewPort)
+                    .addGroup(
+                            simulatorLayout
+                                    .createParallelGroup(
+                                            GroupLayout.Alignment.CENTER)
+                                    .addGroup(
+                                            simulatorLayout
+                                                    .createSequentialGroup()
+                                                    .addComponent(
+                                                            principalViewPort)
+                                                    .addComponent(
+                                                            simulatorViewPorts
+                                                                    .get(0)))
+                                    .addGroup(
+                                            simulatorLayout
+                                                    .createSequentialGroup()
+                                                    .addComponent(
+                                                            simulatorViewPorts
+                                                                    .get(1))
+                                                    .addComponent(
+                                                            simulatorViewPorts
+                                                                    .get(2)))));
             simulatorLayout
                     .setVerticalGroup(simulatorLayout
                             .createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -145,24 +143,20 @@ public class SimulatorPanel extends JPanel {
                                                             .addComponent(
                                                                     simulatorViewPorts
                                                                             .get(2)))));
-            repaint();
-        }
-        else {
-        	simulatorLayout = new GroupLayout(this);
-            setLayout(simulatorLayout);
-            simulatorLayout.setAutoCreateGaps(true);
-            simulatorLayout.setAutoCreateContainerGaps(true);
-            simulatorLayout.setHorizontalGroup(simulatorLayout.createParallelGroup(
-                    GroupLayout.Alignment.CENTER).addComponent(principalViewPort));
+        } else {
+            simulatorLayout.setHorizontalGroup(simulatorLayout
+                    .createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addComponent(principalViewPort));
             simulatorLayout.setVerticalGroup(simulatorLayout
                     .createSequentialGroup().addComponent(principalViewPort));
-            repaint();
         }
+
+        validate();
     }
-    
+
     public void disconnect() {
-    	((RobotPilot)principalPilot).endConnection();
-    	principalPilot = new SimulationPilot(1);
+        ((RobotPilot) principalPilot).endConnection();
+        principalPilot = new SimulationPilot(1);
         principalPilot.setSimulatorPanel(this);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
@@ -170,14 +164,15 @@ public class SimulatorPanel extends JPanel {
 
         changeSpeed(2);
 
-        simulatorLayout = new GroupLayout(this);
-        setLayout(simulatorLayout);
-        simulatorLayout.setAutoCreateGaps(true);
-        simulatorLayout.setAutoCreateContainerGaps(true);
+        removeAll();
+        invalidate();
+
         simulatorLayout.setHorizontalGroup(simulatorLayout.createParallelGroup(
                 GroupLayout.Alignment.CENTER).addComponent(principalViewPort));
         simulatorLayout.setVerticalGroup(simulatorLayout
                 .createSequentialGroup().addComponent(principalViewPort));
+
+        validate();
     }
 
     public AbstractPilot getPrincipalPilot() {
@@ -226,10 +221,9 @@ public class SimulatorPanel extends JPanel {
         allPilots.add(principalPilot);
         overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded);
 
-        simulatorLayout = new GroupLayout(this);
-        setLayout(simulatorLayout);
-        simulatorLayout.setAutoCreateGaps(true);
-        simulatorLayout.setAutoCreateContainerGaps(true);
+        removeAll();
+        invalidate();
+
         simulatorLayout
                 .setHorizontalGroup(simulatorLayout
                         .createSequentialGroup()
@@ -281,7 +275,7 @@ public class SimulatorPanel extends JPanel {
                                                         .addComponent(
                                                                 simulatorViewPorts
                                                                         .get(2)))));
-        repaint();
+        validate();
     }
 
     public void turnLeftPrincipalPilot(double alpha) {

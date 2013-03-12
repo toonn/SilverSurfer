@@ -1,6 +1,5 @@
 package simulator.viewport;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -28,6 +27,7 @@ import mapping.Edge;
 import mapping.MapGraph;
 import mapping.Orientation;
 import mapping.Tile;
+import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 
 @SuppressWarnings("serial")
@@ -40,10 +40,11 @@ public abstract class AbstractViewPort extends JPanel {
     private Map<Barcode, Rectangle2D[]> barcodeRectangles;
     private HashMap<TreasureObject, Ellipse2D[]> treasureCircles;
     private int repaintFPS = 30;
-    private Color[] teamColors = new Color[]{new Color(249,244,99), new Color(208,246,114), new Color(114,246,160), new Color(114,225,246),
-    									new Color(134,46,250), new Color(255,63,72)};
-    
-    
+    private Color[] teamColors = new Color[] { new Color(249, 244, 99),
+            new Color(242, 111, 58), new Color(114, 246, 160),
+            new Color(114, 225, 246), new Color(134, 46, 250),
+            new Color(255, 63, 72) };
+
     private ActionListener repaintViewPort = new ActionListener() {
 
         @Override
@@ -72,12 +73,62 @@ public abstract class AbstractViewPort extends JPanel {
     @Override
     protected void paintComponent(final Graphics graph) {
         super.paintComponent(graph);
+
+        Graphics2D g2 = (Graphics2D) graph;
+
+        int maxMapWidth = 0;
+        int maxMapHeight = 0;
+        for (MapGraph map : getAllMapGraphs()) {
+            if (maxMapWidth < map.getMapSize().x + 1)
+                maxMapWidth = map.getMapSize().x + 1;
+            if (maxMapHeight < map.getMapSize().y + 1)
+                maxMapHeight = map.getMapSize().y + 1;
+        }
+
+        paintFrame(graph);
+
+        PilotInterface pilot = pilots.iterator().next();
+        if (pilots.size() == 1) {
+            if (maxMapWidth * getSizeTile() > getWidth()
+                    || pilot.getPosition().getX() < -getWidth() / 2
+                    || pilot.getPosition().getX() > getWidth() / 2)
+                g2.translate(-pilot.getPosition().getX() + (getSizeTile() / 2),
+                        0);
+            if (maxMapHeight * getSizeTile() > getHeight()
+                    || pilot.getPosition().getY() < -getHeight() / 2
+                    || pilot.getPosition().getY() > getHeight() / 2)
+                g2.translate(0, -pilot.getPosition().getY()
+                        + (getSizeTile() / 2));
+        }
+        if (maxMapWidth * getSizeTile() < getWidth())
+            g2.translate((getWidth() / 2) - (maxMapWidth * getSizeTile() / 2),
+                    0);
+        else
+            g2.translate((getWidth() / 2), 0);
+        if (maxMapHeight * getSizeTile() < getHeight())
+            g2.translate(0, (getHeight() / 2)
+                    - (maxMapHeight * getSizeTile() / 2));
+        else
+            g2.translate(0, (getHeight() / 2));
+
+        paintGrid(graph);
+
         if (pilots.size() > 0) {
-            paintGrid(graph);
+
             paintMapGraph(graph);
             paintRobotColor(graph);
             paintRobots(graph);
         }
+    }
+
+    private void paintFrame(final Graphics graph) {
+        Graphics2D g2 = (Graphics2D) graph;
+
+        Stroke originalStroke = g2.getStroke();
+        g2.setStroke(new BasicStroke(5, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER));
+        g2.draw(new Rectangle2D.Double(2, 2, getWidth() - 5, getHeight() - 5));
+        g2.setStroke(originalStroke);
     }
 
     private void paintGrid(final Graphics graph) {
@@ -97,9 +148,11 @@ public abstract class AbstractViewPort extends JPanel {
          * getHeight() * 2; int maxShiftVer = mapShiftVer + getHeight() * 2;
          */
 
-        int minShiftHor = 0;
+        int minShiftHor = -(getWidth() * 2) / (int) getSizeTile()
+                * (int) getSizeTile();
         int maxShiftHor = getWidth() * 2;
-        int minShiftVer = 0;
+        int minShiftVer = -(getHeight() * 2) / (int) getSizeTile()
+                * (int) getSizeTile();
         int maxShiftVer = getHeight() * 2;
 
         for (int x = minShiftHor; x < maxShiftHor; x += getSizeTile())
@@ -170,20 +223,17 @@ public abstract class AbstractViewPort extends JPanel {
 
         // North or South oriented barcode
         if (barcode.getDirection() == Orientation.NORTH
-                || barcode.getDirection() == Orientation.SOUTH)
-        {
+                || barcode.getDirection() == Orientation.SOUTH) {
             height = getSizeTile() / 20;
-            extraY = getSizeTile()/2 - 8;
-        }
-        else if (barcode.getDirection() == Orientation.EAST
-                || barcode.getDirection() == Orientation.WEST)
-        {
+            extraY = getSizeTile() / 2 - 8;
+        } else if (barcode.getDirection() == Orientation.EAST
+                || barcode.getDirection() == Orientation.WEST) {
             width = getSizeTile() / 20;
-            extraX = getSizeTile()/2 - 8;
+            extraX = getSizeTile() / 2 - 8;
         }
         for (int i = 0; i < 8; i++) {
-            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX() + extraX,
-                    barcodeLUCorner.getY() + extraY, width, height);
+            visualBarcode[i] = new Rectangle2D.Double(barcodeLUCorner.getX()
+                    + extraX, barcodeLUCorner.getY() + extraY, width, height);
             if (width < height)
                 barcodeLUCorner = new Point2D.Double(barcodeLUCorner.getX()
                         + width, barcodeLUCorner.getY());
@@ -205,28 +255,29 @@ public abstract class AbstractViewPort extends JPanel {
                 }
             }
         }
-        
+
         if (treasureCircles.size() != treasures.size()) {
             treasureCircles = new HashMap<TreasureObject, Ellipse2D[]>();
             for (final TreasureObject treasure : treasures)
                 if (!treasureCircles.containsKey(treasure))
-                    treasureCircles.put(treasure,
-                    		new Ellipse2D[]{createVisualTreasure(treasure, 16), 
-                    						createVisualTreasure(treasure, 15)});
+                    treasureCircles.put(treasure, new Ellipse2D[] {
+                            createVisualTreasure(treasure, 16),
+                            createVisualTreasure(treasure, 15) });
         }
 
         // first draw a black circle and then another, colored, circle
         // it will look as if the colored circle has a black border
         final Graphics2D g2 = ((Graphics2D) graph);
         for (final TreasureObject treasure : treasureCircles.keySet()) {
-        	g2.setColor(Color.BLACK);
+            g2.setColor(Color.BLACK);
             g2.fill(treasureCircles.get(treasure)[0]);
-        	g2.setColor(teamColors[treasure.getValue() % 4]);
+            g2.setColor(teamColors[treasure.getValue() % 4]);
             g2.fill(treasureCircles.get(treasure)[1]);
         }
     }
 
-    private Ellipse2D createVisualTreasure(final TreasureObject treasure, double diameter) {
+    private Ellipse2D createVisualTreasure(final TreasureObject treasure,
+            double diameter) {
         final Ellipse2D visualTreasure = new Ellipse2D.Double(treasure
                 .getPosition().getX()
                 * getSizeTile()
@@ -240,20 +291,16 @@ public abstract class AbstractViewPort extends JPanel {
 
     private void paintWalls(Graphics graph) {
         Set<Point2D[]> walls = new HashSet<Point2D[]>();
-        try
-        {
-        	for (MapGraph mapGraph : getAllMapGraphs())
-            for (Tile tile : mapGraph.getTiles())
-                for (Edge wall : tile.getEdges())
-                    if (wall.getObstruction() != null
-                            && !wall.getObstruction().isPassable())
-                        walls.add(wall.getEndPoints());
+        try {
+            for (MapGraph mapGraph : getAllMapGraphs())
+                for (Tile tile : mapGraph.getTiles())
+                    for (Edge wall : tile.getEdges())
+                        if (wall.getObstruction() != null
+                                && !wall.getObstruction().isPassable())
+                            walls.add(wall.getEndPoints());
+        } catch (java.util.ConcurrentModificationException e) {
+            paintWalls(graph);
         }
-        catch(java.util.ConcurrentModificationException e)
-        {
-        	paintWalls(graph);
-        }
-        
 
         final Graphics2D g2 = ((Graphics2D) graph);
         g2.setColor(Color.black);
@@ -287,18 +334,22 @@ public abstract class AbstractViewPort extends JPanel {
             g2.setTransform(oldTransform);
         }
     }
-    
-    protected void paintRobotColor(final Graphics graph) {
-		int diam = 25;
-		final Graphics2D g2 = (Graphics2D) graph;
 
-		for (PilotInterface pilot : pilots) {
-			AffineTransform oldTransform = g2.getTransform();
-			//((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-			g2.setColor(teamColors[pilot.getTeamNumber()]);
-			g2.fill(new Ellipse2D.Double(((pilot.getPosition().getX() - (diam / 2)) * scalingfactor),
-					((pilot.getPosition().getY() - (diam / 2)) * scalingfactor), diam, diam));
-			g2.setTransform(oldTransform);
-		}
-	}
+    protected void paintRobotColor(final Graphics graph) {
+        int diam = 25;
+        final Graphics2D g2 = (Graphics2D) graph;
+
+        for (PilotInterface pilot : pilots) {
+            AffineTransform oldTransform = g2.getTransform();
+            // ((Graphics2D)
+            // graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+            // 0.4f));
+            g2.setColor(teamColors[pilot.getTeamNumber()]);
+            g2.fill(new Ellipse2D.Double(
+                    ((pilot.getPosition().getX() - (diam / 2)) * scalingfactor),
+                    ((pilot.getPosition().getY() - (diam / 2)) * scalingfactor),
+                    diam, diam));
+            g2.setTransform(oldTransform);
+        }
+    }
 }
