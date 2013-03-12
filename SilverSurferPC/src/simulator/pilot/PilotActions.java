@@ -2,8 +2,6 @@ package simulator.pilot;
 
 import java.awt.Point;
 
-import javax.print.attribute.standard.Sides;
-
 import mapping.Barcode;
 import mapping.Obstruction;
 import mapping.Orientation;
@@ -13,8 +11,6 @@ import commands.BarcodeCommand;
 
 /**
  * A class of actions which AbstractPilots can undertake.
- * @author Beheerder
- *
  */
 public class PilotActions {
 
@@ -33,8 +29,6 @@ public class PilotActions {
 
 	/**
 	 * Executes the actions that should result in picking up the object.
-	 * @pre	:	Right after an allignOnWall() and allignOnWhiteLine()
-	 * 			(the robot is standing on the white line right behind the barcode)
 	 */
 	private void pickUpItem(int barcode) {
 		getPilot().stopReadingBarcodes();
@@ -43,10 +37,16 @@ public class PilotActions {
 		// the last bit of the barcode matches the new team; the pilot is given its team
 		int i = 0;
 		if(barcode % 2 == 1)
-		{
 			i = 1;
-		}
 		getPilot().setTeamNumber(4 + i);
+		
+		getPilot().travel(50);
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
+		getPilot().travel(-50);
 		
 		// TODO: travel en rotate interferreertmet het explore-algoritme!! het verennnen loopt dan mis
 //		getPilot().travel(getPilot().sizeTile());
@@ -59,15 +59,11 @@ public class PilotActions {
 		
 		getPilot().startReadingBarcodes();
 	}
-
-	/**
-	 * @pre	:	Right after an allignOnWall() and allignOnWhiteLine()
-	 * 			(the robot is standing on the white line right behind the barcode)
-	 */
+	
 	private void doNotPickUpItem() {
 		getPilot().stopReadingBarcodes();
 		System.out.println("Robot " + getPilot().getTeamNumber() + ": not pickup");
-		
+
 		// TODO: travel en rotate interferreert met het explore-algoritme!! het verennnen loopt dan mis
 //		getPilot().rotate(180);
 //		getPilot().alignOnWhiteLine();
@@ -95,7 +91,7 @@ public class PilotActions {
 			{
 				treasureFound(barcode/2);
 
-				// the first bits of the barcode match the teamnumer and the pilot does not yet know what team it is in
+				// the first bits of the barcode match the teamnumber and the pilot does not yet know what team it is in
 				if(barcode/2 == getPilot().getTeamNumber() && getPilot().getTeamNumber() < 5)
 				{
 					pickUpItem(barcode);
