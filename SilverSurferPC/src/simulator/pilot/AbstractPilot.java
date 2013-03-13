@@ -55,12 +55,9 @@ public abstract class AbstractPilot implements PilotInterface {
 	 * Returns -1 if no valid team number is available
 	 */
 	@Override
-	public int getTeamNumber()
-	{
+	public int getTeamNumber() {
 		if(teamNumber >= 0 && teamNumber <= 5)
-		{
 			return teamNumber;
-		}
 		return -1;
 	}
 
@@ -68,13 +65,11 @@ public abstract class AbstractPilot implements PilotInterface {
 	 * The team number can only change when a robot has found its treasure and knows what team it is in
 	 * This means the team number can only be set to 4 or 5
 	 */
-	public void setTeamNumber(int teamNumber)
-	{
+	public void setTeamNumber(int teamNumber) {
 		if(teamNumber != 4 && teamNumber != 5)
-		{
-			System.out.println("the teamnumber can only be set to 4 or 5");;
-		}
-		this.teamNumber = teamNumber;;
+			System.out.println("the teamnumber can only be set to 4 or 5");
+		else
+			this.teamNumber = teamNumber;
 	}
 
 	@Override
@@ -136,11 +131,9 @@ public abstract class AbstractPilot implements PilotInterface {
 			this.speed = 194;
 	}
 
-
-
 	public MapGraph getMapGraphLoaded() {
 		// TODO: change back (piloot mag niet aan simulatorpanel)
-	return simulatorPanel.getMapGraphLoaded();
+		return simulatorPanel.getMapGraphLoaded();
 	}
 
 	@Override
@@ -179,24 +172,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	public double[] getLightSensorCoordinates() {
 		final double[] coordinates = new double[2];
-		
-		// geeft geen nauwkeurige waarden!!
-
-//		if (getOrientation() == Orientation.NORTH) {
-//			coordinates[0] = getPosition().getX() - lightSensorDistanceFromAxis;
-//			coordinates[1] = getPosition().getY();
-//		} else if (getOrientation() == Orientation.SOUTH) {
-//			coordinates[0] = getPosition().getX() + lightSensorDistanceFromAxis;
-//			coordinates[1] = getPosition().getY();
-//		} else if (getOrientation() == Orientation.EAST) {
-//			coordinates[0] = getPosition().getX();
-//			coordinates[1] = getPosition().getY() - lightSensorDistanceFromAxis;
-//		} else if (getOrientation() == Orientation.WEST) {
-//			coordinates[0] = getPosition().getX();
-//			coordinates[1] = getPosition().getY() + lightSensorDistanceFromAxis;
-//		}
-		
-		// TODO: check of de + en - zeker klopt
 		coordinates[0] = (getPosition().getX() + lightSensorDistanceFromAxis
                 * Math.cos(Math.toRadians(this.getAngle())));
 		coordinates[1] = (getPosition().getX() + lightSensorDistanceFromAxis
@@ -208,33 +183,10 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	public double[] getUltrasonicSensorCoordinates() {
 		final double[] coordinates = new double[2];
-		
-		// geeft geen nauwkeurige waarden!!
-		
-//		if (getOrientation() == Orientation.NORTH) {
-//			coordinates[0] = getPosition().getX()
-//					+ ultrasonicSensorDistanceFromAxis;
-//			coordinates[1] = getPosition().getY();
-//		} else if (getOrientation() == Orientation.SOUTH) {
-//			coordinates[0] = getPosition().getX()
-//					- ultrasonicSensorDistanceFromAxis;
-//			coordinates[1] = getPosition().getY();
-//		} else if (getOrientation() == Orientation.EAST) {
-//			coordinates[0] = getPosition().getX();
-//			coordinates[1] = getPosition().getY()
-//					+ ultrasonicSensorDistanceFromAxis;
-//		} else if (getOrientation() == Orientation.WEST) {
-//			coordinates[0] = getPosition().getX();
-//			coordinates[1] = getPosition().getY()
-//					- ultrasonicSensorDistanceFromAxis;
-//		}
-		
-		// TODO: check of de + en - zeker klopt
 		coordinates[0] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
                 * Math.cos(Math.toRadians(this.getAngle())));
 		coordinates[1] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
                 * Math.sin(Math.toRadians(this.getAngle())));
-		
 		return coordinates;
 	}
 
@@ -271,109 +223,15 @@ public abstract class AbstractPilot implements PilotInterface {
 				|| (y % sizeTile()) < edgeMarge;
 	}
 
-	// /**
-	// * Checks whether the robot, standing on the given point, is on the edge
-	// of
-	// * a tile. The robot is interpreted as a rectangle around the given
-	// * position.
-	 // */
-	 // private boolean robotOnEdge(final double x, final double y,
-	 // final double alpha) {
-	 // Orientation orientation = Orientation.calculateOrientation(alpha);
-	 // Point backup;
-	 // // North
-	 // Point leftFront = new Point((int) (x - lengthOfRobot / 2),
-	 // (int) (y - widthOfRobot / 2));
-	 // Point rightFront = new Point((int) (x - lengthOfRobot / 2),
-	 // (int) (y + widthOfRobot / 2));
-	 // Point leftBack = new Point((int) (x + lengthOfRobot / 2),
-	 // (int) (y - widthOfRobot / 2));
-	 // Point rightBack = new Point((int) (x + lengthOfRobot / 2),
-	 // (int) (y + widthOfRobot / 2));
-	 // if (orientation == Orientation.SOUTH) {
-	 // backup = leftFront;
-	 // leftFront = rightBack;
-	 // rightBack = backup;
-	 // backup = rightFront;
-	 // rightFront = leftBack;
-	 // leftBack = backup;
-	 // } else if (orientation == Orientation.EAST) {
-	 // backup = leftFront;
-	 // leftFront = rightFront;
-	 // rightFront = rightBack;
-	 // rightBack = leftBack;
-	 // leftBack = backup;
-	 // } else if (orientation == Orientation.WEST) {
-	 // backup = leftFront;
-	 // leftFront = leftBack;
-	 // leftBack = rightBack;
-	 // rightBack = rightFront;
-	 // rightFront = backup;
-	 // }
-	 // return pointOnEdge(leftFront.getX(), leftFront.getY())
-	 // || pointOnEdge(rightFront.getX(), rightFront.getY())
-	 // || pointOnEdge(leftBack.getX(), leftBack.getY())
-	 // || pointOnEdge(rightBack.getX(), rightBack.getY())
-	 // || (Math.abs(leftFront.getX() % sizeTile() - rightFront.getX()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(leftFront.getX() % sizeTile() - leftBack.getX()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(leftFront.getX() % sizeTile() - rightBack.getX()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(rightFront.getX() % sizeTile() - rightBack.getX()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(rightFront.getX() % sizeTile() - leftBack.getX()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(rightBack.getX() % sizeTile() - leftBack.getX()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(leftFront.getY() % sizeTile() - rightFront.getY()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(leftFront.getY() % sizeTile() - leftBack.getY()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(leftFront.getY() % sizeTile() - rightBack.getY()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(rightFront.getY() % sizeTile() - rightBack.getY()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(rightFront.getY() % sizeTile() - leftBack.getY()
-	 // % sizeTile()) > sizeTile() / 2)
-	 // || (Math.abs(rightBack.getY() % sizeTile() - leftBack.getY()
-	 // % sizeTile()) > sizeTile() / 2);
-	 // }
-	 //
-	 // /**
-	 // * Checks on what side of the tile you are.
-	 // */
-	 // private Orientation pointOnWichSideOfTile(final double x, final double y,
-	 // final Orientation travelOrientation) {
-	 // if (travelOrientation == Orientation.NORTH
-	 // || travelOrientation == Orientation.SOUTH) {
-	 // if ((y % sizeTile()) > sizeTile() / 2)
-	 // return Orientation.SOUTH;
-	 // // if((y % 40) < 20)
-	 // else
-	 // return Orientation.NORTH;
-	 // } else if ((x % sizeTile()) > sizeTile() / 2)
-	 // return Orientation.EAST;
-	 // // if((x % 40) < 20)
-	 // else
-	 // return Orientation.WEST;
-	 // }
-
-	 public void alignOnWhiteLine() {
-		 // TODO aparte invulling voor sim en robot?
-		 // TODO Commando geven aan de robot om alignOnWhiteLine() te doen?
-		 // Momenteel wordt er in communicator gecheckt hoelang het geleden is.
-		 while (!pointOnEdge(getLightSensorCoordinates()[0],
+	 public void alignOnWhiteLine() {		 
+		 //TODO: express fouten brengen op simulator?
+		 /*while (!pointOnEdge(getLightSensorCoordinates()[0],
 				 getLightSensorCoordinates()[1]))
-		 {
 			 travel(1);
-		 }
 		 travel(5);
 		 while (!pointOnEdge(getLightSensorCoordinates()[0],
 				 getLightSensorCoordinates()[1]))
-		 {
 			 rotate(-1);
-		 }
 		 rotate(90);
 		 int i = 0;
 		 while (!pointOnEdge(getLightSensorCoordinates()[0],
@@ -381,14 +239,18 @@ public abstract class AbstractPilot implements PilotInterface {
 			 rotate(1);
 			 i++;
 		 }
-		 rotate(-(90 + i) / 2);
+		 rotate(-(90 + i) / 2);*/
+		 
+		 travel(13);
+		 travel(5);
+		 rotate(-90);
+		 rotate(180);
+		 rotate(-90);
 	 }
 
 	 public void alignOnWalls() {
-		 // TODO aparte invulling voor sim en robot?
 		 rotate(90);
-		 if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot
-				 && getUltraSensorValue() > 23)
+		 if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot && getUltraSensorValue() > 23)
 			 while (!(getUltraSensorValue() <= 23))
 				 travel(1);
 		 rotate(-90);
@@ -461,22 +323,19 @@ public abstract class AbstractPilot implements PilotInterface {
 			 }
 		 }
 		 if(readBarcodes && !(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
-					&& getLightSensorValue() < 40 && getLightSensorValue() > 10)
-			 {
-				 setBusyExecutingBarcode(true);
-				 pilotActions.barcodeFound();
-			 }
+					&& getLightSensorValue() < 40 && getLightSensorValue() > 10) {
+			 setBusyExecutingBarcode(true);
+			 pilotActions.barcodeFound();
+		 }
 	 }
 
 	 protected abstract int readBarcode();
 	 
-	 public boolean isExecutingBarcode()
-	 {
+	 public boolean isExecutingBarcode() {
 		 return busyExecutingBarcode;
 	 }
 
-	 public void executeBarcode(int barcode)
-	 {
+	 public void executeBarcode(int barcode) {
 		 pilotActions.executeBarcode(barcode);
 	 }
 
@@ -490,8 +349,7 @@ public abstract class AbstractPilot implements PilotInterface {
 		 readBarcodes = true;
 	 }
 	 
-	 public void setBusyExecutingBarcode(boolean busy)
-	 {
+	 public void setBusyExecutingBarcode(boolean busy) {
 		 busyExecutingBarcode = busy;
 	 }
 
@@ -505,7 +363,7 @@ public abstract class AbstractPilot implements PilotInterface {
 			 public void run() {
 				 new MazeExplorer(
 						 mapGraphConstructed.getTile(getMatrixPosition()),
-						 AbstractPilot.this).startExploringMaze();
+						 AbstractPilot.this, true).startExploringMaze();
 			 }
 		 }.start();
 	 }
