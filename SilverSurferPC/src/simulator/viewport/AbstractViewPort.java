@@ -4,11 +4,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
@@ -27,7 +29,6 @@ import mapping.Edge;
 import mapping.MapGraph;
 import mapping.Orientation;
 import mapping.Tile;
-import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 
 @SuppressWarnings("serial")
@@ -44,6 +45,8 @@ public abstract class AbstractViewPort extends JPanel {
             new Color(242, 111, 58), new Color(114, 246, 160),
             new Color(114, 225, 246), new Color(134, 46, 250),
             new Color(255, 63, 72) };
+
+    private Point startShift;
 
     private ActionListener repaintViewPort = new ActionListener() {
 
@@ -89,27 +92,30 @@ public abstract class AbstractViewPort extends JPanel {
 
         PilotInterface pilot = pilots.iterator().next();
         if (pilots.size() == 1) {
-            if (maxMapWidth * getSizeTile() > getWidth()
-                    || pilot.getPosition().getX() < -getWidth() / 2
-                    || pilot.getPosition().getX() > getWidth() / 2)
-                g2.translate(-pilot.getPosition().getX() + (getSizeTile() / 2),
+            if (startShift == null)
+                startShift = new Point(
+                        (int) (-pilot.getPosition().getX() + getSizeTile() / 2),
+                        (int) (-pilot.getPosition().getY() + getSizeTile() / 2));
+
+            if (startShift.x < -getWidth() / 2 || startShift.x > getWidth() / 2)
+                g2.translate(startShift.x + (maxMapWidth - 1) * getSizeTile(),
                         0);
-            if (maxMapHeight * getSizeTile() > getHeight()
-                    || pilot.getPosition().getY() < -getHeight() / 2
-                    || pilot.getPosition().getY() > getHeight() / 2)
-                g2.translate(0, -pilot.getPosition().getY()
-                        + (getSizeTile() / 2));
+            if (startShift.y < -getHeight() / 2
+                    || startShift.y > getHeight() / 2)
+                g2.translate(0, startShift.y + (maxMapHeight - 1)
+                        * getSizeTile());
+
         }
-        if (maxMapWidth * getSizeTile() < getWidth())
+        if (maxMapWidth * getSizeTile() < getWidth() || pilots.size() > 1)
             g2.translate((getWidth() / 2) - (maxMapWidth * getSizeTile() / 2),
                     0);
         else
-            g2.translate((getWidth() / 2), 0);
-        if (maxMapHeight * getSizeTile() < getHeight())
+            g2.translate((getWidth() / 2) - pilot.getPosition().getX(), 0);
+        if (maxMapHeight * getSizeTile() < getHeight() || pilots.size() > 1)
             g2.translate(0, (getHeight() / 2)
                     - (maxMapHeight * getSizeTile() / 2));
         else
-            g2.translate(0, (getHeight() / 2));
+            g2.translate(0, (getHeight() / 2) - pilot.getPosition().getY());
 
         paintGrid(graph);
 
@@ -306,7 +312,7 @@ public abstract class AbstractViewPort extends JPanel {
         g2.setColor(Color.black);
         Stroke originalStroke = g2.getStroke();
         float strokeWidth = 5;
-        g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT,
+        g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE,
                 BasicStroke.JOIN_MITER));
 
         for (Point2D[] wall : walls) {
