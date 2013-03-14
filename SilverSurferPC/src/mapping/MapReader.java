@@ -10,82 +10,6 @@ import java.io.FileReader;
  */
 public class MapReader {
 
-    public static void createCornerFromTile(final Tile t,
-            final Orientation orientation) {
-        t.getEdge(orientation).setObstruction(Obstruction.WALL);
-        t.getEdge(orientation.getOtherOrientationCorner()).setObstruction(
-                Obstruction.WALL);
-    }
-
-    /**
-     * Makes sure all edges of this Tile are un-obstructed.
-     */
-    public static void createCrossFromTile(final Tile t) {
-        return;
-    }
-
-    public static void createDeadEndFromTile(final Tile t,
-            final Orientation orientation) {
-
-        for (final Orientation ori : Orientation.values()) {
-            if (!ori.equals(orientation.getOppositeOrientation())) {
-                t.getEdge(ori).setObstruction(Obstruction.WALL);
-            }
-        }
-    }
-
-    private static String[][] createInfoMatrixFromFile(final File f) {
-        int collums;
-        int rows;
-        try {
-
-            // Setup I/O
-            final BufferedReader readbuffer = new BufferedReader(
-                    new FileReader(f));
-            String strRead;
-
-            // Read first line, extract Map-dimensions.
-            strRead = readbuffer.readLine();
-            final String values[] = strRead.split(" ");
-            collums = Integer.valueOf(values[0]);
-            rows = Integer.valueOf(values[1]);
-
-            final String[][] tileTypes = new String[rows][collums];
-            int lineNo = 0;
-            while ((strRead = readbuffer.readLine()) != null) {
-                int collumNo = 0;
-
-                // Seperate comment from non-comment
-                final String splitComment[] = strRead.split("#");
-
-                // Filter whitespace
-                if (isValuableString(splitComment[0])) {
-
-                    // Split information on tabs
-                    final String splitarray[] = splitComment[0].split("\t");
-
-                    for (final String string : splitarray) {
-                        if (isValuableString(string)) {
-                            tileTypes[lineNo][collumNo++] = string;
-                        }
-                    }
-
-                    lineNo++;
-                }
-            }
-            readbuffer.close(); // toegevoegd om warning weg te werken, geeft
-                                // geen errors?
-            return tileTypes;
-
-        } catch (final Exception e) {
-            System.err
-                    .println("[I/O] Sorry, something went wrong reading the File.");
-        }
-
-        return new String[0][0];
-
-    }
-
     public static MapGraph createMapFromFile(final File txtFile) {
         final String[][] infoMatrix = createInfoMatrixFromFile(txtFile);
 
@@ -144,6 +68,7 @@ public class MapReader {
                             Orientation
                                     .switchStringToOrientation(seperatedInfoIJ[1]));
                 }
+                
                 // a barcode value has been specified
                 if (seperatedInfoIJ.length == 3) {
                     tileIJ.setContent(new Barcode(tileIJ, Integer
@@ -151,23 +76,130 @@ public class MapReader {
                             .switchStringToOrientation(seperatedInfoIJ[1])));
                 }
 
-                // an object has been specified
+                // a treasure has been specified
                 if (seperatedInfoIJ.length == 4
                         && "o".equals(seperatedInfoIJ[2])) {
                     tileIJ.setContent(new TreasureObject(tileIJ, Integer
                             .valueOf(seperatedInfoIJ[3])));
+                }
+                
+                // a seesaw has been specified
+                if (seperatedInfoIJ.length == 4
+                        && "s".equals(seperatedInfoIJ[2])) {
+                	
+                	// add a seesaw to the tile
+                	char[] values = seperatedInfoIJ[3].toCharArray();
+                	tileIJ.setContent(new Seesaw(tileIJ, values[2]));
+                	
+                	// set the right edges
+                	Orientation orientation = Orientation.switchStringToOrientation((String.valueOf(values[0])));
+                	if(Integer.valueOf(String.valueOf(values[1])) == 0)
+                	{
+                		tileIJ.getEdge(orientation).setObstruction(Obstruction.SEESAW_DOWN);
+                	}
+                	else if(Integer.valueOf(String.valueOf(values[1])) == 1)
+                	{
+                		tileIJ.getEdge(orientation).setObstruction(Obstruction.SEESAW_UP);
+                	}
                 }
             }
         }
         return map;
     }
 
-    public static void createStraightFromTile(final Tile t,
+    private static String[][] createInfoMatrixFromFile(final File f) {
+	    int collums;
+	    int rows;
+	    try {
+	
+	        // Setup I/O
+	        final BufferedReader readbuffer = new BufferedReader(
+	                new FileReader(f));
+	        String strRead;
+	
+	        // Read first line, extract Map-dimensions.
+	        strRead = readbuffer.readLine();
+	        final String values[] = strRead.split(" ");
+	        collums = Integer.valueOf(values[0]);
+	        rows = Integer.valueOf(values[1]);
+	
+	        final String[][] tileTypes = new String[rows][collums];
+	        int lineNo = 0;
+	        while ((strRead = readbuffer.readLine()) != null) {
+	            int collumNo = 0;
+	
+	            // Seperate comment from non-comment
+	            final String splitComment[] = strRead.split("#");
+	
+	            // Filter whitespace
+	            if (isValuableString(splitComment[0])) {
+	
+	                // Split information on tabs
+	                final String splitarray[] = splitComment[0].split("\t");
+	
+	                for (final String string : splitarray) {
+	                    if (isValuableString(string)) {
+	                        tileTypes[lineNo][collumNo++] = string;
+	                    }
+	                }
+	
+	                lineNo++;
+	            }
+	        }
+	        readbuffer.close(); // toegevoegd om warning weg te werken, geeft
+	                            // geen errors?
+	        return tileTypes;
+	
+	    } catch (final Exception e) {
+	        System.err
+	                .println("[I/O] Sorry, something went wrong reading the File.");
+	    }
+	
+	    return new String[0][0];
+	
+	}
+
+	public static void createDeadEndFromTile(final Tile t,
+	        final Orientation orientation) {
+	
+	    for (final Orientation ori : Orientation.values()) {
+	        if (!ori.equals(orientation.getOppositeOrientation())) {
+	            t.getEdge(ori).setObstruction(Obstruction.WALL);
+	        }
+	        else
+	        {
+	        	t.getEdge(ori).setObstruction(Obstruction.WHITE_LINE);
+	        }
+	    }
+	}
+
+	/**
+	 * Makes sure all edges of this Tile are un-obstructed.
+	 */
+	public static void createCrossFromTile(final Tile t) {
+	    return;
+	}
+
+	public static void createCornerFromTile(final Tile t,
+	        final Orientation orientation) {
+	    t.getEdge(orientation).setObstruction(Obstruction.WALL);
+	    t.getEdge(orientation.getOtherOrientationCorner()).setObstruction(
+	            Obstruction.WALL);
+	    t.getEdge(orientation.getOppositeOrientation()).setObstruction(Obstruction.WHITE_LINE);
+	    t.getEdge(orientation.getOppositeOrientation().getOtherOrientationCorner()).setObstruction(
+	            Obstruction.WHITE_LINE);
+	}
+
+	public static void createStraightFromTile(final Tile t,
             final Orientation orientation) {
         for (final Orientation ori : Orientation.values()) {
             if ((!(ori.equals(orientation)))
                     && (!(ori.equals(orientation.getOppositeOrientation())))) {
                 t.getEdge(ori).setObstruction(Obstruction.WALL);
+            }
+            else
+            {
+            	t.getEdge(ori).setObstruction(Obstruction.WHITE_LINE);
             }
 
         }
@@ -175,7 +207,17 @@ public class MapReader {
 
     public static void createTFromTile(final Tile t,
             final Orientation orientation) {
-        t.getEdge(orientation).setObstruction(Obstruction.WALL);
+    	for (final Orientation ori : Orientation.values()) {
+    		if(ori.equals(orientation))
+    		{
+    			t.getEdge(ori).setObstruction(Obstruction.WALL);
+    		}
+    		else
+    		{
+    			t.getEdge(ori).setObstruction(Obstruction.WHITE_LINE);
+    		}
+    	}
+        
     }
 
     /**

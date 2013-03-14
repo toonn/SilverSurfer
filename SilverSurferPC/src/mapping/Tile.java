@@ -260,7 +260,8 @@ public class Tile {
     public ArrayList<Tile> getReachableNeighbours() {
         final ArrayList<Tile> neighbours = new ArrayList<Tile>(4);
         for (final Orientation orientation : Orientation.values()) {
-            if (getEdge(orientation).getObstruction() == null) {
+            if (getEdge(orientation).getObstruction() == null
+            		|| getEdge(orientation).getObstruction().isPassable()) {
                 neighbours.add(getEdge(orientation).getNeighbour(this));
             } else {
                 neighbours.add(null);

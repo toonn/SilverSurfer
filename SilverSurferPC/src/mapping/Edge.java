@@ -173,7 +173,7 @@ public class Edge {
      * @return true if there is no wall or nothingness on the edge.
      */
     public boolean isPassable() {
-        return (getObstruction() == null);
+        return (getObstruction() == null || getObstruction().isPassable());
     }
 
     /**
@@ -196,7 +196,14 @@ public class Edge {
     }
 
     public void setObstruction(final Obstruction obstruction) {
-        this.obstruction = obstruction;
+    	if(this.obstruction == null)
+    	{
+    		this.obstruction = obstruction;
+    	}
+    	else if (this.obstruction.ordinal() < obstruction.ordinal())
+    	{
+    		this.obstruction = obstruction;
+    	}
     }
 
     /**

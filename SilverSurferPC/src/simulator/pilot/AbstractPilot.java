@@ -206,6 +206,9 @@ public abstract class AbstractPilot implements PilotInterface {
 			.getEdge(currentOrientation)
 			.setObstruction(Obstruction.WALL);
 		else {
+			getMapGraphConstructed().getTile(getMatrixPosition())
+			.getEdge(currentOrientation)
+			.setObstruction(Obstruction.WHITE_LINE);
 			Point nextPoint = currentOrientation.getNext(getMatrixPosition());
 			if (mapGraphConstructed.getTile(nextPoint) == null)
 				getMapGraphConstructed().addTileXY(nextPoint);
