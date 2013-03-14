@@ -43,7 +43,7 @@ public abstract class AbstractPilot implements PilotInterface {
 		mapGraphConstructed.addTileXY(new Point(0, 0));
 
 		try {
-			messageCenter = new MessageCenter(this);
+		//	messageCenter = new MessageCenter(this);
 		} catch (Exception e) {
 			System.out.println("MessageCenter problem!");
 		}

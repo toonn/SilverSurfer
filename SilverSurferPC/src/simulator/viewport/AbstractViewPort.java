@@ -42,7 +42,7 @@ public abstract class AbstractViewPort extends JPanel {
     private HashMap<TreasureObject, Ellipse2D[]> treasureCircles;
     private int repaintFPS = 30;
     private Color[] teamColors = new Color[] { new Color(249, 244, 99),
-            new Color(242, 111, 58), new Color(114, 246, 160),
+            new Color(242, 150, 60), new Color(145, 254, 126),
             new Color(114, 225, 246), new Color(134, 46, 250),
             new Color(255, 63, 72) };
 
