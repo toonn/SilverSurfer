@@ -16,10 +16,6 @@ public class SimulationPilot extends AbstractPilot {
 		super(teamNumber);
 	}
 	
-	@Override
-	public void recieveMessage(String message) {
-		System.out.println("Simulator -> Message: \""+message+"\" recieved.");
-	}
 
     @Override
     public String getConsoleTag() {

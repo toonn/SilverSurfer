@@ -71,11 +71,7 @@ public class RobotPilot extends AbstractPilot {
         return 2.74;
     }
 
-	@Override
-	public void recieveMessage(String message) {
-		System.out.println("Simulator -> Message: \""+message+"\" recieved.");
-	}
-
+	
     @Override
     public String getConsoleTag() {
         return "[ROBOT]";

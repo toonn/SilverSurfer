@@ -120,7 +120,6 @@ public class SubscribeMonitor {
                                     envelope.getRoutingKey(), new String(body)));
                             //FW: the message to the right Pilot.
                             //TODO: process message before forwarding??
-                            getClientPilot().recieveMessage(new String(body));
                            
                            
                             // send an ack to the server so it can remove the
