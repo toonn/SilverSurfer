@@ -2,11 +2,6 @@ package simulator.pilot;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.security.AllPermission;
-import java.util.HashSet;
-import java.util.Set;
-
-import commands.BarcodeCommand;
 
 import mapping.Barcode;
 import simulator.viewport.SimulatorPanel;
@@ -14,7 +9,6 @@ import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mazeAlgorithm.ExploreThread;
-import mazeAlgorithm.MazeExplorer;
 
 public abstract class AbstractPilot implements PilotInterface {
 
@@ -40,12 +34,6 @@ public abstract class AbstractPilot implements PilotInterface {
 		this.teamNumber = teamNumber;
 		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
 		reset();
-
-		try {
-		//	messageCenter = new MessageCenter(this);
-		} catch (Exception e) {
-			System.out.println("MessageCenter problem!");
-		}
 	}
 
 	/**
@@ -352,15 +340,8 @@ public abstract class AbstractPilot implements PilotInterface {
 	 }
 
 	 public void startExploring() {
-		 exploreThread = new ExploreThread(mapGraphConstructed, getMatrixPosition(), AbstractPilot.this);
+		 exploreThread = new ExploreThread(mapGraphConstructed.getTile(getMatrixPosition()), this);
 		 exploreThread.start();
-		 /*
-		 new Thread() {
-			 public void run() {
-				 new MazeExplorer(mapGraphConstructed.getTile(getMatrixPosition()), AbstractPilot.this, true).startExploringMaze();
-			 }
-		 }.start();
-		 */
 	 }
 
 	public void stopExploring() {

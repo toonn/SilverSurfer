@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -14,15 +15,18 @@ import javax.swing.JMenuItem;
 public class GUIMenuBar extends JMenuBar {
 
     private SilverSurferGUI gui;
+    private JFrame frame;
 
-    private JMenu blueToothMenu, screenMenu, speedMenu, mapMenu;
+    private JMenu blueToothMenu, screenMenu, speedMenu, mapMenu, exploreMenu;
 
-    public GUIMenuBar(final SilverSurferGUI gui) {
+    public GUIMenuBar(final SilverSurferGUI gui, final JFrame frame) {
         this.gui = gui;
+        this.frame = frame;
         this.add(getBlueToothMenu());
         this.add(getScreenMenu());
         this.add(getSpeedMenu());
         this.add(getMapMenu());
+        this.add(getExploreMenu());
         setBackground(new Color(221, 230, 231));
     }
 
@@ -35,7 +39,8 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.connectBluetooth();
+                SilverSurferGUI.getSimulatorPanel().connect();
+            	System.out.println("[CONNECTION] Connection established.");
             }
         });
 
@@ -45,7 +50,8 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                SilverSurferGUI.disconnectBluetooth();
+                SilverSurferGUI.getSimulatorPanel().disconnect();
+                System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
             }
         });
 
@@ -85,13 +91,13 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        final JMenuItem resetRobotsItem = new JMenuItem("Reset Robots");
-        screenMenu.add(resetRobotsItem);
-        resetRobotsItem.addActionListener(new ActionListener() {
+        final JMenuItem pauseSensor = new JMenuItem("Pause sensorpanel");
+        screenMenu.add(pauseSensor);
+        pauseSensor.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                gui.resetRobots();
+                gui.pauseSensorPanel();
             }
         });
 
@@ -152,8 +158,7 @@ public class GUIMenuBar extends JMenuBar {
         loadMapNormalItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui
-                        .getFrame(), "Select maze:", FileDialog.LOAD);
+                final FileDialog prompt = new FileDialog(frame, "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
                 prompt.setVisible(true);
 
@@ -175,8 +180,7 @@ public class GUIMenuBar extends JMenuBar {
         loadMapWithDummiesItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui
-                        .getFrame(), "Select maze:", FileDialog.LOAD);
+                final FileDialog prompt = new FileDialog(frame, "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
                 prompt.setVisible(true);
 
@@ -198,8 +202,7 @@ public class GUIMenuBar extends JMenuBar {
         loadMapWithoutDummiesItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui
-                        .getFrame(), "Select maze:", FileDialog.LOAD);
+                final FileDialog prompt = new FileDialog(frame, "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
                 prompt.setVisible(true);
 
@@ -226,8 +229,14 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
+        return mapMenu;
+    }
+
+    private JMenu getExploreMenu() {
+        exploreMenu = new JMenu("Explore");
+
         final JMenuItem exploreItem = new JMenuItem("Explore");
-        mapMenu.add(exploreItem);
+        exploreMenu.add(exploreItem);
         exploreItem.addActionListener(new ActionListener() {
 
             @Override
@@ -236,7 +245,17 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        return mapMenu;
+        final JMenuItem resetRobotsItem = new JMenuItem("Reset Robots");
+        exploreMenu.add(resetRobotsItem);
+        resetRobotsItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().resetRobots();
+            }
+        });
+
+        return exploreMenu;
     }
 }
 

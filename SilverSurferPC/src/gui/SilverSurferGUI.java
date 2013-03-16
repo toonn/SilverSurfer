@@ -17,8 +17,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import lejos.pc.tools.SensorPanel;
-
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.RobotPilot;
 import simulator.viewport.SimulatorPanel;
@@ -33,7 +31,7 @@ public class SilverSurferGUI {
     private static SimulatorPanel simulatorPanel;
     private static SensorGraph sensorPanel;
     private GUIMenuBar menuBar;
-    private int updateStatusFPS = 3;
+    private int updateStatusFPS = 10;
     private ActionListener updateStatus = new ActionListener() {
 
         @Override
@@ -49,26 +47,8 @@ public class SilverSurferGUI {
         new Timer(1000 / SSG.updateStatusFPS, SSG.updateStatus).start();
     }
 
-    public JFrame getFrame() {
-        return frame;
-    }
-
     public static SimulatorPanel getSimulatorPanel() {
         return simulatorPanel;
-    }
-
-    protected void resetRobots() {
-    	simulatorPanel.resetRobots();
-    }
-
-    protected static void connectBluetooth() {
-    	simulatorPanel.connect();
-    	System.out.println("[CONNECTION] Connection established.");
-    }
-
-    protected static void disconnectBluetooth() {
-    	simulatorPanel.disconnect();
-        System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
     }
 
     public void updateStatus() {
@@ -118,17 +98,17 @@ public class SilverSurferGUI {
     	else
     		sensorPanel.setVisible(true);
     }
+    
+    public void pauseSensorPanel() {
+    	sensorPanel.togglePause();
+    }
 
     public void zoomIn() {
-        // // TODO zoomIn implement
-        // final ZoomThread ZT = new ZoomThread("ZT", simulatorPanel, true);
-        // ZT.start();
+    	
     }
 
     public void zoomOut() {
-        // // TODO zoomOut implement
-        // final ZoomThread ZT = new ZoomThread("ZT", simulatorPanel, false);
-        // ZT.start();
+    	
     }
 
     private void initializePanels() {
@@ -137,7 +117,7 @@ public class SilverSurferGUI {
         infoPanel();
         sensorPanel();
         
-        menuBar = new GUIMenuBar(this);
+        menuBar = new GUIMenuBar(this, frame);
 
         addListeners();
     }
@@ -289,7 +269,7 @@ public class SilverSurferGUI {
     }
 
     private void sensorPanel() {
-        sensorPanel = new SensorGraph(this);
+        sensorPanel = new SensorGraph();
         sensorPanel.setOpaque(false);
 		sensorPanel.setVisible(false);
     }

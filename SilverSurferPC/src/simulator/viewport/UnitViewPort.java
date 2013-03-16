@@ -11,6 +11,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,16 +88,19 @@ public class UnitViewPort extends DummyViewPort {
     private void paintExploreQueue(final Graphics graph) {
     	((Graphics2D) graph).setColor(Color.ORANGE);
     	
-    	for (MapGraph mapGraph : getAllMapGraphs())
-    	{
-            for (Tile tile : mapGraph.getTiles())
-            {
-            	Rectangle2D checkHighlight = new Rectangle2D.Double(tile.getPosition().getX() * 40,
-            														tile.getPosition().getY() * 40,
-            														(int) getSizeTile(),
-            														(int) getSizeTile());
-            	((Graphics2D) graph).fill(checkHighlight);
-            }
+    	try {
+        	for (MapGraph mapGraph : getAllMapGraphs()) {
+                for (Tile tile : mapGraph.getTiles())
+                {
+                	Rectangle2D checkHighlight = new Rectangle2D.Double(tile.getPosition().getX() * 40,
+                														tile.getPosition().getY() * 40,
+                														(int) getSizeTile(),
+                														(int) getSizeTile());
+                	((Graphics2D) graph).fill(checkHighlight);
+                }
+        	}
+    	} catch(ConcurrentModificationException e) {
+    		System.out.println("[Exception] ConcurrentModificationException occured in UnitViewPort.paintExploreQueue(graph) for robot " + pilots.iterator().next().getTeamNumber()+ "!");
     	}
     }
     

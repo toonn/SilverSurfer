@@ -89,4 +89,21 @@ public class DummyPilot implements PilotInterface {
 		return new Point((int) (point.getX() / sizeTile()),
 				(int) (point.getY() / sizeTile()));
 	}
+
+	public void setPosition(final double x, final double y) {
+		position.setLocation(x, y);
+	}
+
+	public void setAngle(final double angle) {
+		if (angle > 360)
+			this.angle = angle - 360;
+		else if (angle < 0)
+			this.angle = angle + 360;
+		else
+			this.angle = angle;
+	}
+	
+	public void setMap(MapGraph newMap) {
+		this.mapGraphConstructed = newMap;
+	}
 }

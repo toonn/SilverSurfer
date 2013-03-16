@@ -1,6 +1,5 @@
 package simulator.pilot;
 
-import commands.BarcodeCommand;
 import commands.Command;
 import communication.Communicator;
 import communication.InfoReceiverThread;

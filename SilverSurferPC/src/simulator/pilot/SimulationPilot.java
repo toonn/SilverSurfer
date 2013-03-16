@@ -3,7 +3,6 @@ package simulator.pilot;
 import java.util.Random;
 
 import mapping.Barcode;
-import mapping.TreasureObject;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Tile;
@@ -91,12 +90,17 @@ public class SimulationPilot extends AbstractPilot {
 
 	@Override
     public int getUltraSensorValue() {
-        final Random random = new Random();
-        final double mean = calculateDistanceToWall();
-        final double standardDeviation = SimulationSensorData.getSDUS();
+		try {
+	        final Random random = new Random();
+	        final double mean = calculateDistanceToWall();
+	        final double standardDeviation = SimulationSensorData.getSDUS();
 
-        return (int) Math.round(mean
-                + (random.nextGaussian() * standardDeviation));
+	        return (int) Math.round(mean
+	                + (random.nextGaussian() * standardDeviation));
+		} catch(Exception e) {
+			System.out.println("[Exception] Exception at SimulationPilot.getUltraSensorValue()!");
+			return 0;
+		}
     }
 
     private double calculateDistanceToWall() {

@@ -107,6 +107,7 @@ public class SimulatorPanel extends JPanel {
         }
         else {
             Set<PilotInterface> allPilots = new HashSet<PilotInterface>(simulatorPilots);
+            allPilots.addAll(dummyPilots);
             allPilots.add(principalPilot);
             overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded);
             
@@ -221,7 +222,7 @@ public class SimulatorPanel extends JPanel {
     private void stopSimulation() {
     	principalPilot.stopExploring();
         for (AbstractPilot pilot : simulatorPilots)
-        	pilot.stopExploring();    	
+        	pilot.stopExploring();
     }
 
     private void changeSpeedAllRobots(final int value) {

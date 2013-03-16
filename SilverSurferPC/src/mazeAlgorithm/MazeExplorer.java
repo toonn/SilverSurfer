@@ -51,18 +51,14 @@ public class MazeExplorer {
                 ((Tile) tile).setMarkingExploreMaze(false);
             // communicator.mustAllign(false);    		
     	} catch(NullPointerException e) {
-    		System.out.println("Algoritm incorrectly closed.");
+    		if(!quit)
+    			System.out.println("Exception in MazeExplorer!");
     	}
     }
 
     private void algorithm(final Tile currentTile) {
     	// Explore tile and set current tile on "Explored".
         exploreTile(currentTile);
-        
-        if(quit) {
-    		System.out.println("Algoritm correctly closed.");
-        	return;
-        }
 
         // Update queue.
         for (final Object neighbourTile : currentTile.getReachableNeighbours())
@@ -70,7 +66,7 @@ public class MazeExplorer {
                 queue.add((Tile) neighbourTile);
 
         // Algorithm finished?
-        if (queue.isEmpty())
+        if (queue.isEmpty() || quit)
             return;
 
         // Get next optimal tile.
@@ -82,7 +78,7 @@ public class MazeExplorer {
             allTiles.add(nextTile);
             removeTileFromQueue(nextTile);
 
-            if (queue.isEmpty())
+            if (queue.isEmpty() || quit)
                 return;
 
             nextTile = getPriorityNextTile(currentTile);
@@ -105,11 +101,6 @@ public class MazeExplorer {
         	}
         }
 		checkExploredQueue();
-        
-        if(quit) {
-    		System.out.println("Algoritm correctly closed.");
-        	return;
-        }
 
         // Repeat with next tile.
         algorithm(nextTile);
@@ -259,7 +250,7 @@ public class MazeExplorer {
         }
     }
     
-    public void setQuit(boolean quit) {
-    	this.quit = quit;
+    public void quit() {
+    	quit = true;
     }
 }
