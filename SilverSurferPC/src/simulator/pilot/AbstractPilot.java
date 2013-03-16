@@ -15,7 +15,6 @@ import mapping.Obstruction;
 import mapping.Orientation;
 import mazeAlgorithm.ExploreThread;
 import mazeAlgorithm.MazeExplorer;
-import mq.communicator.MessageCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
 
@@ -25,7 +24,6 @@ public abstract class AbstractPilot implements PilotInterface {
 	private int teamNumber;
 	private MapGraph mapGraphConstructed;
 	private SimulatorPanel simulatorPanel;
-	private MessageCenter messageCenter;
 	private boolean readBarcodes = true;
 	private boolean busyExecutingBarcode = false;
 	private boolean permaBarcodeStop = false;
@@ -150,12 +148,6 @@ public abstract class AbstractPilot implements PilotInterface {
 	public boolean isRobotControllable() {
 		return true;
 	}
-
-	public MessageCenter getMessageCenter() {
-		return messageCenter;
-	}
-
-	public abstract void recieveMessage(String message);
 
 	public abstract String getConsoleTag();
 
