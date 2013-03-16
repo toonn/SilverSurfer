@@ -55,33 +55,43 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getScreenMenu() {
         screenMenu = new JMenu("Screen");
 
-        final JMenuItem zoomInItem = new JMenuItem("Zoom In");
-        screenMenu.add(zoomInItem);
-        zoomInItem.addActionListener(new ActionListener() {
+        final JMenuItem inputPanel = new JMenuItem("Show/Hide inputpanel");
+        screenMenu.add(inputPanel);
+        inputPanel.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                gui.zoomIn();
+                gui.toggleInputPanel();
             }
         });
 
-        final JMenuItem zoomOutItem = new JMenuItem("Zoom Out");
-        screenMenu.add(zoomOutItem);
-        zoomOutItem.addActionListener(new ActionListener() {
+        final JMenuItem infoPanel = new JMenuItem("Show/Hide infopanel");
+        screenMenu.add(infoPanel);
+        infoPanel.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                gui.zoomOut();
+                gui.toggleInfoPanel();
             }
         });
 
-        final JMenuItem clearScreanItem = new JMenuItem("Clear Screen");
-        screenMenu.add(clearScreanItem);
-        clearScreanItem.addActionListener(new ActionListener() {
+        final JMenuItem sensorPanel = new JMenuItem("Show/Hide sensorpanel");
+        screenMenu.add(sensorPanel);
+        sensorPanel.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                gui.clearScreen();
+                gui.toggleSensorPanel();
+            }
+        });
+
+        final JMenuItem resetRobotsItem = new JMenuItem("Reset Robots");
+        screenMenu.add(resetRobotsItem);
+        resetRobotsItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                gui.resetRobots();
             }
         });
 
@@ -97,7 +107,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().changeSpeed(1);
+                SilverSurferGUI.getSimulatorPanel().changeSpeedMainRobot(1);
             }
         });
 
@@ -107,7 +117,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().changeSpeed(2);
+                SilverSurferGUI.getSimulatorPanel().changeSpeedMainRobot(2);
             }
         });
 
@@ -117,7 +127,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().changeSpeed(3);
+                SilverSurferGUI.getSimulatorPanel().changeSpeedMainRobot(3);
             }
         });
 
@@ -127,7 +137,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().changeSpeed(4);
+                SilverSurferGUI.getSimulatorPanel().changeSpeedMainRobot(4);
             }
         });
 
@@ -137,13 +147,11 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getMapMenu() {
         mapMenu = new JMenu("Map");
 
-        final JMenuItem loadMapItem = new JMenuItem("Load map...");
-        mapMenu.add(loadMapItem);
-        loadMapItem.addActionListener(new ActionListener() {
+        final JMenuItem loadMapNormalItem = new JMenuItem("Load map");
+        mapMenu.add(loadMapNormalItem);
+        loadMapNormalItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                gui.clearScreen();
-
                 final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui
                         .getFrame(), "Select maze:", FileDialog.LOAD);
                 prompt.setDirectory("resources/maze_maps");
@@ -152,15 +160,73 @@ public class GUIMenuBar extends JMenuBar {
                 final File mapFile = new File(prompt.getDirectory()
                         + prompt.getFile()); // Load and display selection
                 prompt.dispose();
-
-                System.out.println("[I/O] Loading map ...");
-                SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile);
-                System.out.println("[I/O] Map loaded!");
+                
+                if(mapFile.exists()) {
+                    System.out.println("[I/O] Loading map ...");
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 1, 0);
+                    System.out.println("[I/O] Map loaded!");
+                }
             }
 
         });
 
-        final JMenuItem exploreItem = new JMenuItem("Explore...");
+        final JMenuItem loadMapWithDummiesItem = new JMenuItem("Load map with 1 dummy");
+        mapMenu.add(loadMapWithDummiesItem);
+        loadMapWithDummiesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui
+                        .getFrame(), "Select maze:", FileDialog.LOAD);
+                prompt.setDirectory("resources/maze_maps");
+                prompt.setVisible(true);
+
+                final File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
+                prompt.dispose();
+                
+                if(mapFile.exists()) {
+                    System.out.println("[I/O] Loading map ...");
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 2, 1);
+                    System.out.println("[I/O] Map loaded!");
+                }
+            }
+
+        });
+
+        final JMenuItem loadMapWithoutDummiesItem = new JMenuItem("Load map with 3 sims");
+        mapMenu.add(loadMapWithoutDummiesItem);
+        loadMapWithoutDummiesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final FileDialog prompt = new FileDialog(GUIMenuBar.this.gui
+                        .getFrame(), "Select maze:", FileDialog.LOAD);
+                prompt.setDirectory("resources/maze_maps");
+                prompt.setVisible(true);
+
+                final File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
+                prompt.dispose();
+                
+                if(mapFile.exists()) {
+                    System.out.println("[I/O] Loading map ...");
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 4, 0);
+                    System.out.println("[I/O] Map loaded!");
+                }
+            }
+
+        });
+
+        final JMenuItem removeMapItem = new JMenuItem("Remove map");
+        mapMenu.add(removeMapItem);
+        removeMapItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+            	SilverSurferGUI.getSimulatorPanel().removeMapFile();
+            }
+        });
+
+        final JMenuItem exploreItem = new JMenuItem("Explore");
         mapMenu.add(exploreItem);
         exploreItem.addActionListener(new ActionListener() {
 

@@ -13,15 +13,15 @@ import simulator.viewport.SimulatorPanel;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mazeAlgorithm.ExploreThread;
 import mazeAlgorithm.MazeExplorer;
 import mq.communicator.MessageCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-	private Point2D.Double position = new Point2D.Double(sizeTile() / 2,
-			sizeTile() / 2);
-	private double angle = 270;
-	protected int speed = 10;
+	private Point2D.Double position;
+	private double angle;
+	protected int speed;
 	private int teamNumber;
 	private MapGraph mapGraphConstructed;
 	private SimulatorPanel simulatorPanel;
@@ -30,6 +30,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private boolean busyExecutingBarcode = false;
 	private boolean permaBarcodeStop = false;
 	protected PilotActions pilotActions = new PilotActions(this);
+	private ExploreThread exploreThread;
 
 	protected final double lengthOfRobot = 24;
 	protected final double widthOfRobot = 26;
@@ -39,8 +40,8 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	public AbstractPilot(int teamNumber) {
 		this.teamNumber = teamNumber;
-		mapGraphConstructed = new MapGraph();
-		mapGraphConstructed.addTileXY(new Point(0, 0));
+		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
+		reset();
 
 		try {
 		//	messageCenter = new MessageCenter(this);
@@ -161,7 +162,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	@Override
 	public void reset() {
 		angle = 270;
-		speed = 10;
+		speed = 86;
 		mapGraphConstructed = new MapGraph();
 		mapGraphConstructed.addTileXY(getMatrixPosition());
 	}
@@ -359,12 +360,19 @@ public abstract class AbstractPilot implements PilotInterface {
 	 }
 
 	 public void startExploring() {
+		 exploreThread = new ExploreThread(mapGraphConstructed, getMatrixPosition(), AbstractPilot.this);
+		 exploreThread.start();
+		 /*
 		 new Thread() {
 			 public void run() {
-				 new MazeExplorer(
-						 mapGraphConstructed.getTile(getMatrixPosition()),
-						 AbstractPilot.this, true).startExploringMaze();
+				 new MazeExplorer(mapGraphConstructed.getTile(getMatrixPosition()), AbstractPilot.this, true).startExploringMaze();
 			 }
 		 }.start();
+		 */
+	 }
+
+	public void stopExploring() {
+		 if(exploreThread != null && exploreThread.isAlive())
+			 exploreThread.quit();
 	 }
 }

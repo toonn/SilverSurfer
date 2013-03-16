@@ -17,6 +17,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import lejos.pc.tools.SensorPanel;
+
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.RobotPilot;
 import simulator.viewport.SimulatorPanel;
@@ -29,7 +31,7 @@ public class SilverSurferGUI {
     private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7, infoLabel8, infoLabel9, infoLabel10, infoLabel11;
     private static JPanel scalePanel, directionPanel, infoPanel;
     private static SimulatorPanel simulatorPanel;
-    private SensorGraph sensorPanel;
+    private static SensorGraph sensorPanel;
     private GUIMenuBar menuBar;
     private int updateStatusFPS = 3;
     private ActionListener updateStatus = new ActionListener() {
@@ -55,22 +57,18 @@ public class SilverSurferGUI {
         return simulatorPanel;
     }
 
-    protected void clearScreen() {
-        // TODO clearScreen
-    	// System.out.println("[GUI] Screen cleared.");
-        // simulatorPanel.resetMap();
+    protected void resetRobots() {
+    	simulatorPanel.resetRobots();
     }
 
     protected static void connectBluetooth() {
     	simulatorPanel.connect();
     	System.out.println("[CONNECTION] Connection established.");
-    	//TODO: clear screen? reset map?
     }
 
     protected static void disconnectBluetooth() {
     	simulatorPanel.disconnect();
         System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
-    	//TODO: clear screen? reset map?
     }
 
     public void updateStatus() {
@@ -94,6 +92,31 @@ public class SilverSurferGUI {
             infoLabel10.setText("-------------------");
         	infoLabel11.setText("Busy: " + ((RobotPilot)pilot).getBusy());
         }
+    }
+    
+    public void toggleInputPanel() {
+    	if(scalePanel.isVisible()) {
+    		scalePanel.setVisible(false);
+    		directionPanel.setVisible(false);
+    	}
+    	else {
+    		scalePanel.setVisible(true);
+    		directionPanel.setVisible(true);
+    	}
+    }
+    
+    public void toggleInfoPanel() {
+    	if(infoPanel.isVisible())
+    		infoPanel.setVisible(false);
+    	else
+    		infoPanel.setVisible(true);
+    }
+    
+    public void toggleSensorPanel() {
+    	if(sensorPanel.isVisible())
+    		sensorPanel.setVisible(false);
+    	else
+    		sensorPanel.setVisible(true);
     }
 
     public void zoomIn() {
@@ -145,6 +168,8 @@ public class SilverSurferGUI {
         scaleLayout.setVerticalGroup(scaleLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(zoomInButton).addComponent(zoomOutButton));
+        
+		scalePanel.setVisible(false);
     }
 
     private void directionPanel() {
@@ -220,6 +245,8 @@ public class SilverSurferGUI {
                                                 GroupLayout.Alignment.CENTER)
                                         .addComponent(length)
                                         .addComponent(moveButton)));
+        
+		directionPanel.setVisible(false);
     }
     
     private void infoPanel() {
@@ -257,11 +284,14 @@ public class SilverSurferGUI {
                 .addComponent(infoLabel7).addComponent(infoLabel8)
                 .addComponent(infoLabel9).addComponent(infoLabel10)
                 .addComponent(infoLabel11));
+        
+        infoPanel.setVisible(false);
     }
 
     private void sensorPanel() {
         sensorPanel = new SensorGraph(this);
         sensorPanel.setOpaque(false);
+		sensorPanel.setVisible(false);
     }
     
     private void addListeners() {

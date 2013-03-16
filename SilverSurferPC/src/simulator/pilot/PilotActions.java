@@ -33,7 +33,6 @@ public class PilotActions {
 	 */
 	private void pickUpItem(int team) {
 		getPilot().stopReadingBarcodes();
-		System.out.println("Robot " + getPilot().getTeamNumber() + ": pickup");
 
 		getPilot().setTeamNumber(4 + team);
 
@@ -50,7 +49,6 @@ public class PilotActions {
 
 	private void doNotPickUpItem() {
 		getPilot().stopReadingBarcodes();
-		System.out.println("Robot " + getPilot().getTeamNumber() + ": not pickup");
 
 		getPilot().startReadingBarcodes();
 	}

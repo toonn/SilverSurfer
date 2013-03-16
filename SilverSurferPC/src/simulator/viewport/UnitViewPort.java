@@ -129,4 +129,9 @@ public class UnitViewPort extends DummyViewPort {
         sonarArc.setArc(arcUpperLeftX, arcUpperLeftY, side, side, arcStart,
                 arcExtent, Arc2D.PIE);
     }
+    
+    @Override
+    public boolean containsDummy() {
+    	return false;
+    }
 }

@@ -28,6 +28,7 @@ public class MazeExplorer {
     private boolean align;
     private final int amountOfTilesUntilAlign = 5;
     private int currentAmount;
+    private boolean quit = false;
 
     public MazeExplorer(final Tile startTile, final AbstractPilot pilot, boolean align) {
         this.startTile = startTile;
@@ -40,20 +41,28 @@ public class MazeExplorer {
      * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
      */
     public void startExploringMaze() {
-        // TODO aligning
-        // communicator.setTilesBeforeAllign(3);
-        // communicator.mustAllign(mustAllign);
-        allTiles.add(startTile);
-        algorithm(startTile);
-        for (final Object tile : allTiles)
-            ((Tile) tile).setMarkingExploreMaze(false);
-        // communicator.mustAllign(false);
-
+    	try {
+            // TODO aligning
+            // communicator.setTilesBeforeAllign(3);
+            // communicator.mustAllign(mustAllign);
+            allTiles.add(startTile);
+            algorithm(startTile);
+            for (final Object tile : allTiles)
+                ((Tile) tile).setMarkingExploreMaze(false);
+            // communicator.mustAllign(false);    		
+    	} catch(NullPointerException e) {
+    		System.out.println("Algoritm incorrectly closed.");
+    	}
     }
 
     private void algorithm(final Tile currentTile) {
     	// Explore tile and set current tile on "Explored".
         exploreTile(currentTile);
+        
+        if(quit) {
+    		System.out.println("Algoritm correctly closed.");
+        	return;
+        }
 
         // Update queue.
         for (final Object neighbourTile : currentTile.getReachableNeighbours())
@@ -96,6 +105,11 @@ public class MazeExplorer {
         	}
         }
 		checkExploredQueue();
+        
+        if(quit) {
+    		System.out.println("Algoritm correctly closed.");
+        	return;
+        }
 
         // Repeat with next tile.
         algorithm(nextTile);
@@ -243,5 +257,9 @@ public class MazeExplorer {
                 numberVariable = 0;
             }
         }
+    }
+    
+    public void setQuit(boolean quit) {
+    	this.quit = quit;
     }
 }

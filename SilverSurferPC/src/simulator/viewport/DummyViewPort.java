@@ -19,4 +19,8 @@ public class DummyViewPort extends AbstractViewPort {
         maps.add(pilots.iterator().next().getMapGraphConstructed());
         return maps;
     }
+    
+    public boolean containsDummy() {
+    	return true;
+    }
 }

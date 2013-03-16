@@ -11,8 +11,7 @@ import simulator.SimulationSensorData;
 
 public class SimulationPilot extends AbstractPilot {
 
-	public SimulationPilot(int teamNumber)
-	{
+	public SimulationPilot(int teamNumber) {
 		super(teamNumber);
 	}
 	
