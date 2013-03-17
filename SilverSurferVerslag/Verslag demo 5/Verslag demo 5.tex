@@ -27,13 +27,13 @@
 \maketitlepage
 
 \begin{abstract}
-Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
+Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} \cite{TeamTreasure} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder is de robot voorzien van een schep waarmee hij het voorwerp kan oprapen.\\
 
-De robot kan een doolhof verkennen en hiervan een map bijhouden. Wanneer hij een tegel vindt die mogelijk een voorwerp bevat, zal het nakijken van deze tegel prioriteit krijgen op het verkennen. Via RabbitMQ \cite{RabbitMQ} kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
+De robot kan een doolhof verkennen en hiervan een map bijhouden. Wanneer hij een tegel vindt die mogelijk een voorwerp bevat, zal het nakijken van deze tegel prioriteit krijgen. Via RabbitMQ \cite{RabbitMQ} kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
 
-Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich dan volledig analoog aan de fysieke robot.
+Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
 
 \setcounter{tocdepth}{2}
@@ -52,7 +52,7 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 % == INLEIDING == %
 \section{Inleiding} % 4 ok
 \label{ssec:inl}
-In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms \cite{mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
+In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms \cite{mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} \cite{TeamTreasure} kunnen spelen.
 De robots moeten hierbij in een onbekend doolhof op zoek naar een bepaald voorwerp (een wc-rol). Elke robot krijgt zijn eigen voorwerp toegewezen. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
 
 Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robots gewerkt. Het is ook mogelijk met vier virtuele robots te werken. De doolhof bevat mogelijk een wip. De robots zijn in staat hun eigen voorwerp te vinden en op te rapen. Wanneer een robot weet wie zijn teamgenoot is, kan hij hiermee een punt afspreken om samen te komen.\\
@@ -276,12 +276,12 @@ De robot wordt voor de eerste demo voorzien van een schep die bestaat uit een ha
 % == resulaten == %
 \subsection{Resultaten} % 3 ?
 \label{Assec:result1}
-Het algoritme waarmee de robot zijn voorwerp opraapte, maakte gebruik van de travel() methode. De \textit{ExploreMaze}-thread wist echter niet dat de robot van plek was verandert. Hierdoor gaf de thread de robot verkeerde instructies en reed hij tegen een muur.
+Het algoritme waarmee de robot zijn voorwerp opraapte, maakte gebruik van de travel() methode. De \textit{ExploreMaze}-thread wist echter niet dat de robot van plek was verandert. In de waan dat de robot op een andere plek stond dan in werkelijkheid, gaf de thread verkeerde instructies waardoor de robot tegen een muur reed.
 
 % == conclusies == %
 \subsection{Conclusies} % 3 ?
 \label{Assec:conc1}
-Het bovengenoemd probleem is voor de volgende demo opgelost. Wanneer de \textit{ExploreMaze}-thread onderbroken wordt, zorgt de onderbrekende methode dat de robot op dezelfde plek staat als waar de \textit{ExploreMaze}-thread
+Het bovengenoemd probleem is voor de volgende demo opgelost. Wanneer de \textit{ExploreMaze}-thread onderbroken wordt, zorgt de onderbrekende methode steeds dat de robot op dezelfde plek staat als waar de \textit{ExploreMaze}-thread denkt dat de robot staat.
 
 
 % == aanpassingen == %
@@ -296,15 +296,19 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 
 \newpage
 \begin{thebibliography}{9}
+\bibitem{TeamTreasure} 
+\textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
+
+\bibitem{RabbitMQ}
+\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
+\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
+
 \bibitem{mindstorms}
 \textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
 
 \bibitem{leJOS}
 \textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
 
-\bibitem{RabbitMQ}
-\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
-\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
 
 
 \end{thebibliography}
