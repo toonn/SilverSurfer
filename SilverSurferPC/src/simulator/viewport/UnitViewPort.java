@@ -11,24 +11,21 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import mapping.MapGraph;
 import mapping.Tile;
-import mapping.TreasureObject;
-
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 
 @SuppressWarnings("serial")
 public class UnitViewPort extends DummyViewPort {
 
-    private final Arc2D sonarArc = new Arc2D.Double();
-    private List<Point> pathCoordinates;
     private final Set<AbstractPilot> pilots;
+    private List<Point> pathCoordinates;
+    private final Arc2D sonarArc = new Arc2D.Double();
 
     public UnitViewPort(final Set<AbstractPilot> pilotSet) {
         super(pilotSet);
@@ -48,30 +45,20 @@ public class UnitViewPort extends DummyViewPort {
         for (final PilotInterface pilot : pilots)
             addPathPoint(pilot.getPosition().getX(), pilot.getPosition().getY());
     }
-
-    /**
-     * Methode die alle paint methodes samenvoegd en uitvoert in het JPanel
-     */
+    
     @Override
     protected void paintComponent(final Graphics graph) {
         super.paintComponent(graph);
-        updatePathComponent();
         paintPathComponent(graph);
         paintBeamComponent(graph);
         paintExploreQueue(graph);
     }
-
-    private void updatePathComponent() {
+    
+    private void paintPathComponent(final Graphics graph) {
         for (final PilotInterface pilot : pilots)
             if (pilot.getPosition().getX() != pathCoordinates.get(pathCoordinates.size() - 1).getX()
                     || pilot.getPosition().getY() != pathCoordinates.get(pathCoordinates.size() - 1).getY())
                 addPathPoint(pilot.getPosition().getX(), pilot.getPosition().getY());
-    }
-
-    /**
-     * Tekent het pad van de robot
-     */
-    private void paintPathComponent(final Graphics graph) {
         final Graphics2D g2 = ((Graphics2D) graph);
         g2.setColor(Color.RED);
         final Stroke originalStroke = g2.getStroke();
@@ -80,62 +67,32 @@ public class UnitViewPort extends DummyViewPort {
             g2.draw(new Line2D.Double(pathCoordinates.get(i), pathCoordinates.get(i + 1)));
         g2.setStroke(originalStroke);
     }
-    
-    /**
-     * Tekent alle tiles in de mapgraph
-     * Handig voor testen
-     */
-    private void paintExploreQueue(final Graphics graph) {
-    	((Graphics2D) graph).setColor(Color.ORANGE);
-    	
-    	try {
-        	for (MapGraph mapGraph : getAllMapGraphs()) {
-                for (Tile tile : mapGraph.getTiles())
-                {
-                	Rectangle2D checkHighlight = new Rectangle2D.Double(tile.getPosition().getX() * 40,
-                														tile.getPosition().getY() * 40,
-                														(int) getSizeTile(),
-                														(int) getSizeTile());
-                	((Graphics2D) graph).fill(checkHighlight);
-                }
-        	}
-    	} catch(ConcurrentModificationException e) {
-    		System.out.println("[Exception] ConcurrentModificationException occured in UnitViewPort.paintExploreQueue(graph) for robot " + pilots.iterator().next().getTeamNumber()+ "!");
-    	}
-    }
-    
 
-    /**
-     * The arc is painted light blue when the measurement is not to be trusted
-     * (>200 || <20). Otherwise, it is painted in a darker blue.
-     */
     private void paintBeamComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-            updateArc(pilot.getPosition().getX(), pilot.getPosition().getY(), pilot.getAngle(), pilot.getUltraSensorValue());
+        	double correctedUSDistance = pilot.getUltraSensorValue() - 5.5;
+            sonarArc.setArc(pilot.getPosition().getX() - correctedUSDistance, pilot.getPosition().getY() - correctedUSDistance,
+            		2 * correctedUSDistance, 2 * correctedUSDistance, 360 - pilot.getAngle() - 15, 30, Arc2D.PIE);
             ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
             if (pilot.getUltraSensorValue() > 200 || pilot.getUltraSensorValue() < 20)
-                graph.setColor(new Color(133, 211, 249));
+                graph.setColor(new Color(133, 211, 249)); //Light blue when not trusted (< 20 || > 200)
             else
-                graph.setColor(new Color(12, 24, 244));
+                graph.setColor(new Color(12, 24, 244)); //Dark blue when trusted (>= 20 && <= 200)
             ((Graphics2D) graph).fill(sonarArc);
         }
     }
 
-    private void updateArc(final double robotX, final double robotY,
-            final double robotAngle, final double USDistance) {
-        double correctedUSDistance = USDistance - 5.5;
-        final double arcUpperLeftX = robotX - correctedUSDistance;
-        final double arcUpperLeftY = robotY - correctedUSDistance;
-        final double arcStart = 360 - robotAngle - 15;
-        final double arcExtent = 30;
-
-        final double side = 2 * correctedUSDistance;
-        sonarArc.setArc(arcUpperLeftX, arcUpperLeftY, side, side, arcStart,
-                arcExtent, Arc2D.PIE);
-    }
-    
-    @Override
-    public boolean containsDummy() {
-    	return false;
+    private void paintExploreQueue(final Graphics graph) {
+    	try {
+        	((Graphics2D) graph).setColor(Color.ORANGE);
+        	for (MapGraph mapGraph : getAllMapGraphs())
+                for (Tile tile : mapGraph.getTiles()) {
+                	Rectangle2D checkHighlight = new Rectangle2D.Double(tile.getPosition().getX() * 40, tile.getPosition().getY() * 40,
+                														(int) getSizeTile(), (int) getSizeTile());
+                	((Graphics2D) graph).fill(checkHighlight);
+                }
+    	} catch(java.util.ConcurrentModificationException e) {
+    		paintExploreQueue(graph);
+    	}
     }
 }

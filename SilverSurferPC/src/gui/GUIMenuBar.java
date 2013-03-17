@@ -17,45 +17,18 @@ public class GUIMenuBar extends JMenuBar {
     private SilverSurferGUI gui;
     private JFrame frame;
 
-    private JMenu blueToothMenu, screenMenu, speedMenu, mapMenu, exploreMenu;
+    private JMenu screenMenu, speedMenu, connectionMenu, mapMenu, exploreMenu;
 
     public GUIMenuBar(final SilverSurferGUI gui, final JFrame frame) {
         this.gui = gui;
         this.frame = frame;
-        this.add(getBlueToothMenu());
         this.add(getScreenMenu());
         this.add(getSpeedMenu());
+        this.add(createEmptyMenu());
+        this.add(getConnectionMenu());
         this.add(getMapMenu());
         this.add(getExploreMenu());
         setBackground(new Color(221, 230, 231));
-    }
-
-    private JMenu getBlueToothMenu() {
-        blueToothMenu = new JMenu("Bluetooth");
-
-        final JMenuItem connectItem = new JMenuItem("Connect...");
-        blueToothMenu.add(connectItem);
-        connectItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().connect();
-            	System.out.println("[CONNECTION] Connection established.");
-            }
-        });
-
-        final JMenuItem disconnectItem = new JMenuItem("Disconnect...");
-        blueToothMenu.add(disconnectItem);
-        disconnectItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                SilverSurferGUI.getSimulatorPanel().disconnect();
-                System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
-            }
-        });
-
-        return blueToothMenu;
     }
 
     private JMenu getScreenMenu() {
@@ -149,9 +122,53 @@ public class GUIMenuBar extends JMenuBar {
 
         return speedMenu;
     }
+    
+    private JMenu createEmptyMenu() {
+    	JMenu emptyMenu = new JMenu("     ");
+    	emptyMenu.setEnabled(false);
+    	return emptyMenu;
+    }
+
+    private JMenu getConnectionMenu() {
+        connectionMenu = new JMenu("Connection");
+        
+        final JMenuItem connectItem = new JMenuItem("Connect...");
+        connectionMenu.add(connectItem);
+        connectItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().connect();
+            	System.out.println("[CONNECTION] Connection established.");
+            }
+        });
+
+        final JMenuItem disconnectItem = new JMenuItem("Disconnect...");
+        connectionMenu.add(disconnectItem);
+        disconnectItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                SilverSurferGUI.getSimulatorPanel().disconnect();
+                System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
+            }
+        });
+
+        return connectionMenu;
+    }
 
     private JMenu getMapMenu() {
         mapMenu = new JMenu("Map");
+
+        final JMenuItem addDummyItem = new JMenuItem("Add dummy");
+        mapMenu.add(addDummyItem);
+        addDummyItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+            	SilverSurferGUI.getSimulatorPanel().addDummy();
+            }
+        });
 
         final JMenuItem loadMapNormalItem = new JMenuItem("Load map");
         mapMenu.add(loadMapNormalItem);
@@ -211,9 +228,9 @@ public class GUIMenuBar extends JMenuBar {
                 prompt.dispose();
                 
                 if(mapFile.exists()) {
-                    System.out.println("[I/O] Loading map ...");
+                    System.out.println("[MAP] Loading map ...");
                     SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 4, 0);
-                    System.out.println("[I/O] Map loaded!");
+                    System.out.println("[MAP] Map loaded!");
                 }
             }
 
@@ -226,6 +243,7 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(final ActionEvent arg0) {
             	SilverSurferGUI.getSimulatorPanel().removeMapFile();
+                System.out.println("[MAP] Map removed!");
             }
         });
 
@@ -235,23 +253,29 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getExploreMenu() {
         exploreMenu = new JMenu("Explore");
 
-        final JMenuItem exploreItem = new JMenuItem("Explore");
+        final JMenuItem exploreItem = new JMenuItem("Explore map");
         exploreMenu.add(exploreItem);
         exploreItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                SilverSurferGUI.getSimulatorPanel().startSimulation();
+            	if(SilverSurferGUI.getSimulatorPanel().getMapGraphLoaded() != null) {
+            		SilverSurferGUI.getSimulatorPanel().startSimulation();
+                	System.out.println("[EXPLORE] Start exploration.");
+            	}
+            	else
+            		System.out.println("[EXPLORE] Cannot explore now, load a map first!");
             }
         });
 
-        final JMenuItem resetRobotsItem = new JMenuItem("Reset Robots");
+        final JMenuItem resetRobotsItem = new JMenuItem("Stop exploration and reset robots");
         exploreMenu.add(resetRobotsItem);
         resetRobotsItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
                 SilverSurferGUI.getSimulatorPanel().resetRobots();
+            	System.out.println("[EXPLORE] Exploration stopped and robots resetted (might have to do multiple times).");
             }
         });
 

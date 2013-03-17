@@ -1,4 +1,4 @@
-package datastructures;
+package unused;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

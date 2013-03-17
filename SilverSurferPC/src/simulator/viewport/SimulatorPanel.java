@@ -36,7 +36,7 @@ public class SimulatorPanel extends JPanel {
     
     public SimulatorPanel() {
         initialization();
-        createSims(false, 1, 0); //(Robot or not, amount of players, amount of dummies)
+        createSims(false, 1, 0); //(Robot or not, amount of players, amount of dummies) -> only (_, 1, 0), (_, 2, 1) or (_, 4, 0) is in use and checked!
     }
     
     private void initialization() {
@@ -48,8 +48,7 @@ public class SimulatorPanel extends JPanel {
     
     private void createSims(boolean robot, int amount, int amountOfDummies) {
     	if(!robot)
-            principalPilot = new SimulationPilot(0);
-        principalPilot.setSimulatorPanel(this);
+            principalPilot = new SimulationPilot(0, mapGraphLoaded);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
         principalViewPort = new UnitViewPort(principalPilotSet);
@@ -62,7 +61,6 @@ public class SimulatorPanel extends JPanel {
         for (int i = 0; i < amountOfDummies; i++)
         	dummyPilots.add(new DummyPilot(i + 1));
         for (DummyPilot pilot : dummyPilots) {
-        	pilot.setSimulatorPanel(this);
         	Set<DummyPilot> dummyPilotSet = new HashSet<DummyPilot>();
         	dummyPilotSet.add(pilot);
         	otherViewPorts.add(new DummyViewPort(dummyPilotSet));
@@ -70,9 +68,8 @@ public class SimulatorPanel extends JPanel {
         
         //Creates non-dummies
         for (int i = 0; i < amount-1-amountOfDummies; i++)
-        	simulatorPilots.add(new SimulationPilot(amountOfDummies + i + 1));
+        	simulatorPilots.add(new SimulationPilot(amountOfDummies + i + 1, mapGraphLoaded));
         for (AbstractPilot pilot : simulatorPilots) {
-        	pilot.setSimulatorPanel(this);
         	Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
         	simulatorPilotSet.add(pilot);
         	otherViewPorts.add(new UnitViewPort(simulatorPilotSet));
@@ -171,6 +168,14 @@ public class SimulatorPanel extends JPanel {
         removeMapFile();
         createSims(false, 1, 0);
     }
+    
+    public void addDummy() {
+    	stopSimulation();
+    	mapName = "/";
+    	mapGraphLoaded = null;
+        overallViewPort = null;
+        createSims(principalPilot instanceof RobotPilot, 2, 1);
+    }
 
     public void setMapFile(File mapFile, int amount, int amountOfDummies) {
     	stopSimulation();
@@ -205,15 +210,16 @@ public class SimulatorPanel extends JPanel {
             for (DummyPilot pilot : dummyPilots)
                 pilot.reset();
             for (DummyViewPort viewPort : otherViewPorts)
-            	if(!viewPort.containsDummy())
+            	if(viewPort instanceof UnitViewPort)
             		((UnitViewPort)viewPort).resetPath();
         }
         
-        changeSpeedAllRobots(2);
+        changeSpeedMainRobot(2);
+        for (AbstractPilot pilot : simulatorPilots)
+        	pilot.setSpeed(2);
     }
 
     public void startSimulation() {
-    	System.out.println("[Explore] Start exploration.");
         principalPilot.startExploring();
         for (AbstractPilot pilot : simulatorPilots)
         	pilot.startExploring();
@@ -223,13 +229,6 @@ public class SimulatorPanel extends JPanel {
     	principalPilot.stopExploring();
         for (AbstractPilot pilot : simulatorPilots)
         	pilot.stopExploring();
-    }
-
-    private void changeSpeedAllRobots(final int value) {
-        speed = value;
-        principalPilot.setSpeed(value);
-        for (AbstractPilot pilot : simulatorPilots)
-        	pilot.setSpeed(value);
     }
 
     public void changeSpeedMainRobot(final int value) {

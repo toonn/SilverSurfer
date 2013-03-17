@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import mapping.Barcode;
-import simulator.viewport.SimulatorPanel;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
@@ -12,28 +11,31 @@ import mazeAlgorithm.ExploreThread;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-	private Point2D.Double position;
-	private double angle;
-	protected int speed;
 	private int teamNumber;
 	private MapGraph mapGraphConstructed;
-	private SimulatorPanel simulatorPanel;
-	private boolean readBarcodes = true;
+	private Point2D.Double position;
+	private double angle;
+	private int speed;
 	private boolean busyExecutingBarcode = false;
+	private boolean readBarcodes = true;
 	private boolean permaBarcodeStop = false;
-	protected PilotActions pilotActions = new PilotActions(this);
+	private PilotActions pilotActions = new PilotActions(this);
 	private ExploreThread exploreThread;
 
-	protected final double lengthOfRobot = 24;
-	protected final double widthOfRobot = 26;
-	protected final double lightSensorDistanceFromAxis = 7.5;
-	protected final double ultrasonicSensorDistanceFromAxis = 5.5;
 	protected final double detectionDistanceUltrasonicSensorRobot = 28;
 
 	public AbstractPilot(int teamNumber) {
-		this.teamNumber = teamNumber;
+		if(teamNumber < 0 || teamNumber > 3)
+			this.teamNumber = -1;
+		else
+			this.teamNumber = teamNumber;
 		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
 		reset();
+	}
+
+	@Override
+	public double sizeTile() {
+		return 40;
 	}
 
 	/**
@@ -43,20 +45,24 @@ public abstract class AbstractPilot implements PilotInterface {
 	 */
 	@Override
 	public int getTeamNumber() {
-		if(teamNumber >= 0 && teamNumber <= 5)
-			return teamNumber;
-		return -1;
+		return teamNumber;
 	}
 
 	/**
 	 * The team number can only change when a robot has found its treasure and knows what team it is in
 	 * This means the team number can only be set to 4 or 5
 	 */
+	@Override
 	public void setTeamNumber(int teamNumber) {
-		if(teamNumber != 4 && teamNumber != 5)
-			System.out.println("the teamnumber can only be set to 4 or 5");
-		else
+		if(teamNumber == 4 || teamNumber == 5)
 			this.teamNumber = teamNumber;
+		else
+			throw new IllegalStateException("The teamnumber can only be set to 4 or 5!");
+	}
+
+	@Override
+	public MapGraph getMapGraphConstructed() {
+		return mapGraphConstructed;
 	}
 
 	@Override
@@ -64,17 +70,15 @@ public abstract class AbstractPilot implements PilotInterface {
 		return position;
 	}
 
+	@Override
+	public Point getMatrixPosition() {
+		return new Point((int) (getPosition().getX() / sizeTile()),
+				(int) (getPosition().getY() / sizeTile()));
+	}
+
+	@Override
 	public void setPosition(final double x, final double y) {
 		position.setLocation(x, y);
-	}
-
-	public Point getMatrixPosition() {
-		return toMatrixPosition(getPosition());
-	}
-
-	public Point toMatrixPosition(Point2D.Double point) {
-		return new Point((int) (point.getX() / sizeTile()),
-				(int) (point.getY() / sizeTile()));
 	}
 
 	@Override
@@ -82,6 +86,7 @@ public abstract class AbstractPilot implements PilotInterface {
 		return angle;
 	}
 
+	@Override
 	public void setAngle(final double angle) {
 		if (angle > 360)
 			this.angle = angle - 360;
@@ -92,84 +97,24 @@ public abstract class AbstractPilot implements PilotInterface {
 	}
 
 	@Override
-	public double sizeTile() {
-		return 40;
-	}
-
-	public int getSpeed() {
-		if (speed == 48)
-			return 4;
-		else if (speed == 58)
-			return 3;
-		else if (speed == 86)
-			return 2;
-		else
-			return 1;
-	}
-
-	public void setSpeed(int speed) {
-		if (speed == 4)
-			this.speed = 48;
-		else if (speed == 3)
-			this.speed = 58;
-		else if (speed == 2)
-			this.speed = 86;
-		else
-			this.speed = 194;
-	}
-
-	public MapGraph getMapGraphLoaded() {
-		// TODO: change back (piloot mag niet aan simulatorpanel)
-		return simulatorPanel.getMapGraphLoaded();
-	}
-
-	@Override
-	public MapGraph getMapGraphConstructed() {
-		return mapGraphConstructed;
-	}
-
-	public void setSimulatorPanel(SimulatorPanel simulatorPanel) {
-		this.simulatorPanel = simulatorPanel;
-	}
-
-	@Override
-	public boolean isRobotControllable() {
-		return true;
+	public void reset() {
+		angle = 270;
+		speed = 2;
+		mapGraphConstructed = new MapGraph();
+		mapGraphConstructed.addTileXY(getMatrixPosition());
 	}
 
 	public abstract String getConsoleTag();
 
-	@Override
-	public void reset() {
-		angle = 270;
-		speed = 86;
-		mapGraphConstructed = new MapGraph();
-		mapGraphConstructed.addTileXY(getMatrixPosition());
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 
 	public Orientation getOrientation() {
 		return Orientation.calculateOrientation(getAngle());
 	}
 
-	public double[] getLightSensorCoordinates() {
-		final double[] coordinates = new double[2];
-		coordinates[0] = (getPosition().getX() + lightSensorDistanceFromAxis
-                * Math.cos(Math.toRadians(this.getAngle())));
-		coordinates[1] = (getPosition().getX() + lightSensorDistanceFromAxis
-                * Math.sin(Math.toRadians(this.getAngle())));
-		return coordinates;
-	}
-
 	public abstract int getLightSensorValue();
-
-	public double[] getUltrasonicSensorCoordinates() {
-		final double[] coordinates = new double[2];
-		coordinates[0] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
-                * Math.cos(Math.toRadians(this.getAngle())));
-		coordinates[1] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
-                * Math.sin(Math.toRadians(this.getAngle())));
-		return coordinates;
-	}
 
 	public abstract int getUltraSensorValue();
 
@@ -180,23 +125,17 @@ public abstract class AbstractPilot implements PilotInterface {
 	}
 
 	public void setObstructionOrTile() {
-		final Orientation currentOrientation = Orientation
-				.calculateOrientation(getAngle());
+		final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
 		if (checkForObstruction())
-			getMapGraphConstructed().getTile(getMatrixPosition())
-			.getEdge(currentOrientation)
-			.setObstruction(Obstruction.WALL);
+			getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(currentOrientation).setObstruction(Obstruction.WALL);
 		else {
 			Point nextPoint = currentOrientation.getNext(getMatrixPosition());
-			if (mapGraphConstructed.getTile(nextPoint) == null)
+			if(mapGraphConstructed.getTile(nextPoint) == null)
 				getMapGraphConstructed().addTileXY(nextPoint);
 		}
 	}
 
-	/**
-	 * checkt of het punt zich binnen de marge van een edge bevindt
-	 */
-	 protected boolean pointOnEdge(final double x, final double y) {
+	protected boolean pointOnEdge(final double x, final double y) {
 		double edgeMarge = 1.2;
 		return (x % sizeTile()) > sizeTile() - edgeMarge
 				|| (x % sizeTile()) < edgeMarge
@@ -204,148 +143,128 @@ public abstract class AbstractPilot implements PilotInterface {
 				|| (y % sizeTile()) < edgeMarge;
 	}
 
-	 public void alignOnWhiteLine() {		 
-		 //TODO: express fouten brengen op simulator?
-		 /*while (!pointOnEdge(getLightSensorCoordinates()[0],
-				 getLightSensorCoordinates()[1]))
-			 travel(1);
-		 travel(5);
-		 while (!pointOnEdge(getLightSensorCoordinates()[0],
-				 getLightSensorCoordinates()[1]))
-			 rotate(-1);
-		 rotate(90);
-		 int i = 0;
-		 while (!pointOnEdge(getLightSensorCoordinates()[0],
-				 getLightSensorCoordinates()[1])) {
-			 rotate(1);
-			 i++;
-		 }
-		 rotate(-(90 + i) / 2);*/
-		 
-		 travel(13);
-		 travel(5);
-		 rotate(-90);
-		 rotate(180);
-		 rotate(-90);
-	 }
+	public void alignOnWhiteLine() {		 
+		travel(13);
+		travel(5);
+		rotate(-90);
+		rotate(180);
+		rotate(-90);
+	}
 
-	 public void alignOnWalls() {
-		 rotate(90);
-		 if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot && getUltraSensorValue() > 23)
-			 while (!(getUltraSensorValue() <= 23))
-				 travel(1);
-		 rotate(-90);
-		 rotate(-90);
-		 if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot
-				 && getUltraSensorValue() > 23)
-			 while (!(getUltraSensorValue() <= 23))
-				 travel(1);
-		 rotate(90);
-	 }
+	public void alignOnWalls() {
+		rotate(90);
+		rotate(-90);
+		rotate(-90);
+		rotate(90);
+	}
 
-	 protected abstract int getRotateSleepTime(double angle);
+	public void travel(final double distance) {
+		double currentX = getPosition().getX();
+		double currentY = getPosition().getY();
+		double x;
+		double y;
+		Orientation travelOrientation = Orientation.calculateOrientation(getAngle());
+		if (distance < 0)
+			travelOrientation = travelOrientation.getOppositeOrientation();
+		for (int i = 1; i <= Math.abs(distance); i++) {
+			if (travelOrientation == Orientation.NORTH) {
+				x = currentX;
+				y = currentY - i;
+			}
+			else if (travelOrientation == Orientation.SOUTH) {
+				x = currentX;
+				y = currentY + i;
+			}
+			else if (travelOrientation == Orientation.EAST) {
+				x = currentX + i;
+				y = currentY;
+			}
+			else {
+				x = currentX - i;
+				y = currentY;
+			}
+			setPosition(x, y);
+			try {
+				Thread.sleep(getTravelSleepTime());
+			} catch (final InterruptedException e) {
+				
+			}
+		}
+		if(readBarcodes && this instanceof SimulationPilot && getMapGraphConstructed().getTile(getMatrixPosition()) != null &&
+				!(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
+				&& getLightSensorValue() < 40 && getLightSensorValue() > 10) {
+			setBusyExecutingBarcode(true);
+			pilotActions.barcodeFound();
+		}
+	}
 
-	 protected abstract int getTravelSleepTime(double distance);
+	private int getTravelSleepTime() {
+		switch (speed) {
+		case 1:
+			return 10;
+		case 2:
+			return 7;
+		case 3:
+			return 5;
+		case 4:
+			return 3;
+		}
+		return 7;
+	}
 
-	 public void rotate(final double alpha) {
-		 double angle = getAngle();
-		 for (int i = 1; i <= Math.abs(alpha); i++) {
-			 if (alpha >= 0)
-				 setAngle(angle + i);
-			 else
-				 setAngle(angle - i);
-			 try {
-				 Thread.sleep(getRotateSleepTime(alpha));
-			 } catch (Exception e) {
+	public void rotate(final double alpha) {
+		double angle = getAngle();
+		for (int i = 1; i <= Math.abs(alpha); i++) {
+			if (alpha >= 0)
+				setAngle(angle + i);
+			else
+				setAngle(angle - i);
+			try {
+				Thread.sleep(getRotateSleepTime());
+			} catch (Exception e) {
+				
+			}
+		}
+	}
 
-			 }
-		 }
-	 }
+	private int getRotateSleepTime() {
+		return 5 - speed;
+	}
 
-	 public void travel(final double distance) {
-		 double currentX = getPosition().getX();
-		 double currentY = getPosition().getY();
-		 double x;
-		 double y;
-		 Orientation travelOrientation = Orientation
-				 .calculateOrientation(getAngle());
-		 if (distance < 0)
-			 travelOrientation = travelOrientation.getOppositeOrientation();
-		 for (int i = 1; i <= Math.abs(distance); i++) {
-			 if (travelOrientation == Orientation.NORTH) {
-				 x = currentX;
-				 y = currentY - i;
-			 } else if (travelOrientation == Orientation.SOUTH) {
-				 x = currentX;
-				 y = currentY + i;
-			 } else if (travelOrientation == Orientation.EAST) {
-				 x = currentX + i;
-				 y = currentY;
-			 } else {
-				 x = currentX - i;
-				 y = currentY;
-			 }
-			 // TODO: niet door muren rijden (maar op betere manier dan
-					 // hieronder, dit geeft errors)
-			 /*
-			  * if (getMapGraphLoaded() != null && robotOnEdge(x, y, getAngle()))
-			  * { final Orientation edgeOrientation = pointOnWichSideOfTile(x, y,
-			  * travelOrientation); if (travelOrientation == edgeOrientation &&
-			  * !getMapGraphLoaded().getTile(getMatrixPosition())
-			  * .getEdge(travelOrientation).isPassable()) {
-			  * System.out.println("Er staat een muur in de weg"); return; } }
-			  */
-			 setPosition(x, y);
-			 
-			 try {
-				 Thread.sleep(getTravelSleepTime(distance));
-			 } catch (final InterruptedException e) {
+	protected abstract int readBarcode();
 
-			 }
-		 }
-		 if(readBarcodes && !(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
-					&& getLightSensorValue() < 40 && getLightSensorValue() > 10) {
-			 setBusyExecutingBarcode(true);
-			 pilotActions.barcodeFound();
-		 }
-	 }
-
-	 protected abstract int readBarcode();
+	public void barcodeFound() {
+		busyExecutingBarcode = true;
+		pilotActions.barcodeFound();
+	}
 	 
-	 public boolean isExecutingBarcode() {
-		 return busyExecutingBarcode;
-	 }
-
-	 public void executeBarcode(int barcode) {
-		 pilotActions.executeBarcode(barcode);
-	 }
-
-	 public void stopReadingBarcodes() {
-		 // TODO Deze methode wil ik weg uit pilot.
-		 readBarcodes = false;
-	 }
-
-	 public void startReadingBarcodes() {
-		 // TODO Deze methode wil ik weg uit pilot.
-		 readBarcodes = true;
-	 }
+	public boolean isExecutingBarcode() {
+		return busyExecutingBarcode;
+	}
 	 
-	 public void setBusyExecutingBarcode(boolean busy) {
-		 busyExecutingBarcode = busy;
-	 }
+	public void setBusyExecutingBarcode(boolean busy) {
+		busyExecutingBarcode = busy;
+	}
 
-	 public void permaStopReadingBarcodes() {
-		 // TODO Deze methode wil ik weg uit pilot.
-		 permaBarcodeStop = true;
-	 }
+	public void setReadBarcodes(boolean readBarcodes) {
+		this.readBarcodes = readBarcodes;
+	}
+	
+	public boolean getPermaStopReadingBarcodes() {
+		return permaBarcodeStop;
+	}
 
-	 public void startExploring() {
-		 exploreThread = new ExploreThread(mapGraphConstructed.getTile(getMatrixPosition()), this);
-		 exploreThread.start();
-	 }
+	public void permaStopReadingBarcodes() {
+		permaBarcodeStop = true;
+	}
+
+	public void startExploring() {
+		exploreThread = new ExploreThread(mapGraphConstructed.getTile(getMatrixPosition()), this);
+		exploreThread.start();
+	}
 
 	public void stopExploring() {
-		 if(exploreThread != null && exploreThread.isAlive())
-			 exploreThread.quit();
-	 }
+		if(exploreThread != null && exploreThread.isAlive())
+			exploreThread.quit();
+	}
 }

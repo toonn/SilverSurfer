@@ -3,18 +3,148 @@ package simulator.pilot;
 import java.util.Random;
 
 import mapping.Barcode;
+import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Tile;
-import simulator.SimulationSensorData;
 
 public class SimulationPilot extends AbstractPilot {
+	
+	private static class SimulationSensorData {
+	    //Whether there the light is bright or quite dark. influences the light sensor
+	    private static boolean isBrightLight = true;
+	    private static boolean isDriving = true;
 
-	public SimulationPilot(int teamNumber) {
+	    //Standard Deviation of the light sensor, when standing on a panel containing a barcode under given circumstances.
+	    public static final double getMBarcodeTileLS(final int color) {
+	        //Black
+	        if (color == 0) {
+	            if (isBrightLight) {
+	                if (isDriving)
+	                    return 33.05;
+	                else
+	                    return 34;
+	            } 
+	            else {
+	                if (isDriving)
+	                    return 33.42;
+	                else
+	                    return 33;
+	            }
+	        }
+	        //White
+	        else if (color == 1)
+	            return SimulationSensorData.getMWhiteLineLS();
+	        //Not on the code itself, but on the brown panel next to it
+	        else
+	            return SimulationSensorData.getMEmptyPanelLS();
+	    }
+
+	    //Mean value of the light sensor, when standing on an empty panel under given circumstances.
+	    public static final double getMEmptyPanelLS() {
+	        if (isBrightLight) {
+	            if (isDriving)
+	                return 49.3863;
+	            else
+	                return 49.99688474;
+	        }
+	        else {
+	            if (isDriving)
+	                return 49.46829;
+	            else
+	                return 49;
+	        }
+	    }
+
+	    //Mean value of the light sensor, when standing a white line under given circumstances.
+	    public static final double getMWhiteLineLS() {
+	        if (isBrightLight) {
+	            if (isDriving)
+	                return 55.02606;
+	            else
+	                return 54.99377;
+	        }
+	        else {
+	            if (isDriving)
+	                return 54.98442;
+	            else
+	                return 55;
+	        }
+	    }
+
+	    //Standard Deviation of the light sensor, when standing on a panel containing a barcode under given circumstances.
+	    //The color should be 0 when standing on a black part, 1 when standing on a white part or something else when standing next to the panel.
+	    public static final double getSDBarcodeTileLS(final int color) {
+	        //Black
+	        if (color == 0) {
+	            if (isBrightLight) {
+	                if (isDriving)
+	                    return 0.272790608;
+	                else
+	                    return 0;
+	            }
+	            else {
+	                if (isDriving)
+	                    return 0.575648536;
+	                else
+	                    return 0;
+	            }
+	        }
+	        //White
+	        else if (color == 1)
+	            return SimulationSensorData.getSDWhiteLineLS();
+	        //Not on the code itself, but on the brown panel next to it
+	        else
+	            return SimulationSensorData.getSDEmptyPanelLS();
+	    }
+
+	    //Standard Deviation of the light sensor, when standing on an empty panel under given circumstances.
+	    public static final double getSDEmptyPanelLS() {
+	        if (isBrightLight) {
+	            if (isDriving)
+	                return 0.6425;
+	            else
+	                return 0.055814557;
+	        }
+	        else {
+	            if (isDriving)
+	                return 1.218249;
+	            else
+	                return 0;
+	        }
+	    }
+
+	    //Standard Deviation of the light sensor, when standing a white line under given circumstances.
+	    public static final double getSDWhiteLineLS() {
+	        if (isBrightLight) {
+	            if (isDriving)
+	                return 0.966416;
+	            else
+	                return 0.111629;
+	        }
+	        else {
+	            if (isDriving)
+	                return 1.1218249;
+	            else
+	                return 0;
+	        }
+	    }
+
+	    //Standard Deviation of the ultrasonic sensor under given circumstances.
+	    public static final double getSDUS() {
+	        return 0.523148364;
+	    }
+	}
+
+	private MapGraph mapGraphLoaded;
+	private final double lightSensorDistanceFromAxis = 7.5;
+	private final double ultrasonicSensorDistanceFromAxis = 5.5;
+	
+	public SimulationPilot(int teamNumber, MapGraph mapGraphLoaded) {
 		super(teamNumber);
+		this.mapGraphLoaded = mapGraphLoaded;
 	}
 	
-
     @Override
     public String getConsoleTag() {
         return "[SIMULATOR]";
@@ -22,81 +152,66 @@ public class SimulationPilot extends AbstractPilot {
 
     @Override
     public int getLightSensorValue() {
-        final Random random = new Random();
         double mean = 0;
         double standardDeviation = 1;
         final double[] coordinates = getLightSensorCoordinates();
-
+        
         // check on which sort of underground your are standing
         // and adjust the mean and standardDeviation accordingly
         if (onEmptyTile(coordinates[0], coordinates[1])) {
             mean = SimulationSensorData.getMEmptyPanelLS();
             standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
-        } else if (onWhiteLine(coordinates[0], coordinates[1])) {
+        }
+        else if (onWhiteLine(coordinates[0], coordinates[1])) {
             mean = SimulationSensorData.getMWhiteLineLS();
             standardDeviation = SimulationSensorData.getSDWhiteLineLS();
-        } else if (onBarcodeTile(coordinates[0], coordinates[1])) {
-            final int color = getMapGraphLoaded()
-                    .getTile(getMatrixPosition())
-                    .getContent()
-                    .getColorValue(coordinates[0] % sizeTile(),
+        }
+        else if (onBarcodeTile(coordinates[0], coordinates[1])) {
+            final int color = mapGraphLoaded.getTile(getMatrixPosition())
+                    .getContent().getColorValue(coordinates[0] % sizeTile(),
                             coordinates[1] % sizeTile());
             mean = SimulationSensorData.getMBarcodeTileLS(color);
             standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
         }
-        return (int) Math.round(mean
-                + (random.nextGaussian() * standardDeviation));
+        return (int) Math.round(mean + (new Random().nextGaussian() * standardDeviation));
     }
 
-    /**
-	 * True if the robot is not on an edge, but on a tile without a content.
-	 */
+	private double[] getLightSensorCoordinates() {
+		final double[] coordinates = new double[2];
+		coordinates[0] = (getPosition().getX() + lightSensorDistanceFromAxis
+                * Math.cos(Math.toRadians(this.getAngle())));
+		coordinates[1] = (getPosition().getX() + lightSensorDistanceFromAxis
+                * Math.sin(Math.toRadians(this.getAngle())));
+		return coordinates;
+	}
+
+    //True if the robot is not on an edge, but on a tile without a content.
 	private boolean onEmptyTile(final double x, final double y) {
 	    return !pointOnEdge(x, y)
-	            && (getMapGraphLoaded() == null || getMapGraphLoaded().getTile(
+	            && (mapGraphLoaded == null || mapGraphLoaded.getTile(
 	                    getMatrixPosition()).getContent() == null);
 	}
 
-	/**
-	 * True if the robot is on an edge and this edge is not a wall
-	 */
+	//True if the robot is on an edge and this edge is not a wall
 	private boolean onWhiteLine(final double x, final double y) {
 	    return pointOnEdge(x, y)
-	            && (getMapGraphLoaded() == null || getMapGraphLoaded()
+	            && (mapGraphLoaded == null || mapGraphLoaded
 	                    .getObstruction(getMatrixPosition(),
 	                            Orientation.calculateOrientation(getAngle())) != Obstruction.WALL);
 	}
 
-	/**
-	 * True if the robot is not on an edge, but on a tile containing a barcode.
-	 */
+	//True if the robot is not on an edge, but on a tile containing a barcode.
 	private boolean onBarcodeTile(final double x, final double y) {
 	    return !pointOnEdge(x, y)
-	            && getMapGraphLoaded() != null
-	            && (getMapGraphLoaded().getTile(getMatrixPosition())
+	            && mapGraphLoaded != null
+	            && (mapGraphLoaded.getTile(getMatrixPosition())
 	                    .getContent() instanceof Barcode);
-	}
-	
-	protected int readBarcode()
-	{
-		if(getMapGraphLoaded().getTile(getMatrixPosition()).getContent() == null
-				|| !(getMapGraphLoaded().getTile(getMatrixPosition()).getContent() instanceof Barcode))
-		{
-			return -1;
-		}
-		int value = getMapGraphLoaded().getTile(getMatrixPosition()).getContent().getValue();
-		return value;
 	}
 
 	@Override
     public int getUltraSensorValue() {
 		try {
-	        final Random random = new Random();
-	        final double mean = calculateDistanceToWall();
-	        final double standardDeviation = SimulationSensorData.getSDUS();
-
-	        return (int) Math.round(mean
-	                + (random.nextGaussian() * standardDeviation));
+	        return (int) Math.round(calculateDistanceToWall() + (new Random().nextGaussian() * SimulationSensorData.getSDUS()));
 		} catch(Exception e) {
 			System.out.println("[Exception] Exception at SimulationPilot.getUltraSensorValue()!");
 			return 0;
@@ -104,13 +219,13 @@ public class SimulationPilot extends AbstractPilot {
     }
 
     private double calculateDistanceToWall() {
-	    if (getMapGraphLoaded() == null)
+	    if (mapGraphLoaded == null)
 	        return 250;
 	    double distanceToFirstEdge;
 	    int amountOfTilesVisible;
 	    Orientation orientation = getOrientation();
-	    Tile tile = getMapGraphLoaded().getTile(getMatrixPosition());
-	    // Berekent de afstand van de UltraSensor tot de eerste edge
+	    Tile tile = mapGraphLoaded.getTile(getMatrixPosition());
+	    //Berekent de afstand van de UltraSensor tot de eerste edge
 	    if (orientation == Orientation.NORTH)
 	        distanceToFirstEdge = getUltrasonicSensorCoordinates()[0]
 	                % sizeTile();
@@ -124,8 +239,7 @@ public class SimulationPilot extends AbstractPilot {
 	        distanceToFirstEdge = sizeTile()
 	                - (getUltrasonicSensorCoordinates()[1] % sizeTile());
 	
-	    // Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een
-	    // maximum van 3)
+	    //Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een maximum van 3)
 	    if (tile.getEdge(orientation).isPassable()) {
 	        tile = tile.getEdge(orientation).getNeighbour(tile);
 	        if (tile.getEdge(orientation).isPassable()) {
@@ -146,23 +260,21 @@ public class SimulationPilot extends AbstractPilot {
 	    return distanceToFirstEdge + amountOfTilesVisible * sizeTile();
 	}
 
+	private double[] getUltrasonicSensorCoordinates() {
+		final double[] coordinates = new double[2];
+		coordinates[0] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
+                * Math.cos(Math.toRadians(this.getAngle())));
+		coordinates[1] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
+                * Math.sin(Math.toRadians(this.getAngle())));
+		return coordinates;
+	}
+	
 	@Override
-    protected int getRotateSleepTime(double angle) {
-        return 5 - getSpeed();
-    }
-
-    @Override
-    protected int getTravelSleepTime(double distance) {
-        switch (getSpeed()) {
-        case 1:
-            return 10;
-        case 2:
-            return 7;
-        case 3:
-            return 5;
-        case 4:
-            return 3;
-        }
-        return 0;
-    }
+	protected int readBarcode() {
+		if(mapGraphLoaded.getTile(getMatrixPosition()).getContent() == null
+				|| !(mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode))
+			return -1;
+		int value = mapGraphLoaded.getTile(getMatrixPosition()).getContent().getValue();
+		return value;
+	}
 }

@@ -25,8 +25,7 @@ public class SensorGraph extends JPanel {
     private int repaintPeriodInms = 10;
     private final Queue<Integer> LS = new ArrayBlockingQueue<Integer>(numberOfValuesToPlotLS);
     private final Queue<Integer> US = new ArrayBlockingQueue<Integer>(numberOfValuesToPlotUS);
-
-    ActionListener repaintSensorGraph = new ActionListener() {
+    private ActionListener repaintSensorGraph = new ActionListener() {
 
         @Override
         public void actionPerformed(final ActionEvent arg0) {

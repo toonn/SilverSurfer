@@ -11,7 +11,7 @@ public class RobotPilot extends AbstractPilot {
     private Communicator communicator;
     private static InfoReceiverThread IRT;
     private boolean busy = false;
-    private boolean executingBarcode = false;
+    private int barcode;
 
     public RobotPilot(int teamNumber) {
         super(teamNumber);
@@ -20,7 +20,7 @@ public class RobotPilot extends AbstractPilot {
         try {
             communicator.openRobotConnection(statusInfoBuffer, IRT);
         } catch(Exception e) {
-        	System.out.println("Error connecting the robot!");
+        	System.out.println("[CONNECTION] Error connecting the robot!");
         }
     }
     
@@ -28,12 +28,21 @@ public class RobotPilot extends AbstractPilot {
         try {
         	communicator.closeRobotConnection(IRT);
         } catch(Exception e) {
-        	System.out.println("Error disconnecting the robot!");
+        	System.out.println("[CONNECTION] Error disconnecting the robot!");
         }
     }
     
     public boolean getBusy() {
     	return busy;
+    }
+    
+    public void robotDone() {
+    	busy = false;
+    }
+	
+    @Override
+    public String getConsoleTag() {
+        return "[ROBOT]";
     }
 
     @Override
@@ -49,31 +58,6 @@ public class RobotPilot extends AbstractPilot {
         	communicator.sendCommand(Command.VERY_FAST_SPEED);
         super.setSpeed(speed);
     	waitUntilDone();
-    }
-
-    /**
-     * Gets the amount of angles the arrow should turn in one event to be at par
-     * with the robot.
-     */
-    public double getAngularSpeed() {
-    	//TODO: recalibrate + getrotatesleeptime is hetzelfde?
-        switch (getSpeed()) {
-        case 1:
-            return 1.82;
-        case 2:
-            return 2.74;
-        case 3:
-            return 2.77;
-        case 4:
-            return 1.82;
-        }
-        return 2.74;
-    }
-
-	
-    @Override
-    public String getConsoleTag() {
-        return "[ROBOT]";
     }
 
     @Override
@@ -113,13 +97,11 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    protected int getRotateSleepTime(double angle) {
-        return speed / 10;
-    }
-
-    @Override
-    protected int getTravelSleepTime(double distance) {
-        return speed / ((int) Math.ceil(Math.abs(distance)));
+    public void travel(final double distance) {
+    	busy = true;
+    	communicator.sendCommand((int)(distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
+    	super.travel(distance);
+    	waitUntilDone();
     }
 
     @Override
@@ -129,42 +111,24 @@ public class RobotPilot extends AbstractPilot {
     	super.rotate(alpha);
     	waitUntilDone();
     }
-
+    
     @Override
-    public void travel(final double distance) {
-    	busy = true;
-    	communicator.sendCommand((int)(distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
-    	//TODO: barcodes
-    	super.travel(distance);
-    	waitUntilDone();
+    protected int readBarcode() {
+    	return barcode;
     }
     
-    public void robotDone() {
-    	busy = false;
-    }
-    
-    private void waitUntilDone() {
-    	try {
-            while (busy || executingBarcode)
-                Thread.sleep(100);    		
-    	} catch(Exception e) {
-    		
-    	}
+    public void setLatestBarcode(int barcode) {
+    	this.barcode = barcode;
     }
 
     @Override
-    public void stopReadingBarcodes() {
+    public void setReadBarcodes(boolean readBarcodes) {
     	busy = true;
-        communicator.sendCommand(Command.STOP_READING_BARCODES);
-        super.stopReadingBarcodes();
-    	waitUntilDone();
-    }
-
-    @Override
-    public void startReadingBarcodes() {
-    	busy = true;
-        communicator.sendCommand(Command.START_READING_BARCODES);
-        super.startReadingBarcodes();
+    	if(readBarcodes)
+            communicator.sendCommand(Command.START_READING_BARCODES);
+    	else
+    		communicator.sendCommand(Command.STOP_READING_BARCODES);
+        super.setReadBarcodes(readBarcodes);
     	waitUntilDone();
     }
     
@@ -175,18 +139,13 @@ public class RobotPilot extends AbstractPilot {
         super.permaStopReadingBarcodes();
     	waitUntilDone();
     }
-//    
-//    public void executeBarcode(int barcode) {
-//    	executingBarcode = true;
-//    	if(barcode == BarcodeCommand.PICKUP_OBJECT || barcode == BarcodeCommand.PICKUP_OBJECT_INVERSE)
-//    		pilotActions.pickUpItem();
-//    	else
-//    		pilotActions.doNotPickUpItem();
-//    	executingBarcode = false;
-//    }
     
-    protected int readBarcode() {
-    	// TODO: nog implementeren
-    	return 0;
+    private void waitUntilDone() {
+    	try {
+            while (busy || isExecutingBarcode())
+                Thread.sleep(100);    		
+    	} catch(Exception e) {
+    		
+    	}
     }
 }

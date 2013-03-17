@@ -1,3 +1,4 @@
+package unused;
 /*package communication;
 
 //Executes a barcode in a different thread.

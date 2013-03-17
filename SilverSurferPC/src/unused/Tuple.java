@@ -1,4 +1,4 @@
-package datastructures;
+package unused;
 
 public class Tuple<Type1, Type2> {
 

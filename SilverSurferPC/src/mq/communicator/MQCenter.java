@@ -1,18 +1,13 @@
 package mq.communicator;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Random;
 
 import peno.htttp.Callback;
 import peno.htttp.Client;
 
 import simulator.pilot.AbstractPilot;
-import simulator.pilot.SimulationPilot;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.AMQP.Connection.Start;
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
 /**

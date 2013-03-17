@@ -132,9 +132,9 @@ public class ShortestPath {
             final Orientation orientation = tilesPath.get(i)
                     .getCommonOrientation(tilesPath.get(i + 1));
             if (tilesPath.size() - i > 2)
-                pilot.stopReadingBarcodes();
+                pilot.setReadBarcodes(false);
             else
-                pilot.startReadingBarcodes();
+                pilot.setReadBarcodes(true);
             pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getRightAngle() - pilot.getAngle())));
             if(align && currentAmount == 0) {
             	pilot.alignOnWhiteLine();
