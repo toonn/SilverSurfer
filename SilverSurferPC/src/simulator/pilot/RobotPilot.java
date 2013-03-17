@@ -1,5 +1,7 @@
 package simulator.pilot;
 
+import mq.communicator.RobotHandler;
+import peno.htttp.Handler;
 import commands.Command;
 import communication.Communicator;
 import communication.InfoReceiverThread;
@@ -12,6 +14,7 @@ public class RobotPilot extends AbstractPilot {
     private static InfoReceiverThread IRT;
     private boolean busy = false;
     private int barcode;
+    private RobotHandler handler;
 
     public RobotPilot(int teamNumber) {
         super(teamNumber);
@@ -148,4 +151,9 @@ public class RobotPilot extends AbstractPilot {
     		
     	}
     }
+
+    @Override
+	public Handler getDefaultHandler() {
+		return handler;
+	}
 }

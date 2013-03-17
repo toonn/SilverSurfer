@@ -4,7 +4,10 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
+import peno.htttp.Handler;
+
 import mapping.MapGraph;
+import mq.communicator.DummyHandler;
 
 public class DummyPilot implements PilotInterface {
 
@@ -13,12 +16,15 @@ public class DummyPilot implements PilotInterface {
 	private Point2D.Double position;
 	private double angle;
 	private boolean active = false;
+	private DummyHandler handler;
 	
 	public DummyPilot(int teamNumber) {
 		if(teamNumber < 0 || teamNumber > 3)
 			this.teamNumber = -1;
 		else
 			this.teamNumber = teamNumber;
+		
+		handler = new DummyHandler(this);
 		reset();
 	}
 
@@ -104,5 +110,10 @@ public class DummyPilot implements PilotInterface {
 	public void activate() {
 		active = true;
 		//TODO
+	}
+
+	@Override
+	public Handler getDefaultHandler() {
+		return handler;
 	}
 }

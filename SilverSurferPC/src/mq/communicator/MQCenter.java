@@ -18,14 +18,14 @@ public class MQCenter {
    
     private Connection conn;
     private AbstractPilot pilot;
-    private HtttpHandler handler;
+    private RobotHandler handler;
     private Client client;
     
     private String gameID = "ZilverTreasureTrek";
     private String playerID;
     
     /**
-     * Creates a MessageCenter for a certain AbstractPilot that takes care of channel/connection creation
+     * Creates a MQcenter for a certain AbstractPilot that takes care of channel/connection creation
      * and the actual sending/monitoring for that AbstractPilot. 
      * 
      * @param pilot
@@ -48,7 +48,7 @@ public class MQCenter {
     	else{
     		
     		this.pilot = pilot;
-    		handler = new HtttpHandler(pilot);
+    		handler = new RobotHandler(pilot);
 
 	        try {
 	            conn = MQ.createConnection();
@@ -84,7 +84,7 @@ public class MQCenter {
 		return playerID;
 	}
     
-    public HtttpHandler getHandler() {
+    public RobotHandler getHandler() {
 		return handler;
 	}
     

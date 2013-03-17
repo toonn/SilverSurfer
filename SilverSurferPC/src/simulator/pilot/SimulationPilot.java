@@ -2,11 +2,14 @@ package simulator.pilot;
 
 import java.util.Random;
 
+import peno.htttp.Handler;
+
 import mapping.Barcode;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Tile;
+import mq.communicator.SimulHandler;
 
 public class SimulationPilot extends AbstractPilot {
 	
@@ -139,7 +142,8 @@ public class SimulationPilot extends AbstractPilot {
 	private MapGraph mapGraphLoaded;
 	private final double lightSensorDistanceFromAxis = 7.5;
 	private final double ultrasonicSensorDistanceFromAxis = 5.5;
-	
+    private SimulHandler handler;
+
 	public SimulationPilot(int teamNumber, MapGraph mapGraphLoaded) {
 		super(teamNumber);
 		this.mapGraphLoaded = mapGraphLoaded;
@@ -276,5 +280,10 @@ public class SimulationPilot extends AbstractPilot {
 			return -1;
 		int value = mapGraphLoaded.getTile(getMatrixPosition()).getContent().getValue();
 		return value;
+	}
+
+	@Override
+	public Handler getDefaultHandler() {
+		return this.handler;
 	}
 }

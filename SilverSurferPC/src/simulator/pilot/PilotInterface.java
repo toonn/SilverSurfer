@@ -3,6 +3,8 @@ package simulator.pilot;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import peno.htttp.Handler;
+
 import mapping.MapGraph;
 
 public interface PilotInterface {
@@ -26,4 +28,6 @@ public interface PilotInterface {
     public abstract void setAngle(double angle);
 
     public abstract void reset();
+    
+    public abstract Handler getDefaultHandler();
 }
