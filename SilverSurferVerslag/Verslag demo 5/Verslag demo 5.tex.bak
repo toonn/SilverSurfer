@@ -87,7 +87,7 @@ De lichtsensor~-~en de schep die hieraan vast hangt~-~kunnen echter bewegen ten 
 
 Een infraroodsensor werd gemonteerd bovenop de robot. Deze infraroodsensor kan infraroodlicht detecteren. Er is een bal beschikbaar die dit infraroodlicht uitzendt. Wanneer deze bal onder een wip geplaatst wordt\footnote{De Scheidsrechtercommissie heeft nog niet besloten of de bal hiervoor gebruikt zal worden.}, kan de robot gemakkelijk detecteren of de wip omhoog staat (en dus niet toegankelijk is) of omlaag. In dat tweede geval blokkeert de wip immers al het licht en detecteert de sensor niets.\\
 
-Net zoals vorig semester zijn de ultrasone- en de infraroodsensor vast gemonteerd op de robot. Hierbij staat de infraroodsensor op het 'hoofd' van de robot. De infraroodsensor zal dus altijd infrarood detecteren in het gezichtsveld van de robot.\\
+Net zoals vorig semester zijn de ultrasone- en de infraroodsensor vast gemonteerd op de robot. Hierbij staat de infraroodsensor op het 'hoofd' van de robot. De infraroodsensor
 
 % figuren robot, oud en nieuw
 \begin{figure}
