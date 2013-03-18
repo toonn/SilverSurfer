@@ -18,15 +18,14 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class SensorGraph extends JPanel {
 
-    private final SilverSurferGUI gui;
+	private Timer timer;
+	private boolean pause = false;
     private final int numberOfValuesToPlotLS = 100;
     private final int numberOfValuesToPlotUS = 100;
-    private final int repaintPeriodInms = 10;
-    private final int updateValuesPeriodInms = 100;
+    private int repaintPeriodInms = 10;
     private final Queue<Integer> LS = new ArrayBlockingQueue<Integer>(numberOfValuesToPlotLS);
     private final Queue<Integer> US = new ArrayBlockingQueue<Integer>(numberOfValuesToPlotUS);
-
-    ActionListener repaintSensorGraph = new ActionListener() {
+    private ActionListener repaintSensorGraph = new ActionListener() {
 
         @Override
         public void actionPerformed(final ActionEvent arg0) {
@@ -34,23 +33,24 @@ public class SensorGraph extends JPanel {
         }
     };
 
-    ActionListener updateTimerAction = new ActionListener() {
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            //gui.updateStatus();
-        }
-    };
-
-    public SensorGraph(final SilverSurferGUI gui) {
-        this.gui = gui;
-        new Timer(updateValuesPeriodInms, updateTimerAction).start();
-
+    public SensorGraph() {
         for (int i = 0; i < numberOfValuesToPlotLS; i++)
             LS.offer(0);
         for (int i = 0; i < numberOfValuesToPlotUS; i++)
             US.offer(250);
-        new Timer(repaintPeriodInms, repaintSensorGraph).start();
+        timer = new Timer(repaintPeriodInms, repaintSensorGraph);
+        timer.start();
+    }
+    
+    public void togglePause() {
+    	pause = !pause;
+    	if(pause)
+    		repaintPeriodInms = 10000000;
+    	else
+    		repaintPeriodInms = 10;
+    	timer.stop();
+        timer = new Timer(repaintPeriodInms, repaintSensorGraph);
+        timer.start();
     }
 
     public void addSensorValues(final int USValue, final int LSValue) {

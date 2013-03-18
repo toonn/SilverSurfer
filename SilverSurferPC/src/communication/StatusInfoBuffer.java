@@ -94,7 +94,8 @@ public class StatusInfoBuffer {
     
     //BARCODE
     public void executeBarcode(int barcode) {
-    	pilot.executeBarcode(barcode);
+    	pilot.setLatestBarcode(barcode);
+    	pilot.barcodeFound();
     }
 }
 

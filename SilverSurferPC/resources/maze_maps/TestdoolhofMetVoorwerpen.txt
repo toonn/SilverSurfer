@@ -1,0 +1,9 @@
+6 6
+
+#yupyup
+Corner.N		T.N					Straight.E		T.N				T.N				Corner.E
+Straight.N		Straight.N.01		Corner.N		T.E				Straight.N.07	Straight.N
+Straight.N		DeadEnd.S.o.01		Straight.N		DeadEnd.S		DeadEnd.S.o.07	Straight.N
+Corner.W		Corner.E			Corner.W		Straight.E.04	DeadEnd.E.o.04	Straight.N.02
+Corner.N		Cross				Straight.E		Straight.E		Corner.E		DeadEnd.S.o.02
+DeadEnd.S		Corner.W			Straight.E		Straight.E		T.S				DeadEnd.E

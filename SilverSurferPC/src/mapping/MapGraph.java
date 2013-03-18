@@ -21,18 +21,20 @@ public class MapGraph {
     /**
      * Adds a given obstruction to the edge on the given orientation of the tile on the given point
      */
-    public void addObstruction(final Point point,
-            final Orientation orientation, final Obstruction obst) {
-        if (getTile(point) == null) {
-            throw new IllegalArgumentException(
-                    "currenttile is null in addObstruction");
-        } else if (getTile(point).getEdge(orientation) == null) {
-            // TODO ??? Volgens Tile is er een invar Tile.getEdge(direction) !=
-            // null
-            throw new IllegalArgumentException("edge is null in addobstruction");
-        }
+    public void addObstruction(final Point point, final Orientation orientation, final Obstruction obst) {
+    	try {
+            if (getTile(point) == null) {
+                throw new IllegalArgumentException( "currenttile is null in addObstruction");
+            } else if (getTile(point).getEdge(orientation) == null) {
+                // TODO ??? Volgens Tile is er een invar Tile.getEdge(direction) !=
+                // null
+                throw new IllegalArgumentException("edge is null in addobstruction");
+            }
 
-        getTile(point).getEdge(orientation).setObstruction(obst);
+            getTile(point).getEdge(orientation).setObstruction(obst);
+    	} catch(Exception e) {
+    		System.out.println("[Exception] Exception at MapGraph.addObstruction(point, orientation, obst)!");
+    	}
     }
 
     /**

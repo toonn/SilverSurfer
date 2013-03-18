@@ -1,6 +1,8 @@
-package mq.communicator;
+package unused;
 
 import java.io.IOException;
+
+import mq.communicator.Config;
 
 import simulator.pilot.AbstractPilot;
 

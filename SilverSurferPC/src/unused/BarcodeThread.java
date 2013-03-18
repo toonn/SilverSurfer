@@ -1,4 +1,5 @@
-package simulator;
+package unused;
+/*package simulator;
 
 import simulator.pilot.AbstractPilot;
 
@@ -35,4 +36,4 @@ public class BarcodeThread extends Thread {
     public void setQuit(final boolean quit) {
         this.quit = quit;
     }
-}
+}*/

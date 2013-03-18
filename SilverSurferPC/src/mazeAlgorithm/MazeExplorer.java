@@ -29,6 +29,7 @@ public class MazeExplorer {
 	private boolean align;
 	private final int amountOfTilesUntilAlign = 5;
 	private int currentAmount;
+    private boolean quit = false;
 
 	public MazeExplorer(final Tile startTile, final AbstractPilot pilot, boolean align) {
 		this.startTile = startTile;
@@ -41,15 +42,19 @@ public class MazeExplorer {
 	 * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
 	 */
 	public void startExploringMaze() {
-		// TODO aligning
-		// communicator.setTilesBeforeAllign(3);
-		// communicator.mustAllign(mustAllign);
-		allTiles.add(startTile);
-		algorithm(startTile);
-		for (final Object tile : allTiles)
-			((Tile) tile).setMarkingExploreMaze(false);
-		// communicator.mustAllign(false);
-
+		try {
+            // TODO aligning
+            // communicator.setTilesBeforeAllign(3);
+            // communicator.mustAllign(mustAllign);
+            allTiles.add(startTile);
+            algorithm(startTile);
+            for (final Object tile : allTiles)
+                ((Tile) tile).setMarkingExploreMaze(false);
+            // communicator.mustAllign(false);    		
+    	} catch(NullPointerException e) {
+    		if(!quit)
+    			System.out.println("Exception in MazeExplorer!");
+    	}
 	}
 
 	private void algorithm(final Tile currentTile) {
@@ -62,7 +67,7 @@ public class MazeExplorer {
 				queue.add(neighbourTile);
 
 		// Algorithm finished?
-		if (queue.isEmpty())
+		if (queue.isEmpty() || quit)
 		{
 			System.out.println("Robot " + pilot.getTeamNumber() + ": done exploring");
 			return;
@@ -76,6 +81,12 @@ public class MazeExplorer {
 			nextTile.setMarkingExploreMaze(true);
 			allTiles.add(nextTile);
 			removeTileFromQueue(nextTile);
+			
+			if (queue.isEmpty() || quit)
+			{
+				System.out.println("Robot " + pilot.getTeamNumber() + ": done exploring");
+				return;
+			}
 
 			nextTile = getPriorityNextTile(currentTile);
 		}
@@ -272,4 +283,8 @@ public class MazeExplorer {
 			}
 		}
 	}
+	
+	 public void quit() {
+	    	quit = true;
+	    }
 }

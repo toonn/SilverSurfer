@@ -1,4 +1,5 @@
-package mq.communicator;
+package unused;
+/*package mq.communicator;
 
 import java.io.IOException;
 import java.util.Date;
@@ -14,7 +15,7 @@ import com.rabbitmq.client.Connection;
  * A MessageCenter takes care of all MQ-related issues for an AbstractPilot.
  * Use the sendMessage(string,string) and subscribeTo(string) methods to do the work for you!
  */
-public class MessageCenter {
+/*public class MessageCenter {
 
     public static void main(String[] args) {
 
@@ -41,7 +42,7 @@ public class MessageCenter {
      * @throws NullPointerException
      * 			: if pilot == null.
      */
-    public MessageCenter(AbstractPilot pilot) throws NullPointerException{
+    /*public MessageCenter(AbstractPilot pilot) throws NullPointerException{
     	
     	if(pilot == null)
     		throw new NullPointerException("null is not a valid pilot!");
@@ -58,21 +59,21 @@ public class MessageCenter {
     /**
      * @return The Channel this MessageSender uses to send messages across.
      */
-    public Channel getChannel() {
+/*    public Channel getChannel() {
         return channel;
     }
 
     /**
      * @return The Connection this MessageCenter uses to send messages across.
      */
-    public Connection getConn() {
+/*    public Connection getConn() {
         return conn;
     }
     
     /**
      * @return	The abstract Pilot this MessageCenter is working for.
      */
-    public AbstractPilot getClientPilot() {
+/*    public AbstractPilot getClientPilot() {
 		return clientPilot;
 	}
 
@@ -86,7 +87,7 @@ public class MessageCenter {
      * @param message
      *            : The message you want to send.
      */
-    public void sendMessage(String exchange, String routingKey, String message) {
+ /*   public void sendMessage(String exchange, String routingKey, String message) {
 
         // Create Default sending properties.
         AMQP.BasicProperties props = new AMQP.BasicProperties();
@@ -112,7 +113,7 @@ public class MessageCenter {
      * @param monitor_key
      *            : The queue you want to monitor.
      */
-    public void subscribeTo(String monitor_key) {
+/*    public void subscribeTo(String monitor_key) {
 
         // TODO: aanvragende Pilot meegeven?
         SubscribeMonitor sm = new SubscribeMonitor(monitor_key, getChannel(),
@@ -121,4 +122,4 @@ public class MessageCenter {
         // TODO: kanaal stopzetten?
 
     }
-}
+}*/
