@@ -197,6 +197,8 @@ public class CommandUnit {
     }
 
     private void turnAngle(int angle) {
+    	Motor.A.setAcceleration(1000);
+    	Motor.A.setAcceleration(1000);
     	int absAngle = Math.abs(angle);
     	if (SPEED > 180) {
     		Motor.A.setSpeed(180);
@@ -212,11 +214,8 @@ public class CommandUnit {
     	}
 		Motor.A.setSpeed(SPEED);
 		Motor.B.setSpeed(SPEED);
-		try {
-			Thread.sleep(500);
-		} catch(Exception e) {
-			
-		}
+    	Motor.A.setAcceleration(6000);
+    	Motor.A.setAcceleration(6000);
     }
     
     private void moveForwardWithoutBarcode(int angle) {

@@ -231,7 +231,7 @@ public class SilverSurferGUI {
         final JLabel lengthLabel = new JLabel("Length (centimeters)",
                 SwingConstants.CENTER);
 
-        final SpinnerNumberModel lenghtModel = new SpinnerNumberModel(24, 0,
+        final SpinnerNumberModel lenghtModel = new SpinnerNumberModel(40, -1000,
                 1000, 1);
         length = new JSpinner(lenghtModel);
 
