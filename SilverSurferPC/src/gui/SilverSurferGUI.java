@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -27,7 +28,8 @@ public class SilverSurferGUI {
     private static JSpinner angle, length;
     private static JButton zoomInButton, zoomOutButton, turnLeftButton, turnRightButton, moveButton;
     private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7, infoLabel8, infoLabel9, infoLabel10, infoLabel11;
-    private static JPanel scalePanel, directionPanel, infoPanel;
+    private static JLabel legendLabel1, legendLabel2, legendLabel3, legendLabel4, legendLabel5, legendLabel6, legendLabel7;
+    private static JPanel legendPanel, scalePanel, directionPanel, infoPanel;
     private static SimulatorPanel simulatorPanel;
     private static SensorGraph sensorPanel;
     private GUIMenuBar menuBar;
@@ -39,6 +41,10 @@ public class SilverSurferGUI {
             updateStatus();
         }
     };
+    private Color[] teamColors = new Color[] { new Color(249, 244, 99),
+            new Color(242, 150, 60), new Color(145, 254, 126),
+            new Color(114, 225, 246), new Color(134, 46, 250),
+            new Color(255, 63, 72), new Color(139, 137, 137) }; //Yellow, Orange, Green, Blue, Purple, Red, Gray
 
     public static void main(final String[] args) {
         final SilverSurferGUI SSG = new SilverSurferGUI();
@@ -58,7 +64,7 @@ public class SilverSurferGUI {
     	int lightSensorValue = pilot.getLightSensorValue();
     	
     	sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue);
-        
+    	
         infoLabel1.setText("Bluetooth: " + robotConnected);
         infoLabel2.setText("Speed level: " + simulatorPanel.getSpeed());
         infoLabel3.setText(simulatorPanel.getMapName());
@@ -86,10 +92,14 @@ public class SilverSurferGUI {
     }
     
     public void toggleInfoPanel() {
-    	if(infoPanel.isVisible())
+    	if(infoPanel.isVisible()) {
+    		legendPanel.setVisible(false);
     		infoPanel.setVisible(false);
-    	else
+    	}
+    	else {
+    		legendPanel.setVisible(true);
     		infoPanel.setVisible(true);
+    	}
     }
     
     public void toggleSensorPanel() {
@@ -112,6 +122,7 @@ public class SilverSurferGUI {
     }
 
     private void initializePanels() {
+    	legendPanel();
         scalePanel();
         directionPanel();
         infoPanel();
@@ -120,6 +131,51 @@ public class SilverSurferGUI {
         menuBar = new GUIMenuBar(this, frame);
 
         addListeners();
+    }
+    
+    private void legendPanel() {
+        legendLabel1 = new JLabel("", SwingConstants.CENTER);
+    	legendLabel1.setForeground(teamColors[0]);
+    	legendLabel1.setText("Player 1");
+        legendLabel2 = new JLabel("", SwingConstants.CENTER);
+    	legendLabel2.setForeground(teamColors[1]);
+    	legendLabel2.setText("Player 2");
+        legendLabel3 = new JLabel("", SwingConstants.CENTER);
+    	legendLabel3.setForeground(teamColors[2]);
+    	legendLabel3.setText("Player 3");
+        legendLabel4 = new JLabel("", SwingConstants.CENTER);
+    	legendLabel4.setForeground(teamColors[3]);
+    	legendLabel4.setText("Player 4");
+        legendLabel5 = new JLabel("", SwingConstants.CENTER);
+    	legendLabel5.setForeground(teamColors[4]);
+    	legendLabel5.setText("Team 1");
+        legendLabel6 = new JLabel("", SwingConstants.CENTER);
+    	legendLabel6.setForeground(teamColors[5]);
+    	legendLabel6.setText("Team 2");
+        legendLabel7 = new JLabel("", SwingConstants.CENTER);
+    	legendLabel7.setForeground(teamColors[6]);
+    	legendLabel7.setText("Invalid");
+        
+        legendPanel = new JPanel();
+        legendPanel.setOpaque(false);
+
+        final GroupLayout legendLayout = new GroupLayout(legendPanel);
+        legendPanel.setLayout(legendLayout);
+        legendLayout.setAutoCreateGaps(true);
+        legendLayout.setAutoCreateContainerGaps(true);
+        legendLayout.setHorizontalGroup(legendLayout
+                .createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(legendLabel1).addComponent(legendLabel2)
+                .addComponent(legendLabel3).addComponent(legendLabel4)
+                .addComponent(legendLabel5).addComponent(legendLabel6)
+                .addComponent(legendLabel7));
+        legendLayout.setVerticalGroup(legendLayout.createSequentialGroup()
+                .addComponent(legendLabel1).addComponent(legendLabel2)
+                .addComponent(legendLabel3).addComponent(legendLabel4)
+                .addComponent(legendLabel5).addComponent(legendLabel6)
+                .addComponent(legendLabel7));
+        
+        legendPanel.setVisible(false);
     }
 
     private void scalePanel() {
@@ -241,7 +297,7 @@ public class SilverSurferGUI {
         infoLabel9 = new JLabel("", SwingConstants.CENTER);
         infoLabel10 = new JLabel("", SwingConstants.CENTER);
         infoLabel11 = new JLabel("", SwingConstants.CENTER);
-
+        
         infoPanel = new JPanel();
         infoPanel.setOpaque(false);
 
@@ -390,7 +446,7 @@ public class SilverSurferGUI {
     }
 
     private void simulatorPanel() {
-        simulatorPanel = new SimulatorPanel();
+        simulatorPanel = new SimulatorPanel(teamColors);
         
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -406,6 +462,7 @@ public class SilverSurferGUI {
                         frameLayout
                                 .createParallelGroup(
                                         GroupLayout.Alignment.CENTER)
+                                .addComponent(legendPanel)
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
                                 .addComponent(infoPanel))
@@ -419,6 +476,7 @@ public class SilverSurferGUI {
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addGroup(
                         frameLayout.createSequentialGroup()
+                        		.addComponent(legendPanel)
                                 .addComponent(scalePanel)
                                 .addComponent(directionPanel)
                                 .addComponent(infoPanel))

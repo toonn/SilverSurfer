@@ -12,7 +12,7 @@ import lejos.nxt.comm.*;
 public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
-	private static final double ANGLE_COEF = 710; //Amount of degrees needed for a 360 degree turn.
+	private static final double ANGLE_COEF = 1.65; //Amount of degrees needed for a 1 degree turn.
     private static int SPEED = 180;
     
     private double x = 20;
@@ -58,11 +58,10 @@ public class CommandUnit {
     public static void main(String[] args) throws IOException {
         CommandUnit CU = new CommandUnit();
 
+        System.out.println("Waiting for input...");
         while (!(CU.quit)) {
             try {
-                LCD.clear();
                 CU.sendStringToUnit("[B]");
-                System.out.println("Waiting for input...");
                 int input = CU.dis.readInt();
                 switch (input) {
                 case (Command.CLOSE_CONNECTION):
@@ -83,11 +82,13 @@ public class CommandUnit {
                     CU.setSpeed(4);
                     break;
                 case (Command.ALIGN_PERPENDICULAR):
+                    System.out.println("Aligning on white line.");
                     CU.updatePosition(20);
                     CU.alignOnWhiteLine();
                     CU.stopRobot();
                     break;
                 case (Command.ALIGN_WALL):
+                    System.out.println("Aligning on walls.");
                     CU.alignOnWalls();
                     CU.stopRobot();
                     break;
@@ -105,14 +106,21 @@ public class CommandUnit {
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
-                        CU.updatePosition((input-Command.AUTOMATIC_MOVE_FORWARD)/100);
-                        int result = CU.moveForward((int)Math.round(LENGTH_COEF*(input-Command.AUTOMATIC_MOVE_FORWARD)/100));
+                    	double distance = (input-Command.AUTOMATIC_MOVE_FORWARD)/100;
+                        System.out.println("Travelling " + distance + " cm.");
+                        CU.updatePosition(distance);
+                        int result = CU.moveForward((int)Math.floor(LENGTH_COEF*distance));
     	    			if(result != 0)
     	    				CU.sendStringToUnit("[BC] " + result);
                         CU.stopRobot();
                     } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -(100-Command.AUTOMATIC_TURN_ANGLE))) && input != Command.AUTOMATIC_TURN_ANGLE) {
-                        CU.updateAngle((input-Command.AUTOMATIC_TURN_ANGLE)/100);
-                        CU.turnAngle((int)Math.round(ANGLE_COEF*(input-Command.AUTOMATIC_TURN_ANGLE)/100/360));
+                    	double angle = (input-Command.AUTOMATIC_TURN_ANGLE)/100;
+                        System.out.println("Turning " + angle + " degrees.");
+                        CU.updateAngle(angle);
+                    	if(angle >= 0)
+                    		CU.turnAngle((int)Math.floor(ANGLE_COEF*angle));
+                    	else
+                    		CU.turnAngle((int)Math.ceil(ANGLE_COEF*angle));
                         CU.stopRobot();
                     }
                 	break;
@@ -163,6 +171,7 @@ public class CommandUnit {
             SPEED = 360;
 		Motor.A.setSpeed(SPEED);
 		Motor.B.setSpeed(SPEED);
+        System.out.println("Speed level: " + speed);
     }
     
     private void updatePosition(double length) {
@@ -174,6 +183,8 @@ public class CommandUnit {
     
     private void updateAngle(double angle) {
     	this.angle = (this.angle + angle)%360;
+    	if(this.angle < 0)
+    		this.angle = this.angle + 360;
     	sendStringToUnit("[ANG] " + this.angle);
     }
 
@@ -186,14 +197,26 @@ public class CommandUnit {
     }
 
     private void turnAngle(int angle) {
+    	int absAngle = Math.abs(angle);
     	if (SPEED > 180) {
     		Motor.A.setSpeed(180);
     		Motor.B.setSpeed(180);
     	}
-        Motor.A.rotate(-angle, true);
-        Motor.B.rotate(angle);
+    	if(angle >= 0) {
+            Motor.A.rotate(-absAngle, true);
+            Motor.B.rotate(absAngle);
+    	}
+    	else {
+            Motor.A.rotate(absAngle, true);
+            Motor.B.rotate(-absAngle);
+    	}
 		Motor.A.setSpeed(SPEED);
 		Motor.B.setSpeed(SPEED);
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
     }
     
     private void moveForwardWithoutBarcode(int angle) {
@@ -289,27 +312,27 @@ public class CommandUnit {
     	int firstUSRead;
     	int secondUSRead;
     	
-    	turnAngle((int)ANGLE_COEF/4);
+    	turnAngle((int)ANGLE_COEF*90);
     	firstUSRead = ultrasonicSensor.getDistance();
     	if (firstUSRead < 28) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*LENGTH_COEF));
-        	turnAngle(-(int)ANGLE_COEF/4);
-        	turnAngle(-(int)ANGLE_COEF/4);
+        	turnAngle(-(int)ANGLE_COEF*90);
+        	turnAngle(-(int)ANGLE_COEF*90);
     		secondUSRead = ultrasonicSensor.getDistance();
     		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 28)
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
-    		turnAngle((int)ANGLE_COEF/4);
+    		turnAngle((int)ANGLE_COEF*90);
     	}
     	else {
-        	turnAngle(-(int)ANGLE_COEF/4);
-    		turnAngle(-(int)ANGLE_COEF/4);
+        	turnAngle(-(int)ANGLE_COEF*90);
+    		turnAngle(-(int)ANGLE_COEF*90);
     		secondUSRead = ultrasonicSensor.getDistance();
     		if (secondUSRead < 28) {
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
-        		turnAngle((int)ANGLE_COEF/4);
+        		turnAngle((int)ANGLE_COEF*90);
     		}
     		else 
-        		turnAngle((int)ANGLE_COEF/4);
+        		turnAngle((int)ANGLE_COEF*90);
     	}
     }
 }

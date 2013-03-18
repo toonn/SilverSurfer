@@ -39,11 +39,8 @@ public abstract class AbstractViewPort extends JPanel {
     private HashMap<TreasureObject, Ellipse2D[]> treasureCircles;
     private Point startShift;
     private ImageIcon robotSprite = new ImageIcon("resources/robot/NXTrobotsmall.png");
-    private Color[] teamColors = new Color[] { new Color(249, 244, 99),
-            new Color(242, 150, 60), new Color(145, 254, 126),
-            new Color(114, 225, 246), new Color(134, 46, 250),
-            new Color(255, 63, 72) };
     private int repaintFPS = 30;
+    private Color[] teamColors;
     private ActionListener repaintViewPort = new ActionListener() {
 
         @Override
@@ -52,7 +49,8 @@ public abstract class AbstractViewPort extends JPanel {
         }
     };
 
-    public AbstractViewPort(Set<? extends PilotInterface> pilotSet) {
+    public AbstractViewPort(Set<? extends PilotInterface> pilotSet, Color[] teamColors) {
+    	this.teamColors = teamColors;
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<Barcode, Rectangle2D[]>();
         treasureCircles = new HashMap<TreasureObject, Ellipse2D[]>();
@@ -166,7 +164,7 @@ public abstract class AbstractViewPort extends JPanel {
         for (final TreasureObject treasure : treasureCircles.keySet()) {
             g2.setColor(Color.BLACK);
             g2.fill(treasureCircles.get(treasure)[0]);
-            g2.setColor(teamColors[treasure.getValue() % 4]);
+            g2.setColor(teamColors[treasure.getColor()]);
             g2.fill(treasureCircles.get(treasure)[1]);
         }
     }
