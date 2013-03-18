@@ -6,7 +6,7 @@ public class BarcodeCommand {
 	//Second ints of arrays are for robot 1 (above: he will belong to team 0, below: he will belong to team 1)
 	//...
 	//Een correct bord bevat van elke array 2 ints met verschillende index (bv barcodes 4,1,2,7 bij deze barcodes, dan zal robot 1 en 4 een team vormen en robot 2 en 3 ook.
-	public static final int[] TREASURE_TEAM0 = new int[]{2,1,0,3};
+	public static final int[] TREASURE_TEAM0 = new int[]{0,1,2,3};
 	public static final int[] TREASURE_TEAM0_INVERSE = new int[]{calcInv(TREASURE_TEAM0[0]),calcInv(TREASURE_TEAM0[1]),calcInv(TREASURE_TEAM0[2]),calcInv(TREASURE_TEAM0[3])};
 	public static final int[] TREASURE_TEAM1 = new int[]{4,5,6,7};
 	public static final int[] TREASURE_TEAM1_INVERSE = new int[]{calcInv(TREASURE_TEAM1[0]),calcInv(TREASURE_TEAM1[1]),calcInv(TREASURE_TEAM1[2]),calcInv(TREASURE_TEAM1[3])};
