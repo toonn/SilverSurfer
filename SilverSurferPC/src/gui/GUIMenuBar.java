@@ -259,12 +259,8 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-            	if(SilverSurferGUI.getSimulatorPanel().getMapGraphLoaded() != null) {
-            		SilverSurferGUI.getSimulatorPanel().startSimulation();
-                	System.out.println("[EXPLORE] Start exploration.");
-            	}
-            	else
-            		System.out.println("[EXPLORE] Cannot explore now, load a map first!");
+            	SilverSurferGUI.getSimulatorPanel().startSimulation();
+            	System.out.println("[EXPLORE] Start exploration.");
             }
         });
 

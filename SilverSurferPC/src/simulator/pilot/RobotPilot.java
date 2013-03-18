@@ -29,7 +29,7 @@ public class RobotPilot extends AbstractPilot {
     
     public void endConnection() {
         try {
-        	communicator.closeRobotConnection(IRT);
+        	communicator.closeRobotConnection();
         } catch(Exception e) {
         	System.out.println("[CONNECTION] Error disconnecting the robot!");
         }

@@ -117,6 +117,10 @@ public abstract class AbstractPilot implements PilotInterface {
 	public abstract int getLightSensorValue();
 
 	public abstract int getUltraSensorValue();
+	
+	public int getInfraRedSensorValue() {
+		return 48;
+	}
 
 	protected boolean checkForObstruction() {
 		if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot)
@@ -246,14 +250,6 @@ public abstract class AbstractPilot implements PilotInterface {
 	 
 	public boolean isExecutingBarcode() {
 		return busyExecutingBarcode;
-	}
-	
-	/**
-	 * @return
-	 */
-	public int getInfraRedSensorValue() {
-		// TODO Auto-generated method stub
-		return 48;
 	}
 		
 		
