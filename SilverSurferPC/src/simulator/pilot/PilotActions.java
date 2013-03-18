@@ -48,18 +48,19 @@ public class PilotActions {
 		if(barcode != -1) {
 			//Check if the barcode is a seesaw.
 			for(int i = 0; i < BarcodeCommand.SEESAW_START.length; i++) {
-				if(barcode == BarcodeCommand.SEESAW_START[i])
+				if(barcode == BarcodeCommand.SEESAW_START[i] || barcode == BarcodeCommand.SEESAW_START_INVERSE[i])
 					seesawFound(barcode, BarcodeCommand.SEESAW_END[i]);
-				else if(barcode == BarcodeCommand.SEESAW_END[i])
+				else if(barcode == BarcodeCommand.SEESAW_END[i] || barcode == BarcodeCommand.SEESAW_END_INVERSE[i])
 					seesawFound(barcode, BarcodeCommand.SEESAW_START[i]);
 			}
 			//Check if the barcode is a treasure.
 			for(int i = 0; i < BarcodeCommand.TREASURE_TEAM0.length; i++) {
-				if(barcode == BarcodeCommand.TREASURE_TEAM0[i]  || barcode == BarcodeCommand.TREASURE_TEAM1[i]) {
+				if(barcode == BarcodeCommand.TREASURE_TEAM0[i]  || barcode == BarcodeCommand.TREASURE_TEAM1[i] || barcode == BarcodeCommand.TREASURE_TEAM0_INVERSE[i]  || barcode == BarcodeCommand.TREASURE_TEAM1_INVERSE[i]) {
 					treasureFound(barcode);
+					//The barcode and object belongs to the robot with number i.
 					if(i == pilot.getTeamNumber()) {
 						int team = 0;
-						if(barcode == BarcodeCommand.TREASURE_TEAM1[i])
+						if(barcode == BarcodeCommand.TREASURE_TEAM1[i] || barcode == BarcodeCommand.TREASURE_TEAM1_INVERSE[i])
 							team = 1;
 						pickUpItem(team);
 					}
