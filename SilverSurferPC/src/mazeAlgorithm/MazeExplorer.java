@@ -67,8 +67,7 @@ public class MazeExplorer {
 				queue.add(neighbourTile);
 
 		// Algorithm finished?
-		if (queue.isEmpty() || quit)
-		{
+		if (queue.isEmpty() || quit) {
 			System.out.println("Robot " + pilot.getTeamNumber() + ": done exploring");
 			return;
 		}
@@ -82,8 +81,7 @@ public class MazeExplorer {
 			allTiles.add(nextTile);
 			removeTileFromQueue(nextTile);
 			
-			if (queue.isEmpty() || quit)
-			{
+			if (queue.isEmpty() || quit) {
 				System.out.println("Robot " + pilot.getTeamNumber() + ": done exploring");
 				return;
 			}
@@ -100,8 +98,7 @@ public class MazeExplorer {
 
 		// the next tile contains a barcode.
 		// this means that the robot can alter its mapping. therefore, the queue has to be updated
-		if(nextTile.getContent() instanceof Barcode)
-		{
+		if(nextTile.getContent() instanceof Barcode) {
 			System.out.println("Robot " + pilot.getTeamNumber() + ": barcode " + nextTile.getContent().getValue());
 			checkExploredQueue();
 
@@ -109,6 +106,7 @@ public class MazeExplorer {
 				try {
 					Thread.sleep(100);
 				} catch(Exception e) {
+					
 				}
 			}
 		}
@@ -124,20 +122,12 @@ public class MazeExplorer {
 	 */
 	private void checkExploredQueue() {
 		for(Tile tile: pilot.getMapGraphConstructed().getTiles())
-		{
-			if(!allTiles.contains(tile) && !queue.contains(tile))
-			{
+			if(!allTiles.contains(tile) && !queue.contains(tile)) {
 				if(tile.isMarkedExploreMaze())
-				{
 					allTiles.add(tile);
-					
-				}
 				else
-				{
 					queue.add(tile);
-				}
 			}
-		}
 	}
 
 
