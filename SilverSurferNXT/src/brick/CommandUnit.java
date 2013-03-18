@@ -57,8 +57,7 @@ public class CommandUnit {
 
     public static void main(String[] args) throws IOException {
         CommandUnit CU = new CommandUnit();
-
-        System.out.println("Waiting for input...");
+        
         while (!(CU.quit)) {
             try {
                 CU.sendStringToUnit("[B]");
@@ -82,13 +81,13 @@ public class CommandUnit {
                     CU.setSpeed(4);
                     break;
                 case (Command.ALIGN_PERPENDICULAR):
-                    System.out.println("Aligning on white line.");
+                    System.out.println("White line.");
                     CU.updatePosition(20);
                     CU.alignOnWhiteLine();
                     CU.stopRobot();
                     break;
                 case (Command.ALIGN_WALL):
-                    System.out.println("Aligning on walls.");
+                    System.out.println("Walls.");
                     CU.alignOnWalls();
                     CU.stopRobot();
                     break;
@@ -107,7 +106,7 @@ public class CommandUnit {
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
                     	double distance = (input-Command.AUTOMATIC_MOVE_FORWARD)/100;
-                        System.out.println("Travelling " + distance + " cm.");
+                        System.out.println(distance + " cm.");
                         CU.updatePosition(distance);
                         int result = CU.moveForward((int)Math.floor(LENGTH_COEF*distance));
     	    			if(result != 0)
@@ -115,7 +114,7 @@ public class CommandUnit {
                         CU.stopRobot();
                     } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -(100-Command.AUTOMATIC_TURN_ANGLE))) && input != Command.AUTOMATIC_TURN_ANGLE) {
                     	double angle = (input-Command.AUTOMATIC_TURN_ANGLE)/100;
-                        System.out.println("Turning " + angle + " degrees.");
+                        System.out.println(angle + " degrees.");
                         CU.updateAngle(angle);
                     	if(angle >= 0)
                     		CU.turnAngle((int)Math.floor(ANGLE_COEF*angle));
@@ -127,6 +126,9 @@ public class CommandUnit {
                 }
             } catch (Exception e) {
             	System.out.println("Error in CommandUnit.main(String[] args)!");
+                CU.ST.setQuit(true);
+                CU.lightSensor.setFloodlight(false);
+                CU.quit = true;
             }
         }
 
@@ -171,7 +173,7 @@ public class CommandUnit {
             SPEED = 360;
 		Motor.A.setSpeed(SPEED);
 		Motor.B.setSpeed(SPEED);
-        System.out.println("Speed level: " + speed);
+        System.out.println("Speed: " + speed);
     }
     
     private void updatePosition(double length) {
@@ -269,69 +271,39 @@ public class CommandUnit {
 
     private void alignOnWhiteLine() {
     	int treshold = 51;
-    	int angle = 0;
-        
-		MoveThread MT = new MoveThread("MT", 0);
-		MT.start();
-		
-		for(int i = 0; i < 7; i++) {
-			try {
-				Thread.sleep(100);
-			} catch(Exception e) {
-	        	System.out.println("Error in CommandUnit.alignOnWhiteLine()!");
-			}
-			while(lightSensor.getLightValue() > treshold || lightSensor.getLightValue() < 40);
-		}
+    	WhitelineThread WT = new WhitelineThread("WT", LENGTH_COEF, ANGLE_COEF);
+		WT.start();		
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
-		
-		MT.setQuit(true);
-		try {
-			Thread.sleep(500);
-		} catch(Exception e) {
-        	System.out.println("Error in CommandUnit.alignOnWhiteLine()!");
-		}
-		
-		moveForwardWithoutBarcode((int)Math.round(3*LENGTH_COEF));
-
-		while(lightSensor.getLightValue() < treshold)
-			turnAngle(-3);
-		while(lightSensor.getLightValue() >= treshold) {
-			turnAngle(3);
-			angle = angle + 3;
-		}
-		while(lightSensor.getLightValue() < treshold) {
-			turnAngle(3);
-			angle = angle + 3;
-		}
-		turnAngle(-(angle/2));
+		WT.setFirstQuit(true);
+		while(lightSensor.getLightValue() < treshold);
+		WT.setSecondQuit(true);
+		while(WT.isAlive());
     }
     
     private void alignOnWalls() {
     	int firstUSRead;
     	int secondUSRead;
     	
-    	turnAngle((int)ANGLE_COEF*90);
+    	turnAngle((int)(ANGLE_COEF*90));
     	firstUSRead = ultrasonicSensor.getDistance();
     	if (firstUSRead < 28) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*LENGTH_COEF));
-        	turnAngle(-(int)ANGLE_COEF*90);
-        	turnAngle(-(int)ANGLE_COEF*90);
+        	turnAngle(-(int)(ANGLE_COEF*180));
     		secondUSRead = ultrasonicSensor.getDistance();
     		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 28)
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
-    		turnAngle((int)ANGLE_COEF*90);
+    		turnAngle((int)(ANGLE_COEF*90));
     	}
     	else {
-        	turnAngle(-(int)ANGLE_COEF*90);
-    		turnAngle(-(int)ANGLE_COEF*90);
+        	turnAngle(-(int)(ANGLE_COEF*180));
     		secondUSRead = ultrasonicSensor.getDistance();
     		if (secondUSRead < 28) {
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
-        		turnAngle((int)ANGLE_COEF*90);
+        		turnAngle((int)(ANGLE_COEF*90));
     		}
     		else 
-        		turnAngle((int)ANGLE_COEF*90);
+        		turnAngle((int)(ANGLE_COEF*90));
     	}
     }
 }
