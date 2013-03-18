@@ -243,14 +243,15 @@ public class SimulationPilot extends AbstractPilot {
 	        distanceToFirstEdge = sizeTile()
 	                - (getUltrasonicSensorCoordinates()[1] % sizeTile());
 	
-	    //Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een maximum van 3)
-	    if (tile.getEdge(orientation).isPassable()) {
+	    // Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een
+	    // maximum van 3)
+	    if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL) {
 	        tile = tile.getEdge(orientation).getNeighbour(tile);
-	        if (tile.getEdge(orientation).isPassable()) {
+	        if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL) {
 	            tile = tile.getEdge(orientation).getNeighbour(tile);
-	            if (tile.getEdge(orientation).isPassable()) {
+	            if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL) {
 	                tile = tile.getEdge(orientation).getNeighbour(tile);
-	                if (tile.getEdge(orientation).isPassable())
+	                if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL)
 	                    return 250;
 	                else
 	                    amountOfTilesVisible = 3;

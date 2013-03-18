@@ -23,6 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import mapping.Barcode;
+import mapping.Obstruction;
+import mapping.Seesaw;
 import mapping.TreasureObject;
 import mapping.Edge;
 import mapping.MapGraph;
@@ -70,9 +72,7 @@ public abstract class AbstractViewPort extends JPanel {
         translate(graph);
         paintGrid(graph);
         if(pilots.size() > 0) {
-            paintTreasures(graph);
-            paintBarcodes(graph);
-            paintWalls(graph);
+        	paintMapGraph(graph);
             paintRobotColor(graph);
             paintRobots(graph);
         }
@@ -138,6 +138,13 @@ public abstract class AbstractViewPort extends JPanel {
         for (int y = minShiftVer; y < maxShiftVer; y += getSizeTile())
             g2.draw(new Line2D.Double(minShiftHor, y, maxShiftHor, y));
     }
+    
+	 private void paintMapGraph(Graphics graph) {
+		 paintTreasures(graph);
+		 paintBarcodes(graph);
+		 paintSeesaws(graph);
+		 paintWalls(graph);
+	 }
 
     private void paintTreasures(final Graphics graph) {
         Set<TreasureObject> treasures = new HashSet<TreasureObject>();
@@ -267,6 +274,56 @@ public abstract class AbstractViewPort extends JPanel {
         }
         g2.setStroke(originalStroke);
     }
+    
+	 private void paintSeesaws(final Graphics graph) {
+		  // make a list of all the seesaw tiles and edges
+		  Set<Rectangle2D> seesawTiles = new HashSet<Rectangle2D>();
+		  Set<Point2D[]> seesawEdges = new HashSet<Point2D[]>();
+		  try {
+			  for (MapGraph mapGraph : getAllMapGraphs())
+				  for (Tile tile : mapGraph.getTiles())
+					  if(tile.getContent() instanceof Seesaw)
+					  {
+						  Rectangle2D seesawTile = new Rectangle2D.Double(tile.getPosition().getX() * getSizeTile(),
+								  tile.getPosition().getY() * getSizeTile(),
+								  (int) getSizeTile(),
+								  (int) getSizeTile());
+						  seesawTiles.add(seesawTile);
+						  for (Edge seesawEdge : tile.getEdges())
+						  {
+							  if (seesawEdge.getObstruction() == Obstruction.SEESAW_UP)
+							  {
+								  seesawEdges.add(seesawEdge.getEndPoints());
+							  }
+						  }
+					  }
+		  } catch (java.util.ConcurrentModificationException e) {
+			  paintSeesaws(graph);
+		  }
+	
+		  // draw the tiles
+		  ((Graphics2D) graph).setColor(Color.YELLOW);
+		  for (Rectangle2D seesawTile : seesawTiles)
+		  {
+			  ((Graphics2D) graph).fill(seesawTile);
+		  }
+	
+		  // draw the edges
+		  final Graphics2D g2 = ((Graphics2D) graph);
+		  g2.setColor(Color.red);
+		  Stroke originalStroke = g2.getStroke();
+		  float strokeWidth = 5;
+		  g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE,
+				  BasicStroke.JOIN_MITER));
+	
+		  for (Point2D[] seesawEdge : seesawEdges) {
+			  for (Point2D point : seesawEdge)
+				  point.setLocation(point.getX() * getSizeTile(), point.getY()
+						  * getSizeTile());
+			  g2.draw(new Line2D.Double(seesawEdge[0], seesawEdge[1]));
+		  }
+		  g2.setStroke(originalStroke);
+	  }
 
     private void paintRobots(final Graphics graph) {
         Graphics2D g2 = (Graphics2D) graph;

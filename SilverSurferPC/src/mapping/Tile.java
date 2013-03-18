@@ -164,16 +164,16 @@ public class Tile {
 
     public int getAmountOfWalls() {
         int i = 0;
-        if (!getEdge(Orientation.EAST).isPassable()) {
+        if (getEdge(Orientation.EAST).getObstruction() == Obstruction.WALL) {
             i++;
         }
-        if (!getEdge(Orientation.WEST).isPassable()) {
+        if (getEdge(Orientation.WEST).getObstruction() == Obstruction.WALL) {
             i++;
         }
-        if (!getEdge(Orientation.NORTH).isPassable()) {
+        if (getEdge(Orientation.NORTH).getObstruction() == Obstruction.WALL) {
             i++;
         }
-        if (!getEdge(Orientation.SOUTH).isPassable()) {
+        if (getEdge(Orientation.SOUTH).getObstruction() == Obstruction.WALL) {
             i++;
         }
         return i;
@@ -260,7 +260,8 @@ public class Tile {
     public ArrayList<Tile> getReachableNeighbours() {
         final ArrayList<Tile> neighbours = new ArrayList<Tile>(4);
         for (final Orientation orientation : Orientation.values()) {
-            if (getEdge(orientation).getObstruction() == null) {
+            if (getEdge(orientation).getObstruction() == null
+            		|| getEdge(orientation).isPassable()) {
                 neighbours.add(getEdge(orientation).getNeighbour(this));
             } else {
                 neighbours.add(null);

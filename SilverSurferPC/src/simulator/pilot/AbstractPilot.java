@@ -127,8 +127,13 @@ public abstract class AbstractPilot implements PilotInterface {
 	public void setObstructionOrTile() {
 		final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
 		if (checkForObstruction())
-			getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(currentOrientation).setObstruction(Obstruction.WALL);
+			getMapGraphConstructed().getTile(getMatrixPosition())
+			.getEdge(currentOrientation)
+			.replaceObstruction(Obstruction.WALL);
 		else {
+			getMapGraphConstructed().getTile(getMatrixPosition())
+			.getEdge(currentOrientation)
+			.replaceObstruction(Obstruction.WHITE_LINE);
 			Point nextPoint = currentOrientation.getNext(getMatrixPosition());
 			if(mapGraphConstructed.getTile(nextPoint) == null)
 				getMapGraphConstructed().addTileXY(nextPoint);
@@ -195,6 +200,7 @@ public abstract class AbstractPilot implements PilotInterface {
 				&& getLightSensorValue() < 40 && getLightSensorValue() > 10) {
 			setBusyExecutingBarcode(true);
 			pilotActions.barcodeFound();
+			setBusyExecutingBarcode(false);
 		}
 	}
 
@@ -241,7 +247,16 @@ public abstract class AbstractPilot implements PilotInterface {
 	public boolean isExecutingBarcode() {
 		return busyExecutingBarcode;
 	}
-	 
+	
+	/**
+	 * @return
+	 */
+	public int getInfraRedSensorValue() {
+		// TODO Auto-generated method stub
+		return 48;
+	}
+		
+		
 	public void setBusyExecutingBarcode(boolean busy) {
 		busyExecutingBarcode = busy;
 	}
