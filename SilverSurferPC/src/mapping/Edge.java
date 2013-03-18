@@ -195,14 +195,23 @@ public class Edge {
         this.numberPairDirections = numberPairDirections;
     }
 
+    /**
+     * Sets the obstruction in a hard way
+     * @param obstruction
+     */
     public void setObstruction(final Obstruction obstruction) {
-    	replaceObstruction(obstruction);
+    	this.obstruction = obstruction;
     }
     
+    /**
+     * Sets the obstruction in a soft way.
+     * The obstruction might not be changed, it depends on the priority of the obstruction.
+     * @param obstruction
+     */
     public void replaceObstruction(final Obstruction obstruction) {
     	if(this.obstruction == null || this.obstruction.ordinal() < obstruction.ordinal())
     	{
-    		this.obstruction = obstruction;
+    		setObstruction(obstruction);
     	}
     }
 

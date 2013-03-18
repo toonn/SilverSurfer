@@ -126,6 +126,21 @@ public class MapGraph {
     // getTile(point).terminate();
     // tiles.remove(point);
     // }
+    
+    /**
+     * Flips all the seesaws with the given value to the other side.
+     */
+    public void flipSeesaw(int value)
+    {
+    	for (Tile tile: getTiles())
+    	{
+    		if(tile.getContent() instanceof Seesaw && tile.getContent().getValue() == value)
+    		{
+    			((Seesaw) tile.getContent()).flipSeesaw();
+    			System.out.println("flip " + tile.getPosition().toString());
+    		}
+    	}
+    }
 
     @Override
     public String toString() {
