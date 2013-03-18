@@ -1,0 +1,11 @@
+uitleg text-files map
+
+algemeen: zie Toledo
+
+specifiek:
+ - voorwerp: 'tegel'.'orientatie'.o.'getal'
+	     het getal is de waarde van het voorwerp (bepaalt de kleur)
+ - wip: 'tegel'.'orientatie'.s.'letter + 2 decimalen'
+	laatste tiental: value van de wip (alle tegels van dezelfde wip hebben dezelfde waarde)
+	eerste tiental: stand van de wip bij start (0 = naar beneden, 1 = naar boven)
+	letter: orientatie van de edge die ophoog kan

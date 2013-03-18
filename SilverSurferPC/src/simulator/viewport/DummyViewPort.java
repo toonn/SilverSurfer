@@ -1,5 +1,6 @@
 package simulator.viewport;
 
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,8 +10,8 @@ import simulator.pilot.PilotInterface;
 @SuppressWarnings("serial")
 public class DummyViewPort extends AbstractViewPort {
 	
-    public DummyViewPort(Set<? extends PilotInterface> pilotSet) {
-        super(pilotSet);
+    public DummyViewPort(Set<? extends PilotInterface> pilotSet, Color[] teamColors) {
+        super(pilotSet, teamColors);
     }
 
     @Override

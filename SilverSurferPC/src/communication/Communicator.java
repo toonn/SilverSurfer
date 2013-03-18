@@ -12,6 +12,7 @@ import commands.Command;
 
 public class Communicator {
 
+	private InfoReceiverThread IRT;
     private static DataInputStream dis;
     private static DataOutputStream dos;
     private static NXTConnector connection;
@@ -34,11 +35,12 @@ public class Communicator {
         dos = connection.getDataOut();
         if (dis == null || dos == null)
             throw new IOException();
-        IRT = new InfoReceiverThread(statusInfoBuffer, dis);
-        IRT.start();
+        this.IRT = IRT;
+        this.IRT = new InfoReceiverThread(statusInfoBuffer, dis);
+        this.IRT.start();
     }
 
-    public void closeRobotConnection(InfoReceiverThread IRT) throws Exception {
+    public void closeRobotConnection() throws Exception {
         dos.writeInt(Command.CLOSE_CONNECTION);
         dos.flush();
         IRT.setQuit(true);

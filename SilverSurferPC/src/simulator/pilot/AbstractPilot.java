@@ -3,10 +3,13 @@ package simulator.pilot;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import javax.jws.Oneway;
+
 import mapping.Barcode;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mapping.Seesaw;
 import mazeAlgorithm.ExploreThread;
 
 public abstract class AbstractPilot implements PilotInterface {
@@ -118,6 +121,8 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	public abstract int getUltraSensorValue();
 
+	public abstract int getInfraRedSensorValue();
+
 	protected boolean checkForObstruction() {
 		if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot)
 			return true;
@@ -127,8 +132,13 @@ public abstract class AbstractPilot implements PilotInterface {
 	public void setObstructionOrTile() {
 		final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
 		if (checkForObstruction())
-			getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(currentOrientation).setObstruction(Obstruction.WALL);
+			getMapGraphConstructed().getTile(getMatrixPosition())
+			.getEdge(currentOrientation)
+			.replaceObstruction(Obstruction.WALL);
 		else {
+			getMapGraphConstructed().getTile(getMatrixPosition())
+			.getEdge(currentOrientation)
+			.replaceObstruction(Obstruction.WHITE_LINE);
 			Point nextPoint = currentOrientation.getNext(getMatrixPosition());
 			if(mapGraphConstructed.getTile(nextPoint) == null)
 				getMapGraphConstructed().addTileXY(nextPoint);
@@ -138,9 +148,9 @@ public abstract class AbstractPilot implements PilotInterface {
 	protected boolean pointOnEdge(final double x, final double y) {
 		double edgeMarge = 1.2;
 		return (x % sizeTile()) > sizeTile() - edgeMarge
-				|| (x % sizeTile()) < edgeMarge
-				|| (y % sizeTile()) > sizeTile() - edgeMarge
-				|| (y % sizeTile()) < edgeMarge;
+		|| (x % sizeTile()) < edgeMarge
+		|| (y % sizeTile()) > sizeTile() - edgeMarge
+		|| (y % sizeTile()) < edgeMarge;
 	}
 
 	public void alignOnWhiteLine() {		 
@@ -187,14 +197,59 @@ public abstract class AbstractPilot implements PilotInterface {
 			try {
 				Thread.sleep(getTravelSleepTime());
 			} catch (final InterruptedException e) {
-				
+
+			}
+
+			if(readBarcodes && this instanceof SimulationPilot && getMapGraphConstructed().getTile(getMatrixPosition()) != null &&
+					!(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
+					&& getLightSensorValue() < 40 && getLightSensorValue() > 10) {
+				setBusyExecutingBarcode(true);
+				pilotActions.barcodeFound();
+				setBusyExecutingBarcode(false);
+			}
+			if(onFlipEdge())
+			{
+				int seesawValue = getMapGraphConstructed().getTile(getMatrixPosition()).getContent().getValue();
+				getMapGraphConstructed().flipSeesaw(seesawValue);
+				System.out.println("Robot " + getTeamNumber() + ": flip seesaw " + seesawValue);
+				// TODO: ook loadedMapGraph.flipSeesaw(seesawValue) doen!
 			}
 		}
-		if(readBarcodes && this instanceof SimulationPilot && getMapGraphConstructed().getTile(getMatrixPosition()) != null &&
-				!(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
-				&& getLightSensorValue() < 40 && getLightSensorValue() > 10) {
-			setBusyExecutingBarcode(true);
-			pilotActions.barcodeFound();
+
+	}
+
+	private boolean onFlipEdge()
+	{
+		if(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Seesaw)
+		{
+			double position = getPosition().getX() % sizeTile();
+			Orientation equivalentOrientation = Orientation.WEST;
+			if(getOrientation() == Orientation.NORTH || getOrientation() == Orientation.SOUTH)
+			{
+				position = getPosition().getY() % sizeTile();
+				equivalentOrientation = Orientation.NORTH;
+			}
+
+			// you are standing right in front of an edge; if this edge is a flip, return true
+			if((position < 1 && getOrientation() == equivalentOrientation)
+					|| (position > sizeTile() - 1 && getOrientation() == equivalentOrientation.getOppositeOrientation()))
+			{
+				return getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(getOrientation()).getObstruction() == Obstruction.SEESAW_FLIP;
+			}
+			// you are standing right across of an edge; if this edge is a flip, return true
+			else if((position < 1 && getOrientation() == equivalentOrientation.getOppositeOrientation())
+					|| (position > sizeTile() - 1 && getOrientation() == equivalentOrientation))
+			{
+				return getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(getOrientation().getOppositeOrientation()).getObstruction() == Obstruction.SEESAW_FLIP;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
 		}
 	}
 
@@ -222,7 +277,7 @@ public abstract class AbstractPilot implements PilotInterface {
 			try {
 				Thread.sleep(getRotateSleepTime());
 			} catch (Exception e) {
-				
+
 			}
 		}
 	}
@@ -237,11 +292,12 @@ public abstract class AbstractPilot implements PilotInterface {
 		busyExecutingBarcode = true;
 		pilotActions.barcodeFound();
 	}
-	 
+
 	public boolean isExecutingBarcode() {
 		return busyExecutingBarcode;
 	}
-	 
+
+
 	public void setBusyExecutingBarcode(boolean busy) {
 		busyExecutingBarcode = busy;
 	}
@@ -249,7 +305,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	public void setReadBarcodes(boolean readBarcodes) {
 		this.readBarcodes = readBarcodes;
 	}
-	
+
 	public boolean getPermaStopReadingBarcodes() {
 		return permaBarcodeStop;
 	}

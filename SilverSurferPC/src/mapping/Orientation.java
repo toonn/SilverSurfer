@@ -278,7 +278,7 @@ public enum Orientation {
     }
 
     /**
-     * enkel gebruikt in mapreader , doet verder niet ter zake
+     * Geeft de orientatie die tegen de klok in, naast deze orientatie ligt.
      */
     public Orientation getOtherOrientationCorner() {
         // implementation is orientation dependent

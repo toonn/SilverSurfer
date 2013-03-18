@@ -27,6 +27,8 @@ public class InfoReceiverThread extends Thread {
                     statusInfoBuffer.addLightSensorInfo(Integer.parseInt(a.substring(5).trim()));
                 else if (a.startsWith("[US]"))
                     statusInfoBuffer.addUltraSensorInfo(Integer.parseInt(a.substring(5).trim()));
+                else if (a.startsWith("[IS]"))
+                    statusInfoBuffer.addInfraRedSensorInfo(Integer.parseInt(a.substring(5).trim()));
                 else if (a.startsWith("[LM]")) {
                     if (a.substring(5).startsWith("true")) {
                         statusInfoBuffer.setLeftMotorMoving(true);

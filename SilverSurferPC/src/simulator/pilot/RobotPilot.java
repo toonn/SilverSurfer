@@ -29,7 +29,7 @@ public class RobotPilot extends AbstractPilot {
     
     public void endConnection() {
         try {
-        	communicator.closeRobotConnection(IRT);
+        	communicator.closeRobotConnection();
         } catch(Exception e) {
         	System.out.println("[CONNECTION] Error disconnecting the robot!");
         }
@@ -71,6 +71,12 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public int getUltraSensorValue() {
         return statusInfoBuffer.getLatestUltraSensorInfo();
+    }
+    
+    @Override
+    public int getInfraRedSensorValue()
+    {
+    	return statusInfoBuffer.getLatestInfraRedSensorInfo();
     }
 
     @Override

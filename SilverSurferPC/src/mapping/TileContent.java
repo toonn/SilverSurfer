@@ -5,7 +5,7 @@ import java.awt.Point;
 public abstract class TileContent {
 
     protected Tile tile;
-    private int value;
+    protected int value;
 
     protected TileContent(final Tile tile, final int value) {
         this.tile = tile;

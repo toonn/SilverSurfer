@@ -8,6 +8,7 @@ public class StatusInfoBuffer {
     private int lightSensorInfo;
     private int ultraSensorInfo;
     private int extraUltraSensorInfo;
+    private int infraSensorInfo;
     private boolean leftMotorMoving;
     private int leftMotorSpeed;
     private boolean rightMotorMoving;
@@ -42,6 +43,15 @@ public class StatusInfoBuffer {
     
     public void setExtraUltrasonicSensorValue(int extraUltrasonicSensorValue) {
     	this.extraUltraSensorInfo = extraUltrasonicSensorValue;
+    }
+    
+    //INFRAREDSENSOR
+    public int getLatestInfraRedSensorInfo() {
+        return infraSensorInfo;
+    }
+
+    public void addInfraRedSensorInfo(int infraSensorInfo) {
+        this.infraSensorInfo = infraSensorInfo;
     }
 
     //LEFT MOTOR

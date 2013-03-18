@@ -37,6 +37,10 @@ public class MapGraph {
     	}
     }
 
+    /**
+     * Add a tile to the map and connect it to its neighbours
+     * @param point
+     */
     public void addTileXY(final Point point) {
         Tile tile = new Tile(point);
         tiles.put(point, tile);
@@ -122,6 +126,20 @@ public class MapGraph {
     // getTile(point).terminate();
     // tiles.remove(point);
     // }
+    
+    /**
+     * Flips all the seesaws with the given value to the other side.
+     */
+    public void flipSeesaw(int value)
+    {
+    	for (Tile tile: getTiles())
+    	{
+    		if(tile.getContent() instanceof Seesaw && tile.getContent().getValue() == value)
+    		{
+    			((Seesaw) tile.getContent()).flipSeesaw();
+    		}
+    	}
+    }
 
     @Override
     public String toString() {

@@ -23,6 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import mapping.Barcode;
+import mapping.Obstruction;
+import mapping.Seesaw;
 import mapping.TreasureObject;
 import mapping.Edge;
 import mapping.MapGraph;
@@ -39,11 +41,8 @@ public abstract class AbstractViewPort extends JPanel {
     private HashMap<TreasureObject, Ellipse2D[]> treasureCircles;
     private Point startShift;
     private ImageIcon robotSprite = new ImageIcon("resources/robot/NXTrobotsmall.png");
-    private Color[] teamColors = new Color[] { new Color(249, 244, 99),
-            new Color(242, 150, 60), new Color(145, 254, 126),
-            new Color(114, 225, 246), new Color(134, 46, 250),
-            new Color(255, 63, 72) };
     private int repaintFPS = 30;
+    private Color[] teamColors;
     private ActionListener repaintViewPort = new ActionListener() {
 
         @Override
@@ -52,7 +51,8 @@ public abstract class AbstractViewPort extends JPanel {
         }
     };
 
-    public AbstractViewPort(Set<? extends PilotInterface> pilotSet) {
+    public AbstractViewPort(Set<? extends PilotInterface> pilotSet, Color[] teamColors) {
+    	this.teamColors = teamColors;
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<Barcode, Rectangle2D[]>();
         treasureCircles = new HashMap<TreasureObject, Ellipse2D[]>();
@@ -72,9 +72,7 @@ public abstract class AbstractViewPort extends JPanel {
         translate(graph);
         paintGrid(graph);
         if(pilots.size() > 0) {
-            paintTreasures(graph);
-            paintBarcodes(graph);
-            paintWalls(graph);
+        	paintMapGraph(graph);
             paintRobotColor(graph);
             paintRobots(graph);
         }
@@ -140,6 +138,13 @@ public abstract class AbstractViewPort extends JPanel {
         for (int y = minShiftVer; y < maxShiftVer; y += getSizeTile())
             g2.draw(new Line2D.Double(minShiftHor, y, maxShiftHor, y));
     }
+    
+	 private void paintMapGraph(Graphics graph) {
+		 paintTreasures(graph);
+		 paintBarcodes(graph);
+		 paintSeesaws(graph);
+		 paintWalls(graph);
+	 }
 
     private void paintTreasures(final Graphics graph) {
         Set<TreasureObject> treasures = new HashSet<TreasureObject>();
@@ -166,7 +171,7 @@ public abstract class AbstractViewPort extends JPanel {
         for (final TreasureObject treasure : treasureCircles.keySet()) {
             g2.setColor(Color.BLACK);
             g2.fill(treasureCircles.get(treasure)[0]);
-            g2.setColor(teamColors[treasure.getValue() % 4]);
+            g2.setColor(teamColors[treasure.getColor()]);
             g2.fill(treasureCircles.get(treasure)[1]);
         }
     }
@@ -242,6 +247,45 @@ public abstract class AbstractViewPort extends JPanel {
         }
 
         return visualBarcode;
+    }
+    
+    private void paintSeesaws(final Graphics graph) {
+    	// make a list of all the seesaw tiles and edges
+    	Set<Rectangle2D> seesawTiles = new HashSet<Rectangle2D>();
+    	Set<Point2D[]> seesawEdges = new HashSet<Point2D[]>();
+    	try {
+    		for (MapGraph mapGraph : getAllMapGraphs())
+    			for (Tile tile : mapGraph.getTiles())
+    				if(tile.getContent() instanceof Seesaw) {
+    					Rectangle2D seesawTile = new Rectangle2D.Double(tile.getPosition().getX() * getSizeTile(),
+    							tile.getPosition().getY() * getSizeTile(), (int) getSizeTile(), (int) getSizeTile());
+    					seesawTiles.add(seesawTile);
+    					for (Edge seesawEdge : tile.getEdges())
+							  if (seesawEdge.getObstruction() == Obstruction.SEESAW_UP)
+								  seesawEdges.add(seesawEdge.getEndPoints());
+    				}
+    	} catch (java.util.ConcurrentModificationException e) {
+    		paintSeesaws(graph);
+    	}
+	
+    	// draw the tiles
+    	((Graphics2D) graph).setColor(Color.YELLOW);
+    	for (Rectangle2D seesawTile : seesawTiles)
+    		((Graphics2D) graph).fill(seesawTile);
+	
+    	// draw the edges
+    	final Graphics2D g2 = ((Graphics2D) graph);
+    	g2.setColor(Color.red);
+    	Stroke originalStroke = g2.getStroke();
+    	float strokeWidth = 5;
+    	g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+	
+    	for (Point2D[] seesawEdge : seesawEdges) {
+    		for (Point2D point : seesawEdge)
+    			point.setLocation(point.getX() * getSizeTile(), point.getY() * getSizeTile());
+    		g2.draw(new Line2D.Double(seesawEdge[0], seesawEdge[1]));
+    	}
+    	g2.setStroke(originalStroke);
     }
 
     private void paintWalls(Graphics graph) {
