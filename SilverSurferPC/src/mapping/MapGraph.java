@@ -137,7 +137,6 @@ public class MapGraph {
     		if(tile.getContent() instanceof Seesaw && tile.getContent().getValue() == value)
     		{
     			((Seesaw) tile.getContent()).flipSeesaw();
-    			System.out.println("flip " + tile.getPosition().toString());
     		}
     	}
     }

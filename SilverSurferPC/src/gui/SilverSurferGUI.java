@@ -27,7 +27,7 @@ public class SilverSurferGUI {
     private static JFrame frame = new JFrame("Silver Surfer Command Center");
     private static JSpinner angle, length;
     private static JButton zoomInButton, zoomOutButton, turnLeftButton, turnRightButton, moveButton;
-    private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7, infoLabel8, infoLabel9, infoLabel10, infoLabel11;
+    private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7, infoLabel8, infoLabel9, infoLabel10, infoLabel11, infoLabel12;
     private static JLabel legendLabel1, legendLabel2, legendLabel3, legendLabel4, legendLabel5, legendLabel6, legendLabel7;
     private static JPanel legendPanel, scalePanel, directionPanel, infoPanel;
     private static SimulatorPanel simulatorPanel;
@@ -62,6 +62,7 @@ public class SilverSurferGUI {
     	boolean robotConnected = pilot instanceof RobotPilot;
     	int ultraSensorValue = pilot.getUltraSensorValue();
     	int lightSensorValue = pilot.getLightSensorValue();
+    	int infraSensorValue = pilot.getInfraRedSensorValue();
     	
     	sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue);
     	
@@ -71,12 +72,13 @@ public class SilverSurferGUI {
         infoLabel4.setText("-------------------");
         infoLabel5.setText("Ultrasonicsensor: " + ultraSensorValue);
         infoLabel6.setText("Lightsensor: " + lightSensorValue);
-        infoLabel7.setText("-------------------");
-        infoLabel8.setText("Coordinates: (" + pilot.getPosition().getX() + ", " +  pilot.getPosition().getY() + ")");
-        infoLabel9.setText("Angle: " + pilot.getAngle());
+        infoLabel7.setText("Infraressensor: " + infraSensorValue);
+        infoLabel8.setText("-------------------");
+        infoLabel9.setText("Coordinates: (" + pilot.getPosition().getX() + ", " +  pilot.getPosition().getY() + ")");
+        infoLabel10.setText("Angle: " + pilot.getAngle());
         if(robotConnected) {
-            infoLabel10.setText("-------------------");
-        	infoLabel11.setText("Busy: " + ((RobotPilot)pilot).getBusy());
+            infoLabel11.setText("-------------------");
+        	infoLabel12.setText("Busy: " + ((RobotPilot)pilot).getBusy());
         }
     }
     
@@ -297,6 +299,7 @@ public class SilverSurferGUI {
         infoLabel9 = new JLabel("", SwingConstants.CENTER);
         infoLabel10 = new JLabel("", SwingConstants.CENTER);
         infoLabel11 = new JLabel("", SwingConstants.CENTER);
+        infoLabel12 = new JLabel("", SwingConstants.CENTER);
         
         infoPanel = new JPanel();
         infoPanel.setOpaque(false);
@@ -312,14 +315,14 @@ public class SilverSurferGUI {
                 .addComponent(infoLabel5).addComponent(infoLabel6)
                 .addComponent(infoLabel7).addComponent(infoLabel8)
                 .addComponent(infoLabel9).addComponent(infoLabel10)
-                .addComponent(infoLabel11));
+                .addComponent(infoLabel11).addComponent(infoLabel12));
         outputLayout.setVerticalGroup(outputLayout.createSequentialGroup()
                 .addComponent(infoLabel1).addComponent(infoLabel2)
                 .addComponent(infoLabel3).addComponent(infoLabel4)
                 .addComponent(infoLabel5).addComponent(infoLabel6)
                 .addComponent(infoLabel7).addComponent(infoLabel8)
                 .addComponent(infoLabel9).addComponent(infoLabel10)
-                .addComponent(infoLabel11));
+                .addComponent(infoLabel11).addComponent(infoLabel12));
         
         infoPanel.setVisible(false);
     }

@@ -1,5 +1,6 @@
 package simulator.pilot;
 
+import java.awt.Point;
 import java.util.Random;
 
 import peno.htttp.Handler;
@@ -74,6 +75,22 @@ public class SimulationPilot extends AbstractPilot {
 	                return 55;
 	        }
 	    }
+	    
+	    /**
+	     * Mean value of the infrared sensor, when having an open seesaw in view
+	     */
+	    public static final double getMSeesawIS()
+	    {
+	    	return 50;
+	    }
+	    
+	    /**
+	     * Mean value of the infrared sensor, when the robot has nog infrared in view
+	     */
+	    public static final double getMNoInfraRedIS()
+	    {
+	    	return 2;
+	    }
 
 	    //Standard Deviation of the light sensor, when standing on a panel containing a barcode under given circumstances.
 	    //The color should be 0 when standing on a black part, 1 when standing on a white part or something else when standing next to the panel.
@@ -136,6 +153,13 @@ public class SimulationPilot extends AbstractPilot {
 	    //Standard Deviation of the ultrasonic sensor under given circumstances.
 	    public static final double getSDUS() {
 	        return 0.523148364;
+	    }
+	    
+	    /**
+	     * Standard Deviation of the infrared sensor
+	     */
+	    public static final double getSDIS() {
+	    	return 0;
 	    }
 	}
 
@@ -274,6 +298,31 @@ public class SimulationPilot extends AbstractPilot {
 		return coordinates;
 	}
 	
+	@Override
+	public int getInfraRedSensorValue() {
+	    if (mapGraphLoaded == null)
+	        return (int) SimulationSensorData.getMNoInfraRedIS();
+	    else
+	    	return recursiveInfraRed(getMatrixPosition(), 3);
+	}
+
+	private int recursiveInfraRed(Point currentPoint, int nbOfTilesToLook) {
+		if(nbOfTilesToLook < 0
+				|| mapGraphLoaded.getTile(currentPoint).getEdge(getOrientation()).getObstruction() == Obstruction.WALL
+	    		|| mapGraphLoaded.getTile(currentPoint).getEdge(getOrientation()).getObstruction() == Obstruction.SEESAW_DOWN)
+	    {
+	    	return (int) SimulationSensorData.getMNoInfraRedIS();
+	    }
+	    else if(mapGraphLoaded.getTile(currentPoint).getEdge(getOrientation()).getObstruction() == Obstruction.SEESAW_UP)
+	    {
+	    	return (int) SimulationSensorData.getMSeesawIS();
+	    }
+	    else
+	    {
+	    	return recursiveInfraRed(getOrientation().getNext(currentPoint), nbOfTilesToLook--);
+	    }
+	}
+
 	@Override
 	protected int readBarcode() {
 		if(mapGraphLoaded.getTile(getMatrixPosition()).getContent() == null

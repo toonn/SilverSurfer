@@ -121,9 +121,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	public abstract int getUltraSensorValue();
 
-	public int getInfraRedSensorValue() {
-		return 48;
-	}
+	public abstract int getInfraRedSensorValue();
 
 	protected boolean checkForObstruction() {
 		if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot)

@@ -72,6 +72,12 @@ public class RobotPilot extends AbstractPilot {
     public int getUltraSensorValue() {
         return statusInfoBuffer.getLatestUltraSensorInfo();
     }
+    
+    @Override
+    public int getInfraRedSensorValue()
+    {
+    	return statusInfoBuffer.getLatestInfraRedSensorInfo();
+    }
 
     @Override
     protected boolean checkForObstruction() {
