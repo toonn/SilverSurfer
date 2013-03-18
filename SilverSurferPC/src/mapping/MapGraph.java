@@ -35,6 +35,10 @@ public class MapGraph {
         getTile(point).getEdge(orientation).setObstruction(obst);
     }
 
+    /**
+     * Add a tile to the map and connect it to its neighbours
+     * @param point
+     */
     public void addTileXY(final Point point) {
         Tile tile = new Tile(point);
         tiles.put(point, tile);

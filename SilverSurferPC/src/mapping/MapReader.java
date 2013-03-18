@@ -95,11 +95,11 @@ public class MapReader {
                 	Orientation orientation = Orientation.switchStringToOrientation((String.valueOf(values[0])));
                 	if(Integer.valueOf(String.valueOf(values[1])) == 0)
                 	{
-                		tileIJ.getEdge(orientation).setObstruction(Obstruction.SEESAW_DOWN);
+                		tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_DOWN);
                 	}
                 	else if(Integer.valueOf(String.valueOf(values[1])) == 1)
                 	{
-                		tileIJ.getEdge(orientation).setObstruction(Obstruction.SEESAW_UP);
+                		tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_UP);
                 	}
                 }
             }
@@ -164,11 +164,11 @@ public class MapReader {
 	
 	    for (final Orientation ori : Orientation.values()) {
 	        if (!ori.equals(orientation.getOppositeOrientation())) {
-	            t.getEdge(ori).setObstruction(Obstruction.WALL);
+	            t.getEdge(ori).replaceObstruction(Obstruction.WALL);
 	        }
 	        else
 	        {
-	        	t.getEdge(ori).setObstruction(Obstruction.WHITE_LINE);
+	        	t.getEdge(ori).replaceObstruction(Obstruction.WHITE_LINE);
 	        }
 	    }
 	}
@@ -182,11 +182,11 @@ public class MapReader {
 
 	public static void createCornerFromTile(final Tile t,
 	        final Orientation orientation) {
-	    t.getEdge(orientation).setObstruction(Obstruction.WALL);
-	    t.getEdge(orientation.getOtherOrientationCorner()).setObstruction(
+	    t.getEdge(orientation).replaceObstruction(Obstruction.WALL);
+	    t.getEdge(orientation.getOtherOrientationCorner()).replaceObstruction(
 	            Obstruction.WALL);
-	    t.getEdge(orientation.getOppositeOrientation()).setObstruction(Obstruction.WHITE_LINE);
-	    t.getEdge(orientation.getOppositeOrientation().getOtherOrientationCorner()).setObstruction(
+	    t.getEdge(orientation.getOppositeOrientation()).replaceObstruction(Obstruction.WHITE_LINE);
+	    t.getEdge(orientation.getOppositeOrientation().getOtherOrientationCorner()).replaceObstruction(
 	            Obstruction.WHITE_LINE);
 	}
 
@@ -195,11 +195,11 @@ public class MapReader {
         for (final Orientation ori : Orientation.values()) {
             if ((!(ori.equals(orientation)))
                     && (!(ori.equals(orientation.getOppositeOrientation())))) {
-                t.getEdge(ori).setObstruction(Obstruction.WALL);
+                t.getEdge(ori).replaceObstruction(Obstruction.WALL);
             }
             else
             {
-            	t.getEdge(ori).setObstruction(Obstruction.WHITE_LINE);
+            	t.getEdge(ori).replaceObstruction(Obstruction.WHITE_LINE);
             }
 
         }
@@ -210,11 +210,11 @@ public class MapReader {
     	for (final Orientation ori : Orientation.values()) {
     		if(ori.equals(orientation))
     		{
-    			t.getEdge(ori).setObstruction(Obstruction.WALL);
+    			t.getEdge(ori).replaceObstruction(Obstruction.WALL);
     		}
     		else
     		{
-    			t.getEdge(ori).setObstruction(Obstruction.WHITE_LINE);
+    			t.getEdge(ori).replaceObstruction(Obstruction.WHITE_LINE);
     		}
     	}
         

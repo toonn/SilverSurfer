@@ -196,11 +196,11 @@ public class Edge {
     }
 
     public void setObstruction(final Obstruction obstruction) {
-    	if(this.obstruction == null)
-    	{
-    		this.obstruction = obstruction;
-    	}
-    	else if (this.obstruction.ordinal() < obstruction.ordinal())
+    	replaceObstruction(obstruction);
+    }
+    
+    public void replaceObstruction(final Obstruction obstruction) {
+    	if(this.obstruction == null || this.obstruction.ordinal() < obstruction.ordinal())
     	{
     		this.obstruction = obstruction;
     	}

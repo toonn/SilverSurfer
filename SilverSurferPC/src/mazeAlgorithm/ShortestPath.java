@@ -64,11 +64,10 @@ public class ShortestPath {
         }
 
         // voeg neighbourTiles van de currentTile toe aan de queu
-        for (final Object neighbourTile : currentTile.getReachableNeighbours()) {
-            if (neighbourTile != null && tiles.contains(neighbourTile)
-                    && !((Tile) neighbourTile).isMarkedShortestPath()) {
-                ((Tile) neighbourTile).setCost(currentTile.getCost() + 1);
-                queue.add((Tile) neighbourTile);
+        for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
+            if (neighbourTile != null && tiles.contains(neighbourTile) && !neighbourTile.isMarkedShortestPath()) {
+                neighbourTile.setCost(currentTile.getCost() + 1);
+                queue.add(neighbourTile);
             }
         }
 

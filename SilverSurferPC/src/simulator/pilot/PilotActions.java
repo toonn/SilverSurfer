@@ -5,6 +5,7 @@ import java.awt.Point;
 import mapping.Barcode;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mapping.Seesaw;
 import mapping.TreasureObject;
 
 import commands.BarcodeCommand;
@@ -65,11 +66,11 @@ public class PilotActions {
 			{
 				if(barcode == BarcodeCommand.SEESAW_START[i])
 				{
-					seesawFound(barcode, BarcodeCommand.SEESAW_END[i]);
+					seesawFound(BarcodeCommand.SEESAW_END[i], i, false);
 				}
 				else if(barcode == BarcodeCommand.SEESAW_END[i])
 				{
-					seesawFound(barcode, BarcodeCommand.SEESAW_START[i]);
+					seesawFound(BarcodeCommand.SEESAW_START[i], i, true);
 				}
 			}
 			// check whether the barcode found is one of the treasures of team 0.
@@ -102,13 +103,79 @@ public class PilotActions {
 	}
 
 	/**
-	 * @param barcode
-	 * @param i
+	 * @param barcode, the value of the barcode on the other side of the seesaw
+	 * @param value, the value of the seesaw
+	 * @param right, true if the seesaw lies partitally to the left of this tile (given the orientation of the robot)
 	 */
-	private void seesawFound(int currentBarcode, int otherBarcode) {
+	private void seesawFound(int otherBarcode, int value, boolean right) {
+		System.out.println("Robot " + getPilot().getTeamNumber() + ": seesaw " + value);
+
+		// add the four next tiles to the map (the tile on nextPoint1 is allready added by addBarcode())
+		Point nextPoint1 = getPilot().getOrientation().getNext(getPilot().getMatrixPosition());
+		Point nextPoint2 = getPilot().getOrientation().getNext(nextPoint1);
+		Point nextPoint3 = getPilot().getOrientation().getNext(nextPoint2);
+		Point nextPoint4 = getPilot().getOrientation().getNext(nextPoint3);
+		getPilot().getMapGraphConstructed().addTileXY(nextPoint2);
+		getPilot().getMapGraphConstructed().addTileXY(nextPoint3);
+		getPilot().getMapGraphConstructed().addTileXY(nextPoint4);
 		
-		// TODO Auto-generated method stub
+		// add the other two seesaw-tiles to the map
+		Orientation sideOrientation = getPilot().getOrientation().getOtherOrientationCorner();
+		if(right)
+		{
+			sideOrientation = sideOrientation.getOppositeOrientation();
+		}
+		Point sidePoint1 = sideOrientation.getNext(nextPoint1);
+		getPilot().getMapGraphConstructed().addTileXY(sidePoint1);
+		Point sidePoint2 = sideOrientation.getNext(nextPoint2);
+		getPilot().getMapGraphConstructed().addTileXY(sidePoint2);
 		
+		// add the seesaw to the seesaw-tiles
+		Seesaw seesaw1 = new Seesaw(getPilot().getMapGraphConstructed().getTile(nextPoint1), value);
+		Seesaw seesaw2 = new Seesaw(getPilot().getMapGraphConstructed().getTile(nextPoint2), value);
+		Seesaw seesaw3 = new Seesaw(getPilot().getMapGraphConstructed().getTile(sidePoint1), value);
+		Seesaw seesaw4 = new Seesaw(getPilot().getMapGraphConstructed().getTile(sidePoint2), value);
+		getPilot().getMapGraphConstructed().addContentToCurrentTile(nextPoint1, seesaw1);
+		getPilot().getMapGraphConstructed().addContentToCurrentTile(nextPoint2, seesaw2);
+		getPilot().getMapGraphConstructed().addContentToCurrentTile(sidePoint1, seesaw3);
+		getPilot().getMapGraphConstructed().addContentToCurrentTile(sidePoint2, seesaw4);
+		
+		// add the right edges to the seesaw tiles and mark as explored
+		Obstruction closeObstruction = Obstruction.SEESAW_DOWN;
+		Obstruction farObstruction = Obstruction.SEESAW_UP;
+		if(getPilot().getInfraRedSensorValue() > 40 && getPilot().getInfraRedSensorValue() < 60)
+		{
+			closeObstruction = Obstruction.SEESAW_UP;
+			farObstruction = Obstruction.SEESAW_DOWN;
+		}
+		getPilot().getMapGraphConstructed().getTile(nextPoint1).getEdge(getPilot().getOrientation()).replaceObstruction(Obstruction.SEESAW_FLIP);
+		getPilot().getMapGraphConstructed().getTile(nextPoint1).getEdge(getPilot().getOrientation().getOppositeOrientation()).replaceObstruction(closeObstruction);
+		getPilot().getMapGraphConstructed().getTile(nextPoint1).getEdge(sideOrientation.getOppositeOrientation()).replaceObstruction(Obstruction.WALL);
+		getPilot().getMapGraphConstructed().getTile(nextPoint1).setMarkingExploreMaze(true);
+		
+		getPilot().getMapGraphConstructed().getTile(sidePoint1).getEdge(getPilot().getOrientation()).replaceObstruction(Obstruction.SEESAW_FLIP);
+		getPilot().getMapGraphConstructed().getTile(sidePoint1).getEdge(sideOrientation).replaceObstruction(Obstruction.WALL);
+		getPilot().getMapGraphConstructed().getTile(sidePoint1).getEdge(getPilot().getOrientation().getOppositeOrientation()).replaceObstruction(Obstruction.WALL);
+		getPilot().getMapGraphConstructed().getTile(sidePoint1).setMarkingExploreMaze(true);
+		
+		getPilot().getMapGraphConstructed().getTile(nextPoint2).getEdge(getPilot().getOrientation()).replaceObstruction(farObstruction);
+		getPilot().getMapGraphConstructed().getTile(nextPoint2).getEdge(getPilot().getOrientation().getOppositeOrientation()).replaceObstruction(Obstruction.SEESAW_FLIP);
+		getPilot().getMapGraphConstructed().getTile(nextPoint2).getEdge(sideOrientation.getOppositeOrientation()).replaceObstruction(Obstruction.WALL);
+		getPilot().getMapGraphConstructed().getTile(nextPoint2).setMarkingExploreMaze(true);
+		
+		getPilot().getMapGraphConstructed().getTile(sidePoint2).getEdge(getPilot().getOrientation()).replaceObstruction(Obstruction.WALL);
+		getPilot().getMapGraphConstructed().getTile(sidePoint2).getEdge(sideOrientation).replaceObstruction(Obstruction.WALL);
+		getPilot().getMapGraphConstructed().getTile(sidePoint2).getEdge(getPilot().getOrientation().getOppositeOrientation()).replaceObstruction(Obstruction.SEESAW_FLIP);
+		getPilot().getMapGraphConstructed().getTile(sidePoint2).setMarkingExploreMaze(true);
+		
+		// change the third tile into a straight, add the other barcode and mark as explored
+		for(Orientation orientation: Orientation.values())
+			if(orientation != getPilot().getOrientation() && orientation != getPilot().getOrientation().getOppositeOrientation())
+				getPilot().getMapGraphConstructed().addObstruction(nextPoint3, orientation, Obstruction.WALL);
+		getPilot().getMapGraphConstructed().addObstruction(nextPoint3, getPilot().getOrientation(), farObstruction);
+		Barcode barcode = new Barcode(getPilot().getMapGraphConstructed().getTile(nextPoint3), otherBarcode, getPilot().getOrientation());
+		getPilot().getMapGraphConstructed().addContentToCurrentTile(nextPoint3, barcode);
+		getPilot().getMapGraphConstructed().getTile(nextPoint3).setMarkingExploreMaze(true);
 	}
 
 	/**
@@ -120,7 +187,7 @@ public class PilotActions {
 
 		// change the current tile into a straight and mark it explored
 		for(Orientation orientation: Orientation.values())
-			if(orientation != getPilot().getOrientation() &&	orientation != getPilot().getOrientation().getOppositeOrientation())
+			if(orientation != getPilot().getOrientation() && orientation != getPilot().getOrientation().getOppositeOrientation())
 				getPilot().getMapGraphConstructed().addObstruction(getPilot().getMatrixPosition(), orientation, Obstruction.WALL);
 		getPilot().getMapGraphConstructed().getTile(getPilot().getMatrixPosition()).setMarkingExploreMaze(true);
 
