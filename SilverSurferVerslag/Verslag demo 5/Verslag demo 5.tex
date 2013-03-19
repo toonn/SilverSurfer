@@ -66,63 +66,69 @@ Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robot
 \label{ssec:bouwrob}
 LEGO Mindstorms  biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS  kan dit in Java.
 
+De robot moet in staat zijn een wc-rolletje, op te nemen. Verder moet de robot andere robots en de stand van de wip kunnen detecteren.
 
 \subsection{Fysieke bouw}
 \label{ssec:fysb}
+Een infraroodsensor werd gemonteerd bovenop de robot. Wanneer een infraroodbal onder een wip geplaatst wordt, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
 
-De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot geschikt te maken voor de nieuwe opdracht. De robot moet in staat zijn een wc-rolletje, op te nemen. Verder bevat de opdracht enkele aspecten die extra sensoren impliceren: het detecteren van andere robots, het detecteren van de wip, vaststellen of het voorwerp daadwerkelijk is opgepakt...\\
- 
-Op vlak van sensoren zijn twee aspecten veranderd ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze hadden als doel te detecteren wanneer er tegen een muur werd gebotst tijdens het witte-lijnalgoritme. Ze zijn echter nooit ge\"implementeerd en bleken ook niet nodig te zijn.
+Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werden getest: een schep met motor achteraan, een kartonnen schep vooraan en een plastieken schep met klittenband vooraan. Figuur \ref{fig:robotBouw} geeft deze opstellingen weer. Volgende bevindingen werden gemaakt:
 
+\begin{enumerate}
+\item De robot heft het voorwerp expliciet op met behulp van een extra motor. Deze opstelling maakte de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
+\item Vooraan is niet genoeg plaats voor een extra motor, deze werd niet gebruikt. Een halve wc-rol leek een ideale vorm voor de schep. Na testen bleek dit echter niet altijd te werken.
+\item De robot neemt het voorwerp op met behulp van klittenband. De schep zorgt ervoor dat het voorwerp niet over de grond sleept. Zo zit het niet in de weg voor de wip. Dit is de huidige opstelling.
+\end{enumerate}
 
+De infrarood- en ultrasone sensor worden vast gemonteerd op de robot.
+De schep werd samen met de lichtsensor gemonteerd op een hefboomsysteem. Wanneer de robot over de wip rijdt, gaat dit systeem omhoog. Zo botsen er geen onderdelen tegen de wip.
 
-Verschillende opstellingen laten toe het voorwerp mee te nemen. Het voorwerp kan de bewegingsvrijheid van de robot beperken. Dit moet uiteraard zoveel mogelijk vermeden worden. Het is mogelijk het voorwerp over de grond te laten slepen, maar dit zorgt voor extra wrijving en verhoogt de kans dat het voorwerp los geraakt. Bovendien moet de robot een wip kunnen passeren, ook wanneer hij het voorwerp bij zich heeft. 
- 
-Aanvankelijk werd gekozen een schep achteraan de robot te monteren, gebruik makend van een extra motor om het voorwerp `op te scheppen' (zie figuur \ref{fig:robotBouwAchter}). Dit heeft als voordeel dat de wip zonder probleem gepasseerd kan worden en dat het voorwerp stevig vast zit. De configuratie maakt de robot echter te lang waardoor hij moeilijk kan omkeren zonder tegen een muur aan te botsen (tenzij dit draaien in meerdere stappen gebeurt, maar dit is niet zo effici\"ent). De opstelling kon daarom niet behouden worden.
+De robot is ook voorzien van een dubbel paar wielen. Dit vermijdt dat hij gaat schuiven op de wip.
 
-In de uiteindelijke opstelling (zie figuur \ref{fig:robotBouwVoor}) heeft de robot een schep vooraan. De schep is opgebouwd uit een stuk wc-rol. Dit is immers de ideale vorm om het voorwerp, het wc-rolletje, op te nemen. De schep is, net zoals het voorwerp, voorzien van een strook klittenband (nog niet op de foto). Dit biedt extra zekerheid zodat het voorwerp niet verloren geraakt. Figuur \ref{fig:robotSchep} toont een gedetailleerd zicht op de schep en het voorwerp.\\
+Figuur \ref{fig:robotDetail} geeft details van de schep, de wielen en de sensoren.
 
-De lichtsensor~-~en de schep die hieraan vast hangt~-~kunnen echter bewegen ten opzichte van de robot. Dit gebeurt met behulp van een scharnier, er werd geen extra motor gebruikt. Het scharnier zorgt ervoor dat de lichtsensor wegklapt bij contact met de wip en later door de zwaartekracht weer terug op zijn plaats klapt. Zo zit de lichtsensor niet in de weg wanneer de robot over een wip rijdt.
-
-\subsection{Infraroodsensor}
-\label{ssec:infra}
-
-Een infraroodsensor werd gemonteerd bovenop de robot. Deze infraroodsensor kan infraroodlicht detecteren. Er is een bal beschikbaar die dit infraroodlicht uitzendt. Wanneer deze bal onder een wip geplaatst wordt\footnote{De Scheidsrechtercommissie heeft nog niet besloten of de bal hiervoor gebruikt zal worden.}, kan de robot gemakkelijk detecteren of de wip omhoog staat (en dus niet toegankelijk is) of omlaag. In dat tweede geval blokkeert de wip immers al het licht en detecteert de sensor niets.\\
-
-Net zoals vorig semester zijn de ultrasone- en de infraroodsensor vast gemonteerd op de robot. Hierbij staat de infraroodsensor op het 'hoofd' van de robot. De infraroodsensor zal dus altijd infrarood detecteren in het gezichtsveld van de robot.\\
-
-% figuren robot, oud en nieuw
+% bouw robot
 \begin{figure}
 \centering
-	\begin{subfigure}[h]{0.45\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 	\centering
-		\includegraphics[width=\textwidth]{robotSchepOud}
-		\caption{schep achteraan}
-		\label{fig:robotBouwAchter}
+		\includegraphics[width=\textwidth]{robotOud1}
+		\caption{opstelling 1}
 	\end{subfigure}%
-	\begin{subfigure}[h]{0.47\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{robotSchepNieuw}
-	\caption{schep vooraan}
-	\label{fig:robotBouwVoor}
-\end{subfigure}
-\caption{Bouw van de robot.}
+		\includegraphics[width=\textwidth]{robotOud2}
+	\caption{opstelling 2}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.33\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{robotNieuw}
+	\caption{opstelling 3}
+	\end{subfigure}
+\caption{Een vergelijking tussen verschillende ontwerpen.}
 \label{fig:robotBouw}
 \end{figure}
 
-% figuren detail schep
+% details robot
 \begin{figure}
 \centering
-	\begin{subfigure}[h]{0.46\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 	\centering
-		\includegraphics[width=\textwidth]{schepZonder}
+		\includegraphics[width=\textwidth]{robotSchep}
+		\caption{schep}
 	\end{subfigure}%
-	\begin{subfigure}[h]{0.46\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{schepMet}
-\end{subfigure}
-\caption{Detail van de schep, met en zonder voorwerp.}
-\label{fig:robotSchep}
+		\includegraphics[width=\textwidth]{robotWielen}
+		\caption{wielen}
+	\end{subfigure}%
+	\begin{subfigure}[h]{0.33\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{robotSensoren}
+		\caption{infrarood- en ultrasone sensor}
+	\end{subfigure}
+\caption{Details van de robot.}
+\label{fig:robotDetail}
 \end{figure}
 
 
@@ -283,6 +289,12 @@ Elke \textit{AbstractPilot} moet kunnen interageren met een RabbitMQ-kanaal. De 
 \item[subscribeTo(String monitorKey):] Een object van de klasse \textit{SubscribeMonitor} wordt aangemaakt. Deze \textit{SubscribeMonitor} luistert naar alle berichten op het kanaal van het \textit{MessageCenter} die met de gegeven string beginnen (de `Monitor Key'). Vervolgens stuurt het \textit{MessageCenter} al deze informatie naar de \textit{AbstractPilot} die de monitoring-aanvraag deed. Deze Pilot ontvangt vanaf dan alle berichten met het onderwerp waarvoor hij een aanvraag deed, maar van berichten met een ander onderwerp krijgt hij geen melding.
 \item[sendMessage(String exchange, String routingKey, String message):] Het gegeven bericht wordt naar de gespecifi\"eerde `exchange' gestuurd. Deze plaatst het bericht in alle `queues' die het onderwerp (gespecifi\"eerd door de routingKey) volgen. Op deze manier krijgen alle \textit{Pilots} die aanvraag deden voor het onderwerp, melding van het bericht.
 \end{description}
+
+% De scheidsrechterscommissie ontwikkelde ‘Het Team Treasure Trek Protocol’ ofwel HTTTP. Het protocol voorziet in een breed scala van methodes: het starten, stoppen en pauzeren van een Game, het toewijzen van objecten, het melden van een locatie-wijziging, … Ook voorzag de commissie een implementatie. Daarin zit een Client-klasse die onder andere voorgenoemde methoden aanbiedt en die het gebruik van RabbitMQ bijna volledig abstraheert. 
+%
+%Elk team maakt zelf een implementatie van de bijgevoegde Handler-interface. Zo’n Handler zorgt ervoor dat de info die op de RabbitMQ-kanalen binnenkomt juist gebruikt wordt. In dit project bestaan er meerdere implementaties van die Handlers. Elk soort Pilot gaat immers anders met die info om. De Robot- en SimulatorPilots die instaan voor het besturen van Robots en Simulatoren gebruiken bijvoorbeeld de informatie voor het starten van een game, terwijl DummyHandlers informatie voeren aan de DummyPilots die andere Robots modeleren. Van daaruit is het dan makkelijker om aan mapmerging etc. te doen. Een overzicht van de voorziene architectuur zie je in figuur TODO
+%
+%Bij het aanmaken van een Pilot wordt er een MQCenter aangemaakt met bijhorende Handler. Dit MQCenter abstraheert verder de - reusachtige - Client-klasse en zorgt ervoor dat een AbstractPilot makkelijk htttp-ondersteuning krijgt.
 
 % -- Simulator -- %
 \subsection{Simulator}
