@@ -19,18 +19,12 @@ public class Seesaw extends TileContent {
 	/**
 	 * Flips the seesaw. If the current seesaw-edge is up, it is set down and vice versa.
 	 */
-	public void flipSeesaw()
-	{
-		for(Edge edge: tile.getEdges())
-		{
+	public void flipSeesaw() {
+		for(Edge edge: tile.getEdges()) {
 			if(edge.getObstruction() == Obstruction.SEESAW_DOWN)
-			{
 				edge.setObstruction(Obstruction.SEESAW_UP);
-			}
 			else if(edge.getObstruction() == Obstruction.SEESAW_UP)
-			{
 				edge.setObstruction(Obstruction.SEESAW_DOWN);
-			}
 		}
 	}
 
@@ -43,4 +37,10 @@ public class Seesaw extends TileContent {
 		return 0;
 	}
 
+	public boolean isUp() {
+		for(Edge edge: tile.getEdges()) 
+			if(edge.getObstruction() == Obstruction.SEESAW_UP)
+				return true;
+		return false;
+	}
 }

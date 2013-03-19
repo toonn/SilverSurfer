@@ -89,7 +89,7 @@ public class MapReader {
                 	
                 	// add a seesaw to the tile
                 	char[] values = seperatedInfoIJ[3].toCharArray();
-                	tileIJ.setContent(new Seesaw(tileIJ, values[2]));
+                	tileIJ.setContent(new Seesaw(tileIJ, Integer.valueOf(String.valueOf(values[2]))));
                 	
                 	// set the right edges
                 	Orientation orientation = Orientation.switchStringToOrientation((String.valueOf(values[0])));

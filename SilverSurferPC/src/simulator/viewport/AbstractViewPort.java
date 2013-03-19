@@ -294,7 +294,7 @@ public abstract class AbstractViewPort extends JPanel {
             for (MapGraph mapGraph : getAllMapGraphs())
                 for (Tile tile : mapGraph.getTiles())
                     for (Edge wall : tile.getEdges())
-                        if (wall.getObstruction() != null && !wall.getObstruction().isPassable())
+                        if (wall.getObstruction() != null && wall.getObstruction() == Obstruction.WALL)
                             walls.add(wall.getEndPoints());
     	} catch (java.util.ConcurrentModificationException e) {
             paintWalls(graph);
