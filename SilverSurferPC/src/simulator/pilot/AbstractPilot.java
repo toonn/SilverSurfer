@@ -286,4 +286,6 @@ public abstract class AbstractPilot implements PilotInterface {
     public GameHandler getDefaultHandler() {
         return this.handler;
     }
+
+    protected abstract boolean crashImminent();
 }

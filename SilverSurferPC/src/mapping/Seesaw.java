@@ -8,16 +8,23 @@ package mapping;
  *
  */
 public class Seesaw extends TileContent {
+	
+	private Orientation ori;
 
 	/**
-	 * Creates an object with as value 'value'.
+	 * Creates an Seesaw with a direction.
 	 */
-	public Seesaw(final Tile tile, final int value) {
+	public Seesaw(final Tile tile, final Orientation ori) {
+		this(tile, ori, 0);
+	}
+	
+	public Seesaw(final Tile tile, final Orientation ori, int value) {
 		super(tile, value);
+		this.ori = ori;
 	}
 
 	/**
-	 * Flips the seesaw. If the current seesaw-edge is up, it is set down and vice versa.
+	 * Flips the Seesaw. If the current Seesaw-edge is up, it is set down and vice versa.
 	 */
 	public void flipSeesaw() {
 		for(Edge edge: tile.getEdges()) {
@@ -36,6 +43,12 @@ public class Seesaw extends TileContent {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public Orientation getOrientation() {
+		return ori;
+	}
+	
+	
 
 	public boolean isUp() {
 		for(Edge edge: tile.getEdges()) 

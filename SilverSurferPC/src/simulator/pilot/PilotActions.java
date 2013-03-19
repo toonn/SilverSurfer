@@ -91,10 +91,15 @@ public class PilotActions {
 		pilot.getMapGraphConstructed().addTileXY(nextPoint4);
 		
 		// add the seesaw to the seesaw-tiles
-		Seesaw seesaw1 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint1), value);
-		Seesaw seesaw2 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint2), value);
+		Seesaw seesaw1 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint1), pilot.getOrientation().getOppositeOrientation(), value);
+		Seesaw seesaw2 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint2), pilot.getOrientation(), value);
+		//Seesaw seesaw3 = new Seesaw(pilot.getMapGraphConstructed().getTile(sidePoint1), pilot.getOrientation(), value);
+		//Seesaw seesaw4 = new Seesaw(pilot.getMapGraphConstructed().getTile(sidePoint2), pilot.getOrientation(), value);
 		pilot.getMapGraphConstructed().addContentToCurrentTile(nextPoint1, seesaw1);
 		pilot.getMapGraphConstructed().addContentToCurrentTile(nextPoint2, seesaw2);
+		//pilot.getMapGraphConstructed().addContentToCurrentTile(sidePoint1, seesaw3);
+		//pilot.getMapGraphConstructed().addContentToCurrentTile(sidePoint2, seesaw4);
+
 		
 		// add the right edges to the seesaw tiles and mark as explored
 		Obstruction closeObstruction = Obstruction.SEESAW_DOWN;

@@ -1,7 +1,10 @@
 package simulator.pilot;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.Random;
+
+import simulator.viewport.SimulatorPanel;
 
 import mapping.Barcode;
 import mapping.MapGraph;
@@ -326,4 +329,18 @@ public class SimulationPilot extends AbstractPilot {
         }
     }
 
+    @Override
+    protected boolean crashImminent() {
+        Point2D.Double point = new Point2D.Double();
+        if (getOrientation() == Orientation.NORTH)
+            point.setLocation(getPosition().getX(), getPosition().getY() - 1);
+        else if (getOrientation() == Orientation.SOUTH)
+            point.setLocation(getPosition().getX(), getPosition().getY() + 1);
+        else if (getOrientation() == Orientation.EAST)
+            point.setLocation(getPosition().getX() + 1, getPosition().getY());
+        else if (getOrientation() == Orientation.WEST)
+            point.setLocation(getPosition().getX() - 1, getPosition().getY());
+
+        return SimulatorPanel.robotOn(point);
+    }
 }
