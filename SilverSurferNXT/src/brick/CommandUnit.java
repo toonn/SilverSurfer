@@ -13,7 +13,7 @@ public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
 	private static final double ANGLE_COEF = 1.65; //Amount of degrees needed for a 1 degree turn.
-    private static int SPEED = 180;
+    private static int SPEED = 200;
     
     private double x = 20;
     private double y = 20;
@@ -109,7 +109,7 @@ public class CommandUnit {
                         System.out.println(distance + " cm.");
                         CU.updatePosition(distance);
                         int result = CU.moveForward((int)Math.floor(LENGTH_COEF*distance));
-    	    			if(result != 0)
+    	    			if(result != -1)
     	    				CU.sendStringToUnit("[BC] " + result);
                         CU.stopRobot();
                     } else if (((input % 100 == Command.AUTOMATIC_TURN_ANGLE) || (input % 100 == -(100-Command.AUTOMATIC_TURN_ANGLE))) && input != Command.AUTOMATIC_TURN_ANGLE) {
@@ -151,26 +151,15 @@ public class CommandUnit {
         Motor.B.stop();
     }
 
-    private int getSpeed() {
-        if (SPEED == 360)
-            return 4;
-        else if (SPEED == 270)
-            return 3;
-        else if (SPEED == 180)
-            return 2;
-        else
-            return 1;
-    }
-
     private void setSpeed(int speed) {
         if (speed == 1)
-            SPEED = 90;
+            SPEED = 100;
         else if (speed == 2)
-            SPEED = 180;
+            SPEED = 200;
         else if (speed == 3)
-            SPEED = 270;
+            SPEED = 300;
         else
-            SPEED = 360;
+            SPEED = 400;
 		Motor.A.setSpeed(SPEED);
 		Motor.B.setSpeed(SPEED);
         System.out.println("Speed: " + speed);
@@ -202,9 +191,9 @@ public class CommandUnit {
     	Motor.A.setAcceleration(1000);
     	Motor.A.setAcceleration(1000);
     	int absAngle = Math.abs(angle);
-    	if (SPEED > 180) {
-    		Motor.A.setSpeed(180);
-    		Motor.B.setSpeed(180);
+    	if (SPEED > 200) {
+    		Motor.A.setSpeed(200);
+    		Motor.B.setSpeed(200);
     	}
     	if(angle >= 0) {
             Motor.A.rotate(-absAngle, true);
@@ -220,53 +209,26 @@ public class CommandUnit {
     	Motor.A.setAcceleration(6000);
     }
     
-    private void moveForwardWithoutBarcode(int angle) {
-        Motor.A.rotate(angle, true);
-        Motor.B.rotate(angle);
+    private void moveForwardWithoutBarcode(int distance) {
+        Motor.A.rotate(distance, true);
+        Motor.B.rotate(distance);
     }
     
-    private int moveForward(int angle) {
-        try {
-        	if(readBarcodes && !permaBarcodeStop) {
-        		BT = new BarcodeThread("BT", lightSensor);
-        		BT.start();
-        	}
-        	Motor.A.rotate(angle, true);
-        	Motor.B.rotate(angle);
-        	if(readBarcodes && !permaBarcodeStop) {
-        		Thread.sleep(500);
-        		boolean found = BT.getFound();
-        		BT.setQuit(true);
-        		if(found) {
-        			Thread.sleep(500);
-        			return readBarcode();
-        		}
-        	}
-        } catch(Exception e) {
-        	System.out.println("Error in CommandUnit.moveForward(int angle)!");
-        }
-        return 0;
-    }
-    
-    private int readBarcode() {
-    	int backupSpeed = getSpeed();
-    	setSpeed(1);
-    	String result = "";
-    	if(lightSensor.getLightValue() < 40) {
-        	moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
-        	for(int i = 0; i < 6; i++) {
-        		if(lightSensor.getLightValue() < 40) 
-        			result = result + "0";
-        		else
-        			result = result + "1";
-            	moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
-        	}
-        	moveForwardWithoutBarcode((int)Math.round(2*LENGTH_COEF));
+    private int moveForward(int distance) {
+    	if(readBarcodes && !permaBarcodeStop) {
+    		BT = new BarcodeThread("BT", distance, lightSensor, LENGTH_COEF);
+    		BT.start();
+    		while(BT.isAlive() && lightSensor.getLightValue() >= 40);
+    		if(BT.isAlive()) {
+    			BT.changeBool();
+    			while(!BT.getBool());
+    			alignOnWalls();
+    			return BT.getResult();
+    		}
     	}
-    	alignOnWalls();
-    	setSpeed(backupSpeed);
-    	Byte byteResult = Byte.valueOf(result, 2);
-    	return Integer.valueOf(byteResult.intValue());
+    	else
+    		moveForwardWithoutBarcode(distance);
+    	return -1;
     }
 
     private void alignOnWhiteLine() {
@@ -282,11 +244,9 @@ public class CommandUnit {
     }
     
     private void alignOnWalls() {
-    	int firstUSRead;
-    	int secondUSRead;
-    	
     	turnAngle((int)(ANGLE_COEF*90));
-    	firstUSRead = ultrasonicSensor.getDistance();
+    	int firstUSRead = ultrasonicSensor.getDistance();
+    	int secondUSRead;
     	if (firstUSRead < 28) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*LENGTH_COEF));
         	turnAngle(-(int)(ANGLE_COEF*180));

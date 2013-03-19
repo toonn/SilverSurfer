@@ -76,19 +76,13 @@ public class SimulationPilot extends AbstractPilot {
 	        }
 	    }
 	    
-	    /**
-	     * Mean value of the infrared sensor, when having an open seesaw in view
-	     */
-	    public static final double getMSeesawIS()
-	    {
+	    //Mean value of the infrared sensor, when having an open seesaw in view
+	    public static final double getMSeesawIS() {
 	    	return 50;
 	    }
 	    
-	    /**
-	     * Mean value of the infrared sensor, when the robot has nog infrared in view
-	     */
-	    public static final double getMNoInfraRedIS()
-	    {
+	    //Mean value of the infrared sensor, when the robot has nog infrared in view
+	    public static final double getMNoInfraRedIS() {
 	    	return 2;
 	    }
 
@@ -155,9 +149,7 @@ public class SimulationPilot extends AbstractPilot {
 	        return 0.523148364;
 	    }
 	    
-	    /**
-	     * Standard Deviation of the infrared sensor
-	     */
+	    //Standard Deviation of the infrared sensor
 	    public static final double getSDIS() {
 	    	return 0;
 	    }
@@ -310,17 +302,11 @@ public class SimulationPilot extends AbstractPilot {
 		if(nbOfTilesToLook < 0
 				|| mapGraphLoaded.getTile(currentPoint).getEdge(getOrientation()).getObstruction() == Obstruction.WALL
 	    		|| mapGraphLoaded.getTile(currentPoint).getEdge(getOrientation()).getObstruction() == Obstruction.SEESAW_DOWN)
-	    {
 	    	return (int) SimulationSensorData.getMNoInfraRedIS();
-	    }
 	    else if(mapGraphLoaded.getTile(currentPoint).getEdge(getOrientation()).getObstruction() == Obstruction.SEESAW_UP)
-	    {
 	    	return (int) SimulationSensorData.getMSeesawIS();
-	    }
 	    else
-	    {
 	    	return recursiveInfraRed(getOrientation().getNext(currentPoint), nbOfTilesToLook--);
-	    }
 	}
 
 	@Override
