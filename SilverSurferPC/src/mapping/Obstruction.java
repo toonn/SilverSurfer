@@ -10,7 +10,7 @@ public enum Obstruction {
     SEESAW_UP {
     	@Override
         public boolean isPassable() {
-            return true;
+            return false;
         }
     },
     SEESAW_FLIP {

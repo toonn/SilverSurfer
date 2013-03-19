@@ -124,6 +124,7 @@ public class MapReader {
 //                		tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_UP);
 //                	
 //                }
+
             }
         }
         return map;
