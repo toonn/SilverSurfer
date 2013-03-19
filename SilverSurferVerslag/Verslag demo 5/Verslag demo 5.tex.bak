@@ -1,6 +1,7 @@
 \documentclass[tt2]{penoverslag}
 
 %%% PACKAGES
+\renewcommand{\refname}{}
 \usepackage{lipsum}
 \usepackage{gensymb}
 \usepackage [dutch] {babel}
@@ -83,11 +84,12 @@ In de uiteindelijke opstelling (zie figuur \ref{fig:robotBouwVoor}) heeft de rob
 
 De lichtsensor~-~en de schep die hieraan vast hangt~-~kunnen echter bewegen ten opzichte van de robot. Dit gebeurt met behulp van een scharnier, er werd geen extra motor gebruikt. Het scharnier zorgt ervoor dat de lichtsensor wegklapt bij contact met de wip en later door de zwaartekracht weer terug op zijn plaats klapt. Zo zit de lichtsensor niet in de weg wanneer de robot over een wip rijdt.
 
-\section{Infraroodsensor}
+\subsection{Infraroodsensor}
+\label{ssec:infra}
 
 Een infraroodsensor werd gemonteerd bovenop de robot. Deze infraroodsensor kan infraroodlicht detecteren. Er is een bal beschikbaar die dit infraroodlicht uitzendt. Wanneer deze bal onder een wip geplaatst wordt\footnote{De Scheidsrechtercommissie heeft nog niet besloten of de bal hiervoor gebruikt zal worden.}, kan de robot gemakkelijk detecteren of de wip omhoog staat (en dus niet toegankelijk is) of omlaag. In dat tweede geval blokkeert de wip immers al het licht en detecteert de sensor niets.\\
 
-Net zoals vorig semester zijn de ultrasone- en de infraroodsensor vast gemonteerd op de robot. Hierbij staat de infraroodsensor op het 'hoofd' van de robot. De infraroodsensor
+Net zoals vorig semester zijn de ultrasone- en de infraroodsensor vast gemonteerd op de robot. Hierbij staat de infraroodsensor op het 'hoofd' van de robot. De infraroodsensor zal dus altijd infrarood detecteren in het gezichtsveld van de robot.\\
 
 % figuren robot, oud en nieuw
 \begin{figure}
@@ -137,9 +139,29 @@ Voor volgende algoritmes wordt verwezen naar het verslag van het eerste semester
 % == zoeken van het voorwerp == %
 \subsection{Zoeken van het voorwerp} %
 \label{ssec:algoZoek}
-Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing. Een beschrijving wordt gegeven in het verslag van het eerste semester.\\
+Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing. %TODO deze optimalisaties hierin zetten\\
 
-Nog een extra optimalisatie (F) geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
+DeadEnd prioriteit
+
+Er wordt een extra queue bijgehouden die de vakjes waar de robot nog niet weet hoe heen te gaan
+omdat daar het doolhof nog niet verkend is bijhoudt. Wanneer hier een vakje in zit dat een deadend
+is en wanneer er voor dat vakje mogelijk een straight in de juiste orientatie kan liggen, krijgt dit
+vakje prioriteit en gaat de robot zo snel mogelijk naar daar manoeuvreren. Dit gebeurt door naar het
+vakje te gaan dat wel bereikbaar is en dat zo dicht mogelijk ligt bij de deadEnd (zo klein mogelijke
+manhattan distance).
+
+Testen...
+
+Uit deze testen blijkt dat het algoritme vaker efficienter is zonder deze optimalisatie. Dit komt omdat
+de robot veel omrijdt om het dichtsbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad
+op en afgaat (een duidelijk voorbeeld hiervan is doolhof2 : .... ). Bij het oorspronkelijke algoritme was
+dit meermaals over dezelfde wegen rijden heel hard geminimaliseerd.
+
+Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar het
+oorspronkelijke algoritme te behouden.
+
+%
+%Eerst werd er geopteerd om een extra optimalisatie (F) geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. Hierbij wordt nog steeds prioriteit gegeven aan voorwerp-locaties. Deze bevatten immers unieke barcodes die het later gemakkelijker maken de mappen te combineren.
 
@@ -303,11 +325,15 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 % overzicht aangepaste secties
 \begin{itemize}
 \item \textit{\ref{ssec:fysb} Fysieke bouw:} de schep vooraan werd aangepast.
+\item \textit{\ref{ssec:algoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
+\item \textit{\ref{ssec:infra} Infraroodsensor:} Nieuw stuk over infraroodsensor werd toegevoegd, samen met de testen.
 %\item \textit{calibratie infrarood}: nieuwe gegevens.
 \end{itemize}
 
 \newpage
+\renewcommand\bibsection{\subsection{Laa}}
 \begin{thebibliography}{9}
+
 \bibitem{TeamTreasure} 
 \textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
 

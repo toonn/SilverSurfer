@@ -3,6 +3,9 @@ package simulator.pilot;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import peno.htttp.GameHandler;
+import peno.htttp.PlayerHandler;
+
 import mapping.Barcode;
 import mapping.MapGraph;
 import mapping.Obstruction;
@@ -22,6 +25,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private boolean permaBarcodeStop = false;
 	private PilotActions pilotActions = new PilotActions(this);
 	private ExploreThread exploreThread;
+    private PlayerHandler handler;
 
 	protected final double detectionDistanceUltrasonicSensorRobot = 28;
 
@@ -252,7 +256,6 @@ public abstract class AbstractPilot implements PilotInterface {
 		return busyExecutingBarcode;
 	}
 
-
 	public void setBusyExecutingBarcode(boolean busy) {
 		busyExecutingBarcode = busy;
 	}
@@ -278,4 +281,9 @@ public abstract class AbstractPilot implements PilotInterface {
 		if(exploreThread != null && exploreThread.isAlive())
 			exploreThread.quit();
 	}
+
+    @Override
+    public GameHandler getDefaultHandler() {
+        return this.handler;
+    }
 }

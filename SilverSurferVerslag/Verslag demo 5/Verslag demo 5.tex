@@ -1,6 +1,7 @@
 \documentclass[tt2]{penoverslag}
 
 %%% PACKAGES
+\renewcommand{\refname}{}
 \usepackage{lipsum}
 \usepackage{gensymb}
 \usepackage [dutch] {babel}
@@ -30,11 +31,11 @@
 \newpage
 
 \begin{abstract}
-Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} \cite{TeamTreasure} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
+Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder is de robot voorzien van een schep waarmee hij het voorwerp kan oprapen.\\
 
-De robot kan een doolhof verkennen en hiervan een map bijhouden. Wanneer hij een tegel vindt die mogelijk een voorwerp bevat, zal het nakijken van deze tegel prioriteit krijgen. Via RabbitMQ \cite{RabbitMQ} kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
+De robot kan een doolhof verkennen en hiervan een map bijhouden. Wanneer hij een tegel vindt die mogelijk een voorwerp bevat, zal het nakijken van deze tegel prioriteit krijgen. Via RabbitMQ kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -55,7 +56,7 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 % == INLEIDING == %
 \section{Inleiding} % 4 ok
 \label{ssec:inl}
-In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms \cite{mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} \cite{TeamTreasure} kunnen spelen.
+In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
 De robots moeten hierbij in een onbekend doolhof op zoek naar een bepaald voorwerp (een wc-rol). Elke robot krijgt zijn eigen voorwerp toegewezen. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
 
 Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robots gewerkt. Het is ook mogelijk met vier virtuele robots te werken. De doolhof bevat mogelijk een wip. De robots zijn in staat hun eigen voorwerp te vinden en op te rapen. Wanneer een robot weet wie zijn teamgenoot is, kan hij hiermee een punt afspreken om samen te komen.\\
@@ -63,64 +64,71 @@ Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robot
 
 \section{Bouw robot}
 \label{ssec:bouwrob}
-LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS \cite{leJOS} kan dit in Java.
+LEGO Mindstorms  biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS  kan dit in Java.
 
+De robot moet in staat zijn een wc-rolletje, op te nemen. Verder moet de robot andere robots en de stand van de wip kunnen detecteren.
 
 \subsection{Fysieke bouw}
 \label{ssec:fysb}
+Een infraroodsensor werd gemonteerd bovenop de robot. Wanneer een infraroodbal onder een wip geplaatst wordt, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
 
-De fysieke bouw van de robot is grotendeels gebaseerd op die van het eerste semester. Enkele aanpassingen waren echter nodig om de robot geschikt te maken voor de nieuwe opdracht. De robot moet in staat zijn een wc-rolletje, op te nemen. Verder bevat de opdracht enkele aspecten die extra sensoren impliceren: het detecteren van andere robots, het detecteren van de wip, vaststellen of het voorwerp daadwerkelijk is opgepakt...\\
- 
-Op vlak van sensoren zijn twee aspecten veranderd ten opzichte van het eerste semester. De druksensoren aan weerszijde van de lichtsensor zijn weggehaald. Deze hadden als doel te detecteren wanneer er tegen een muur werd gebotst tijdens het witte-lijnalgoritme. Ze zijn echter nooit ge\"implementeerd en bleken ook niet nodig te zijn.
+Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werden getest: een schep met motor achteraan, een kartonnen schep vooraan en een plastieken schep met klittenband vooraan. Figuur \ref{fig:robotBouw} geeft deze opstellingen weer. Volgende bevindingen werden gemaakt:
 
+\begin{enumerate}
+\item De robot heft het voorwerp expliciet op met behulp van een extra motor. Deze opstelling maakte de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
+\item Vooraan is niet genoeg plaats voor een extra motor, deze werd niet gebruikt. Een halve wc-rol leek een ideale vorm voor de schep. Na testen bleek dit echter niet altijd te werken.
+\item De robot neemt het voorwerp op met behulp van klittenband. De schep zorgt ervoor dat het voorwerp niet over de grond sleept. Zo zit het niet in de weg voor de wip. Dit is de huidige opstelling.
+\end{enumerate}
 
+De infrarood- en ultrasone sensor worden vast gemonteerd op de robot.
+De schep werd samen met de lichtsensor gemonteerd op een hefboomsysteem. Wanneer de robot over de wip rijdt, gaat dit systeem omhoog. Zo botsen er geen onderdelen tegen de wip.
 
-Verschillende opstellingen laten toe het voorwerp mee te nemen. Het voorwerp kan de bewegingsvrijheid van de robot beperken. Dit moet uiteraard zoveel mogelijk vermeden worden. Het is mogelijk het voorwerp over de grond te laten slepen, maar dit zorgt voor extra wrijving en verhoogt de kans dat het voorwerp los geraakt. Bovendien moet de robot een wip kunnen passeren, ook wanneer hij het voorwerp bij zich heeft. 
- 
-Aanvankelijk werd gekozen een schep achteraan de robot te monteren, gebruik makend van een extra motor om het voorwerp `op te scheppen' (zie figuur \ref{fig:robotBouwAchter}). Dit heeft als voordeel dat de wip zonder probleem gepasseerd kan worden en dat het voorwerp stevig vast zit. De configuratie maakt de robot echter te lang waardoor hij moeilijk kan omkeren zonder tegen een muur aan te botsen (tenzij dit draaien in meerdere stappen gebeurt, maar dit is niet zo effici\"ent). De opstelling kon daarom niet behouden worden.
+De robot is ook voorzien van een dubbel paar wielen. Dit vermijdt dat hij gaat schuiven op de wip.
 
-In de uiteindelijke opstelling (zie figuur \ref{fig:robotBouwVoor}) heeft de robot een schep vooraan. De schep is opgebouwd uit een stuk wc-rol. Dit is immers de ideale vorm om het voorwerp, het wc-rolletje, op te nemen. De schep is, net zoals het voorwerp, voorzien van een strook klittenband (nog niet op de foto). Dit biedt extra zekerheid zodat het voorwerp niet verloren geraakt. Figuur \ref{fig:robotSchep} toont een gedetailleerd zicht op de schep en het voorwerp.\\
+Figuur \ref{fig:robotDetail} geeft details van de schep, de wielen en de sensoren.
 
-De lichtsensor~-~en de schep die hieraan vast hangt~-~kunnen echter bewegen ten opzichte van de robot. Dit gebeurt met behulp van een scharnier, er werd geen extra motor gebruikt. Het scharnier zorgt ervoor dat de lichtsensor wegklapt bij contact met de wip en later door de zwaartekracht weer terug op zijn plaats klapt. Zo zit de lichtsensor niet in de weg wanneer de robot over een wip rijdt.
-
-\section{Infraroodsensor}
-
-Een infraroodsensor werd gemonteerd bovenop de robot. Deze infraroodsensor kan infraroodlicht detecteren. Er is een bal beschikbaar die dit infraroodlicht uitzendt. Wanneer deze bal onder een wip geplaatst wordt\footnote{De Scheidsrechtercommissie heeft nog niet besloten of de bal hiervoor gebruikt zal worden.}, kan de robot gemakkelijk detecteren of de wip omhoog staat (en dus niet toegankelijk is) of omlaag. In dat tweede geval blokkeert de wip immers al het licht en detecteert de sensor niets.\\
-
-Net zoals vorig semester zijn de ultrasone- en de infraroodsensor vast gemonteerd op de robot. Hierbij staat de infraroodsensor op het 'hoofd' van de robot. De infraroodsensor zal dus altijd infrarood detecteren in het gezichtsveld van de robot.\\
-
-% figuren robot, oud en nieuw
+% bouw robot
 \begin{figure}
 \centering
-	\begin{subfigure}[h]{0.45\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 	\centering
-		\includegraphics[width=\textwidth]{robotSchepOud}
-		\caption{schep achteraan}
-		\label{fig:robotBouwAchter}
+		\includegraphics[width=\textwidth]{robotOud1}
+		\caption{opstelling 1}
 	\end{subfigure}%
-	\begin{subfigure}[h]{0.47\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{robotSchepNieuw}
-	\caption{schep vooraan}
-	\label{fig:robotBouwVoor}
-\end{subfigure}
-\caption{Bouw van de robot.}
+		\includegraphics[width=\textwidth]{robotOud2}
+	\caption{opstelling 2}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.33\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{robotNieuw}
+	\caption{opstelling 3}
+	\end{subfigure}
+\caption{Een vergelijking tussen verschillende ontwerpen.}
 \label{fig:robotBouw}
 \end{figure}
 
-% figuren detail schep
+% details robot
 \begin{figure}
 \centering
-	\begin{subfigure}[h]{0.46\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 	\centering
-		\includegraphics[width=\textwidth]{schepZonder}
+		\includegraphics[width=\textwidth]{robotSchep}
+		\caption{schep}
 	\end{subfigure}%
-	\begin{subfigure}[h]{0.46\textwidth}
+	\begin{subfigure}[h]{0.33\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{schepMet}
-\end{subfigure}
-\caption{Detail van de schep, met en zonder voorwerp.}
-\label{fig:robotSchep}
+		\includegraphics[width=\textwidth]{robotWielen}
+		\caption{wielen}
+	\end{subfigure}%
+	\begin{subfigure}[h]{0.33\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{robotSensoren}
+		\caption{infrarood- en ultrasone sensor}
+	\end{subfigure}
+\caption{Details van de robot.}
+\label{fig:robotDetail}
 \end{figure}
 
 
@@ -137,9 +145,38 @@ Voor volgende algoritmes wordt verwezen naar het verslag van het eerste semester
 % == zoeken van het voorwerp == %
 \subsection{Zoeken van het voorwerp} %
 \label{ssec:algoZoek}
-Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing. Een beschrijving wordt gegeven in het verslag van het eerste semester.\\
+Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing. \\
+%TODO deze optimalisaties hierin zetten\\
 
-Nog een extra optimalisatie (F) geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
+\begin{description}
+\item[A] basisalgoritme zonder optimalisatie: draai bij elke tegel vier keer (eindig in startori\"entatie) en neem de laatste tile in de queue als volgende tile.
+\item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tile.
+\item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori"entatie).
+\item[D] muren die vanuit een naburige tile reeds gedetecteerd werden, worden niet nog eens nagekeken.
+\item[E] tiles waarvan de vier zijden al gekend zijn en waaraan drie muren grenzen, worden niet meer bezocht (`dead-ends' kunnen onmogelijk barcodes bevatten, dus dit is geen probleem)
+\end{description}
+
+DeadEnd prioriteit
+
+Er wordt een extra queue bijgehouden die de vakjes waar de robot nog niet weet hoe heen te gaan
+omdat daar het doolhof nog niet verkend is bijhoudt. Wanneer hier een vakje in zit dat een deadend
+is en wanneer er voor dat vakje mogelijk een straight in de juiste orientatie kan liggen, krijgt dit
+vakje prioriteit en gaat de robot zo snel mogelijk naar daar manoeuvreren. Dit gebeurt door naar het
+vakje te gaan dat wel bereikbaar is en dat zo dicht mogelijk ligt bij de deadEnd (zo klein mogelijke
+manhattan distance).
+
+Testen...
+
+Uit deze testen blijkt dat het algoritme vaker efficienter is zonder deze optimalisatie. Dit komt omdat
+de robot veel omrijdt om het dichtsbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad
+op en afgaat (een duidelijk voorbeeld hiervan is doolhof2 : .... ). Bij het oorspronkelijke algoritme was
+dit meermaals over dezelfde wegen rijden heel hard geminimaliseerd.
+
+Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar het
+oorspronkelijke algoritme te behouden.
+
+%
+%Eerst werd er geopteerd om een extra optimalisatie (F) geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. Hierbij wordt nog steeds prioriteit gegeven aan voorwerp-locaties. Deze bevatten immers unieke barcodes die het later gemakkelijker maken de mappen te combineren.
 
@@ -244,7 +281,7 @@ Al deze \textit{Viewports} nemen plaats in, waardoor andere functionaliteiten va
 % -- RabbitMQ -- %
 \subsection{RabbitMQ}
 \label{ssec:RabbMQ}
-De implementatie van RabbitMQ \cite{RabbitMQ} is sterk gebaseerd op de demo die op Toledo werd geplaatst.\\
+De implementatie van RabbitMQ  is sterk gebaseerd op de demo die op Toledo werd geplaatst.\\
 
 Elke \textit{AbstractPilot} moet kunnen interageren met een RabbitMQ-kanaal. De klasse \textit{MessageCenter} zorgt voor een RabbitMQ-interface die de pilots kunnen gebruiken. Het object verbindt met een server bij initialisatie. Enkele algemene parameters worden meegegeven: gebruikersnaam, wachtwoord en poort. De belangrijkste methodes in de klasse zijn \textit{sendMessage()} en \textit{subscribeTo()} die respectievelijk het schrijven naar en monitoren van, specifieke `exchanges' en `queues' toelaten. De methodes aanroepen heeft volgend effect:
 
@@ -252,6 +289,12 @@ Elke \textit{AbstractPilot} moet kunnen interageren met een RabbitMQ-kanaal. De 
 \item[subscribeTo(String monitorKey):] Een object van de klasse \textit{SubscribeMonitor} wordt aangemaakt. Deze \textit{SubscribeMonitor} luistert naar alle berichten op het kanaal van het \textit{MessageCenter} die met de gegeven string beginnen (de `Monitor Key'). Vervolgens stuurt het \textit{MessageCenter} al deze informatie naar de \textit{AbstractPilot} die de monitoring-aanvraag deed. Deze Pilot ontvangt vanaf dan alle berichten met het onderwerp waarvoor hij een aanvraag deed, maar van berichten met een ander onderwerp krijgt hij geen melding.
 \item[sendMessage(String exchange, String routingKey, String message):] Het gegeven bericht wordt naar de gespecifi\"eerde `exchange' gestuurd. Deze plaatst het bericht in alle `queues' die het onderwerp (gespecifi\"eerd door de routingKey) volgen. Op deze manier krijgen alle \textit{Pilots} die aanvraag deden voor het onderwerp, melding van het bericht.
 \end{description}
+
+% De scheidsrechterscommissie ontwikkelde ‘Het Team Treasure Trek Protocol’ ofwel HTTTP. Het protocol voorziet in een breed scala van methodes: het starten, stoppen en pauzeren van een Game, het toewijzen van objecten, het melden van een locatie-wijziging, … Ook voorzag de commissie een implementatie. Daarin zit een Client-klasse die onder andere voorgenoemde methoden aanbiedt en die het gebruik van RabbitMQ bijna volledig abstraheert. 
+%
+%Elk team maakt zelf een implementatie van de bijgevoegde Handler-interface. Zo’n Handler zorgt ervoor dat de info die op de RabbitMQ-kanalen binnenkomt juist gebruikt wordt. In dit project bestaan er meerdere implementaties van die Handlers. Elk soort Pilot gaat immers anders met die info om. De Robot- en SimulatorPilots die instaan voor het besturen van Robots en Simulatoren gebruiken bijvoorbeeld de informatie voor het starten van een game, terwijl DummyHandlers informatie voeren aan de DummyPilots die andere Robots modeleren. Van daaruit is het dan makkelijker om aan mapmerging etc. te doen. Een overzicht van de voorziene architectuur zie je in figuur TODO
+%
+%Bij het aanmaken van een Pilot wordt er een MQCenter aangemaakt met bijhorende Handler. Dit MQCenter abstraheert verder de - reusachtige - Client-klasse en zorgt ervoor dat een AbstractPilot makkelijk htttp-ondersteuning krijgt.
 
 % -- Simulator -- %
 \subsection{Simulator}
@@ -303,27 +346,31 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 % overzicht aangepaste secties
 \begin{itemize}
 \item \textit{\ref{ssec:fysb} Fysieke bouw:} de schep vooraan werd aangepast.
+\item \textit{\ref{ssec:algoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
+\item \textit{\ref{ssec:infra} Infraroodsensor:} Nieuw stuk over infraroodsensor werd toegevoegd, samen met de testen.
 %\item \textit{calibratie infrarood}: nieuwe gegevens.
 \end{itemize}
 
 \newpage
-\begin{thebibliography}{9}
-\bibitem{TeamTreasure} 
-\textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
 
-\bibitem{RabbitMQ}
-\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
-\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
-
-\bibitem{mindstorms}
-\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
-
-\bibitem{leJOS}
-\textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
-
-
-
-\end{thebibliography}
+%\begin{thebibliography}{9}
+%
+%\bibitem{TeamTreasure} 
+%\textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
+%
+%\bibitem{RabbitMQ}
+%\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
+%\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
+%
+%\bibitem{mindstorms}
+%\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+%
+%\bibitem{leJOS}
+%\textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+%
+%
+%
+%\end{thebibliography}
 
 
 \end{document}

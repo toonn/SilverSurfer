@@ -1,74 +1,77 @@
 package mq.communicator;
 
-import peno.htttp.Handler;
-import simulator.pilot.AbstractPilot;
+import peno.htttp.DisconnectReason;
+import peno.htttp.SpectatorHandler;
 import simulator.pilot.PilotInterface;
 
-public class DummyHandler implements Handler{
+public class DummyHandler implements SpectatorHandler {
 
-private PilotInterface pilot;
-	
-	public DummyHandler(PilotInterface pilot){
-		this.pilot = pilot;
-	}
-	
-	public PilotInterface getPilot() {
-		return pilot;
-	}
+    private PilotInterface pilot;
 
-	@Override
-	public void gameStarted() {
-		// TODO Auto-generated method stub
-		System.out.println("game started");
-		
-	}
+    public DummyHandler(PilotInterface pilot) {
+        this.pilot = pilot;
+    }
 
-	@Override
-	public void gameStopped() {
-		// TODO Auto-generated method stub
-		System.out.println("game stopped");
+    public PilotInterface getPilot() {
+        return pilot;
+    }
 
-	}
+    @Override
+    public void gameStarted() {
+        // TODO Auto-generated method stub
+        System.out.println("game started");
 
-	@Override
-	public void gamePaused() {
-		// TODO Auto-generated method stub
-		System.out.println("game paused");
+    }
 
-	}
+    @Override
+    public void gameStopped() {
+        // TODO Auto-generated method stub
+        System.out.println("game stopped");
 
-	@Override
-	public void gameRolled(int playerNumber) {
-		// TODO Auto-generated method stub
-		System.out.println("game rolled " + playerNumber);
+    }
 
-	}
+    @Override
+    public void gamePaused() {
+        // TODO Auto-generated method stub
+        System.out.println("game paused");
 
-	@Override
-	public void playerJoined(String playerID) {
-		// TODO Auto-generated method stub
-		System.out.println("player joined "+playerID);
+    }
 
-	}
+    @Override
+    public void playerJoined(String playerID) {
+        // TODO Auto-generated method stub
+        System.out.println("player joined " + playerID);
 
-	@Override
-	public void playerLeft(String playerID) {
-		// TODO Auto-generated method stub
-		System.out.println("player left "+playerID);
+    }
 
-	}
+    @Override
+    public void playerJoining(String playerID) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void playerPosition(String playerID, double x, double y, double angle) {
-		// TODO Auto-generated method stub
-		System.out.println("player position "+playerID + x + y + angle);
+    }
 
-	}
+    @Override
+    public void playerDisconnected(String playerID, DisconnectReason reason) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void playerFoundObject(String playerID) {
-		// TODO Auto-generated method stub
-		System.out.println("player found object "+playerID);
-		
-	}
+    }
+
+    @Override
+    public void playerReady(String playerID, boolean isReady) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void playerFoundObject(String playerID, int playerNumber) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void playerUpdate(String playerID, int playerNumber, double x,
+            double y, double angle, boolean foundObject) {
+        // TODO Auto-generated method stub
+
+    }
 }
