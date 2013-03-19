@@ -31,11 +31,11 @@
 \newpage
 
 \begin{abstract}
+\label{ssec:abstract}
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
-De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder is de robot voorzien van een schep waarmee hij het voorwerp kan oprapen.\\
-
-De robot kan een doolhof verkennen en hiervan een map bijhouden. Wanneer hij een tegel vindt die mogelijk een voorwerp bevat, zal het nakijken van deze tegel prioriteit krijgen. Via RabbitMQ kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
+De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder is de robot voorzien van een schep waarmee hij het voorwerp kan oprapen.
+De robot kan een doolhof verkennen en hiervan een map bijhouden. Via RabbitMQ kunnen de robots en simulators met elkaar communiceren. Zo kunnen ze een map naar elkaar doorsturen en extra informatie om zo naar elkaar toe te rijden.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -164,11 +164,11 @@ Eerst werd er geopteerd om een extra optimalisatie (F) toe te voegen. Deze geeft
 
 %TODO Testen...
 
-Uit deze testen blijkt dat het algoritme vaker efficienter is zonder deze optimalisatie. Dit komt omdat de robot veel omrijdt om het dichtsbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad op en afgaat (een duidelijk voorbeeld hiervan is doolhof2 : .... %TODO
+Uit deze testen blijkt dat het algoritme vaker effici"enter is zonder deze optimalisatie. Dit komt omdat de robot veel omrijdt om het dichtstbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad op en afgaat (een duidelijk voorbeeld hiervan is doolhof 2 : .... %TODO
  ). Bij het oorspronkelijke algoritme was dit meermaals over dezelfde wegen rijden heel hard geminimaliseerd.\\
  
 
-Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar hetoorspronkelijke algoritme te behouden.\\
+Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar het oorspronkelijke algoritme te behouden.\\
 
 %
 % In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
@@ -181,7 +181,7 @@ Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren
 \subsection{Weg vinden naar andere robot}
 Hierbij dachten we aan het kortste-pad-algoritme. Dit zal wel nog aangepast moeten worden aan zowel draaien als vooruit rijden (draaien was nog niet in rekening gebracht).\\ Er moet ook nog rekening gehouden worden als de andere robot zou wegrijden. De robot mag hierdoor niet in een loop terechtkomen. \\
 
-In de scheidsrechtercommissie is er besloten dat de robots naar elkaar informatie doorsturen over waar ze zich bevinden in het doolhof. Dit kan gebeuren via de hele verkende map door te sturen. De robot kan er dan voor kiezen om delen van de informatie van zijn teamgenoot te gebruiken of niet. Met deze informatie rijdt de robot naar zijn teamgenoot. Ze spreken geen tegel onderling af, maar rijden gewoon naar elkaar toe. Dit heeft het nadeel dat als ze elk een ander pad kiezen ze elkaar kunnen kruisen zonder dat ze het weten. Voorlopig wordt dit dus toegepast in deze demo.\\
+In de scheidsrechterscommissie is er besloten dat de robots naar elkaar informatie doorsturen over waar ze zich bevinden in het doolhof. Dit kan gebeuren via de hele verkende map door te sturen. De robot kan er dan voor kiezen om delen van de informatie van zijn teamgenoot te gebruiken of niet. Met deze informatie rijdt de robot naar zijn teamgenoot. Ze spreken geen tegel onderling af, maar rijden gewoon naar elkaar toe. Dit heeft het nadeel dat als ze elk een ander pad kiezen ze elkaar kunnen kruisen zonder dat ze het weten. Voorlopig wordt dit dus toegepast in deze demo.\\
 
 % == SOFTWARE == %
 \section{Software}
@@ -319,7 +319,7 @@ De robot communiceert met andere robots via RabbitMQ. Zo kan de robot afspraken 
 %% == DEMO 1 == %
 \section{Demo 1} % 3
 \label{Asec:demo1}
-De robot wordt voor de eerste demo voorzien van een schep die bestaat uit een halve wc-rol. De infraroodsensor is ge\"installeerd, maar wordt nog niet gebruikt. Wanneer de robot zijn voorwerp vindt, stuurt hij een bericht via RabbitMQ. De GUI is opgesplitst in verschillende \textit{Viewports} die elks \'e\'en of meerdere \textit{Pilots} weergeeft.
+De robot wordt voor de eerste demo voorzien van een schep die bestaat uit een halve wc-rol. De infraroodsensor is ge\"installeerd, maar wordt nog niet gebruikt. Wanneer de robot zijn voorwerp vindt, stuurt hij een bericht via RabbitMQ. De GUI is opgesplitst in verschillende \textit{Viewports} die elk een of meerdere \textit{Pilots} weergeeft.
 
 % == resulaten == %
 \subsection{Resultaten} % 3 ?
@@ -341,13 +341,14 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 
 % overzicht aangepaste secties
 \begin{itemize}
+\item \textit{\ref{ssec:abstract} Abstract:} aangepast.
 \item \textit{\ref{ssec:fysb} Fysieke bouw:} de schep vooraan werd aangepast.
 \item \textit{\ref{ssec:algoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
 \item \textit{\ref{ssec:infra} Infraroodsensor:} Nieuw stuk over infraroodsensor werd toegevoegd, samen met de testen.
+
 %\item \textit{calibratie infrarood}: nieuwe gegevens.
 \end{itemize}
 
-\newpage
 
 %\begin{thebibliography}{9}
 %
