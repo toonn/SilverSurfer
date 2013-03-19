@@ -60,7 +60,7 @@ public class InfoReceiverThread extends Thread {
                 else if (a.startsWith("[ANG]"))
                     statusInfoBuffer.setAngle(Double.valueOf(a.substring(6).trim()));
                 else if (a.startsWith("[BC]"))
-                    statusInfoBuffer.executeBarcode(Integer.parseInt(a.substring(5).trim()));
+                    statusInfoBuffer.setBarcode(Integer.parseInt(a.substring(5).trim()));
                 else if (a.startsWith("[CFO]"))
                     statusInfoBuffer.setExtraUltrasonicSensorValue(Integer.parseInt(a.substring(5).trim()));
             } catch (final Exception e) {

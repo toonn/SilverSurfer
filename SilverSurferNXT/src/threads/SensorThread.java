@@ -2,7 +2,6 @@ package threads;
 
 import brick.CommandUnit;
 
-//Continuously updates status info.
 public class SensorThread extends Thread {
 
     private CommandUnit CU;
