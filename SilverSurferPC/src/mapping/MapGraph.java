@@ -130,15 +130,10 @@ public class MapGraph {
     /**
      * Flips all the seesaws with the given value to the other side.
      */
-    public void flipSeesaw(int value)
-    {
+    public void flipSeesaw(int value) {
     	for (Tile tile: getTiles())
-    	{
     		if(tile.getContent() instanceof Seesaw && tile.getContent().getValue() == value)
-    		{
     			((Seesaw) tile.getContent()).flipSeesaw();
-    		}
-    	}
     }
 
     @Override

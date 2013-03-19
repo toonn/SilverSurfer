@@ -67,41 +67,64 @@ public class MapReader {
                             tileIJ,
                             Orientation
                                     .switchStringToOrientation(seperatedInfoIJ[1]));
+                } else if (seperatedInfoIJ[0].equals("Closed")){
+                	createClosedFromTile(tileIJ);
+                } else if (seperatedInfoIJ[0].equals("Seesaw")){
+                	createSeesawFromTile(tileIJ, Orientation
+                                    .switchStringToOrientation(seperatedInfoIJ[1]));
                 }
                 
-                // a barcode value has been specified
+                // a Barcode value has been specified
                 if (seperatedInfoIJ.length == 3) {
-                    tileIJ.setContent(new Barcode(tileIJ, Integer
-                            .valueOf(seperatedInfoIJ[2]), Orientation
-                            .switchStringToOrientation(seperatedInfoIJ[1])));
+                	//An object has been specified.
+                	if (seperatedInfoIJ[2].equals("V")){
+                		tileIJ.setContent(new TreasureObject(tileIJ, 0));
+                	}
+                	//A StartTile has been specified
+                	else if (seperatedInfoIJ[2].startsWith("S")){
+                		Character player = seperatedInfoIJ[2].charAt(1);
+                		int pNo = Character.getNumericValue(player);
+                		Character oriChar = seperatedInfoIJ[2].charAt(2);
+                		Orientation ori = Orientation.switchStringToOrientation(oriChar.toString());
+                		StartBase base = new StartBase(tileIJ, pNo, ori);
+                		tileIJ.setContent(base);
+                	}
+                	//only possibility left @3 is a barcode.
+                	else{
+                		tileIJ.setContent(new Barcode(tileIJ, Integer
+                                .valueOf(seperatedInfoIJ[2]), Orientation
+                                .switchStringToOrientation(seperatedInfoIJ[1])));
+                	}
+                    
                 }
 
-                // a treasure has been specified
-                if (seperatedInfoIJ.length == 4
-                        && "o".equals(seperatedInfoIJ[2])) {
-                    tileIJ.setContent(new TreasureObject(tileIJ, Integer
-                            .valueOf(seperatedInfoIJ[3])));
+            	//A StartTile has been specified
+                if (seperatedInfoIJ.length == 4) {
+                	Character player = seperatedInfoIJ[3].charAt(1);
+            		int pNo = Character.getNumericValue(player);
+            		Character oriChar = seperatedInfoIJ[3].charAt(2);
+            		Orientation ori = Orientation.switchStringToOrientation(oriChar.toString());
+            		StartBase base = new StartBase(tileIJ, pNo, ori);
+            		tileIJ.setContent(base);
                 }
                 
                 // a seesaw has been specified
-                if (seperatedInfoIJ.length == 4
-                        && "s".equals(seperatedInfoIJ[2])) {
-                	
-                	// add a seesaw to the tile
-                	char[] values = seperatedInfoIJ[3].toCharArray();
-                	tileIJ.setContent(new Seesaw(tileIJ, values[2]));
-                	
-                	// set the right edges
-                	Orientation orientation = Orientation.switchStringToOrientation((String.valueOf(values[0])));
-                	if(Integer.valueOf(String.valueOf(values[1])) == 0)
-                	{
-                		tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_DOWN);
-                	}
-                	else if(Integer.valueOf(String.valueOf(values[1])) == 1)
-                	{
-                		tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_UP);
-                	}
-                }
+//                if (seperatedInfoIJ.length == 4
+//                        && "s".equals(seperatedInfoIJ[2])) {
+//                	
+//                	// add a seesaw to the tile
+//                	char[] values = seperatedInfoIJ[3].toCharArray();
+//                	tileIJ.setContent(new Seesaw(tileIJ, values[2]));
+//                	
+//                	// set the right edges
+//                	Orientation orientation = Orientation.switchStringToOrientation((String.valueOf(values[0])));
+//                	if(Integer.valueOf(String.valueOf(values[1])) == 0)
+//	                	tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_DOWN);
+//                	else if(Integer.valueOf(String.valueOf(values[1])) == 1)
+//                		tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_UP);
+//                	
+//                }
+
             }
         }
         return map;
@@ -205,8 +228,7 @@ public class MapReader {
         }
     }
 
-    public static void createTFromTile(final Tile t,
-            final Orientation orientation) {
+    public static void createTFromTile(final Tile t, final Orientation orientation) {
     	for (final Orientation ori : Orientation.values()) {
     		if(ori.equals(orientation))
     		{
@@ -218,6 +240,17 @@ public class MapReader {
     		}
     	}
         
+    }
+    
+    public static void createClosedFromTile(final Tile t){
+    	for (final Orientation ori : Orientation.values())
+    		t.getEdge(ori).replaceObstruction(Obstruction.WALL);
+    }
+    
+    public static void createSeesawFromTile(final Tile t, Orientation ori){
+    	createStraightFromTile(t, ori);
+    	Seesaw saw = new Seesaw(t, ori);
+    	t.setContent(saw);
     }
 
     /**
