@@ -1,7 +1,6 @@
 \documentclass[tt2]{penoverslag}
 
 %%% PACKAGES
-\renewcommand{\refname}{}
 \usepackage{lipsum}
 \usepackage{gensymb}
 \usepackage [dutch] {babel}
@@ -31,11 +30,11 @@
 \newpage
 
 \begin{abstract}
-Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
+Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} \cite{TeamTreasure} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder is de robot voorzien van een schep waarmee hij het voorwerp kan oprapen.\\
 
-De robot kan een doolhof verkennen en hiervan een map bijhouden. Wanneer hij een tegel vindt die mogelijk een voorwerp bevat, zal het nakijken van deze tegel prioriteit krijgen. Via RabbitMQ kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
+De robot kan een doolhof verkennen en hiervan een map bijhouden. Wanneer hij een tegel vindt die mogelijk een voorwerp bevat, zal het nakijken van deze tegel prioriteit krijgen. Via RabbitMQ \cite{RabbitMQ} kunnen de robots en simulators met elkaar communiceren. Zo kunnen de duo's een plaats afspreken om elkaar te ontmoeten.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -56,7 +55,7 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 % == INLEIDING == %
 \section{Inleiding} % 4 ok
 \label{ssec:inl}
-In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
+In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms \cite{mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} \cite{TeamTreasure} kunnen spelen.
 De robots moeten hierbij in een onbekend doolhof op zoek naar een bepaald voorwerp (een wc-rol). Elke robot krijgt zijn eigen voorwerp toegewezen. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
 
 Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robots gewerkt. Het is ook mogelijk met vier virtuele robots te werken. De doolhof bevat mogelijk een wip. De robots zijn in staat hun eigen voorwerp te vinden en op te rapen. Wanneer een robot weet wie zijn teamgenoot is, kan hij hiermee een punt afspreken om samen te komen.\\
@@ -64,7 +63,7 @@ Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robot
 
 \section{Bouw robot}
 \label{ssec:bouwrob}
-LEGO Mindstorms  biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS  kan dit in Java.
+LEGO Mindstorms \cite{mindstorms} biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS \cite{leJOS} kan dit in Java.
 
 De robot moet in staat zijn een wc-rolletje, op te nemen. Verder moet de robot andere robots en de stand van de wip kunnen detecteren.
 
@@ -145,38 +144,9 @@ Voor volgende algoritmes wordt verwezen naar het verslag van het eerste semester
 % == zoeken van het voorwerp == %
 \subsection{Zoeken van het voorwerp} %
 \label{ssec:algoZoek}
-Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing. \\
-%TODO deze optimalisaties hierin zetten\\
+Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing. Een beschrijving wordt gegeven in het verslag van het eerste semester.\\
 
-\begin{description}
-\item[A] basisalgoritme zonder optimalisatie: draai bij elke tegel vier keer (eindig in startori\"entatie) en neem de laatste tile in de queue als volgende tile.
-\item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tile.
-\item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori"entatie).
-\item[D] muren die vanuit een naburige tile reeds gedetecteerd werden, worden niet nog eens nagekeken.
-\item[E] tiles waarvan de vier zijden al gekend zijn en waaraan drie muren grenzen, worden niet meer bezocht (`dead-ends' kunnen onmogelijk barcodes bevatten, dus dit is geen probleem)
-\end{description}
-
-DeadEnd prioriteit
-
-Er wordt een extra queue bijgehouden die de vakjes waar de robot nog niet weet hoe heen te gaan
-omdat daar het doolhof nog niet verkend is bijhoudt. Wanneer hier een vakje in zit dat een deadend
-is en wanneer er voor dat vakje mogelijk een straight in de juiste orientatie kan liggen, krijgt dit
-vakje prioriteit en gaat de robot zo snel mogelijk naar daar manoeuvreren. Dit gebeurt door naar het
-vakje te gaan dat wel bereikbaar is en dat zo dicht mogelijk ligt bij de deadEnd (zo klein mogelijke
-manhattan distance).
-
-Testen...
-
-Uit deze testen blijkt dat het algoritme vaker efficienter is zonder deze optimalisatie. Dit komt omdat
-de robot veel omrijdt om het dichtsbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad
-op en afgaat (een duidelijk voorbeeld hiervan is doolhof2 : .... ). Bij het oorspronkelijke algoritme was
-dit meermaals over dezelfde wegen rijden heel hard geminimaliseerd.
-
-Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar het
-oorspronkelijke algoritme te behouden.
-
-%
-%Eerst werd er geopteerd om een extra optimalisatie (F) geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
+Eerst werd er geopteerd om een extra optimalisatie (F) geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. Hierbij wordt nog steeds prioriteit gegeven aan voorwerp-locaties. Deze bevatten immers unieke barcodes die het later gemakkelijker maken de mappen te combineren.
 
@@ -190,9 +160,6 @@ Als de andere robot zou wegrijden zou er een afstand kunnen bijgehouden worden d
 % == SOFTWARE == %
 \section{Software}
 \label{secc:softw}
-
-Bij het aanvatten van het tweede semester bleek dat de code van het project niet goed gestructureerd was. Het project is daarom grondig hervormd, opgekuist en ontward. Hier is veel tijd naar gegaan, maar we geloven dat het een nuttige investering is.\\
-
 De software bestaat uit twee delen: een project dat op de NXT van de robot loopt en een project dat op de computer loopt (sectie \ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie \ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Robots kunnen met elkaar communiceren via RabbitMQ (sectie \ref{ssec:RabbMQ}). Via de GUI kunnen ook virtuele robots aangestuurd worden: de simulators (sectie \ref{ssec:Sim}).\\
 
 Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
@@ -233,25 +200,9 @@ Een overzicht van het ontwerp wordt weergegeven in de klassendiagramma van figuu
 \end{figure}
 \end{landscape}
 
-De Main-methode bevindt zich in de GUI-klasse. Deze maakt een \textit{SimulatorPanel}-object aan. Dit is een overkoepelend panel waarin meerdere \textit{Viewports} zitten. Een \textit{OverallViewport} geeft het volledige doolhof en alle robots erin weer. Dit kan uiteraard enkel wanneer een gekend virtueel doolhof gebruikt wordt en wanneer van alle robots genoeg informatie beschikbaar is. Een \textit{UnitViewport} geeft de wereld van \'e\'en robot (eventueel gesimuleerd) weer: de sensorwaarden en de muren die hij reeds ontdekt heeft. Een wereld waarvan niets geweten is, kan niet worden weergegeven. Dit is het geval voor robots van andere teams: zij worden niet weergegeven in de GUI, met uitzondering van de teamgenoot. Deze laatste stuurt wel zijn map door, maar niet zijn sensorwaarden en wordt gerepresenteerd door een \textit{DummyViewPort}. Het aantal \textit{Viewports} hangt af van het aantal gekende werelden. Deze verdeling wordt weergegeven in tabel \ref{tab:aantViewPorts}.\\
+De Main-methode bevindt zich in de GUI-klasse. Deze maakt een \textit{SimulatorPanel}-object aan. Dit is een overkoepelend panel waarin meerdere \textit{Viewports} zitten. Een \textit{OverallViewport} geeft het volledige doolhof en alle robots erin weer. Dit kan uiteraard enkel wanneer een gekend virtueel doolhof gebruikt wordt en wanneer van alle robots genoeg informatie beschikbaar is. Een \textit{UnitViewport} geeft de wereld van \'e\'en robot (eventueel gesimuleerd) weer: de sensorwaarden en de muren die hij reeds ontdekt heeft. Een wereld waarvan niets geweten is, kan niet worden weergegeven. Dit is het geval voor robots van andere teams: zij worden niet weergegeven in de GUI, met uitzondering van de teamgenoot. Deze laatste stuurt wel zijn map door, maar niet zijn sensorwaarden en wordt gerepresenteerd door een \textit{DummyViewPort}. Het aantal \textit{Viewports} hangt af van het aantal gekende werelden.\\
 
-% tabel #viewports
-\begin{table}
-\begin{center}
-    \begin{tabular}{ c | c | c || c | c | c }
-    wij & wij & anderen & aantal & aantal & aantal\\
-    fysiek & gesimuleerd & fysiek/gesimuleerd & OveralViewports & UnitViewports & DummyViewports\\ \hline \hline
-    1 & 3 & 0 & 1 & 4 & 0\\
-    0 & 4 & 0 & 1 & 4 & 0\\
-    1 & 0 & 3 & 0 & 1 & 1\\
-    0 & 1 & 3 & 0 & 1 & 1\\
-    \end{tabular}
-    \caption{Overzicht van het aantal en de soort \textit{Viewports}}
-    \label{tab:aantViewPorts}
-\end{center}
-\end{table}
-
-Een \textit{DummyViewport} zal aanvankelijk niet worden weergeven. Wie de teamgenoot van de robot is, wordt immers pas bekend wanneer beide leden van het team hun voorwerp gevonden hebben. Op dat moment zal het \textit{DummyViewport} verschijnen.\\
+Een \textit{DummyViewport} is aanvankelijk leeg. Wie de teamgenoot van de robot is, wordt immers pas bekend wanneer beide leden van het team hun voorwerp gevonden hebben. Op dat moment zal de \textit{DummyViewport} iets weergeven.\\
 
 Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \textit{OverallViewport}, die krijgt er meerdere). Er zijn verschillende soorten \textit{Pilots} die elk een implementatie van \textit{PilotInterface} zijn. De keuze van \textit{Pilot} hangt af van het type robot. Een robot waarvan de wereld niet kan worden voorgesteld, krijgt geen \textit{Pilot}. Een teamgenoot (die we niet zelf simuleren) heeft een \textit{DummyPilot}. Deze bevat enkel `getters', want deze robot kan niet worden aangestuurd. Een robot die gesimuleerd wordt, heeft een \textit{SimulatorPilot}. Deze berekent zelf zijn sensorwaarden op basis van een virtuele doolhof. Een fysieke robot krijgt een \textit{RobotPilot} die via de \textit{Communicator} in verbinding staat met de fysieke robot. De \textit{RobotPilot} krijgt zijn sensorwaarden terug van de robot via de \textit{InfoReceiverThread} en de \textit{StatusInfoBuffer}. Deze \textit{Pilots} zijn de `hersenen' van deze robots/simulators. De \textit{Viewports} geven enkel weer wat de robots uitvoeren, zij berekenen en beslissen niets.
 
@@ -279,22 +230,22 @@ Al deze \textit{Viewports} nemen plaats in, waardoor andere functionaliteiten va
 
 
 % -- RabbitMQ -- %
-\subsection{RabbitMQ}
+\subsection{Communicatie via RabbitMQ}
 \label{ssec:RabbMQ}
-De implementatie van RabbitMQ  is sterk gebaseerd op de demo die op Toledo werd geplaatst.\\
+De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van RabbitMQ bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implemeteerd worden.\\
 
-Elke \textit{AbstractPilot} moet kunnen interageren met een RabbitMQ-kanaal. De klasse \textit{MessageCenter} zorgt voor een RabbitMQ-interface die de pilots kunnen gebruiken. Het object verbindt met een server bij initialisatie. Enkele algemene parameters worden meegegeven: gebruikersnaam, wachtwoord en poort. De belangrijkste methodes in de klasse zijn \textit{sendMessage()} en \textit{subscribeTo()} die respectievelijk het schrijven naar en monitoren van, specifieke `exchanges' en `queues' toelaten. De methodes aanroepen heeft volgend effect:
+Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHandler}, om respectievelijk in de \textit{AbstractPilot} en de \textit{DummyPilot} met informatie om te gaan. Een onderscheid is nodig omdat \textit{DummyPilots} niet aangestuurd kunnen worden. Figuur \ref{fig:KlasHTTTP} geeft een overzicht van de softwarearchitectuur.
 
-\begin{description}
-\item[subscribeTo(String monitorKey):] Een object van de klasse \textit{SubscribeMonitor} wordt aangemaakt. Deze \textit{SubscribeMonitor} luistert naar alle berichten op het kanaal van het \textit{MessageCenter} die met de gegeven string beginnen (de `Monitor Key'). Vervolgens stuurt het \textit{MessageCenter} al deze informatie naar de \textit{AbstractPilot} die de monitoring-aanvraag deed. Deze Pilot ontvangt vanaf dan alle berichten met het onderwerp waarvoor hij een aanvraag deed, maar van berichten met een ander onderwerp krijgt hij geen melding.
-\item[sendMessage(String exchange, String routingKey, String message):] Het gegeven bericht wordt naar de gespecifi\"eerde `exchange' gestuurd. Deze plaatst het bericht in alle `queues' die het onderwerp (gespecifi\"eerd door de routingKey) volgen. Op deze manier krijgen alle \textit{Pilots} die aanvraag deden voor het onderwerp, melding van het bericht.
-\end{description}
+Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt met bijhorende \textit{Handler}. Het \textit{MQCenter} abstraheert de \textit{Client}-klasse nog verder.
 
-% De scheidsrechterscommissie ontwikkelde ‘Het Team Treasure Trek Protocol’ ofwel HTTTP. Het protocol voorziet in een breed scala van methodes: het starten, stoppen en pauzeren van een Game, het toewijzen van objecten, het melden van een locatie-wijziging, … Ook voorzag de commissie een implementatie. Daarin zit een Client-klasse die onder andere voorgenoemde methoden aanbiedt en die het gebruik van RabbitMQ bijna volledig abstraheert. 
-%
-%Elk team maakt zelf een implementatie van de bijgevoegde Handler-interface. Zo’n Handler zorgt ervoor dat de info die op de RabbitMQ-kanalen binnenkomt juist gebruikt wordt. In dit project bestaan er meerdere implementaties van die Handlers. Elk soort Pilot gaat immers anders met die info om. De Robot- en SimulatorPilots die instaan voor het besturen van Robots en Simulatoren gebruiken bijvoorbeeld de informatie voor het starten van een game, terwijl DummyHandlers informatie voeren aan de DummyPilots die andere Robots modeleren. Van daaruit is het dan makkelijker om aan mapmerging etc. te doen. Een overzicht van de voorziene architectuur zie je in figuur TODO
-%
-%Bij het aanmaken van een Pilot wordt er een MQCenter aangemaakt met bijhorende Handler. Dit MQCenter abstraheert verder de - reusachtige - Client-klasse en zorgt ervoor dat een AbstractPilot makkelijk htttp-ondersteuning krijgt.
+% klassendiagram HTTTP
+\begin{figure}[h]
+\centering
+	\includegraphics[width=0.8\textwidth]{KlasHTTTP}
+\caption{Klassendiagram HTTTP}
+\label{fig:KlasHTTTP}
+\end{figure}
+
 
 % -- Simulator -- %
 \subsection{Simulator}
@@ -353,24 +304,24 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 
 \newpage
 
-%\begin{thebibliography}{9}
-%
-%\bibitem{TeamTreasure} 
-%\textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
-%
-%\bibitem{RabbitMQ}
-%\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
-%\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
-%
-%\bibitem{mindstorms}
-%\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
-%
-%\bibitem{leJOS}
-%\textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
-%
-%
-%
-%\end{thebibliography}
+\begin{thebibliography}{9}
+
+\bibitem{TeamTreasure} 
+\textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
+
+\bibitem{RabbitMQ}
+\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
+\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
+
+\bibitem{mindstorms}
+\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+
+\bibitem{leJOS}
+\textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+
+
+
+\end{thebibliography}
 
 
 \end{document}
