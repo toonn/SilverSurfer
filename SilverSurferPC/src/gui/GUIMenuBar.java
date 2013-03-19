@@ -64,7 +64,7 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        final JMenuItem pauseSensor = new JMenuItem("Pause sensorpanel");
+        final JMenuItem pauseSensor = new JMenuItem("Pause/Resume sensorpanel");
         screenMenu.add(pauseSensor);
         pauseSensor.addActionListener(new ActionListener() {
 
