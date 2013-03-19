@@ -12,7 +12,8 @@ public class OverallViewPort extends AbstractViewPort {
 
     private MapGraph mapGraphLoaded;
 
-    public OverallViewPort(Set<PilotInterface> pilotSet, MapGraph mapGraphLoaded, Color[] teamColors) {
+    public OverallViewPort(Set<PilotInterface> pilotSet,
+            MapGraph mapGraphLoaded, Color[] teamColors) {
         super(pilotSet, teamColors);
         this.mapGraphLoaded = mapGraphLoaded;
     }

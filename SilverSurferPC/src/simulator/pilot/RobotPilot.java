@@ -155,4 +155,10 @@ public class RobotPilot extends AbstractPilot {
 
         }
     }
+
+    @Override
+    protected boolean crashImminent() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
