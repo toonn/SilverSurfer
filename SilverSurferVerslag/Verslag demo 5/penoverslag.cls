@@ -17,13 +17,13 @@
 \def\thetitle{}
 \def\thepagelimit{100}
 \DeclareOption{tt1}{%
-  \def\thetitle{Tussentijdsverslag 1: semester 2}%
+  \def\thetitle{Tussentijds verslag 1: semester 2}%
   \def\thepagelimit{10}}
 \DeclareOption{tt2}{%
-  \def\thetitle{Tussentijdsverslag 2: semester 2}%
+  \def\thetitle{Tussentijds verslag 2: semester 2}%
   \def\thepagelimit{15}}
 \DeclareOption{tt3}{%
-  \def\thetitle{Tussentijdsverslag 3: semester 2}%
+  \def\thetitle{Tussentijds verslag 3: semester 2}%
   \def\thepagelimit{20}}
 \DeclareOption{eind}{%
   \def\thetitle{Eindverslag}%
