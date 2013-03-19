@@ -205,38 +205,7 @@ public abstract class AbstractPilot implements PilotInterface {
 				pilotActions.barcodeFound();
 				setBusyExecutingBarcode(false);
 			}
-			if(onFlipEdge()) {
-				int seesawValue = getMapGraphConstructed().getTile(getMatrixPosition()).getContent().getValue();
-				getMapGraphConstructed().flipSeesaw(seesawValue);
-				System.out.println("Robot " + getTeamNumber() + ": flip seesaw " + seesawValue);
-				// TODO: ook loadedMapGraph.flipSeesaw(seesawValue) doen!
-			}
 		}
-
-	}
-
-	private boolean onFlipEdge() {
-		if(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Seesaw) {
-			double position = getPosition().getX() % sizeTile();
-			Orientation equivalentOrientation = Orientation.WEST;
-			if(getOrientation() == Orientation.NORTH || getOrientation() == Orientation.SOUTH) {
-				position = getPosition().getY() % sizeTile();
-				equivalentOrientation = Orientation.NORTH;
-			}
-
-			// you are standing right in front of an edge; if this edge is a flip, return true
-			if((position < 1 && getOrientation() == equivalentOrientation)
-					|| (position > sizeTile() - 1 && getOrientation() == equivalentOrientation.getOppositeOrientation()))
-				return getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(getOrientation()).getObstruction() == Obstruction.SEESAW_FLIP;
-			// you are standing right across of an edge; if this edge is a flip, return true
-			else if((position < 1 && getOrientation() == equivalentOrientation.getOppositeOrientation())
-					|| (position > sizeTile() - 1 && getOrientation() == equivalentOrientation))
-				return getMapGraphConstructed().getTile(getMatrixPosition()).getEdge(getOrientation().getOppositeOrientation()).getObstruction() == Obstruction.SEESAW_FLIP;
-			else
-				return false;
-		}
-		else
-			return false;
 	}
 
 	private int getTravelSleepTime() {
