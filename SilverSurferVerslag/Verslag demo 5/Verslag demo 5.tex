@@ -145,8 +145,9 @@ Voor volgende algoritmes wordt verwezen naar het verslag van het eerste semester
 % == zoeken van het voorwerp == %
 \subsection{Zoeken van het voorwerp} %
 \label{ssec:algoZoek}
-Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing. \\
+Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De robot gebruikt hiervoor een implementatie van \textit{A*}. In de loop van het eerste semester werd dit algoritme geoptimaliseerd voor deze specifieke toepassing. Deze optimalisaties zijn ook dit semester van toepassing en worden hieronder in opbouwende volgorde gegeven: \\
 %TODO deze optimalisaties hierin zetten
+
 \begin{description}
 \item[A] basisalgoritme zonder optimalisatie: draai bij elke tegel vier keer (eindig in startori\"entatie) en neem de laatste tile in de queue als volgende tile.
 \item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tile.
@@ -158,34 +159,29 @@ Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. De r
 
 \subsubsection{DeadEnd prioriteit}
 
-Er wordt een extra queue bijgehouden die de vakjes waar de robot nog niet weet hoe heen te gaan
-omdat daar het doolhof nog niet verkend is bijhoudt. Wanneer hier een vakje in zit dat een deadend
-is en wanneer er voor dat vakje mogelijk een straight in de juiste orientatie kan liggen, krijgt dit
-vakje prioriteit en gaat de robot zo snel mogelijk naar daar manoeuvreren. Dit gebeurt door naar het
-vakje te gaan dat wel bereikbaar is en dat zo dicht mogelijk ligt bij de deadEnd (zo klein mogelijke
-manhattan distance). \\
+Eerst werd er geopteerd om een extra optimalisatie (F) toe te voegen. Deze geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. \\
+
 
 %TODO Testen...
 
-Uit deze testen blijkt dat het algoritme vaker efficienter is zonder deze optimalisatie. Dit komt omdat
-de robot veel omrijdt om het dichtsbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad
-op en afgaat (een duidelijk voorbeeld hiervan is doolhof2 : .... ). Bij het oorspronkelijke algoritme was
-dit meermaals over dezelfde wegen rijden heel hard geminimaliseerd.\\
+Uit deze testen blijkt dat het algoritme vaker efficienter is zonder deze optimalisatie. Dit komt omdat de robot veel omrijdt om het dichtsbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad op en afgaat (een duidelijk voorbeeld hiervan is doolhof2 : .... %TODO
+ ). Bij het oorspronkelijke algoritme was dit meermaals over dezelfde wegen rijden heel hard geminimaliseerd.\\
+ 
 
-Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar het
-oorspronkelijke algoritme te behouden.\\
+Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar hetoorspronkelijke algoritme te behouden.\\
 
 %
-%Eerst werd er geopteerd om een extra optimalisatie (F) geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer een mogelijke voorwerp-locatie gevonden wordt, wordt zo snel mogelijk nagegaan of het om het juiste voorwerp gaat. In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
+% In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
 
-Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. Hierbij wordt nog steeds prioriteit gegeven aan voorwerp-locaties. Deze bevatten immers unieke barcodes die het later gemakkelijker maken de mappen te combineren.
+Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. \\
 
-Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om daar op hem te wachten (niet te dichtbij om niet in de weg te staan). Deze extra optie wordt voorlopig nog niet ge\"implementeerd omdat nog niet duidelijk is in welke gevallen de strategie het best werkt.
+%Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om daar op hem te wachten (niet te dichtbij om niet in de weg te staan). Deze extra optie wordt voorlopig nog niet ge\"implementeerd omdat nog niet duidelijk is in welke gevallen de strategie het best werkt.
 
 
 \subsection{Weg vinden naar andere robot}
-Hierbij dachten we aan het kortste-pad-algoritme. Dit zal wel nog aangepast moeten worden aan zowel draaien als vooruit rijden (draaien was nog niet in rekening gebracht).\\ Er moet ook nog rekening gehouden worden als de andere robot zou wegrijden. De robot mag hierdoor niet in een loop terechtkomen. Er zou moeten gecommuniceerd worden wie naar wie toerijdt, of dat er naar een gezamenlijke tegel moet gereden worden. \\
-Als de andere robot zou wegrijden zou er een afstand kunnen bijgehouden worden die dan opnieuw berekent wordt als de afstand niet kleiner wordt.
+Hierbij dachten we aan het kortste-pad-algoritme. Dit zal wel nog aangepast moeten worden aan zowel draaien als vooruit rijden (draaien was nog niet in rekening gebracht).\\ Er moet ook nog rekening gehouden worden als de andere robot zou wegrijden. De robot mag hierdoor niet in een loop terechtkomen. \\
+
+In de scheidsrechtercommissie is er besloten dat de robots naar elkaar informatie doorsturen over waar ze zich bevinden in het doolhof. Dit kan gebeuren via de hele verkende map door te sturen. De robot kan er dan voor kiezen om delen van de informatie van zijn teamgenoot te gebruiken of niet. Met deze informatie rijdt de robot naar zijn teamgenoot. Ze spreken geen tegel onderling af, maar rijden gewoon naar elkaar toe. Dit heeft het nadeel dat als ze elk een ander pad kiezen ze elkaar kunnen kruisen zonder dat ze het weten. Voorlopig wordt dit dus toegepast in deze demo.\\
 
 % == SOFTWARE == %
 \section{Software}
