@@ -77,8 +77,8 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	@Override
 	public Point getMatrixPosition() {
-		return new Point((int) (getPosition().getX() / sizeTile()),
-				(int) (getPosition().getY() / sizeTile()));
+		return new Point((int)Math.floor(getPosition().getX() / sizeTile()),
+				(int)Math.floor(getPosition().getY() / sizeTile()));
 	}
 
 	@Override
