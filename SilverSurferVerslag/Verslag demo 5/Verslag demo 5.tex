@@ -32,7 +32,7 @@
 \label{ssec:abstract}
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
-De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot van een schep vooraan waarmee hij het voorwerp kan oprapen.
+De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot van een strip klittenband vooraan waarmee hij het voorwerp kan oprapen.
 De robot kan een doolhof verkennen en hiervan een map bijhouden. Via RabbitMQ kunnen de robots en simulatoren met elkaar communiceren. Zo kunnen ze een map naar elkaar doorsturen om naar elkaar toe te rijden.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
@@ -163,7 +163,7 @@ Bij de start van het tweede semester werd besloten een extra optimalisatie (F) t
 \begin{center}
     \begin{tabular}{ c | c || c | c }
     \multicolumn{4}{c}{\textbf{Start linksboven}} \\ 
-   \multicolumn{2}{c||}{Met deadend prioriteit} & \multicolumn{2}{|c}{Zonder deadend prioriteit}\\
+   \multicolumn{2}{c||}{Met dead-end prioriteit} & \multicolumn{2}{|c}{Zonder dead-end prioriteit}\\
      gevonden locatie & afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm)\\ \hline\hline
     A & {\color{green}720} & B & {\color{green}880} \\ \hline
     B & {\color{green}1520} & D & {\color{green}2960} \\ \hline
@@ -179,7 +179,7 @@ Bij de start van het tweede semester werd besloten een extra optimalisatie (F) t
 \begin{center}
     \begin{tabular}{c | c || c | c }
     \multicolumn{4}{c}{\textbf{Start rechtsonder}} \\
-   \multicolumn{2}{c||}{Met deadend prioriteit} & \multicolumn{2}{|c}{Zonder deadend prioriteit}\\
+   \multicolumn{2}{c||}{Met dead-end prioriteit} & \multicolumn{2}{|c}{Zonder dead-end prioriteit}\\
      gevonden locatie &  afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm)\\ \hline\hline
     D & 120 & D & 120 \\ \hline
     A & {\color{red}2920} & A & {\color{red}2600} \\ \hline
@@ -191,7 +191,8 @@ Bij de start van het tweede semester werd besloten een extra optimalisatie (F) t
 \end{center}
 \end{table}
 
-%TODO Testen...
+Testresultaten: De figuur~\ref{doolhof3} geeft het geteste doolhof weer. Hierbij hebben we de robot acht keer laten rijden op vier verschillende posities. De tabellen geven de resultaten van de robot die start op de tegel met co"ordinaat 09 (dat is de rechterbovenhoek) en van de robot die start op de tegel met co"ordinaat 99 (dat is rechterbenedenhoek). De twee andere tabellen van de andere posities zijn niet weergegeven, maar die testresultaten zijn er wel. De robot heeft twee maal het doolhof verkend. De eerste keer met de dead-end prioriteit en de tweede keer zonder dead-end prioriteit. Als de kleuren groen zijn in de tabel betekent dat het met dead-end prioriteit beter was, en als de kleur rood is van de getallen dan is het niet voordelig om dead-end prioriteit te gebruiken. Uiteindelijk zijn deze testen uitgevoerd op 4 verschillende hoeken beginnend uit elke hoek, maar deze testresultaten waren teveel om in het verslag bij te voegen.\\
+
 
 Een eerste reeks testen doet vermoeden dat de optimalisatie het algoritme niet altijd effici"enter maakt. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen omdat deze tegels vaak nog niet verkend zijn. Het vinden van een pad gebeurt daarom via een heuristiek, waardoor de robot soms veel omwegen maakt. %(een duidelijk voorbeeld hiervan is doolhof 2 : ....) TODO
 Deze resultaten verplichten ons na te denken over een alternatieve manier om deze optimalisatie te implementeren. De optimalisatie werd voorlopig niet toegevoegd aan het algoritme. \\
