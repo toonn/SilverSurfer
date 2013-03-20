@@ -156,6 +156,23 @@ Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. In d
 
 Bij de start van het tweede semester werd besloten een extra optimalisatie (F) toe te voegen. Deze geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer de robot een mogelijke voorwerplocatie vindt, controleert hij zo snel mogelijk of er werkelijk een voorwerp ligt en om welk voorwerp het gaat. \\
 
+\begin{table}[!hb]
+\begin{center}
+    \begin{tabular}{ | c | c | c | c | } 
+    \multicolumn{4}{|c|}{Robot beginplaats 00}
+ \\   
+     jj & cm afgelegd & \degree gedraaid & cm afgelegd\\ \hline \hline
+    A & 2160 & 10620 & 1080 \\ \hline
+    B & 1920 & 10800 & 1160 \\ \hline
+    C & 2000 & 9090 & 1080 \\ \hline
+    D & 2000 & 6570 & 1080\\ \hline
+    8820 & 1880 & 6570 & 1080\\
+    \end{tabular}
+    \caption{Verbeteringen aan het verkenalgoritme}
+    \label{tab:resultVerken}
+\end{center}
+\end{table}
+
 
 %TODO Testen...
 
