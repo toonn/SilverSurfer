@@ -155,23 +155,46 @@ Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. In d
 
 Bij de start van het tweede semester werd besloten een extra optimalisatie (F) toe te voegen. Deze geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer de robot een mogelijke voorwerplocatie vindt, controleert hij zo snel mogelijk of er werkelijk een voorwerp ligt en om welk voorwerp het gaat. \\
 
+\begin{figure}[!hb]
+\caption{Veranderingen aan verkenalgoritme test doolhof}
+\centering
+\includegraphics[scale=0.5]{doolhof 3.png}
+\label{doolhof3}
+\end{figure}
+
 \begin{table}[!hb]
 \begin{center}
-    \begin{tabular}{ | c | c | c | c | } 
-    \multicolumn{4}{|c|}{Robot beginplaats 00}
- \\   
-     jj & cm afgelegd & \degree gedraaid & cm afgelegd\\ \hline \hline
-    A & 2160 & 10620 & 1080 \\ \hline
-    B & 1920 & 10800 & 1160 \\ \hline
-    C & 2000 & 9090 & 1080 \\ \hline
-    D & 2000 & 6570 & 1080\\ \hline
-    8820 & 1880 & 6570 & 1080\\
+    \begin{tabular}{ | p{3cm}  | p{3cm}  | p{3cm}  | p{3cm}  | } \hline
+    \multicolumn{4}{|c|}{Robot beginplaats 00} \\ \hline
+   \multicolumn{2}{|c|}{Met deadend prioriteit} & \multicolumn{2}{|c|}{Zonder deadend prioriteit}\\  \hline
+     Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm) & Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm)\\ \hline
+    {\color{green}05} & {\color{green}720} & {\color{green}43} & {\color{green}880} \\ \hline
+    {\color{green}43} & {\color{green}1520} & {\color{green}69} & {\color{green}2960} \\ \hline
+    {\color{green}69} & {\color{green}4320} & {\color{green}64} & {\color{green}4520} \\ \hline
+    {\color{red}64} & {\color{red}6120} & {\color{red}05} & {\color{red}5920}\\ \hline
+    
     \end{tabular}
     \caption{Verbeteringen aan het verkenalgoritme}
     \label{tab:resultVerken}
 \end{center}
 \end{table}
 
+\begin{table}[!hb]
+\begin{center}
+    \begin{tabular}{ | p{3cm}  | p{3cm}  | p{3cm}  | p{3cm}  | } \hline
+    \multicolumn{4}{|c|}{Robot beginplaats 99} \\ \hline
+   \multicolumn{2}{|c|}{Met deadend prioriteit} & \multicolumn{2}{|c|}{Zonder deadend prioriteit}\\  \hline
+     Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm) & Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm)\\ \hline
+    69 & 120 & 69 & 120 \\ \hline
+    {\color{red}05} & {\color{red}2920} & {\color{red}05} & {\color{red}2600} \\ \hline
+    {\color{red}43} & {\color{red}3720} & {\color{red}43} & {\color{red}3240} \\ \hline
+    {\color{red}64} & {\color{red}6240} & {\color{red}64} & {\color{red}6000}\\ \hline
+    
+    \end{tabular}
+    \caption{Verbeteringen aan het verkenalgoritme}
+    \label{tab:resultVerken}
+\end{center}
+\end{table}
 
 %TODO Testen...
 
@@ -336,6 +359,8 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 \item \textit{\ref{ssec:fysb} Fysieke bouw:} de schep vooraan werd aangepast.
 \item \textit{\ref{ssec:algoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
 \item \textit{\ref{ssec:infra} Infraroodsensor:} Nieuw stuk over infraroodsensor werd toegevoegd, samen met de testen.
+\item \textit{\ref{ssec:GUI}} Grafic user interface: de figuur van de GUI is aangepast en de tekst.
+
 
 %\item \textit{calibratie infrarood}: nieuwe gegevens.
 \end{itemize}
