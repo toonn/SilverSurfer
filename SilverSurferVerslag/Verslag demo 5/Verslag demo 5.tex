@@ -156,6 +156,23 @@ Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. In d
 
 Bij de start van het tweede semester werd besloten een extra optimalisatie (F) toe te voegen. Deze geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer de robot een mogelijke voorwerplocatie vindt, controleert hij zo snel mogelijk of er werkelijk een voorwerp ligt en om welk voorwerp het gaat. \\
 
+\begin{table}[!hb]
+\begin{center}
+    \begin{tabular}{ | c | c | c | c | } 
+    \multicolumn{4}{|c|}{Robot beginplaats 00}
+ \\   
+     jj & cm afgelegd & \degree gedraaid & cm afgelegd\\ \hline \hline
+    A & 2160 & 10620 & 1080 \\ \hline
+    B & 1920 & 10800 & 1160 \\ \hline
+    C & 2000 & 9090 & 1080 \\ \hline
+    D & 2000 & 6570 & 1080\\ \hline
+    8820 & 1880 & 6570 & 1080\\
+    \end{tabular}
+    \caption{Verbeteringen aan het verkenalgoritme}
+    \label{tab:resultVerken}
+\end{center}
+\end{table}
+
 
 %TODO Testen...
 
@@ -230,14 +247,18 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 % figuur GUI
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.8\textwidth]{GUI}
+	\includegraphics[width=0.8\textwidth]{GUInew}
 \caption{de Graphical User Interface}
 \label{fig:GUI}
 \end{figure}
 
-De nieuwe GUI is nog niet volledig klaar. Een figuur van de GUI zoals deze er in het eerste semester uit zag, wordt weergegeven in figuur \ref{fig:GUI}.\\
+De GUI van deze demo werkt voorlopig niet dus is hier geen foto van beschikbaar. De figuur van de GUI zoals deze er in de vorige demo uit zag, wordt weergegeven in figuur \ref{fig:GUI}.\\
 
-De GUI zal er wat anders uitzien dan vorig semester. Het moet nu immers mogelijk zijn de wereld van meerdere robots tegelijk weer te geven. Deze werelden verschillen van elkaar: zeker in het begin verkennen de verschillende robots een ander deel van het doolhof. Omdat zowel beginpositie als -ori\"entatie niet gekend zijn, is het niet mogelijk al deze werelden in \'e\'en paneel weer te geven. Het \textit{SimulatorPanel} wordt opgedeeld in verschillende \textit{Viewports}. Zoals uitgelegd in sectie \ref{ssec:Sdesign} hangt het aantal \textit{Viewports} af van de situatie.\\
+Het eerste doolhof is de overal \textit{Vieuwport} met de vier verschillende robotten.  De objecten worden voorgesteld door gekleurde bollen. Elke robot heeft initieel een eigen kleur, weergegeven als een gekleurde cirkel onder de robot. Zo is gemakkelijk te zien welk object bij welke robot hoort. Wanneer een robot zijn object gevonden heeft, zal zijn kleur veranderen in de teamkleur. Wanneer alle robots hun object gevonden hebben, zullen er dus twee teams van twee robots zijn, elk met dezelfde kleur.
+
+%De GUI zal er wat anders uitzien dan vorig semester. Het moet nu immers mogelijk zijn de wereld van meerdere robots tegelijk weer te geven. Deze werelden verschillen van elkaar: zeker in het begin verkennen de verschillende robots een ander deel van het doolhof. Omdat zowel beginpositie als -ori\"entatie niet gekend zijn, is het niet mogelijk al deze werelden in \'e\'en paneel weer te geven. Het \textit{SimulatorPanel} wordt opgedeeld in verschillende \textit{Viewports}. Zoals uitgelegd in sectie \ref{ssec:Sdesign} hangt het aantal \textit{Viewports} af van de situatie.\\
+
+%Objecten worden voorgesteld door gekleurde bollen. Elke robot heeft initieel een eigen kleur, weergegeven als een gekleurde cirkel onder de robot. Zo is gemakkelijk te zien welk object bij welke robot hoort. Wanneer een robot zijn object gevonden heeft, zal zijn kleur veranderen in de teamkleur. Wanneer alle robots hun object gevonden hebben, zullen er dus twee teams van twee robots zijn, elk met dezelfde kleur.
 
 Wanneer de robot een pad aflegt, tekent de \textit{UnitViewport} dit in het tekenpaneel als een rode lijn (herschaald: \'e\'en cm = \'e\'en pixel). De lijnen worden als lijnen opgeslagen in de \textit{UnitViewport}. Wanneer de robot een rechte weg aflegt, wordt het eindpunt van de gedefinieerde lijn steeds verlegd. Dit zorgt ervoor dat de weg die de robot aflegt continu bijgewerkt wordt. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een driehoek die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. De lichtsensor wordt voorgesteld als een bol die van kleur verandert wanneer de ondergrond wijzigt. 
 Een \textit{DummyViewport} geeft geen pad of sensorwaarden weer, enkel een map. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt.\\
@@ -335,7 +356,7 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 \textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
 
 \bibitem{RabbitMQ}
-\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
+\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queueing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
 \mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
 
 \bibitem{mindstorms}
