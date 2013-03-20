@@ -29,7 +29,7 @@
 \newpage
 
 \begin{abstract}
-\label{ssec:abstract}
+\label{ssec:Abstract}
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot van een strip klittenband vooraan waarmee hij het voorwerp kan oprapen.
@@ -44,7 +44,7 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 \begin{figure}[!hb]
 \begin{textblock}{38}(4,15)
     \includegraphics[width=0.45\textwidth]{robotFP}
-    \label{fig:robotFP2}
+    \label{fig:robotFP}
 \end{textblock}
 \end{figure}
 
@@ -53,7 +53,7 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 
 % == INLEIDING == %
 \section{Inleiding} % 4 ok
-\label{ssec:inl}
+\label{ssec:Inl}
 In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
 De robots moeten hierbij in een onbekend doolhof op zoek naar een bepaald voorwerp (een wc-rol). Elke robot krijgt een eigen voorwerp toegewezen. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
 
@@ -61,14 +61,14 @@ Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robot
 
 
 \section{Bouw robot}
-\label{ssec:bouwrob}
+\label{ssec:Bouw}
 LEGO Mindstorms biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS kan dit in Java.
 
 \subsection{Fysieke bouw}
-\label{ssec:fysb}
-Een infraroodsensor werd gemonteerd bovenop de robot. Door een infraroodbal onder de wip te plaatsen, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
+\label{ssec:FysB}
+Een infraroodsensor werd gemonteerd bovenop de robot. Doordat er een infraroodbal onder een wip ligt, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
 
-Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werden getest: een schep met motor achteraan, een kartonnen schep vooraan en een plastieken schep met klittenband vooraan. Figuur \ref{fig:robotBouw} geeft deze opstellingen weer. Het testen van de opstellingen, leidde tot volgende bevindingen:
+Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werden getest: een schep met motor achteraan, een kartonnen schep vooraan en een plastieken schep met klittenband vooraan. Figuur~\ref{fig:robotBouw} geeft deze opstellingen weer. Het testen van de opstellingen, leidde tot volgende bevindingen:
 
 \begin{enumerate}
 \item De robot heft het voorwerp expliciet op met behulp van een extra motor. Deze opstelling maakt de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
@@ -76,11 +76,11 @@ Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werde
 \item De robot neemt het voorwerp op met behulp van klittenband. De schep zorgt ervoor dat het voorwerp niet over de grond sleept. Dit is de huidige opstelling.
 \end{enumerate}
 
-De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De schep werd samen met de lichtsensor gemonteerd op een hefboomsysteem. Wanneer het hefboomsysteem de wip raakt, kantelt het omhoog. Zo kan de robot vlot de wip op.
+De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De schep werd samen met de lichtsensor scharnierend gemonteerd. Wanneer het hefboomsysteem de wip raakt, kantelt het omhoog. Zo kan de robot vlot de wip op.
 
-De robot is ook voorzien van een dubbel paar wielen. Dit vermijdt dat hij van de wip glijdt.
+De robot is voorzien van een dubbel paar wielen. Dit vermijdt dat hij van de wip glijdt.
 
-Figuur \ref{fig:robotDetail} geeft details van de schep, de wielen en de sensoren.
+Figuur~\ref{fig:robotDetail} geeft details van de schep, de wielen en de sensoren.
 
 % bouw robot
 \begin{figure}
@@ -129,6 +129,7 @@ Figuur \ref{fig:robotDetail} geeft details van de schep, de wielen en de sensore
 
 % == ALGORITMES == %
 \section{Algoritmes}
+\label{sec:Algo}
 Voor volgende algoritmes wordt verwezen naar het verslag van het eerste semester. Deze algoritmes worden dit semester zonder aanpassingen opnieuw gebruikt:
 \begin{itemize}
 	\item Rechtzetten op een witte lijn
@@ -139,11 +140,11 @@ Voor volgende algoritmes wordt verwezen naar het verslag van het eerste semester
 
 % == zoeken van het voorwerp == %
 \subsection{Zoeken van het voorwerp} %
-\label{ssec:algoZoek}
-Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. In de loop van het eerste semester werd hiervoor een algoritme ontwikkeld. Dit werd verder geoptimaliseerd: 
+\label{ssec:AlgoZoek}
+Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. In de loop van het eerste semester werd hiervoor een algoritme ontwikkeld. Dit werd verder geoptimaliseerd in volgende stappen: 
 
 \begin{description}
-\item[A] basisalgoritme zonder optimalisatie: draai bij elke tegel vier keer (eindig in startori\"entatie) en neem de laatste tegel in de queue als volgende tegel.
+\item[A] basisalgoritme: draai bij elke tegel vier keer (eindig in startori\"entatie) en neem de laatste tegel in de queue als volgende tegel.
 \item[B] neem steeds de buur die met het minst aantal rotaties bereikt kan worden als volgende tegel.
 \item[C] draai bij elke tegel slechts drie keer (eindig niet meer in startori"entatie).
 \item[D] muren die vanuit een naburige tegel reeds gedetecteerd werden, worden niet nog eens nagekeken.
@@ -155,59 +156,60 @@ Bij de start van het tweede semester werd besloten een extra optimalisatie (F) t
 \begin{figure}[!hb]
 \centering
 	\includegraphics[scale=0.5]{doolhof3}
-	\caption{Een doolhof waarop optimalisatie F van het verkenalgoritme getest werd.}
-\label{doolhof3}
+	\caption{Doolhof waarop de dead-end prioriteit getest werd.}
+\label{fig:TestF}
 \end{figure}
 
 \begin{table}[!hb]
 \begin{center}
-    \begin{tabular}{ c | c || c | c }
-    \multicolumn{4}{c}{\textbf{Start linksboven}} \\ 
-   \multicolumn{2}{c||}{Met dead-end prioriteit} & \multicolumn{2}{|c}{Zonder dead-end prioriteit}\\
-     gevonden locatie & afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm)\\ \hline\hline
-    A & {\color{green}720} & B & {\color{green}880} \\ \hline
-    B & {\color{green}1520} & D & {\color{green}2960} \\ \hline
-    D & {\color{green}4320} & C & {\color{green}4520} \\ \hline
-    C & {\color{red}6120} & A & {\color{red}5920}\\
+    \begin{tabular}{ c | c || c | c || c}
+   \multicolumn{2}{c||}{Met dead-end prioriteit} & \multicolumn{2}{|c||}{Zonder dead-end prioriteit} & \\
+     gevonden locatie & afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm) & verbetering?\\ \hline\hline
+    A & 720 & B & 880 & ja \\ \hline
+    B & 1520 & D & 2960 & ja \\ \hline
+    D & 4320 & C & 4520 & ja\\ \hline
+    C & 6120 & A & 5920 & nee\\
     \end{tabular}
     \caption{Testresultaten optimalisatie F, start linksboven}
-    \label{tab:resultVerken}
+    \label{tab:resultVerken1}
 \end{center}
 \end{table}
 
 \begin{table}[!hb]
 \begin{center}
-    \begin{tabular}{c | c || c | c }
-    \multicolumn{4}{c}{\textbf{Start rechtsonder}} \\
-   \multicolumn{2}{c||}{Met dead-end prioriteit} & \multicolumn{2}{|c}{Zonder dead-end prioriteit}\\
-     gevonden locatie &  afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm)\\ \hline\hline
-    D & 120 & D & 120 \\ \hline
-    A & {\color{red}2920} & A & {\color{red}2600} \\ \hline
-    B & {\color{red}3720} & B & {\color{red}3240} \\ \hline
-    C & {\color{red}6240} & C & {\color{red}6000}\\
+    \begin{tabular}{c | c || c | c || c}
+   \multicolumn{2}{c||}{Met dead-end prioriteit} & \multicolumn{2}{|c}{Zonder dead-end prioriteit} &\\
+     gevonden locatie &  afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm)& verbetering?\\ \hline\hline
+    D & 120 & D & 120 & -\\ \hline
+    A & 2920 & A & 2600 & nee\\ \hline
+    B & 3720 & B & 3240 & nee\\ \hline
+    C & 6240 & C & 6000 & nee\\
     \end{tabular}
     \caption{Testresultaten optimalisatie F, start rechtsonder}
-    \label{tab:resultVerken}
+    \label{tab:resultVerken2}
 \end{center}
 \end{table}
 
-Testresultaten: De figuur~\ref{doolhof3} geeft het geteste doolhof weer. Hierbij hebben we de robot acht keer laten rijden op vier verschillende posities. De tabellen geven de resultaten van de robot die start op de tegel met co"ordinaat 09 (dat is de rechterbovenhoek) en van de robot die start op de tegel met co"ordinaat 99 (dat is rechterbenedenhoek). De twee andere tabellen van de andere posities zijn niet weergegeven, maar die testresultaten zijn er wel. De robot heeft twee maal het doolhof verkend. De eerste keer met de dead-end prioriteit en de tweede keer zonder dead-end prioriteit. Als de kleuren groen zijn in de tabel betekent dat het met dead-end prioriteit beter was, en als de kleur rood is van de getallen dan is het niet voordelig om dead-end prioriteit te gebruiken. Uiteindelijk zijn deze testen uitgevoerd op 4 verschillende hoeken beginnend uit elke hoek, maar deze testresultaten waren teveel om in het verslag bij te voegen.\\
+De optimalisatie werd getest door de simulator 32~keer het doolhof van figuur~\ref{fig:TestF} te laten rijden. De robot startte met alle mogelijke rotaties vanuit de vier hoeken. Steeds een keer met de optimalisatie en zonder. Tabellen~\ref{tab:resultVerken1} en~\ref{tab:resultVerken2} geven enkele resultaten weer: de afstand die afgelegd werd voordat de robot de punten~A,~B, C~en~D bereikte. Steeds wordt de totaal afgelegde afstand ten opzichte van het startpunt weergegeven. Niet alle testresultaten werden ingevoegd; het groot aantal tabellen zou weinig meerwaarde bieden.\\
 
-
-Een eerste reeks testen doet vermoeden dat de optimalisatie het algoritme niet altijd effici"enter maakt. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen omdat deze tegels vaak nog niet verkend zijn. Het vinden van een pad gebeurt daarom via een heuristiek, waardoor de robot soms veel omwegen maakt. %(een duidelijk voorbeeld hiervan is doolhof 2 : ....) TODO
-Deze resultaten verplichten ons na te denken over een alternatieve manier om deze optimalisatie te implementeren. De optimalisatie werd voorlopig niet toegevoegd aan het algoritme. \\
+Uit deze testen blijkt dat de optimalisatie het algoritme niet altijd effici\"enter maakt. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen wanneer de tegels op dat pad nog niet verkend zijn. In dat geval kan het pad enkel op basis van een heuristiek bepaald worden. Dit zorgt dat de robot soms grote omwegen maakt. Deze resultaten verplichten ons na te denken over een alternatieve manier om deze optimalisatie te implementeren. De optimalisatie werd voorlopig niet toegevoegd aan het algoritme. \\
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. \\
 
-\subsection{Weg vinden naar andere robot}
+\subsection{Weg vinden naar teamgenoot}
+\label{ssec:AlgoAndereRobot}
 De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan gewoon naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
 
-Om naar de plek van de andere robot te gaan wordt gebruik gemaakt van het kortste pad algoritme.
+Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme.
+
+%\subsection{Twee mappen samenvoegen}
+%\label{ssec:AlgoMappen}
+%Aangezien het nog niet helemaal duidelijk is hoe andere robots hun map zullen doorsturen, wordt voorlopig gewerkt met absolute co\"ordinaten. De mappen worden met andere worden nog niet gecombineerd. 
 
 % == SOFTWARE == %
 \section{Software}
-\label{secc:softw}
-De software bestaat uit twee delen: een project dat op de NXT van de robot loopt en een project dat op de computer loopt (sectie \ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie \ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Robots kunnen met elkaar communiceren via RabbitMQ (sectie \ref{ssec:RabbMQ}). Via de GUI kunnen ook virtuele robots aangestuurd worden: de simulators (sectie \ref{ssec:Sim}).\\
+\label{sec:Softw}
+De software bestaat uit twee delen: een project dat op de NXT van de robot loopt en een project dat op de computer loopt (sectie~\ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie~\ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Robots kunnen met elkaar communiceren via RabbitMQ (sectie~\ref{ssec:RabbMQ}). Via de GUI kunnen ook virtuele robots aangestuurd worden: de simulatoren (sectie~\ref{ssec:Sim}). Tijdens het verkennen wordt een map opgeslagen van de wereld (sectie~\ref{ssec:Mapping}).\\
 
 Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
 
@@ -220,7 +222,7 @@ Voor volgende secties wordt verwezen naar het verslag van het eerste semester. D
 % -- Ontwerp -- %
 \subsection{Ontwerp van het computerproject}
 \label{ssec:Sdesign}
-Een overzicht van het ontwerp wordt weergegeven in figuur \ref{fig:klasSoft}.\\
+Een overzicht van het ontwerp wordt weergegeven in figuur~\ref{fig:klasSoft}.\\
 
 % klassendiagram
 \begin{figure}
@@ -234,7 +236,9 @@ De Main-methode bevindt zich in de GUI-klasse. Deze maakt een \textit{SimulatorP
 
 Een \textit{DummyViewport} is aanvankelijk leeg. Wie de teamgenoot van de robot is, wordt immers pas bekend wanneer beide leden van het team hun voorwerp gevonden hebben. Op dat moment zal de \textit{DummyViewport} iets weergeven.\\
 
-Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \textit{OverallViewport}, die krijgt er meerdere). Er zijn verschillende soorten \textit{Pilots} die elk een implementatie van \textit{PilotInterface} zijn. De keuze van \textit{Pilot} hangt af van het type robot. Een robot waarvan de wereld niet kan worden voorgesteld, krijgt geen \textit{Pilot}. Een teamgenoot (die we niet zelf simuleren) heeft een \textit{DummyPilot}. Deze bevat enkel `getters', want deze robot kan niet worden aangestuurd. Een robot die gesimuleerd wordt, heeft een \textit{SimulatorPilot}. Deze berekent zelf zijn sensorwaarden op basis van een virtuele doolhof. Een fysieke robot krijgt een \textit{RobotPilot} die via de \textit{Communicator} in verbinding staat met de fysieke robot. De \textit{RobotPilot} krijgt zijn sensorwaarden terug van de robot via de \textit{InfoReceiverThread} en de \textit{StatusInfoBuffer}. Deze \textit{Pilots} zijn de `hersenen' van deze robots/simulators. De \textit{Viewports} geven enkel weer wat de robots uitvoeren, zij berekenen en beslissen niets.
+Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \textit{OverallViewport}, die krijgt er meerdere). Er zijn verschillende soorten \textit{Pilots} die elk een implementatie van \textit{PilotInterface} zijn. De keuze van \textit{Pilot} hangt af van het type robot. Een robot waarvan de wereld niet kan worden voorgesteld, krijgt geen \textit{Pilot}. Een teamgenoot (die we niet zelf simuleren) heeft een \textit{DummyPilot}. Deze bevat enkel `getters', want deze robot kan niet worden aangestuurd. Een robot die gesimuleerd wordt, heeft een \textit{SimulatorPilot}. Deze berekent zelf zijn sensorwaarden op basis van een virtuele doolhof. Een fysieke robot krijgt een \textit{RobotPilot} die via de \textit{Communicator} in verbinding staat met de fysieke robot. De \textit{RobotPilot} krijgt zijn sensorwaarden terug van de robot via de \textit{InfoReceiverThread} en de \textit{StatusInfoBuffer}. Deze \textit{Pilots} zijn de `hersenen' van deze robots/simulatoren. De \textit{Viewports} geven enkel weer wat de robots uitvoeren, zij berekenen en beslissen niets.
+
+De \textit{AbstractPilot} bepaalt hoe de gesimuleerde robot moet reageren in de gegeven situatie. De klasse bevat methodes als \textit{travel()} en \textit{rotate()}. Ook bouwt de \textit{AbstractPilot} een map op terwijl de robot zich voortbeweegt door het doolhof. De \textit{AbstractPilot} kan zowel de echte robot als een gesimuleerde robot aansturen. De \textit{AbstractPilots} zijn de hersenen van de robots.
 
 % -- GUI -- %
 \subsection{Grafische User Interface}
@@ -256,18 +260,18 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 \label{fig:GUI2}
 \end{figure}
 
-Figuren \ref{fig:GUI1} en \ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De GUI toont links de \textit{OverallVieuwport}: de volledige map met alle robots, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
+Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De GUI toont links de \textit{OverallVieuwport}: de volledige map met alle robots, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
 
 Rechts worden de \textit{UnitViewports} en \textit{DummyViewports} weergegeven. Wanneer de robot een pad aflegt, tekenen de \textit{Viewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Dit is handig bij het testen van verkenalgoritmes.\\
 
-Het aantal \textit{UnitViewports} of \textit{DummyViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubar. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur \ref{fig:GUI2}.
+Het aantal \textit{UnitViewports} of \textit{DummyViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubar. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur~\ref{fig:GUI2}.
 
 % -- RabbitMQ -- %
 \subsection{Communicatie via RabbitMQ}
 \label{ssec:RabbMQ}
-De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van RabbitMQ bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implemeteerd worden. Figuur \ref{fig:KlasHTTTP} toont een schema van de implementatie.\\
+De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van RabbitMQ bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implemeteerd worden. Figuur~\ref{fig:klasHTTTP} toont een schema van de implementatie.\\
 
-Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHandler}, om respectievelijk in de \textit{AbstractPilot} en de \textit{DummyPilot} met informatie om te gaan. Een onderscheid is nodig omdat \textit{DummyPilots} niet aangestuurd kunnen worden.\\
+Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHandler}, om respectievelijk in de \textit{AbstractPilot} en de \textit{DummyPilot} met informatie om te gaan. Een onderscheid is nodig omdat \textit{DummyPilots} `aangestuurd' worden via hun \textit{Handler}.\\
 
 Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt met bijhorende \textit{Handler}. Het \textit{MQCenter} abstraheert de \textit{Client}-klasse nog verder.
 
@@ -276,7 +280,7 @@ Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt m
 \centering
 	\includegraphics[width=0.5\textwidth]{KlasHTTTP}
 \caption{Klassendiagram HTTTP}
-\label{fig:KlasHTTTP}
+\label{fig:klasHTTTP}
 \end{figure}
 
 
@@ -287,33 +291,30 @@ De \textit{Simulator} bootst de werking van de robot virtueel na. Hij kan dezelf
 
 De \textit{SimulatorPilot} bepaalt de positie van de `robot' ten opzichte van het virtuele doolhof: hoe ver van de muur en op welke ondergrond. De klasse \textit{SimulationSensorData} houdt sensorwaarden bij van tests op de echte robot in verschillende situaties. De \textit{SimulatorPilot} haalt hier zijn referenties uit en probeert op basis van de meetwaarden een realistische sensorwaarde te genereren. De sensorwaarden worden niet nauwkeurig gegenereerd: er wordt ruis toegevoegd. De echte robot geeft immers ook geen exacte waarden.\\
 
-De \textit{AbstractPilot} bepaalt hoe de gesimuleerde robot moet reageren in de gegeven situatie. De klasse bevat methodes als \textit{travel()} en \textit{rotate()}. Ook bouwt de \textit{AbstractPilot} een map op terwijl de robot zich voortbeweegt door het doolhof. De \textit{AbstractPilot} kan zowel de echte robot als een gesimuleerde robot aansturen. De \textit{AbstractPilots} zijn de hersenen van de robots.
-
 % -- Mapping -- %
 \subsection{Mappen van een doolhof} % 3 ok
-\label{ssec:mapping}
-Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \textit{Obstruction} en \textit{Barcode} die elementen uit de wereld van een robot voorstellen. Een klassendagram wordt gegeven in figuur \ref{fig:KlasMap}. Een \textit{Tile} stemt overeen met \'e\'en tegel van de doolhof en heeft vier \textit{Edges}: \'e\'en voor elke zijde. Die \textit{Edges} houden de twee aanliggende tegels bij en eventueel een \textit{Obstruction}, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze houdt een begin tegel bij en een huidige tegel. Ze biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof die in het bestand gedefinieerd wordt.\\
+\label{ssec:Mapping}
+Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een robot voorstellen. Figuur~\ref{fig:klasMap} geeft de structuur van het pakket weer. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze biedt functionaliteiten om van de huidige tegel naar een aanliggende tegel te reizen en om de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een \textit{MapGraph} opstellen.\\
 
-De \textit{Simulator} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld in de klasse \textit{SimulationPanel}, die de muren ook tekent. Ook de robot maakt gebruik van het \textit{SimulationPanel} om de verkende map op te slaan.
+De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld door de \textit{AbstractPilot}. Deze bevat enkel informatie die de robot zelf verzamelde.
 
-% klassendiagram HTTTP
+% klassendiagram mapping
 \begin{figure}[h]
 \centering
 	\includegraphics[width=0.8\textwidth]{klasMapping}
 \caption{Klassendiagram mapping}
-\label{fig:KlasMap}
+\label{fig:klasMap}
 \end{figure}
 
 
 % == BESLUIT == %
 \section{Besluit}
-De bouw van de robot wordt uitgebreid met een infraroodsensor bovenaan en een schep vooraan. De schep laat toe een voorwerp op te rapen. Op de schep is klittenband aangebracht zodat het voorwerp stevig vastzit. De lichtsensor heeft een scharnier gekregen. Zo zit de lichtsensor niet in de weg wanneer de robot over een wip rijdt. \\
+\label{sec:Besluit}
+De bouw van de robot wordt uitgebreid met een infraroodsensor. De schep vooraan wordt aangepast en van klittenband voorzien. Zowel de schep als de lichtsensor zijn gemonteerd op een hefboomsysteem dat omhoog klapt wanneer het de wip raakt. Zo geraakt de robot makkelijk de wip op.\\
 
-De GUI ziet er anders uit dan vorig semester. Zo kunnen nu ook de tegenstanders en de teamgenoot gesimuleerd worden. Al deze robots (al dan niet gesimuleerd) hebben een eigen idee van de wereld. Deze verschillende werelden worden weergegeven via \textit{Viewports}.\\
+Er kunnen verschillende robots worden gesimuleerd of gemodelleerd. Al deze robots hebben een eigen idee van de wereld. Deze verschillende werelden worden weergegeven via \textit{Viewports}. Een \textit{OverallViewport} toont de werkelijke wereld en alle robots erin.\\
 
-Verder werd de communicatie ge\"implementeerd zodat de robot een bericht kan sturen wanneer hij zijn voorwerp vindt. 
 De robot communiceert met andere robots via RabbitMQ. Zo kan de robot afspraken maken met anderen en kan hij te weten komen wie zijn teamgenoot is.
- 
 
 
 \newpage
@@ -334,24 +335,24 @@ Het schepsysteem van de robot functioneerde niet. Tijdens de demo faalde de robo
 \subsection{Conclusies} % 3 ?
 \label{Assec:conc1}
 Het bovengenoemd probleem is voor de volgende demo opgelost. Wanneer de \textit{ExploreMaze}-thread onderbroken wordt, zorgt de onderbrekende methode steeds dat de robot op dezelfde plek staat als waar de \textit{ExploreMaze}-thread denkt dat de robot staat.\\
-Het opraapsysteem voor de robot is ook aangepast. De schep is weggehaald en er is een velcrostrip aangebracht. De robot is nog steeds in staat om het voorwerp met een liftsysteem op te heffen, zodat de robot vlot over de wip heen kan.
+De schep is ook aangepast. De schep is weggehaald en er is een klittenband aangebracht. De robot is nog steeds in staat om het voorwerp met een scharnierend systeem op te heffen, zodat de robot vlot over de wip heen kan.
 
 
 % == aanpassingen == %
 \subsection{Oplijsting aanpassingen verslag} % 3 ?
 \label{Assec:aanp1}
-Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
+Volgende secties werden aangepast ten opzichte van de eerste demonstratie van het tweede semester:
 
 % overzicht aangepaste secties
 \begin{itemize}
-\item \textit{\ref{ssec:abstract} Abstract:} aangepast.
-\item \textit{\ref{ssec:fysb} Fysieke bouw:} de schep vooraan werd aangepast.
-\item \textit{\ref{ssec:algoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
-\item \textit{\ref{ssec:infra} Infraroodsensor:} Nieuw stuk over infraroodsensor werd toegevoegd, samen met de testen.
-\item \textit{\ref{ssec:GUI}} Grafic user interface: de figuur van de GUI is aangepast en de tekst.
-
-
-%\item \textit{calibratie infrarood}: nieuwe gegevens.
+\item \textit{\ref{ssec:Abstract} Samenvatting:} aangepast.
+\item \textit{\ref{ssec:FysB} Fysieke bouw:} de schep vooraan.
+\item \textit{\ref{ssec:AlgoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
+\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} nieuwe sectie.
+%\item \textit{\ref{ssec:AlgoMappen} Twee mappen samenvoegen:} nieuwe sectie.
+\item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
+\item \textit{\ref{ssec:RabbMQ} Communicatie via RabbitMQ:} implementatie \textit{HTTTP}.
+\item \textit{\ref{ssec:Mapping} Mappen van een doolhof:} wip en voorwerpen toegevoegd.
 \end{itemize}
 
 
