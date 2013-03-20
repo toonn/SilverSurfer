@@ -32,7 +32,7 @@
 \label{ssec:abstract}
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
-De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder is de robot voorzien van een schep waarmee hij het voorwerp kan oprapen.
+De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot van een schep vooraan waarmee hij het voorwerp kan oprapen.
 De robot kan een doolhof verkennen en hiervan een map bijhouden. Via RabbitMQ kunnen de robots en simulatoren met elkaar communiceren. Zo kunnen ze een map naar elkaar doorsturen om naar elkaar toe te rijden.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
@@ -55,7 +55,7 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 \section{Inleiding} % 4 ok
 \label{ssec:inl}
 In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van LEGO Mindstorms. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
-De robots moeten hierbij in een onbekend doolhof op zoek naar een bepaald voorwerp (een wc-rol). Elke robot krijgt zijn eigen voorwerp toegewezen. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
+De robots moeten hierbij in een onbekend doolhof op zoek naar een bepaald voorwerp (een wc-rol). Elke robot krijgt een eigen voorwerp toegewezen. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
 
 Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robots gewerkt. Het is ook mogelijk met vier virtuele robots te werken. De doolhof bevat mogelijk een wip. De robots zijn in staat hun eigen voorwerp te vinden en op te rapen. Wanneer een robot weet wie zijn teamgenoot is, kan hij hiermee een punt afspreken om samen te komen.\\
 
@@ -64,41 +64,38 @@ Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robot
 \label{ssec:bouwrob}
 LEGO Mindstorms biedt een bouwpakket voor een robot aan. Een NXT-microcomputer laat toe de robot te programmeren. Met behulp van leJOS kan dit in Java.
 
-De robot moet in staat zijn een wc-rolletje, op te nemen. Verder moet de robot andere robots en de stand van de wip kunnen detecteren.
-
 \subsection{Fysieke bouw}
 \label{ssec:fysb}
-Een infraroodsensor werd gemonteerd bovenop de robot. Wanneer een infraroodbal onder de wip geplaatst wordt, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
+Een infraroodsensor werd gemonteerd bovenop de robot. Door een infraroodbal onder de wip te plaatsen, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
 
-Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werden getest: een schep met motor achteraan, een kartonnen schep vooraan en een plastieken schep met klittenband vooraan. Figuur \ref{fig:robotBouw} geeft deze opstellingen weer. Volgende bevindingen werden gemaakt:
+Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werden getest: een schep met motor achteraan, een kartonnen schep vooraan en een plastieken schep met klittenband vooraan. Figuur \ref{fig:robotBouw} geeft deze opstellingen weer. Het testen van de opstellingen, leidde tot volgende bevindingen:
 
 \begin{enumerate}
-\item De robot heft het voorwerp expliciet op met behulp van een extra motor. Deze opstelling maakte de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
-\item Vooraan is niet genoeg plaats voor een extra motor, deze werd niet gebruikt. Een halve wc-rol leek een ideale vorm voor de schep. Na testen bleek dit echter niet altijd te werken.
-\item De robot neemt het voorwerp op met behulp van klittenband. De schep zorgt ervoor dat het voorwerp niet over de grond sleept. Zo zit het niet in de weg voor de wip. Dit is de huidige opstelling.
+\item De robot heft het voorwerp expliciet op met behulp van een extra motor. Deze opstelling maakt de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
+\item Vooraan is niet genoeg plaats voor een extra motor, deze kon dus niet meer gebruikt worden. Een halve wc-rol leek een ideale vorm voor de schep. Na testen bleek dit echter niet altijd te werken.
+\item De robot neemt het voorwerp op met behulp van klittenband. De schep zorgt ervoor dat het voorwerp niet over de grond sleept. Dit is de huidige opstelling.
 \end{enumerate}
 
-De infrarood- en ultrasone sensor worden vast gemonteerd op de robot.
-De schep werd samen met de lichtsensor gemonteerd op een hefboomsysteem. Wanneer het hefboomsysteem de wip raakt, kantelt het omhoog. Zo kan de robot vlot de wip op.
+De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De schep werd samen met de lichtsensor gemonteerd op een hefboomsysteem. Wanneer het hefboomsysteem de wip raakt, kantelt het omhoog. Zo kan de robot vlot de wip op.
 
-De robot is ook voorzien van een dubbel paar wielen. Dit vermijdt dat hij gaat schuiven op de wip.
+De robot is ook voorzien van een dubbel paar wielen. Dit vermijdt dat hij van de wip glijdt.
 
 Figuur \ref{fig:robotDetail} geeft details van de schep, de wielen en de sensoren.
 
 % bouw robot
 \begin{figure}
 \centering
-	\begin{subfigure}[h]{0.33\textwidth}
+	\begin{subfigure}[h]{0.325\textwidth}
 	\centering
 		\includegraphics[width=\textwidth]{robotOud1}
 		\caption{opstelling 1}
-	\end{subfigure}%
-	\begin{subfigure}[h]{0.33\textwidth}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{robotOud2}
 	\caption{opstelling 2}
 	\end{subfigure}
-	\begin{subfigure}[h]{0.33\textwidth}
+	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{robotNieuw}
 	\caption{opstelling 3}
@@ -110,17 +107,17 @@ Figuur \ref{fig:robotDetail} geeft details van de schep, de wielen en de sensore
 % details robot
 \begin{figure}
 \centering
-	\begin{subfigure}[h]{0.33\textwidth}
+	\begin{subfigure}[h]{0.325\textwidth}
 	\centering
 		\includegraphics[width=\textwidth]{robotSchep}
 		\caption{schep}
-	\end{subfigure}%
-	\begin{subfigure}[h]{0.33\textwidth}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{robotWielen}
 		\caption{wielen}
-	\end{subfigure}%
-	\begin{subfigure}[h]{0.33\textwidth}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{robotSensoren}
 		\caption{infrarood- en ultrasone sensor}
@@ -153,61 +150,53 @@ Om het voorwerp te vinden moet de robot aanvankelijk het doolhof verkennen. In d
 \item[E] tegels waarvan de vier zijden al gekend zijn en waaraan drie muren grenzen, worden niet meer bezocht (`dead-ends' kunnen onmogelijk barcodes bevatten, dus dit is geen probleem)
 \end{description}
 
-Bij de start van het tweede semester werd besloten een extra optimalisatie (F) toe te voegen. Deze geeft prioriteit aan het vinden van het voorwerp. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Deze barcode identificeert het voorwerp. Wanneer de robot een mogelijke voorwerplocatie vindt, controleert hij zo snel mogelijk of er werkelijk een voorwerp ligt en om welk voorwerp het gaat. \\
+Bij de start van het tweede semester werd besloten een extra optimalisatie (F) toe te voegen. Deze geeft prioriteit aan tegels met voorwerpen. Een voorwerp kan zich enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. De barcode identificeert het voorwerp. Wanneer de robot een mogelijke voorwerplocatie vindt, controleert hij zo snel mogelijk of er werkelijk een voorwerp ligt en om welk voorwerp het gaat. \\
 
 \begin{figure}[!hb]
-\caption{Veranderingen aan verkenalgoritme test doolhof}
 \centering
-\includegraphics[scale=0.5]{doolhof 3.png}
+	\includegraphics[scale=0.5]{doolhof3}
+	\caption{Een doolhof waarop optimalisatie F van het verkenalgoritme getest werd.}
 \label{doolhof3}
 \end{figure}
 
 \begin{table}[!hb]
 \begin{center}
-    \begin{tabular}{ | p{3cm}  | p{3cm}  | p{3cm}  | p{3cm}  | } \hline
-    \multicolumn{4}{|c|}{Robot beginplaats 00} \\ \hline
-   \multicolumn{2}{|c|}{Met deadend prioriteit} & \multicolumn{2}{|c|}{Zonder deadend prioriteit}\\  \hline
-     Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm) & Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm)\\ \hline
+    \begin{tabular}{ c | c || c | c }
+    \multicolumn{4}{c}{\textbf{Start op positie 00}} \\ 
+   \multicolumn{2}{c||}{Met deadend prioriteit} & \multicolumn{2}{|c}{Zonder deadend prioriteit}\\
+     positie (xy) & afgelegde weg (cm) & positie (xy) &  afgelegde weg (cm)\\ \hline\hline
     {\color{green}05} & {\color{green}720} & {\color{green}43} & {\color{green}880} \\ \hline
     {\color{green}43} & {\color{green}1520} & {\color{green}69} & {\color{green}2960} \\ \hline
     {\color{green}69} & {\color{green}4320} & {\color{green}64} & {\color{green}4520} \\ \hline
-    {\color{red}64} & {\color{red}6120} & {\color{red}05} & {\color{red}5920}\\ \hline
-    
+    {\color{red}64} & {\color{red}6120} & {\color{red}05} & {\color{red}5920}\\
     \end{tabular}
-    \caption{Verbeteringen aan het verkenalgoritme}
+    \caption{Testresultaten optimalisatie F, startpositie 00}
     \label{tab:resultVerken}
 \end{center}
 \end{table}
 
 \begin{table}[!hb]
 \begin{center}
-    \begin{tabular}{ | p{3cm}  | p{3cm}  | p{3cm}  | p{3cm}  | } \hline
-    \multicolumn{4}{|c|}{Robot beginplaats 99} \\ \hline
-   \multicolumn{2}{|c|}{Met deadend prioriteit} & \multicolumn{2}{|c|}{Zonder deadend prioriteit}\\  \hline
-     Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm) & Vakje(xy) & Totaal afgelegde afstand vanaf beginplaats(cm)\\ \hline
+    \begin{tabular}{c | c || c | c }
+    \multicolumn{4}{c}{\textbf{Start op positie 99}} \\
+   \multicolumn{2}{c||}{Met deadend prioriteit} & \multicolumn{2}{|c}{Zonder deadend prioriteit}\\
+     positie (xy) &  afgelegde weg (cm) & positie (xy) &  afgelegde weg (cm)\\ \hline\hline
     69 & 120 & 69 & 120 \\ \hline
     {\color{red}05} & {\color{red}2920} & {\color{red}05} & {\color{red}2600} \\ \hline
     {\color{red}43} & {\color{red}3720} & {\color{red}43} & {\color{red}3240} \\ \hline
-    {\color{red}64} & {\color{red}6240} & {\color{red}64} & {\color{red}6000}\\ \hline
-    
+    {\color{red}64} & {\color{red}6240} & {\color{red}64} & {\color{red}6000}\\
     \end{tabular}
-    \caption{Verbeteringen aan het verkenalgoritme}
+    \caption{Testresultaten optimalisatie F, startpositie 99}
     \label{tab:resultVerken}
 \end{center}
 \end{table}
 
 %TODO Testen...
 
-Een eerste reeks testen doet vermoeden dat het algoritme niet altijd effici"enter is met deze optimalisatie. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen omdat deze tegels vaak nog niet verkend zijn. Hierdoor maakt de robot veel omwegen. %(een duidelijk voorbeeld hiervan is doolhof 2 : ....) TODO
-Deze resultaten verplichten ons na te denken over een alternatieve manier om deze optimalisatie te bereiken. Daarom wordt deze optimalisatie voorlopig niet toegevoegd aan het algoritme. \\
-
-%
-% In sommige gevallen is het niet mogelijk rechtstreeks naar de locatie te gaan omdat het doolhof daar nog niet verkend is. In dat geval wordt verder verkend in de richting van de locatie. De `dead-end' zelf hoeft niet bezocht te worden wanneer uit de barcode blijkt dat het niet om het juiste voorwerp gaat, zodat optimalisatie E nog steeds geldt.\\
+Een eerste reeks testen doet vermoeden dat de optimalisatie het algoritme niet altijd effici"enter maakt. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen omdat deze tegels vaak nog niet verkend zijn. Het vinden van een pad gebeurt daarom via een heuristiek, waardoor de robot soms veel omwegen maakt. %(een duidelijk voorbeeld hiervan is doolhof 2 : ....) TODO
+Deze resultaten verplichten ons na te denken over een alternatieve manier om deze optimalisatie te implementeren. De optimalisatie werd voorlopig niet toegevoegd aan het algoritme. \\
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. \\
-
-%Als alternatief kan de robot zich naar het voorwerp van de teamgenoot begeven om daar op hem te wachten (niet te dichtbij om niet in de weg te staan). Deze extra optie wordt voorlopig nog niet ge\"implementeerd omdat nog niet duidelijk is in welke gevallen de strategie het best werkt.
-
 
 \subsection{Weg vinden naar andere robot}
 Hierbij dachten we aan het kortste-pad-algoritme. Dit zal wel nog aangepast moeten worden aan zowel draaien als vooruit rijden (draaien was nog niet in rekening gebracht).\\ Er moet ook nog rekening gehouden worden als de andere robot zou wegrijden. De robot mag hierdoor niet in een loop terechtkomen. \\
