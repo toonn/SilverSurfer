@@ -66,7 +66,7 @@ LEGO Mindstorms biedt een bouwpakket voor een robot aan. Een NXT-microcomputer l
 
 \subsection{Fysieke bouw}
 \label{ssec:fysb}
-Een infraroodsensor werd gemonteerd bovenop de robot. Door een infraroodbal onder de wip te plaatsen, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
+Een infraroodsensor werd gemonteerd bovenop de robot. Door een infraroodbal onder een wip te plaatsen, kan de robot bepalen of de wip naar beneden staat. In dat geval wordt het infrarood licht immers geblokt. Later kan de infraroodsensor eventueel gebruikt worden om robots te detecteren.\\
 
 Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werden getest: een schep met motor achteraan, een kartonnen schep vooraan en een plastieken schep met klittenband vooraan. Figuur \ref{fig:robotBouw} geeft deze opstellingen weer. Het testen van de opstellingen, leidde tot volgende bevindingen:
 
@@ -76,7 +76,7 @@ Het voorwerp kan op verschillende manieren worden opgeraapt. Enkele opties werde
 \item De robot neemt het voorwerp op met behulp van klittenband. De schep zorgt ervoor dat het voorwerp niet over de grond sleept. Dit is de huidige opstelling.
 \end{enumerate}
 
-De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De schep werd samen met de lichtsensor gemonteerd op een hefboomsysteem. Wanneer het hefboomsysteem de wip raakt, kantelt het omhoog. Zo kan de robot vlot de wip op.
+De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De schep werd samen met de lichtsensor scharnierend gemonteerd. Wanneer het hefboomsysteem de wip raakt, kantelt het omhoog. Zo kan de robot vlot de wip op.
 
 De robot is ook voorzien van een dubbel paar wielen. Dit vermijdt dat hij van de wip glijdt.
 
@@ -194,8 +194,7 @@ Bij de start van het tweede semester werd besloten een extra optimalisatie (F) t
 Testresultaten: De figuur~\ref{doolhof3} geeft het geteste doolhof weer. Hierbij hebben we de robot acht keer laten rijden op vier verschillende posities. De tabellen geven de resultaten van de robot die start op de tegel met co"ordinaat 09 (dat is de rechterbovenhoek) en van de robot die start op de tegel met co"ordinaat 99 (dat is rechterbenedenhoek). De twee andere tabellen van de andere posities zijn niet weergegeven, maar die testresultaten zijn er wel. De robot heeft twee maal het doolhof verkend. De eerste keer met de dead-end prioriteit en de tweede keer zonder dead-end prioriteit. Als de kleuren groen zijn in de tabel betekent dat het met dead-end prioriteit beter was, en als de kleur rood is van de getallen dan is het niet voordelig om dead-end prioriteit te gebruiken. Uiteindelijk zijn deze testen uitgevoerd op 4 verschillende hoeken beginnend uit elke hoek, maar deze testresultaten waren teveel om in het verslag bij te voegen.\\
 
 
-Een eerste reeks testen doet vermoeden dat de optimalisatie het algoritme niet altijd effici"enter maakt. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen omdat deze tegels vaak nog niet verkend zijn. Het vinden van een pad gebeurt daarom via een heuristiek, waardoor de robot soms veel omwegen maakt. %(een duidelijk voorbeeld hiervan is doolhof 2 : ....) TODO
-Deze resultaten verplichten ons na te denken over een alternatieve manier om deze optimalisatie te implementeren. De optimalisatie werd voorlopig niet toegevoegd aan het algoritme. \\
+Uit deze testen blijkt dat het algoritme vaker effici"enter is zonder deze optimalisatie. Dit komt omdat de robot veel omrijdt om het dichtstbijzijnde vakje te vinden en daardoor meermaals hetzelfde pad op en afgaat. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen omdat deze tegels vaak nog niet verkend zijn. Uit deze resultaten hebben we besloten om de optimalisatie niet door te voeren maar het oorspronkelijke algoritme te behouden. \\
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. \\
 
@@ -266,9 +265,9 @@ Al deze \textit{Viewports} nemen plaats in, waardoor andere functionaliteiten va
 % -- RabbitMQ -- %
 \subsection{Communicatie via RabbitMQ}
 \label{ssec:RabbMQ}
-De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van RabbitMQ bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implemeteerd worden.\\
+De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van RabbitMQ bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implementeerd worden.\\
 
-Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHandler}, om respectievelijk in de \textit{AbstractPilot} en de \textit{DummyPilot} met informatie om te gaan. Een onderscheid is nodig omdat \textit{DummyPilots} niet aangestuurd kunnen worden. Figuur \ref{fig:KlasHTTTP} geeft een overzicht van de softwarearchitectuur.
+Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHandler}, om respectievelijk in de \textit{AbstractPilot} en de \textit{DummyPilot} met informatie om te gaan. Een onderscheid is nodig omdat \textit{DummyPilots} `aangestuurd' worden via hun handler. Figuur \ref{fig:KlasHTTTP} geeft een overzicht van de softwarearchitectuur.
 
 Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt met bijhorende \textit{Handler}. Het \textit{MQCenter} abstraheert de \textit{Client}-klasse nog verder.
 
@@ -293,7 +292,7 @@ De \textit{AbstractPilot} bepaalt hoe de gesimuleerde robot moet reageren in de 
 % -- Mapping -- %
 \subsection{Mappen van een doolhof} % 3 ok
 \label{ssec:mapping}
-Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \textit{Obstruction} en \textit{Barcode} die elementen uit de wereld van een robot voorstellen. Een klassendagram wordt gegeven in figuur \ref{fig:KlasMap}. Een \textit{Tile} stemt overeen met \'e\'en tegel van de doolhof en heeft vier \textit{Edges}: \'e\'en voor elke zijde. Die \textit{Edges} houden de twee aanliggende tegels bij en eventueel een \textit{Obstruction}, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze houdt een begin tegel bij en een huidige tegel. Ze biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof die in het bestand gedefinieerd wordt.\\
+Het \textit{Mapping}-pakket heeft klassen zoals \textit{Tile}, \textit{Edge}, \textit{Obstruction} en \textit{Barcode} die elementen uit de wereld van een robot voorstellen.  Een \textit{Tile} stemt overeen met \'e\'en tegel van de doolhof en heeft vier \textit{Edges}: \'e\'en voor elke zijde. Die \textit{Edges} houden de twee aanliggende tegels bij en eventueel een \textit{Obstruction}, bijvoorbeeld een muur. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze houdt een begin tegel bij en een huidige tegel. Ze biedt functionaliteiten aan om van de huidige tegel naar de tegel Noord, Oost, Zuid of West ervan te reizen en de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een MapGraph opstellen die overeenkomt met de doolhof die in het bestand gedefinieerd wordt.\\
 
 De \textit{Simulator} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld in de klasse \textit{SimulationPanel}, die de muren ook tekent. Ook de robot maakt gebruik van het \textit{SimulationPanel} om de verkende map op te slaan.
 
@@ -335,7 +334,7 @@ Het schepsysteem van de robot functioneerde niet. Tijdens de demo faalde de robo
 \subsection{Conclusies} % 3 ?
 \label{Assec:conc1}
 Het bovengenoemd probleem is voor de volgende demo opgelost. Wanneer de \textit{ExploreMaze}-thread onderbroken wordt, zorgt de onderbrekende methode steeds dat de robot op dezelfde plek staat als waar de \textit{ExploreMaze}-thread denkt dat de robot staat.\\
-Het opraapsysteem voor de robot is ook aangepast. De schep is weggehaald en er is een velcrostrip aangebracht. De robot is nog steeds in staat om het voorwerp met een liftsysteem op te heffen, zodat de robot vlot over de wip heen kan.
+Het opraapsysteem voor de robot is ook aangepast. De schep is weggehaald en er is een klittenband aangebracht. De robot is nog steeds in staat om het voorwerp met een scharnierend systeem op te heffen, zodat de robot vlot over de wip heen kan.
 
 
 % == aanpassingen == %
