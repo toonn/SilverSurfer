@@ -162,15 +162,15 @@ Bij de start van het tweede semester werd besloten een extra optimalisatie (F) t
 \begin{table}[!hb]
 \begin{center}
     \begin{tabular}{ c | c || c | c }
-    \multicolumn{4}{c}{\textbf{Start op positie 00}} \\ 
+    \multicolumn{4}{c}{\textbf{Start linksboven}} \\ 
    \multicolumn{2}{c||}{Met deadend prioriteit} & \multicolumn{2}{|c}{Zonder deadend prioriteit}\\
-     positie (xy) & afgelegde weg (cm) & positie (xy) &  afgelegde weg (cm)\\ \hline\hline
-    {\color{green}05} & {\color{green}720} & {\color{green}43} & {\color{green}880} \\ \hline
-    {\color{green}43} & {\color{green}1520} & {\color{green}69} & {\color{green}2960} \\ \hline
-    {\color{green}69} & {\color{green}4320} & {\color{green}64} & {\color{green}4520} \\ \hline
-    {\color{red}64} & {\color{red}6120} & {\color{red}05} & {\color{red}5920}\\
+     gevonden locatie & afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm)\\ \hline\hline
+    A & {\color{green}720} & B & {\color{green}880} \\ \hline
+    B & {\color{green}1520} & D & {\color{green}2960} \\ \hline
+    D & {\color{green}4320} & C & {\color{green}4520} \\ \hline
+    C & {\color{red}6120} & A & {\color{red}5920}\\
     \end{tabular}
-    \caption{Testresultaten optimalisatie F, startpositie 00}
+    \caption{Testresultaten optimalisatie F, start linksboven}
     \label{tab:resultVerken}
 \end{center}
 \end{table}
@@ -178,15 +178,15 @@ Bij de start van het tweede semester werd besloten een extra optimalisatie (F) t
 \begin{table}[!hb]
 \begin{center}
     \begin{tabular}{c | c || c | c }
-    \multicolumn{4}{c}{\textbf{Start op positie 99}} \\
+    \multicolumn{4}{c}{\textbf{Start rechtsonder}} \\
    \multicolumn{2}{c||}{Met deadend prioriteit} & \multicolumn{2}{|c}{Zonder deadend prioriteit}\\
-     positie (xy) &  afgelegde weg (cm) & positie (xy) &  afgelegde weg (cm)\\ \hline\hline
-    69 & 120 & 69 & 120 \\ \hline
-    {\color{red}05} & {\color{red}2920} & {\color{red}05} & {\color{red}2600} \\ \hline
-    {\color{red}43} & {\color{red}3720} & {\color{red}43} & {\color{red}3240} \\ \hline
-    {\color{red}64} & {\color{red}6240} & {\color{red}64} & {\color{red}6000}\\
+     gevonden locatie &  afgelegde weg (cm) & gevonden locatie &  afgelegde weg (cm)\\ \hline\hline
+    D & 120 & D & 120 \\ \hline
+    A & {\color{red}2920} & A & {\color{red}2600} \\ \hline
+    B & {\color{red}3720} & B & {\color{red}3240} \\ \hline
+    C & {\color{red}6240} & C & {\color{red}6000}\\
     \end{tabular}
-    \caption{Testresultaten optimalisatie F, startpositie 99}
+    \caption{Testresultaten optimalisatie F, start rechtsonder}
     \label{tab:resultVerken}
 \end{center}
 \end{table}
