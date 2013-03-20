@@ -341,7 +341,7 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie:
 
 % overzicht aangepaste secties
 \begin{itemize}
-\item \textit{\ref{ssec:abstract} Abstract:} 
+\item \textit{\ref{ssec:abstract} Abstract:} aangepast.
 \item \textit{\ref{ssec:fysb} Fysieke bouw:} de schep vooraan werd aangepast.
 \item \textit{\ref{ssec:algoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
 \item \textit{\ref{ssec:infra} Infraroodsensor:} Nieuw stuk over infraroodsensor werd toegevoegd, samen met de testen.
