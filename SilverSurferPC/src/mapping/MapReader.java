@@ -78,7 +78,16 @@ public class MapReader {
                 if (seperatedInfoIJ.length == 3) {
                 	//An object has been specified.
                 	if (seperatedInfoIJ[2].equals("V")){
-                		tileIJ.setContent(new TreasureObject(tileIJ, 0));
+                		Orientation orientation = Orientation.switchStringToOrientation(seperatedInfoIJ[1]);
+                		String[] barcodeInfo = infoMatrix[row+1][column].split("\\.");
+                		if(orientation == Orientation.SOUTH)
+                    		barcodeInfo = infoMatrix[row-1][column].split("\\.");
+                		else if(orientation == Orientation.WEST)
+                    		barcodeInfo = infoMatrix[row][column+1].split("\\.");
+                		else if(orientation == Orientation.EAST)
+                    		barcodeInfo = infoMatrix[row][column-1].split("\\.");
+                		int value = Integer.valueOf(barcodeInfo[2]);
+                		tileIJ.setContent(new TreasureObject(tileIJ, value));
                 	}
                 	//A StartTile has been specified
                 	else if (seperatedInfoIJ[2].startsWith("S")){
