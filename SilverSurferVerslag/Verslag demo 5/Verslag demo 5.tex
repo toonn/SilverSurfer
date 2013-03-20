@@ -199,9 +199,9 @@ Deze resultaten verplichten ons na te denken over een alternatieve manier om dez
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof. \\
 
 \subsection{Weg vinden naar andere robot}
-Hierbij dachten we aan het kortste-pad-algoritme. Dit zal wel nog aangepast moeten worden aan zowel draaien als vooruit rijden (draaien was nog niet in rekening gebracht).\\ Er moet ook nog rekening gehouden worden als de andere robot zou wegrijden. De robot mag hierdoor niet in een loop terechtkomen. \\
+De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan gewoon naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
 
-In de scheidsrechterscommissie is er besloten dat de robots naar elkaar informatie doorsturen over waar ze zich bevinden in het doolhof. Dit kan gebeuren via de hele verkende map door te sturen. De robot kan er dan voor kiezen om delen van de informatie van zijn teamgenoot te gebruiken of niet. Met deze informatie rijdt de robot naar zijn teamgenoot. Ze spreken geen tegel onderling af, maar rijden gewoon naar elkaar toe. Dit heeft het nadeel dat als ze elk een ander pad kiezen ze elkaar kunnen kruisen zonder dat ze het weten. Voorlopig wordt dit dus toegepast in deze demo.\\
+Om naar de plek van de andere robot te gaan wordt gebruik gemaakt van het kortste pad algoritme.
 
 % == SOFTWARE == %
 \section{Software}
@@ -219,13 +219,13 @@ Voor volgende secties wordt verwezen naar het verslag van het eerste semester. D
 % -- Ontwerp -- %
 \subsection{Ontwerp van het computerproject}
 \label{ssec:Sdesign}
-Een overzicht van het ontwerp wordt weergegeven in de klassendiagramma van figuur \ref{fig:klasSoft}.\\
+Een overzicht van het ontwerp wordt weergegeven in figuur \ref{fig:klasSoft}.\\
 
 % klassendiagram
 \begin{figure}
 \centering
 		\includegraphics[width=\textwidth]{KlasSoftware}
-\caption[Klassendiagram computerproject]{Klassendiagram met de belangrijkste klassen van het computerproject (paarse pijlen wijzen op overerving of implementatie, blauwe op een informatiestroom)}
+\caption[Klassendiagram computerproject]{Klassendiagram met de belangrijkste klassen van het computerproject (paarse pijlen wijzen op overerving of implementatie)}
 \label{fig:klasSoft}
 \end{figure}
 
