@@ -11,7 +11,6 @@ public class RobotPilot extends AbstractPilot {
     private Communicator communicator;
     private static InfoReceiverThread IRT;
     private boolean busy = false;
-    private int barcode;
 
     public RobotPilot(int teamNumber) {
         super(teamNumber);
@@ -108,6 +107,9 @@ public class RobotPilot extends AbstractPilot {
                 .sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
         super.travel(distance);
         waitUntilDone();
+        if(readBarcodes && !permaBarcodeStop && isExecutingBarcode()) 
+			pilotActions.barcodeFound();
+        setBusyExecutingBarcode(false);
     }
 
     @Override
@@ -121,11 +123,7 @@ public class RobotPilot extends AbstractPilot {
 
     @Override
     protected int readBarcode() {
-        return barcode;
-    }
-
-    public void setLatestBarcode(int barcode) {
-        this.barcode = barcode;
+        return statusInfoBuffer.getBarcode();
     }
 
     @Override
@@ -149,7 +147,7 @@ public class RobotPilot extends AbstractPilot {
 
     private void waitUntilDone() {
         try {
-            while (busy || isExecutingBarcode())
+            while (busy)
                 Thread.sleep(100);
         } catch (Exception e) {
 

@@ -13,6 +13,7 @@ public class StatusInfoBuffer {
     private int leftMotorSpeed;
     private boolean rightMotorMoving;
     private int rightMotorSpeed;
+    private int barcode;
 
     public StatusInfoBuffer(RobotPilot pilot) {
     	this.pilot = pilot;
@@ -103,9 +104,13 @@ public class StatusInfoBuffer {
     }
     
     //BARCODE
+    public int getBarcode() {
+    	return barcode;
+    }
+    
     public void setBarcode(int barcode) {
-    	pilot.setLatestBarcode(barcode);
-    	pilot.barcodeFound();
+    	this.barcode = barcode;
+		pilot.setBusyExecutingBarcode(true);
     }
 }
 

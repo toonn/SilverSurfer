@@ -5,14 +5,16 @@ import lejos.nxt.Motor;
 public class WhitelineThread extends Thread {
 
 	private double lengthCoef;
-	private double angleCoef;
+	private double angleCoefRight;
+	private double angleCoefLeft;
 	private boolean firstQuit = false;
 	private boolean secondQuit = false;
 
-	public WhitelineThread(String str, double lenghtCoef, double angleCoef) {
+	public WhitelineThread(String str, double lenghtCoef, double angleCoefRight, double angleCoefLeft) {
 		super(str);
 		this.lengthCoef = lenghtCoef;
-		this.angleCoef = angleCoef;
+		this.angleCoefRight = angleCoefRight;
+		this.angleCoefLeft = angleCoefLeft;
 	}
 
 	@Override
@@ -29,8 +31,8 @@ public class WhitelineThread extends Thread {
 		Motor.A.setAcceleration(6000);
 		Motor.B.setAcceleration(6000);
 		while(!secondQuit);
-		Motor.A.rotate(-(int)(angleCoef*90), true);
-		Motor.B.rotate((int)(angleCoef*90));
+		Motor.A.rotate(-(int)(angleCoefLeft*90), true);
+		Motor.B.rotate((int)(angleCoefRight*90));
 	}
 	
 	public void setFirstQuit(boolean firstQuit) {

@@ -12,7 +12,8 @@ import lejos.nxt.comm.*;
 public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
-	private static final double ANGLE_COEF = 1.65; //Amount of degrees needed for a 1 degree turn.
+	private static final double ANGLE_COEF_RIGHT = 1.74; //Amount of degrees needed for a 1 degree turn to the right.
+	private static final double ANGLE_COEF_LEFT = 1.73; //Amount of degrees needed for a 1 degree turn to the left.
     private static int SPEED = 200;
     
     private double x = 20;
@@ -116,10 +117,10 @@ public class CommandUnit {
                     	double angle = (input-Command.AUTOMATIC_TURN_ANGLE)/100;
                         System.out.println(angle + " degrees.");
                         CU.updateAngle(angle);
-                    	if(angle >= 0)
-                    		CU.turnAngle((int)Math.floor(ANGLE_COEF*angle));
-                    	else
-                    		CU.turnAngle((int)Math.ceil(ANGLE_COEF*angle));
+                    	if(angle >= 0) //Turn to the right
+                    		CU.turnAngle((int)Math.floor(ANGLE_COEF_RIGHT*angle));
+                    	else //Turn to the left
+                    		CU.turnAngle((int)Math.ceil(ANGLE_COEF_LEFT*angle));
                         CU.stopRobot();
                     }
                 	break;
@@ -233,7 +234,7 @@ public class CommandUnit {
 
     private void alignOnWhiteLine() {
     	int treshold = 51;
-    	WhitelineThread WT = new WhitelineThread("WT", LENGTH_COEF, ANGLE_COEF);
+    	WhitelineThread WT = new WhitelineThread("WT", LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT);
 		WT.start();		
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
@@ -244,26 +245,26 @@ public class CommandUnit {
     }
     
     private void alignOnWalls() {
-    	turnAngle((int)(ANGLE_COEF*90));
+    	turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	int firstUSRead = ultrasonicSensor.getDistance();
     	int secondUSRead;
     	if (firstUSRead < 28) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*LENGTH_COEF));
-        	turnAngle(-(int)(ANGLE_COEF*180));
+        	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
     		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 28)
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
-    		turnAngle((int)(ANGLE_COEF*90));
+    		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	}
     	else {
-        	turnAngle(-(int)(ANGLE_COEF*180));
+        	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
     		if (secondUSRead < 28) {
         		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
-        		turnAngle((int)(ANGLE_COEF*90));
+        		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     		}
     		else 
-        		turnAngle((int)(ANGLE_COEF*90));
+        		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	}
     }
 }

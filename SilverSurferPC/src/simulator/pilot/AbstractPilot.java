@@ -21,9 +21,9 @@ public abstract class AbstractPilot implements PilotInterface {
 	private double angle;
 	private int speed;
 	private boolean busyExecutingBarcode = false;
-	private boolean readBarcodes = true;
-	private boolean permaBarcodeStop = false;
-	private PilotActions pilotActions = new PilotActions(this);
+	protected boolean readBarcodes = true;
+	protected boolean permaBarcodeStop = false;
+	protected PilotActions pilotActions = new PilotActions(this);
 	private ExploreThread exploreThread;
     private PlayerHandler handler;
 
@@ -201,14 +201,6 @@ public abstract class AbstractPilot implements PilotInterface {
 			} catch (final InterruptedException e) {
 
 			}
-
-			if(readBarcodes && this instanceof SimulationPilot && getMapGraphConstructed().getTile(getMatrixPosition()) != null &&
-					!(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)
-					&& getLightSensorValue() < 40 && getLightSensorValue() > 10) {
-				setBusyExecutingBarcode(true);
-				pilotActions.barcodeFound();
-				setBusyExecutingBarcode(false);
-			}
 		}
 	}
 
@@ -246,11 +238,6 @@ public abstract class AbstractPilot implements PilotInterface {
 	}
 
 	protected abstract int readBarcode();
-
-	public void barcodeFound() {
-		busyExecutingBarcode = true;
-		pilotActions.barcodeFound();
-	}
 
 	public boolean isExecutingBarcode() {
 		return busyExecutingBarcode;

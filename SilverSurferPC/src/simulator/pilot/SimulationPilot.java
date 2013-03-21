@@ -343,4 +343,14 @@ public class SimulationPilot extends AbstractPilot {
 
         return SimulatorPanel.robotOn(point);
     }
+    
+    public void travel(final double distance) {
+    	super.travel(distance);
+		if(readBarcodes && !permaBarcodeStop && getMapGraphConstructed().getTile(getMatrixPosition()) != null &&
+				!(getMapGraphConstructed().getTile(getMatrixPosition()).getContent() instanceof Barcode)) {
+			setBusyExecutingBarcode(true);
+			pilotActions.barcodeFound();
+			setBusyExecutingBarcode(false);
+		}
+    }
 }
