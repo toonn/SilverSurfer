@@ -248,19 +248,19 @@ public class CommandUnit {
     	turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	int firstUSRead = ultrasonicSensor.getDistance();
     	int secondUSRead;
-    	if (firstUSRead < 28) {
-    		moveForwardWithoutBarcode((int)Math.round((firstUSRead-23)*LENGTH_COEF));
+    	if (firstUSRead < 25) {
+    		moveForwardWithoutBarcode((int)Math.round((firstUSRead-20)*LENGTH_COEF));
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(!(secondUSRead < 25 && secondUSRead > 21) && secondUSRead < 28)
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
+    		if(!(secondUSRead < 22 && secondUSRead > 18) && secondUSRead < 25)
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-20)*LENGTH_COEF));
     		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	}
     	else {
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 28) {
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-23)*LENGTH_COEF));
+    		if (secondUSRead < 25) {
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-20)*LENGTH_COEF));
         		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     		}
     		else 

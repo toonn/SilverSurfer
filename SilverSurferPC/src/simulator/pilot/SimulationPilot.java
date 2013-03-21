@@ -161,7 +161,7 @@ public class SimulationPilot extends AbstractPilot {
 
     private MapGraph mapGraphLoaded;
     private final double lightSensorDistanceFromAxis = 7.5;
-    private final double ultrasonicSensorDistanceFromAxis = 5.5;
+    private final double ultrasonicSensorDistanceFromAxis = 2.5;
 
     public SimulationPilot(int teamNumber, MapGraph mapGraphLoaded) {
         super(teamNumber);

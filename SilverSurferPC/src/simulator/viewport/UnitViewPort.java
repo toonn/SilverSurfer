@@ -70,7 +70,7 @@ public class UnitViewPort extends DummyViewPort {
 
     private void paintBeamComponent(final Graphics graph) {
         for (AbstractPilot pilot : pilots) {
-        	double correctedUSDistance = pilot.getUltraSensorValue() - 5.5;
+        	double correctedUSDistance = pilot.getUltraSensorValue() - 2.5;
             sonarArc.setArc(pilot.getPosition().getX() - correctedUSDistance, pilot.getPosition().getY() - correctedUSDistance,
             		2 * correctedUSDistance, 2 * correctedUSDistance, 360 - pilot.getAngle() - 15, 30, Arc2D.PIE);
             ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
