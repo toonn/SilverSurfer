@@ -87,7 +87,7 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public void alignOnWhiteLine() {
         busy = true;
-        communicator.sendCommand(Command.ALIGN_PERPENDICULAR);
+        communicator.sendCommand(Command.ALIGN_WHITE_LINE);
         super.alignOnWhiteLine();
         waitUntilDone();
     }

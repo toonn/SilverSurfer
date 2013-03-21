@@ -33,6 +33,8 @@ public class WhitelineThread extends Thread {
 		while(!secondQuit);
 		Motor.A.rotate(-(int)(angleCoefLeft*90), true);
 		Motor.B.rotate((int)(angleCoefRight*90));
+		Motor.A.rotate((int)Math.round(20*lengthCoef), true);
+		Motor.B.rotate((int)Math.round(20*lengthCoef));
 	}
 	
 	public void setFirstQuit(boolean firstQuit) {

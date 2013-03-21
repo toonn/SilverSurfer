@@ -212,7 +212,10 @@ public class SimulatorPanel extends JPanel {
     }
 
     public void connect() {
-        removeMapFile();
+        stopSimulation();
+        mapName = "/";
+        mapGraphLoaded = null;
+        overallViewPort = null;
         principalPilot = new RobotPilot(0);
         createSims(true, 1, 0);
     }
@@ -221,7 +224,10 @@ public class SimulatorPanel extends JPanel {
         if (principalPilot instanceof RobotPilot)
             ((RobotPilot) principalPilot).endConnection();
         principalPilot = new SimulationPilot(0, mapGraphLoaded);
-        removeMapFile();
+        stopSimulation();
+        mapName = "/";
+        mapGraphLoaded = null;
+        overallViewPort = null;
         createSims(false, 1, 0);
     }
 

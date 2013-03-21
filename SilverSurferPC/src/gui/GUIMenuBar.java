@@ -184,9 +184,9 @@ public class GUIMenuBar extends JMenuBar {
                 prompt.dispose();
                 
                 if(mapFile.exists()) {
-                    System.out.println("[I/O] Loading map ...");
+                    System.out.println("[MAP] Loading map ...");
                     SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 1, 0);
-                    System.out.println("[I/O] Map loaded!");
+                    System.out.println("[MAP] Map loaded!");
                 }
             }
 
@@ -206,9 +206,9 @@ public class GUIMenuBar extends JMenuBar {
                 prompt.dispose();
                 
                 if(mapFile.exists()) {
-                    System.out.println("[I/O] Loading map ...");
+                    System.out.println("[MAP] Loading map ...");
                     SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 2, 1);
-                    System.out.println("[I/O] Map loaded!");
+                    System.out.println("[MAP] Map loaded!");
                 }
             }
 

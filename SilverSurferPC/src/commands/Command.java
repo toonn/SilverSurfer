@@ -9,7 +9,7 @@ public class Command {
     public static final int NORMAL_SPEED = 4;
     public static final int FAST_SPEED = 5;
     public static final int VERY_FAST_SPEED = 6;
-    public static final int ALIGN_PERPENDICULAR = 7;
+    public static final int ALIGN_WHITE_LINE = 7;
     public static final int ALIGN_WALL = 8;
     public static final int CHECK_FOR_OBSTRUCTION = 9;
     public static final int START_READING_BARCODES = 10;

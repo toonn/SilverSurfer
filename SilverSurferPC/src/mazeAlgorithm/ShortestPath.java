@@ -137,7 +137,6 @@ public class ShortestPath {
             pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getRightAngle() - pilot.getAngle())));
             if(align && currentAmount == 0) {
             	pilot.alignOnWhiteLine();
-            	pilot.travel(22);
             	currentAmount = amountOfTilesUntilAlign;
             }
             else {

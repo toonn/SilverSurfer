@@ -81,9 +81,9 @@ public class CommandUnit {
                 case (Command.VERY_FAST_SPEED):
                     CU.setSpeed(4);
                     break;
-                case (Command.ALIGN_PERPENDICULAR):
+                case (Command.ALIGN_WHITE_LINE):
                     System.out.println("White line.");
-                    CU.updatePosition(20);
+                    CU.updatePosition(40);
                     CU.alignOnWhiteLine();
                     CU.stopRobot();
                     break;

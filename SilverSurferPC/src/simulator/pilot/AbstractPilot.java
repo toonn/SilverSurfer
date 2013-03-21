@@ -6,15 +6,14 @@ import java.awt.geom.Point2D;
 import peno.htttp.GameHandler;
 import peno.htttp.PlayerHandler;
 
-import mapping.Barcode;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
-import mapping.Seesaw;
 import mazeAlgorithm.ExploreThread;
 
 public abstract class AbstractPilot implements PilotInterface {
 
+	private int originalTeamNumber;
 	private int teamNumber;
 	private MapGraph mapGraphConstructed;
 	private Point2D.Double position;
@@ -34,6 +33,7 @@ public abstract class AbstractPilot implements PilotInterface {
 			this.teamNumber = -1;
 		else
 			this.teamNumber = teamNumber;
+		originalTeamNumber = this.teamNumber;
 		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
 		reset();
 	}
@@ -103,6 +103,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	@Override
 	public void reset() {
+		teamNumber = originalTeamNumber;
 		angle = 270;
 		speed = 2;
 		mapGraphConstructed = new MapGraph();
@@ -155,12 +156,11 @@ public abstract class AbstractPilot implements PilotInterface {
 		|| (y % sizeTile()) < edgeMarge;
 	}
 
-	public void alignOnWhiteLine() {		 
-		travel(13);
-		travel(5);
+	public void alignOnWhiteLine() {
+		travel(20);
 		rotate(-90);
-		rotate(180);
-		rotate(-90);
+		rotate(90);
+		travel(20);
 	}
 
 	public void alignOnWalls() {
