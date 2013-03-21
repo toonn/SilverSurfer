@@ -120,6 +120,56 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
+        final JMenuItem slowSpeedAllItem = new JMenuItem("Slow Speed (all)");
+        speedMenu.add(slowSpeedAllItem);
+        slowSpeedAllItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(1);
+            }
+        });
+
+        final JMenuItem normalSpeedAllItem = new JMenuItem("Normal Speed (all)");
+        speedMenu.add(normalSpeedAllItem);
+        normalSpeedAllItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(2);
+            }
+        });
+
+        final JMenuItem fastSpeedAllItem = new JMenuItem("Fast Speed (all)");
+        speedMenu.add(fastSpeedAllItem);
+        fastSpeedAllItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(3);
+            }
+        });
+
+        final JMenuItem veryFastSpeedAllItem = new JMenuItem("Very Fast Speed (all)");
+        speedMenu.add(veryFastSpeedAllItem);
+        veryFastSpeedAllItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(4);
+            }
+        });
+
+        final JMenuItem fastForwardItem = new JMenuItem("Fast Forward");
+        speedMenu.add(fastForwardItem);
+        fastForwardItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(5);
+            }
+        });
+
         return speedMenu;
     }
     

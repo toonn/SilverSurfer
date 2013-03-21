@@ -82,7 +82,7 @@ public class SimulationPilot extends AbstractPilot {
             return 50;
         }
 
-        // Mean value of the infrared sensor, when the robot has nog infrared in
+        // Mean value of the infrared sensor, when the robot has no infrared in
         // view
         public static final double getMNoInfraRedIS() {
             return 2;

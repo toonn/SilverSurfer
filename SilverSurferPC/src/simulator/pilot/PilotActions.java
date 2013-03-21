@@ -79,8 +79,6 @@ public class PilotActions {
 	 * @param right, true if the seesaw lies partitally to the left of this tile (given the orientation of the robot)
 	 */
 	private boolean seesawFound(int otherBarcode, int value) {
-		System.out.println("Robot " + pilot.getTeamNumber() + ": seesaw " + value);
-
 		// add the four next tiles to the map (the tile on nextPoint1 is allready added by addBarcode())
 		Point nextPoint1 = pilot.getOrientation().getNext(pilot.getMatrixPosition());
 		Point nextPoint2 = pilot.getOrientation().getNext(nextPoint1);
@@ -154,11 +152,6 @@ public class PilotActions {
 	private void pickUpItem(int team) {
 		pilot.setTeamNumber(4 + team);
 		pilot.travel(50);
-		try {
-			Thread.sleep(500);
-		} catch(Exception e) {
-
-		}
 		pilot.travel(-50);
 	}
 }

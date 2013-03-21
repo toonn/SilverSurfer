@@ -215,7 +215,7 @@ public abstract class AbstractPilot implements PilotInterface {
 		case 4:
 			return 3;
 		}
-		return 7;
+		return 1;
 	}
 
 	public void rotate(final double alpha) {

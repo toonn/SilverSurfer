@@ -59,7 +59,8 @@ public class MazeExplorer {
 
 	private void algorithm(final Tile currentTile) {
 		// Explore tile and set current tile on "Explored".
-		exploreTile(currentTile);
+		if(!currentTile.isMarkedExploreMaze())
+			exploreTile(currentTile);
 		
 		// Update queue.
 		for (final Tile neighbourTile : currentTile.getReachableNeighbours())
@@ -68,7 +69,7 @@ public class MazeExplorer {
 
 		// Algorithm finished?
 		if (queue.isEmpty() || quit) {
-			System.out.println("Robot " + pilot.getTeamNumber() + ": done exploring");
+			System.out.println("[EXPLORE] Robot " + pilot.getTeamNumber() + " has finished exploring.");
 			return;
 		}
 
@@ -82,7 +83,7 @@ public class MazeExplorer {
 			removeTileFromQueue(nextTile);
 			
 			if (queue.isEmpty() || quit) {
-				System.out.println("Robot " + pilot.getTeamNumber() + ": done exploring");
+				System.out.println("[EXPLORE] Robot " + pilot.getTeamNumber() + " has finished exploring.");
 				return;
 			}
 
@@ -99,7 +100,6 @@ public class MazeExplorer {
 		// the next tile contains a barcode.
 		// this means that the robot can alter its mapping. therefore, the queue has to be updated
 		if(nextTile.getContent() instanceof Barcode) {
-			System.out.println("Robot " + pilot.getTeamNumber() + ": barcode " + nextTile.getContent().getValue());
 			checkExploredQueue();
 
 			while(pilot.isExecutingBarcode()) {
@@ -110,7 +110,6 @@ public class MazeExplorer {
 				}
 			}
 		}
-
 		// Repeat with next tile.
 		algorithm(nextTile);
 	}

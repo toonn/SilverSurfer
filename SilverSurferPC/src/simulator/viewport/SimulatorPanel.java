@@ -281,9 +281,7 @@ public class SimulatorPanel extends JPanel {
                     ((UnitViewPort) viewPort).resetPath();
         }
 
-        changeSpeedMainRobot(2);
-        for (AbstractPilot pilot : simulatorPilots)
-            pilot.setSpeed(2);
+        changeSpeed(2);
     }
 
     public void startSimulation() {
@@ -301,6 +299,13 @@ public class SimulatorPanel extends JPanel {
     public void changeSpeedMainRobot(final int value) {
         speed = value;
         principalPilot.setSpeed(value);
+    }
+
+    public void changeSpeed(final int value) {
+        speed = value;
+        principalPilot.setSpeed(value);
+        for (AbstractPilot pilot : simulatorPilots)
+            pilot.setSpeed(value);
     }
 
     public AbstractPilot getPrincipalPilot() {

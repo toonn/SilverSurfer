@@ -223,7 +223,6 @@ public class CommandUnit {
     		if(BT.isAlive()) {
     			BT.changeBool();
     			while(!BT.getBool());
-    			alignOnWalls();
     			return BT.getResult();
     		}
     	}
