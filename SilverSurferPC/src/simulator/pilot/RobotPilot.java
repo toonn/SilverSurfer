@@ -88,7 +88,10 @@ public class RobotPilot extends AbstractPilot {
     public void alignOnWhiteLine() {
         busy = true;
         communicator.sendCommand(Command.ALIGN_WHITE_LINE);
-        super.alignOnWhiteLine();
+		super.travel(20);
+		super.rotate(-90);
+		super.rotate(90);
+		super.travel(20);
         waitUntilDone();
     }
 
@@ -96,7 +99,10 @@ public class RobotPilot extends AbstractPilot {
     public void alignOnWalls() {
         busy = true;
         communicator.sendCommand(Command.ALIGN_WALL);
-        super.alignOnWalls();
+        super.rotate(90);
+        super.rotate(-90);
+        super.rotate(-90);
+        super.rotate(90);
         waitUntilDone();
     }
 

@@ -241,25 +241,26 @@ public class CommandUnit {
 		while(lightSensor.getLightValue() < treshold);
 		WT.setSecondQuit(true);
 		while(WT.isAlive());
+		moveForwardWithoutBarcode((int)Math.floor(20*LENGTH_COEF));
     }
     
     private void alignOnWalls() {
     	turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	int firstUSRead = ultrasonicSensor.getDistance();
     	int secondUSRead;
-    	if (firstUSRead < 25) {
+    	if (firstUSRead < 26) {
     		moveForwardWithoutBarcode((int)Math.round((firstUSRead-20)*LENGTH_COEF));
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(!(secondUSRead < 22 && secondUSRead > 18) && secondUSRead < 25)
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-20)*LENGTH_COEF));
+    		if(secondUSRead != 21 && secondUSRead < 26)
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-21)*LENGTH_COEF));
     		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	}
     	else {
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 25) {
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-20)*LENGTH_COEF));
+    		if (secondUSRead < 26) {
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-21)*LENGTH_COEF));
         		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     		}
     		else 

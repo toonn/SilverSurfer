@@ -26,7 +26,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private ExploreThread exploreThread;
     private PlayerHandler handler;
 
-	protected final double detectionDistanceUltrasonicSensorRobot = 25;
+	protected final double detectionDistanceUltrasonicSensorRobot = 26;
 
 	public AbstractPilot(int teamNumber) {
 		if(teamNumber < 0 || teamNumber > 3)

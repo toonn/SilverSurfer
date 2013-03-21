@@ -21,16 +21,18 @@ public class BarcodeThread extends Thread {
 	public void run() {
 		Motor.A.resetTachoCount();
 		Motor.B.resetTachoCount();
+		Motor.A.forward();
+		Motor.B.forward();
     	Motor.A.rotateTo(distance, true);
     	Motor.B.rotateTo(distance, true);
     	while(bool)
     		if(Motor.A.getTachoCount() >= distance)
     			return;
     	int tachoCount = Motor.A.getTachoCount();
-		Motor.A.rotateTo((int)Math.round(tachoCount + 16*lengthCoef), true);
-		Motor.B.rotateTo((int)Math.round(tachoCount + 16*lengthCoef), true);
+    	Motor.A.rotateTo((int)Math.round(tachoCount + 17*lengthCoef), true);
+		Motor.B.rotateTo((int)Math.round(tachoCount + 17*lengthCoef), true);
 		for(int i = 1; i <= 6; i++) {
-			while(Motor.A.getTachoCount() < (int)Math.round(tachoCount + i*2*lengthCoef));
+			while(Motor.A.getTachoCount() < (int)Math.round(tachoCount + (1+i*2)*lengthCoef));
 			if(lightSensor.getLightValue() < 40) 
 				result = result + "0";
 			else

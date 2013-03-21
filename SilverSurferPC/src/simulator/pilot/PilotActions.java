@@ -151,7 +151,13 @@ public class PilotActions {
 	
 	private void pickUpItem(int team) {
 		pilot.setTeamNumber(4 + team);
-		pilot.travel(50);
-		pilot.travel(-50);
+		pilot.travel(35);
+		pilot.alignOnWalls();
+		pilot.travel(10);
+		/*pilot.travel(-10);
+		pilot.rotate(180);
+		pilot.alignOnWhiteLine(); //fix barcode + whiteline first
+		pilot.rotate(-180);*/
+		pilot.travel(-45);
 	}
 }

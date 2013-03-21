@@ -27,7 +27,7 @@ public class MazeExplorer {
 	private AbstractPilot pilot;
 
 	private boolean align;
-	private final int amountOfTilesUntilAlign = 5;
+	private final int amountOfTilesUntilAlign = 100000;
 	private int currentAmount;
     private boolean quit = false;
 
