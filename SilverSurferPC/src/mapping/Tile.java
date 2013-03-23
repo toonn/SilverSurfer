@@ -435,6 +435,23 @@ public class Tile {
         isMarkedShortestPath = marking;
 
     }
+    
+    @Override
+    public Tile clone(){
+    	Point point = new Point();
+    	point.setLocation(this.getPosition());
+    	Tile tile = new Tile(point);
+    	
+    	tile.setContent(this.getContent());
+    	
+    	for(Orientation orientation: Orientation.values()){
+    		tile.getEdge(orientation).setObstruction(this.getEdge(orientation).getObstruction());
+    	}
+    	
+    	return tile;
+    }
+
+
 
     /**
      * Terminate this square.

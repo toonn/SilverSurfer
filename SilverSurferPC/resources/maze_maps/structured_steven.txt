@@ -1,0 +1,9 @@
+10 8
+Cross			Cross			T.E			DeadEnd.N.V		T.W			T.E			DeadEnd.N		DeadEnd.N.V		T.W				Cross
+Cross			Cross			Corner.S		Straight.N.1		Corner.W		Corner.S		Straight.N		Straight.N.4		T.W				Cross
+Cross			T.E			Corner.N		Cross			Corner.E		Corner.N		Cross			T.E			T.W				Cross
+Cross			T.E			DeadEnd.S		Straight.N.13		Corner.W		Corner.S		Straight.N.15		DeadEnd.S		T.W				Cross
+Cross			T.E			Closed			Seesaw.N		Corner.N		Corner.E		Seesaw.N		Closed			T.W				Cross
+T.S			Corner.S		Closed			Seesaw.S		Corner.W		Corner.S		Seesaw.S		Closed			Corner.W			T.S
+DeadEnd.W.V		Straight.W.0		Corner.E		Straight.N.11		Corner.N		Corner.E		Straight.N.17		Corner.N		Straight.W			DeadEnd.E
+T.N			Corner.E		Corner.W		T.S			Corner.S		Corner.W		T.S			T.S			Straight.W.5			DeadEnd.E.V

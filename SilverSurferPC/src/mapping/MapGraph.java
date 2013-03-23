@@ -23,9 +23,9 @@ public class MapGraph {
      */
     public void addObstruction(final Point point, final Orientation orientation, final Obstruction obst) {
     	try {
-            if (getTile(point) == null) {
+            if (getTile(point) == null)
                 throw new IllegalArgumentException( "currenttile is null in addObstruction");
-            } else if (getTile(point).getEdge(orientation) == null) {
+            else if (getTile(point).getEdge(orientation) == null) {
                 // TODO ??? Volgens Tile is er een invar Tile.getEdge(direction) !=
                 // null
                 throw new IllegalArgumentException("edge is null in addobstruction");
@@ -136,6 +136,78 @@ public class MapGraph {
     			((Seesaw) tile.getContent()).flipSeesaw();
     }
 
+    public void mergeMap(MapGraph map2, Point map1tile1, Point map1tile2, Point map2tile1, Point map2tile2 ){
+	   	
+    	int translatedxmap1 = (int) (map1tile2.getX()-map1tile1.getX());
+    	int translatedymap1 = (int) (map1tile2.getY()-map1tile1.getY());
+    	
+    	int translatedxmap2 = (int) (map2tile2.getX()-map2tile1.getX());
+    	int translatedymap2 = (int) (map2tile2.getY()-map2tile1.getY());
+    	
+    	float sinA = (float) ((translatedymap1 - translatedxmap1/translatedxmap2*translatedymap2)/((Math.pow(translatedymap2, 2))/translatedxmap2 + translatedxmap2));
+    	float cosA = (float) ((translatedymap1 - translatedxmap2*sinA)/translatedymap2);
+    
+    	for(Tile tile:map2.getTiles()){
+    		int convertedX = (int) (cosA*tile.getPosition().getX() - sinA*tile.getPosition().getY() - cosA*map2tile1.getX()+sinA*map2tile1.getY() + map1tile1.getX());
+    		int convertedY = (int) (cosA*tile.getPosition().getY() + sinA*tile.getPosition().getX() - sinA*map2tile1.getX() - cosA*map2tile1.getY() + map1tile1.getY());
+
+    		if(!this.tiles.containsKey(new Point(convertedX, convertedY))){
+    			Tile copiedTile = tile.clone();
+    			setExistingTile(copiedTile);
+    		}
+    		
+    		else{
+    			for(Orientation orientation:Orientation.values()){
+    				if(this.getTile(new Point(convertedX, convertedY)).getEdge(orientation).getObstruction() == null)
+    				{
+    					this.getTile(new Point(convertedX, convertedY)).getEdge(orientation).setObstruction(
+    							tile.getEdge(orientation).getObstruction());    				
+    				}
+    			}
+    		}
+    	}
+    	
+    }
+    
+    private void setExistingTile(Tile tile){
+   	 Point point = tile.getPosition();
+        tiles.put(point, tile);
+
+        Set<Tile> neighbourTiles = new HashSet<Tile>();
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() - 1,
+                (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() + 1,
+                (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
+                .getY() - 1)));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
+                .getY() + 1)));
+
+        for (final Tile neighbourTile : neighbourTiles) {
+            Orientation orientation = null;
+            if (neighbourTile != null)
+                if (tile.getPosition().getX() < neighbourTile.getPosition()
+                        .getX())
+                    orientation = Orientation.EAST;
+                else if (tile.getPosition().getX() > neighbourTile
+                        .getPosition().getX())
+                    orientation = Orientation.WEST;
+                else if (tile.getPosition().getY() < neighbourTile
+                        .getPosition().getY())
+                    orientation = Orientation.SOUTH;
+                else if (tile.getPosition().getY() > neighbourTile
+                        .getPosition().getY())
+                    orientation = Orientation.NORTH;
+            if (orientation != null) {
+           	 if(neighbourTile.getEdge(orientation).getObstruction() != null){
+                tile.replaceEdge(orientation, neighbourTile.getEdge(orientation
+                        .getOppositeOrientation()));}
+           	 else{
+           		 neighbourTile.replaceEdge(orientation.getOppositeOrientation(), neighbourTile.getEdge(orientation));
+           	 }}}
+            }
+            
+            
     @Override
     public String toString() {
         int minX = Integer.MAX_VALUE;
