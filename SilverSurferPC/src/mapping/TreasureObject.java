@@ -3,6 +3,8 @@ package mapping;
 import commands.BarcodeCommand;
 
 public class TreasureObject extends TileContent {
+	
+	private int teamNo;
 
 	/**
      * Creates an object with as value 'value'.
@@ -25,5 +27,16 @@ public class TreasureObject extends TileContent {
 		if(color == -1)
 			color = 6; //Gray color
 		return color;
+	}
+	
+	/**
+	 * Get the destined team (0 or 1).
+	 */
+	public int getTeamNo() {
+		return teamNo;
+	}
+	
+	public void setTeamNo(int teamNo) {
+		this.teamNo = teamNo;
 	}
 }

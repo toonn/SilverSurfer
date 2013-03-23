@@ -61,14 +61,32 @@ public class MapReader {
             	if(map.getTile(new Point(column,row)) != null)
             		if(map.getTile(new Point(column,row)).getContent() != null)
             			if(map.getTile(new Point(column,row)).getContent() instanceof TreasureObject){
+            				
+            				TreasureObject treasure = ((TreasureObject)map.getTile(new Point(column,row)).getContent());
             				//get location of barcode value.
             				Orientation closed = Orientation.switchStringToOrientation(infoMatrix[row][column].split("\\.")[1]);
             				Orientation open = closed.getOppositeOrientation();
             				
-            				//open.TODO continue
-            				System.out.println(row);
-            				System.out.println(column);
-            				System.out.println("ha");
+            				//get the player-number from the right barcode and update the object with it.
+            				if(open.equals(Orientation.NORTH))
+            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row-1][column].split("\\.")[2])));
+            				else if(open.equals(Orientation.EAST))
+            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row][column+1].split("\\.")[2])));
+            				else if(open.equals(Orientation.SOUTH))
+            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row+1][column].split("\\.")[2])));
+            				else if(open.equals(Orientation.WEST))
+            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row][column-1].split("\\.")[2])));
+            				
+            				//get the team-number from the right barcode and update the object with it.
+            				if(open.equals(Orientation.NORTH))
+            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row-1][column].split("\\.")[2])));
+            				else if(open.equals(Orientation.EAST))
+            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row][column+1].split("\\.")[2])));
+            				else if(open.equals(Orientation.SOUTH))
+            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row+1][column].split("\\.")[2])));
+            				else if(open.equals(Orientation.WEST))
+            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row][column-1].split("\\.")[2])));
+            				
             			}
             }
         }

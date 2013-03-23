@@ -112,7 +112,35 @@ public class Barcode extends TileContent {
         this.direction = direction;
     }
 
-
+    /**
+     * Given a decimal barcode-value, get the team-number associated with it.     
+     * only useful for treasure-barcodes
+     */
+    public static int getTeamNumberFrom(int value) {
+    	//generate binary-string
+    	String binaryRep = Integer.toBinaryString(value);
+    	String binaryExp = "000000000000".concat(binaryRep);
+    	int length = binaryExp.length();
+    	//see barcode specification doc.
+    	int teamNo = Integer.parseInt(binaryExp.substring(length-3,length-2),2);
+    	return teamNo;
+	}
+    
+    /**
+     * Given a decimal barcode-value, get the player-number associated with it.
+     * only useful for treasure-barcodes.
+     */
+    public static int getPlayerNumberFrom(int value) {
+    	System.out.println(value);
+    	//generate binary-string
+    	String binaryRep = Integer.toBinaryString(value);
+    	String binaryExp = "000000000000".concat(binaryRep);
+    	int length = binaryExp.length();
+    	System.out.println(length);
+    	//see barcode specification doc.
+    	int playerNo = Integer.parseInt(binaryExp.substring(length-2,length),2);
+    	return playerNo;
+	}
     /**
      * 0 = black, 1 = white
      */
@@ -124,5 +152,5 @@ public class Barcode extends TileContent {
         }
         return 0 + body + 0;
     }
-
+    
 }
