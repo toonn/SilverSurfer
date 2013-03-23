@@ -131,13 +131,12 @@ public class Barcode extends TileContent {
      * only useful for treasure-barcodes.
      */
     public static int getPlayerNumberFrom(int value) {
-    	System.out.println(value);
     	//generate binary-string
     	String binaryRep = Integer.toBinaryString(value);
     	String binaryExp = "000000000000".concat(binaryRep);
     	int length = binaryExp.length();
-    	System.out.println(length);
     	//see barcode specification doc.
+    	System.out.println("player:" + binaryExp.substring(length-2,length));
     	int playerNo = Integer.parseInt(binaryExp.substring(length-2,length),2);
     	return playerNo;
 	}

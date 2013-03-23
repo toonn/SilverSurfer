@@ -120,7 +120,21 @@ public class MapGraph {
     public Collection<Tile> getTiles() {
         return tiles.values();
     }
+    
+    /**
+     * @return	All Tiles in this map that contain a StartBase.
+     */
+    public ArrayList<Tile> getStartTiles() {
+    	ArrayList<Tile> startTiles = new ArrayList<Tile>();
+    	
+		for (Tile t : getTiles())
+			if (t.getContent() instanceof StartBase){
+				startTiles.add(t);
+			System.out.println("added");
+			}
+		return startTiles;
 
+	}
     // @SuppressWarnings("unused")
     // private void removeTile(final Point point) {
     // getTile(point).terminate();

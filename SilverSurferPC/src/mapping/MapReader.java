@@ -25,8 +25,6 @@ public class MapReader {
                 final String[] seperatedInfoIJ = infoMatrix[row][column]
                         .split("\\.");
 
-                // Create the desired tile form first
-                // connect it to the graph in a right way later!
                 Point pointIJ = new Point(column, row);
                 Tile tileIJ = map.getTile(pointIJ);
 
@@ -55,8 +53,19 @@ public class MapReader {
 
             }
         }
-        //Make sure all pick-up-objects have the right value.
-        for (int row = 0; row < infoMatrix.length; row++) {
+        
+        tagTreasures(infoMatrix, map);
+        
+        return map;
+    }
+    
+    /**
+     * Make sure all treasure-objects get tagged in a correct way.
+     * @param infoMatrix
+     * @param map
+     */
+	private static void tagTreasures(final String[][] infoMatrix, MapGraph map) {
+		for (int row = 0; row < infoMatrix.length; row++) {
             for (int column = 0; column < infoMatrix[row].length; column++) {
             	if(map.getTile(new Point(column,row)) != null)
             		if(map.getTile(new Point(column,row)).getContent() != null)
@@ -87,12 +96,11 @@ public class MapReader {
             				else if(open.equals(Orientation.WEST))
             					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row][column-1].split("\\.")[2])));
             				
+            				System.out.println("treasure: " + treasure.getValue());
             			}
             }
         }
-        
-        return map;
-    }
+	}
 
 	private static void generateObjects(final String[] seperatedInfoIJ,
 			Tile tileIJ) {
@@ -226,7 +234,6 @@ public class MapReader {
 	        }
 	        else
 	        {
-	        	System.out.println(ori +" "+orientation);
 	        	t.getEdge(ori).replaceObstruction(Obstruction.WHITE_LINE);
 	        }
 	    }

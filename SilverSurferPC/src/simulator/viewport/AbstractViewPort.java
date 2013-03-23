@@ -337,7 +337,7 @@ public abstract class AbstractViewPort extends JPanel {
         for (PilotInterface pilot : pilots) {
         	if(!(pilot instanceof DummyPilot) || ((DummyPilot)pilot).isActive()) {
         		AffineTransform oldTransform = g2.getTransform();
-        		g2.setColor(teamColors[pilot.getTeamNumber()]);
+        		g2.setColor(teamColors[pilot.getPlayerNumber()]);
         		g2.fill(new Ellipse2D.Double(
         				(pilot.getPosition().getX() - (diam / 2)),
         				(pilot.getPosition().getY() - (diam / 2)),

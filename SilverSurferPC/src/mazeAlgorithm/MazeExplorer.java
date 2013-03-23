@@ -69,7 +69,7 @@ public class MazeExplorer {
 
 		// Algorithm finished?
 		if (queue.isEmpty() || quit) {
-			System.out.println("[EXPLORE] Robot " + pilot.getTeamNumber() + " has finished exploring.");
+			System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
 			return;
 		}
 
@@ -83,7 +83,7 @@ public class MazeExplorer {
 			removeTileFromQueue(nextTile);
 			
 			if (queue.isEmpty() || quit) {
-				System.out.println("[EXPLORE] Robot " + pilot.getTeamNumber() + " has finished exploring.");
+				System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
 				return;
 			}
 

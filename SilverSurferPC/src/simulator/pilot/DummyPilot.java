@@ -39,7 +39,7 @@ public class DummyPilot implements PilotInterface {
      * it is in Returns -1 if no valid team number is available
      */
     @Override
-    public int getTeamNumber() {
+    public int getPlayerNumber() {
         return teamNumber;
     }
 
@@ -49,7 +49,7 @@ public class DummyPilot implements PilotInterface {
      * or 5
      */
     @Override
-    public void setTeamNumber(int teamNumber) {
+    public void setPlayerNumber(int teamNumber) {
         if (teamNumber == 4 || teamNumber == 5)
             this.teamNumber = teamNumber;
         else

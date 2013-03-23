@@ -62,7 +62,7 @@ public class PilotActions {
 				      || barcode == BarcodeCommand.TREASURE_TEAM0_INVERSE[i]  || barcode == BarcodeCommand.TREASURE_TEAM1_INVERSE[i]) {
 					treasureFound(barcode);
 					//The barcode and object belongs to the robot with number i.
-					if(i == pilot.getTeamNumber()) {
+					if(i == pilot.getPlayerNumber()) {
 						int team = 0;
 						if(barcode == BarcodeCommand.TREASURE_TEAM1[i] || barcode == BarcodeCommand.TREASURE_TEAM1_INVERSE[i])
 							team = 1;
@@ -150,7 +150,7 @@ public class PilotActions {
 	}
 	
 	private void pickUpItem(int team) {
-		pilot.setTeamNumber(4 + team);
+		pilot.setPlayerNumber(4 + team);
 		pilot.travel(35);
 		pilot.alignOnWalls();
 		pilot.travel(10);

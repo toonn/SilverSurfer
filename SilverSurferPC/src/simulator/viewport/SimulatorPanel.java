@@ -1,6 +1,7 @@
 package simulator.viewport;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
 
 import mapping.MapGraph;
 import mapping.MapReader;
+import mapping.Tile;
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 import simulator.pilot.SimulationPilot;
@@ -247,7 +249,16 @@ public class SimulatorPanel extends JPanel {
                 amountOfDummies);
     }
 
-    public void removeMapFile() {
+    private void setOnStartTile(PilotInterface pilot) {
+    	
+    	for (Tile t : mapGraphLoaded.getStartTiles())
+			if (t.getContent().getValue() == pilot.getPlayerNumber()){
+				Point tPos = t.getPosition();
+				pilot.setPosition(tPos.x*40+20,tPos.y*40+20);
+			}	
+	}
+
+	public void removeMapFile() {
         stopSimulation();
         mapName = "/";
         mapGraphLoaded = null;
@@ -259,23 +270,26 @@ public class SimulatorPanel extends JPanel {
         stopSimulation();
 
         principalPilot.setPosition(20, 20);
+        if (mapGraphLoaded != null)
+        	setOnStartTile(principalPilot);
         principalPilot.reset();
         principalViewPort.resetPath();
 
         if (mapGraphLoaded != null) {
             if (simulatorPilots.size() == 3) {
-                simulatorPilots.get(0).setPosition(
-                        mapGraphLoaded.getMapSize().x * 40 + 20, 20);
-                simulatorPilots.get(1).setPosition(20,
-                        mapGraphLoaded.getMapSize().y * 40 + 20);
-                simulatorPilots.get(2).setPosition(
-                        mapGraphLoaded.getMapSize().x * 40 + 20,
-                        mapGraphLoaded.getMapSize().y * 40 + 20);
+            	setOnStartTile(simulatorPilots.get(0));
+            	setOnStartTile(simulatorPilots.get(1));
+            	setOnStartTile(simulatorPilots.get(2));
+
             }
-            for (AbstractPilot pilot : simulatorPilots)
+            for (AbstractPilot pilot : simulatorPilots){
+            	setOnStartTile(pilot);
                 pilot.reset();
-            for (DummyPilot pilot : dummyPilots)
+            }
+            for (DummyPilot pilot : dummyPilots){
+            	setOnStartTile(pilot);
                 pilot.reset();
+            }
             for (DummyViewPort viewPort : otherViewPorts)
                 if (viewPort instanceof UnitViewPort)
                     ((UnitViewPort) viewPort).resetPath();

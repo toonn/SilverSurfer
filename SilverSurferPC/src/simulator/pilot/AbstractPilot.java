@@ -14,7 +14,7 @@ import mazeAlgorithm.ExploreThread;
 public abstract class AbstractPilot implements PilotInterface {
 
 	private int originalTeamNumber;
-	private int teamNumber;
+	private int playerNumber;
 	private MapGraph mapGraphConstructed;
 	private Point2D.Double position;
 	private double angle;
@@ -30,10 +30,10 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	public AbstractPilot(int teamNumber) {
 		if(teamNumber < 0 || teamNumber > 3)
-			this.teamNumber = -1;
+			this.playerNumber = -1;
 		else
-			this.teamNumber = teamNumber;
-		originalTeamNumber = this.teamNumber;
+			this.playerNumber = teamNumber;
+		originalTeamNumber = this.playerNumber;
 		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
 		reset();
 	}
@@ -49,18 +49,18 @@ public abstract class AbstractPilot implements PilotInterface {
 	 * Returns -1 if no valid team number is available
 	 */
 	@Override
-	public int getTeamNumber() {
-		return teamNumber;
+	public int getPlayerNumber() {
+		return playerNumber;
 	}
 
 	/**
-	 * The team number can only change when a robot has found its treasure and knows what team it is in
+	 * The player number can only change when a robot has found its treasure and knows what team it is in
 	 * This means the team number can only be set to 4 or 5
 	 */
 	@Override
-	public void setTeamNumber(int teamNumber) {
-		if(teamNumber == 4 || teamNumber == 5)
-			this.teamNumber = teamNumber;
+	public void setPlayerNumber(int playerNumber) {
+		if(playerNumber == 4 || playerNumber == 5)
+			this.playerNumber = playerNumber;
 		else
 			throw new IllegalStateException("The teamnumber can only be set to 4 or 5!");
 	}
@@ -103,7 +103,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	@Override
 	public void reset() {
-		teamNumber = originalTeamNumber;
+		playerNumber = originalTeamNumber;
 		angle = 270;
 		speed = 2;
 		mapGraphConstructed = new MapGraph();

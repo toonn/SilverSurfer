@@ -11,9 +11,9 @@ public interface PilotInterface {
 
     public abstract double sizeTile();
 
-    public abstract int getTeamNumber();
+    public abstract int getPlayerNumber();
 
-    public abstract void setTeamNumber(int teamNumber);
+    public abstract void setPlayerNumber(int teamNumber);
 
     public abstract MapGraph getMapGraphConstructed();
 
