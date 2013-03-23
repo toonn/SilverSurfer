@@ -5,185 +5,38 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-/**
- * Used to read a map from a given ASCII file.
- */
 public class MapReader {
 
     public static MapGraph createMapFromFile(final File txtFile) {
         final String[][] infoMatrix = createInfoMatrixFromFile(txtFile);
 
-        // Fill a graph with the information in infoMatrix.
+        //Fill a graph with the information in infoMatrix.
         MapGraph map = new MapGraph();
         for (int row = 0; row < infoMatrix.length; row++)
             for (int column = 0; column < infoMatrix[row].length; column++)
-                map.addTileXY(new Point(column, row));
-            
+                map.addTile(new Point(column, row));
 
-        for (int row = 0; row < infoMatrix.length; row++) {
+        for (int row = 0; row < infoMatrix.length; row++)
             for (int column = 0; column < infoMatrix[row].length; column++) {
-                final String[] seperatedInfoIJ = infoMatrix[row][column]
-                        .split("\\.");
-
+                final String[] seperatedInfoIJ = infoMatrix[row][column].split("\\.");
                 Point pointIJ = new Point(column, row);
                 Tile tileIJ = map.getTile(pointIJ);
-
                 generateStructures(seperatedInfoIJ, tileIJ);
-            
                 generateObjects(seperatedInfoIJ, tileIJ);
-                
-                
-                
-                // a seesaw has been specified
-//                if (seperatedInfoIJ.length == 4
-//                        && "s".equals(seperatedInfoIJ[2])) {
-//                	
-//                	// add a seesaw to the tile
-//                	char[] values = seperatedInfoIJ[3].toCharArray();
-//                	tileIJ.setContent(new Seesaw(tileIJ, values[2]));
-//                	
-//                	// set the right edges
-//                	Orientation orientation = Orientation.switchStringToOrientation((String.valueOf(values[0])));
-//                	if(Integer.valueOf(String.valueOf(values[1])) == 0)
-//	                	tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_DOWN);
-//                	else if(Integer.valueOf(String.valueOf(values[1])) == 1)
-//                		tileIJ.getEdge(orientation).replaceObstruction(Obstruction.SEESAW_UP);
-//                	
-//                }
-
             }
-        }
-        
         tagTreasures(infoMatrix, map);
-        
         return map;
     }
-    
-    /**
-     * Make sure all treasure-objects get tagged in a correct way.
-     * @param infoMatrix
-     * @param map
-     */
-	private static void tagTreasures(final String[][] infoMatrix, MapGraph map) {
-		for (int row = 0; row < infoMatrix.length; row++) {
-            for (int column = 0; column < infoMatrix[row].length; column++) {
-            	if(map.getTile(new Point(column,row)) != null)
-            		if(map.getTile(new Point(column,row)).getContent() != null)
-            			if(map.getTile(new Point(column,row)).getContent() instanceof TreasureObject){
-            				
-            				TreasureObject treasure = ((TreasureObject)map.getTile(new Point(column,row)).getContent());
-            				//get location of barcode value.
-            				Orientation closed = Orientation.switchStringToOrientation(infoMatrix[row][column].split("\\.")[1]);
-            				Orientation open = closed.getOppositeOrientation();
-            				
-            				//get the player-number from the right barcode and update the object with it.
-            				if(open.equals(Orientation.NORTH))
-            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row-1][column].split("\\.")[2])));
-            				else if(open.equals(Orientation.EAST))
-            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row][column+1].split("\\.")[2])));
-            				else if(open.equals(Orientation.SOUTH))
-            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row+1][column].split("\\.")[2])));
-            				else if(open.equals(Orientation.WEST))
-            					treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row][column-1].split("\\.")[2])));
-            				
-            				//get the team-number from the right barcode and update the object with it.
-            				if(open.equals(Orientation.NORTH))
-            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row-1][column].split("\\.")[2])));
-            				else if(open.equals(Orientation.EAST))
-            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row][column+1].split("\\.")[2])));
-            				else if(open.equals(Orientation.SOUTH))
-            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row+1][column].split("\\.")[2])));
-            				else if(open.equals(Orientation.WEST))
-            					treasure.setTeamNo(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row][column-1].split("\\.")[2])));
-            				
-            				System.out.println("treasure: " + treasure.getValue());
-            			}
-            }
-        }
-	}
-
-	private static void generateObjects(final String[] seperatedInfoIJ,
-			Tile tileIJ) {
-		// a Barcode value has been specified
-		if (seperatedInfoIJ.length == 3) {
-			//An object has been specified.
-			if (seperatedInfoIJ[2].equals("V"))
-				tileIJ.setContent(new TreasureObject(tileIJ,0));
-			//A StartTile has been specified
-			else if (seperatedInfoIJ[2].startsWith("S")){
-				Character player = seperatedInfoIJ[2].charAt(1);
-				int pNo = Character.getNumericValue(player);
-				Character oriChar = seperatedInfoIJ[2].charAt(2);
-				Orientation ori = Orientation.switchStringToOrientation(oriChar.toString());
-				StartBase base = new StartBase(tileIJ, pNo, ori);
-				tileIJ.setContent(base);
-			}
-			//only possibility left @3 is a barcode.
-			else{
-				tileIJ.setContent(new Barcode(tileIJ, Integer
-		                .valueOf(seperatedInfoIJ[2]), Orientation
-		                .switchStringToOrientation(seperatedInfoIJ[1])));
-			}
-		    
-		}
-
-		//A StartTile has been specified
-		if (seperatedInfoIJ.length == 4) {
-			Character player = seperatedInfoIJ[3].charAt(1);
-			int pNo = Character.getNumericValue(player);
-			Character oriChar = seperatedInfoIJ[3].charAt(2);
-			Orientation ori = Orientation.switchStringToOrientation(oriChar.toString());
-			StartBase base = new StartBase(tileIJ, pNo, ori);
-			tileIJ.setContent(base);
-		}
-	}
-
-	private static void generateStructures(final String[] seperatedInfoIJ,
-			Tile tileIJ) {
-		if (seperatedInfoIJ[0].equals("Cross")) {
-		    createCrossFromTile(tileIJ);
-		} else if (seperatedInfoIJ[0].equals("Straight")) {
-		    createStraightFromTile(
-		            tileIJ,
-		            Orientation
-		                    .switchStringToOrientation(seperatedInfoIJ[1]));
-
-		} else if (seperatedInfoIJ[0].equals("Corner")) {
-		    createCornerFromTile(
-		            tileIJ,
-		            Orientation
-		                    .switchStringToOrientation(seperatedInfoIJ[1]));
-
-		} else if (seperatedInfoIJ[0].equals("T")) {
-		    createTFromTile(
-		            tileIJ,
-		            Orientation
-		                    .switchStringToOrientation(seperatedInfoIJ[1]));
-
-		} else if (seperatedInfoIJ[0].equals("DeadEnd")) {
-		    createDeadEndFromTile(
-		            tileIJ,
-		            Orientation
-		                    .switchStringToOrientation(seperatedInfoIJ[1]));
-		} else if (seperatedInfoIJ[0].equals("Closed")){
-			createClosedFromTile(tileIJ);
-		} else if (seperatedInfoIJ[0].equals("Seesaw")){
-			createSeesawFromTile(tileIJ, Orientation
-		                    .switchStringToOrientation(seperatedInfoIJ[1]));
-		}
-	}
 
     private static String[][] createInfoMatrixFromFile(final File f) {
 	    int collums;
 	    int rows;
+	    String strRead;
 	    try {
+	        //Setup I/O
+	        final BufferedReader readbuffer = new BufferedReader(new FileReader(f));
 	
-	        // Setup I/O
-	        final BufferedReader readbuffer = new BufferedReader(
-	                new FileReader(f));
-	        String strRead;
-	
-	        // Read first line, extract Map-dimensions.
+	        //Read first line, extract Map-dimensions.
 	        strRead = readbuffer.readLine();
 	        final String values[] = strRead.split(" ");
 	        collums = Integer.valueOf(values[0]);
@@ -192,117 +45,169 @@ public class MapReader {
 	        final String[][] tileTypes = new String[rows][collums];
 	        int lineNo = 0;
 	        while ((strRead = readbuffer.readLine()) != null) {
-	            int collumNo = 0;
-	
-	            // Seperate comment from non-comment
+	            //Separate comment from non-comment
 	            final String splitComment[] = strRead.split("#");
 	
-	            // Filter whitespace
+	            //Filter whitespace and split information on tabs
 	            if (isValuableString(splitComment[0])) {
-	
-	                // Split information on tabs
 	                final String splitarray[] = splitComment[0].split("\t");
-	
-	                for (final String string : splitarray) {
-	                    if (isValuableString(string)) {
+		            int collumNo = 0;
+	                for (final String string : splitarray)
+	                    if (isValuableString(string))
 	                        tileTypes[lineNo][collumNo++] = string;
-	                    }
-	                }
-	
 	                lineNo++;
 	            }
 	        }
-	        readbuffer.close(); // toegevoegd om warning weg te werken, geeft
-	                            // geen errors?
+	        readbuffer.close();
 	        return tileTypes;
-	
 	    } catch (final Exception e) {
-	        System.err
-	                .println("[I/O] Sorry, something went wrong reading the File.");
-	    }
-	
-	    return new String[0][0];
-	
-	}
-
-    private static void createDeadEndFromTile(final Tile t,
-	        final Orientation orientation) {
-	
-	    for (final Orientation ori : Orientation.values()) {
-	        if (!ori.equals(orientation.getOppositeOrientation())) {
-	            t.getEdge(ori).replaceObstruction(Obstruction.WALL);
-	        }
-	        else
-	        {
-	        	t.getEdge(ori).replaceObstruction(Obstruction.WHITE_LINE);
-	        }
+	        System.err.println("[I/O] Sorry, something went wrong reading the File.");
+		    return new String[0][0];
 	    }
 	}
-
-	/**
-	 * Makes sure all edges of this Tile are un-obstructed.
-	 */
-	private static void createCrossFromTile(final Tile t) {
-	    return;
-	}
-
-	private static void createCornerFromTile(final Tile t, final Orientation orientation) {
-	    t.getEdge(orientation).replaceObstruction(Obstruction.WALL);
-	    t.getEdge(orientation.getOtherOrientationCorner()).replaceObstruction(
-	            Obstruction.WALL);
-	    t.getEdge(orientation.getOppositeOrientation()).replaceObstruction(Obstruction.WHITE_LINE);
-	    t.getEdge(orientation.getOppositeOrientation().getOtherOrientationCorner()).replaceObstruction(
-	            Obstruction.WHITE_LINE);
-	}
-
-	private static void createStraightFromTile(final Tile t,
-            final Orientation orientation) {
-        for (final Orientation ori : Orientation.values()) {
-            if ((!(ori.equals(orientation)))
-                    && (!(ori.equals(orientation.getOppositeOrientation())))) {
-                t.getEdge(ori).replaceObstruction(Obstruction.WALL);
-            }
-            else
-            	t.getEdge(ori).replaceObstruction(Obstruction.WHITE_LINE);
-           
-
-        }
-    }
-
-    private static void createTFromTile(final Tile t, final Orientation orientation) {
-    	for (final Orientation ori : Orientation.values()) {
-    		if(ori.equals(orientation))
-    			t.getEdge(ori).replaceObstruction(Obstruction.WALL);
-    		else
-    			t.getEdge(ori).replaceObstruction(Obstruction.WHITE_LINE);
-    	}
-        
-    }
-    
-    private static void createClosedFromTile(final Tile t){
-    	for (final Orientation ori : Orientation.values())
-    		t.getEdge(ori).replaceObstruction(Obstruction.WALL);
-    }
-    
-    private static void createSeesawFromTile(final Tile t, Orientation ori){
-    	createStraightFromTile(t, ori);
-    	Seesaw saw = new Seesaw(t, ori);
-    	t.setContent(saw);
-    }
 
     /**
-     * Checks if this String has any character that isn't a
-     * whitespace-character.
+     * Checks if this String has any character that isn't a whitespace-character.
      */
     private static boolean isValuableString(final String string) {
         final char[] chars = new char[string.length()];
         string.getChars(0, string.length(), chars, 0);
-        for (final char c : chars) {
-            if (!Character.isWhitespace(c)) {
+        for (final char c : chars)
+            if (!Character.isWhitespace(c))
                 return true;
-            }
-        }
-
         return false;
+    }
+
+	private static void generateStructures(final String[] seperatedInfoIJ, Tile tile) {
+		if (seperatedInfoIJ[0].equals("Cross"))
+		    createCrossFromTile(tile);
+		else if (seperatedInfoIJ[0].equals("Straight"))
+		    createStraightFromTile(tile, switchStringToOrientation(seperatedInfoIJ[1]));
+		else if (seperatedInfoIJ[0].equals("Corner"))
+		    createCornerFromTile(tile, switchStringToOrientation(seperatedInfoIJ[1]));
+		else if (seperatedInfoIJ[0].equals("T"))
+		    createTFromTile(tile, switchStringToOrientation(seperatedInfoIJ[1]));
+		else if (seperatedInfoIJ[0].equals("DeadEnd"))
+		    createDeadEndFromTile(tile, switchStringToOrientation(seperatedInfoIJ[1]));
+		else if (seperatedInfoIJ[0].equals("Closed"))
+			createClosedFromTile(tile);
+		else if (seperatedInfoIJ[0].equals("Seesaw"))
+			createSeesawFromTile(tile, switchStringToOrientation(seperatedInfoIJ[1]));
+		else
+			throw new IllegalArgumentException("MapReader.generateStructures: Unchecked structure in the map!");
+	}
+
+	private static void createCrossFromTile(final Tile tile) {
+	    return;
+	}
+
+	private static void createStraightFromTile(final Tile tile, final Orientation orientation) {
+        for (final Orientation ori : Orientation.values()) 
+            if (ori.equals(orientation) || ori.equals(orientation.getOppositeOrientation()))
+            	tile.getEdgeAt(ori).setObstruction(Obstruction.WHITE_LINE);
+            else
+            	tile.getEdgeAt(ori).setObstruction(Obstruction.WALL);
+    }
+
+	private static void createCornerFromTile(final Tile tile, final Orientation orientation) {
+	    tile.getEdgeAt(orientation).setObstruction(Obstruction.WALL);
+	    tile.getEdgeAt(orientation.getCounterClockwiseOrientation()).setObstruction(Obstruction.WALL);
+	    tile.getEdgeAt(orientation.getOppositeOrientation()).setObstruction(Obstruction.WHITE_LINE);
+	    tile.getEdgeAt(orientation.getOppositeOrientation().getCounterClockwiseOrientation()).setObstruction(Obstruction.WHITE_LINE);
+	}
+
+    private static void createTFromTile(final Tile tile, final Orientation orientation) {
+    	for (final Orientation ori : Orientation.values())
+    		if(ori.equals(orientation))
+    			tile.getEdgeAt(ori).setObstruction(Obstruction.WALL);
+    		else
+    			tile.getEdgeAt(ori).setObstruction(Obstruction.WHITE_LINE);
+    }
+
+    private static void createDeadEndFromTile(final Tile tile, final Orientation orientation) {
+	    for (final Orientation ori : Orientation.values())
+	        if (ori.equals(orientation.getOppositeOrientation()))
+	        	tile.getEdgeAt(ori).setObstruction(Obstruction.WHITE_LINE);
+	        else
+	        	tile.getEdgeAt(ori).setObstruction(Obstruction.WALL);
+	}
+    
+    private static void createClosedFromTile(final Tile tile) {
+    	for (final Orientation ori : Orientation.values())
+    		tile.getEdgeAt(ori).setObstruction(Obstruction.WALL);
+    }
+    
+    private static void createSeesawFromTile(final Tile tile, Orientation orientation) {
+    	createStraightFromTile(tile, orientation);
+    	Seesaw saw = new Seesaw(tile, orientation);
+    	tile.setContent(saw);
+    }
+
+	private static void generateObjects(final String[] seperatedInfoIJ, Tile tile) {
+		//An extra value has been found.
+		if (seperatedInfoIJ.length == 3) {
+			//An object has been specified.
+			if (seperatedInfoIJ[2].equals("V"))
+				tile.setContent(new TreasureObject(tile, 0));
+			
+			//A StartTile has been specified.
+			else if (seperatedInfoIJ[2].startsWith("S")) {
+				Character player = seperatedInfoIJ[2].charAt(1);
+				int playerNumber = Character.getNumericValue(player);
+				Character oriChar = seperatedInfoIJ[2].charAt(2);
+				Orientation orientation = switchStringToOrientation(oriChar.toString());
+				StartBase base = new StartBase(tile, playerNumber, orientation);
+				tile.setContent(base);
+			}
+			
+			//A Barcode has been specified.
+			else
+				tile.setContent(new Barcode(tile, Integer.valueOf(seperatedInfoIJ[2]), switchStringToOrientation(seperatedInfoIJ[1])));
+		}
+	}
+    
+    /**
+     * Make sure all treasure-objects get tagged in a correct way.
+     */
+	private static void tagTreasures(final String[][] infoMatrix, MapGraph map) {
+		for (int row = 0; row < infoMatrix.length; row++)
+            for (int column = 0; column < infoMatrix[row].length; column++)
+            	if(map.getTile(new Point(column,row)) != null && map.getTile(new Point(column,row)).getContent() != null && map.getTile(new Point(column,row)).getContent() instanceof TreasureObject) {
+            		TreasureObject treasure = ((TreasureObject)map.getTile(new Point(column,row)).getContent());
+            		
+            		//Get location of barcode value.
+            		Orientation orientation = switchStringToOrientation(infoMatrix[row][column].split("\\.")[1]).getOppositeOrientation();
+            		
+            		//Get the player-number from the right barcode and update the object with it.
+            		if(orientation.equals(Orientation.NORTH))
+            			treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row-1][column].split("\\.")[2])));
+            		else if(orientation.equals(Orientation.EAST))
+            			treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row][column+1].split("\\.")[2])));
+            		else if(orientation.equals(Orientation.SOUTH))
+            			treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row+1][column].split("\\.")[2])));
+            		else if(orientation.equals(Orientation.WEST))
+            			treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(infoMatrix[row][column-1].split("\\.")[2])));
+            		
+            		//Get the team-number from the right barcode and update the object with it.
+            		if(orientation.equals(Orientation.NORTH))
+            			treasure.setTeamNumber(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row-1][column].split("\\.")[2])));
+            		else if(orientation.equals(Orientation.EAST))
+            			treasure.setTeamNumber(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row][column+1].split("\\.")[2])));
+            		else if(orientation.equals(Orientation.SOUTH))
+            			treasure.setTeamNumber(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row+1][column].split("\\.")[2])));
+            		else if(orientation.equals(Orientation.WEST))
+            			treasure.setTeamNumber(Barcode.getTeamNumberFrom(Integer.valueOf(infoMatrix[row][column-1].split("\\.")[2])));
+            	}
+	}
+	
+    private static Orientation switchStringToOrientation(final String string) {
+        if (string.equals("N"))
+            return Orientation.NORTH;
+        else if (string.equals("S"))
+            return Orientation.SOUTH;
+        else if (string.equals("E"))
+            return Orientation.EAST;
+        else
+            return Orientation.WEST;
     }
 }

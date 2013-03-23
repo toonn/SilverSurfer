@@ -4,20 +4,11 @@ import commands.BarcodeCommand;
 
 public class TreasureObject extends TileContent {
 	
-	private int teamNo;
+	private int teamNumber;
 
-	/**
-     * Creates an object with as value 'value'.
-     */
     public TreasureObject(final Tile tile, final int value) {
         super(tile, value);
     }
-    
-	@Override
-	public int getColorValue(double x, double y) {
-		//Only for barcodes
-		return 0;
-	}
 
 	public int getColor() {
 		int color = -1;
@@ -29,14 +20,15 @@ public class TreasureObject extends TileContent {
 		return color;
 	}
 	
-	/**
-	 * Get the destined team (0 or 1).
-	 */
-	public int getTeamNo() {
-		return teamNo;
+	public int getTeamNumber() {
+		return teamNumber;
 	}
 	
-	public void setTeamNo(int teamNo) {
-		this.teamNo = teamNo;
+	public void setTeamNumber(int teamNumber) {
+		this.teamNumber = teamNumber;
 	}
+    
+    public void setValue(final int value) {
+        this.value = value;
+    }
 }

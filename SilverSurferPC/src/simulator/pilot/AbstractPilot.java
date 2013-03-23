@@ -107,7 +107,7 @@ public abstract class AbstractPilot implements PilotInterface {
 		angle = 270;
 		speed = 2;
 		mapGraphConstructed = new MapGraph();
-		mapGraphConstructed.addTileXY(getMatrixPosition());
+		mapGraphConstructed.addTile(getMatrixPosition());
 	}
 
 	public abstract String getConsoleTag();
@@ -136,15 +136,15 @@ public abstract class AbstractPilot implements PilotInterface {
 		final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
 		if (checkForObstruction())
 			getMapGraphConstructed().getTile(getMatrixPosition())
-			.getEdge(currentOrientation)
-			.replaceObstruction(Obstruction.WALL);
+			.getEdgeAt(currentOrientation)
+			.setObstruction(Obstruction.WALL);
 		else {
 			getMapGraphConstructed().getTile(getMatrixPosition())
-			.getEdge(currentOrientation)
-			.replaceObstruction(Obstruction.WHITE_LINE);
+			.getEdgeAt(currentOrientation)
+			.setObstruction(Obstruction.WHITE_LINE);
 			Point nextPoint = currentOrientation.getNext(getMatrixPosition());
 			if(mapGraphConstructed.getTile(nextPoint) == null)
-				getMapGraphConstructed().addTileXY(nextPoint);
+				getMapGraphConstructed().addTile(nextPoint);
 		}
 	}
 

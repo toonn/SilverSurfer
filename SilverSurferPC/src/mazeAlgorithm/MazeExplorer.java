@@ -138,10 +138,10 @@ public class MazeExplorer {
 	 */
 	private void exploreTile(final Tile currentTile) {
 		// numbervariable met als inhoud het getal van de orientatie (N = 1,...)
-		int numberVariable = pilot.getOrientation().getNumberArray();
-
+		int numberVariable = pilot.getOrientation().ordinal();
+		
 		// Array met alle buren van deze tile
-		final ArrayList<Tile> array = currentTile.getAllNeighbours();
+		final ArrayList<Tile> array = currentTile.getNeighbours();
 
 		for (int i = 0; i < 4; i++) {
 			// Do nothing if tile with numbervariable as orientation is already done
@@ -149,7 +149,7 @@ public class MazeExplorer {
 				;
 			else {
 				// TODO +360 zinloos? Zodat angle altijd >= 0 is?
-				double angle = (((numberVariable - pilot.getOrientation() .getNumberArray()) * 90) + 360) % 360;
+				double angle = (((numberVariable - pilot.getOrientation().ordinal()) * 90) + 360) % 360;
 				angle = ExtMath.getSmallestAngle(angle);
 				pilot.rotate(angle);
 				pilot.setObstructionOrTile();
@@ -172,7 +172,7 @@ public class MazeExplorer {
 	private boolean doesHaveOtherNeighboursToCheck(final Tile nextTile) {
 		int j = 0;
 		//if (!nextTile.isStraightTile())
-			for (final Tile neighbourTile : nextTile.getAllNeighbours())
+			for (final Tile neighbourTile : nextTile.getNeighbours())
 				if (neighbourTile != null && neighbourTile.isMarkedExploreMaze())
 					j++;
 		if (j == 4)
@@ -188,22 +188,22 @@ public class MazeExplorer {
 	 */
 	private Tile getPriorityNextTile(final Tile currentTile) {
 		if (isGoodNextTile(currentTile, pilot.getOrientation())) {
-			return currentTile.getEdge(pilot.getOrientation()).getNeighbour(
+			return currentTile.getEdgeAt(pilot.getOrientation()).getNeighbour(
 					currentTile);
 		} else if (isGoodNextTile(currentTile, pilot.getOrientation()
-				.getOtherOrientationCorner())) {
-			return currentTile.getEdge(
-					pilot.getOrientation().getOtherOrientationCorner())
+				.getCounterClockwiseOrientation())) {
+			return currentTile.getEdgeAt(
+					pilot.getOrientation().getCounterClockwiseOrientation())
 					.getNeighbour(currentTile);
 		} else if (isGoodNextTile(currentTile, pilot.getOrientation()
-				.getOtherOrientationCorner().getOppositeOrientation())) {
-			return currentTile.getEdge(
-					pilot.getOrientation().getOtherOrientationCorner()
+				.getCounterClockwiseOrientation().getOppositeOrientation())) {
+			return currentTile.getEdgeAt(
+					pilot.getOrientation().getCounterClockwiseOrientation()
 					.getOppositeOrientation())
 					.getNeighbour(currentTile);
 		} else if (isGoodNextTile(currentTile, pilot.getOrientation()
 				.getOppositeOrientation())) {
-			return currentTile.getEdge(
+			return currentTile.getEdgeAt(
 					pilot.getOrientation().getOppositeOrientation())
 					.getNeighbour(currentTile);
 		}
@@ -228,9 +228,9 @@ public class MazeExplorer {
 	 * @return
 	 */
 	private boolean isGoodNextTile(final Tile currentTile,final Orientation orientation) {
-		return currentTile.getEdge(orientation).isPassable()
-		&& currentTile.getEdge(orientation).getNeighbour(currentTile) != null
-		&& queue.contains(currentTile.getEdge(orientation)
+		return currentTile.getEdgeAt(orientation).isPassable()
+		&& currentTile.getEdgeAt(orientation).getNeighbour(currentTile) != null
+		&& queue.contains(currentTile.getEdgeAt(orientation)
 				.getNeighbour(currentTile));
 	}
 
@@ -243,13 +243,13 @@ public class MazeExplorer {
 	// Gebruikt door nieuw algoritme (bijhouden voor later)
 	@SuppressWarnings("unused")
 	private void updateQueue(Tile currentTile) {
-		ArrayList<Tile> array = currentTile.getAllNeighbours();
-		int numberVariable = pilot.getOrientation().getNumberArray();
+		ArrayList<Tile> array = currentTile.getNeighbours();
+		int numberVariable = pilot.getOrientation().ordinal();
 		for (int i = 0; i < 4; i++) {
 			if (!allTiles.contains(array.get(numberVariable))) {
 				double angle = ExtMath
 				.getSmallestAngle((((numberVariable - pilot
-						.getOrientation().getNumberArray()) * 90) + 360) % 360);
+						.getOrientation().ordinal()) * 90) + 360) % 360);
 				pilot.rotate(angle);
 				// // TODO: robot checkforobstruction
 				// if (communicator.getPilot().checkForObstruction())

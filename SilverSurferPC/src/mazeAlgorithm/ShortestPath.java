@@ -25,15 +25,13 @@ public class ShortestPath {
     private Tile endTile;
     private AbstractPilot pilot;
 
-    public ShortestPath(final AbstractPilot pilot, final Tile startTile,
-            final Tile endTile, final Vector<Tile> tiles) {
+    public ShortestPath(final AbstractPilot pilot, final Tile startTile, final Tile endTile, final Vector<Tile> tiles) {
         this.pilot = pilot;
         this.tiles = tiles;
         this.startTile = startTile;
         this.endTile = endTile;
-        for (final Tile tile : tiles) {
+        for (final Tile tile : tiles)
             tile.setMarkingShortestPath(false);
-        }
     }
 
     /**
@@ -128,13 +126,15 @@ public class ShortestPath {
         if (tilesPath.size() == 1)
             return currentAmount;
         for (int i = 0; i < tilesPath.size() - 1; i++) {
-            final Orientation orientation = tilesPath.get(i)
-                    .getCommonOrientation(tilesPath.get(i + 1));
+        	Orientation orientation = null;
+        	for(Orientation ori : Orientation.values())
+        		if(tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
+        			orientation = ori;
             if (tilesPath.size() - i > 2)
                 pilot.setReadBarcodes(false);
             else
                 pilot.setReadBarcodes(true);
-            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getRightAngle() - pilot.getAngle())));
+            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
             if(align && currentAmount == 0) {
             	pilot.alignOnWhiteLine();
             	currentAmount = amountOfTilesUntilAlign;
@@ -148,7 +148,7 @@ public class ShortestPath {
         }
 
         for (final Object tile : getTiles())
-            ((Tile) tile).setCostBackToInitiatedValue();
+            ((Tile) tile).resetCost();
         return currentAmount;
     }
 

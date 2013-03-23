@@ -98,7 +98,7 @@ public class DummyPilot implements PilotInterface {
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
         angle = 270;
         mapGraphConstructed = new MapGraph();
-        mapGraphConstructed.addTileXY(getMatrixPosition());
+        mapGraphConstructed.addTile(getMatrixPosition());
     }
 
     public void setMap(MapGraph newMap) {

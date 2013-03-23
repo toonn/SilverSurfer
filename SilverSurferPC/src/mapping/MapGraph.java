@@ -13,69 +13,21 @@ public class MapGraph {
 
     private final Map<Point, Tile> tiles = new HashMap<Point, Tile>();
 
-    public void addContentToCurrentTile(final Point point, final TileContent content) {
-        // TODO Wat als point == null?
-        getTile(point).setContent(content);
+    public Collection<Tile> getTiles() {
+        return tiles.values();
     }
 
-    /**
-     * Adds a given obstruction to the edge on the given orientation of the tile on the given point
-     */
-    public void addObstruction(final Point point, final Orientation orientation, final Obstruction obst) {
-    	try {
-            if (getTile(point) == null)
-                throw new IllegalArgumentException( "currenttile is null in addObstruction");
-            else if (getTile(point).getEdge(orientation) == null) {
-                // TODO ??? Volgens Tile is er een invar Tile.getEdge(direction) !=
-                // null
-                throw new IllegalArgumentException("edge is null in addobstruction");
-            }
-
-            getTile(point).getEdge(orientation).setObstruction(obst);
-    	} catch(Exception e) {
-    		System.out.println("[Exception] Exception at MapGraph.addObstruction(point, orientation, obst)!");
-    	}
+    public Tile getTile(final Point point) {
+        return tiles.get(point);
     }
-
-    /**
-     * Add a tile to the map and connect it to its neighbours
-     * @param point
-     */
-    public void addTileXY(final Point point) {
-        Tile tile = new Tile(point);
-        tiles.put(point, tile);
-
-        Set<Tile> neighbourTiles = new HashSet<Tile>();
-        neighbourTiles.add(tiles.get(new Point((int) point.getX() - 1,
-                (int) point.getY())));
-        neighbourTiles.add(tiles.get(new Point((int) point.getX() + 1,
-                (int) point.getY())));
-        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
-                .getY() - 1)));
-        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
-                .getY() + 1)));
-
-        for (final Tile neighbourTile : neighbourTiles) {
-            Orientation orientation = null;
-            if (neighbourTile != null)
-                if (tile.getPosition().getX() < neighbourTile.getPosition()
-                        .getX())
-                    orientation = Orientation.EAST;
-                else if (tile.getPosition().getX() > neighbourTile
-                        .getPosition().getX())
-                    orientation = Orientation.WEST;
-                else if (tile.getPosition().getY() < neighbourTile
-                        .getPosition().getY())
-                    orientation = Orientation.SOUTH;
-                else if (tile.getPosition().getY() > neighbourTile
-                        .getPosition().getY())
-                    orientation = Orientation.NORTH;
-            if (orientation != null) {
-                tile.replaceEdge(orientation, neighbourTile.getEdge(orientation
-                        .getOppositeOrientation()));
-            }
-        }
-    }
+    
+    public ArrayList<Tile> getStartTiles() {
+    	ArrayList<Tile> startTiles = new ArrayList<Tile>();
+		for (Tile tile : getTiles())
+			if (tile.getContent() instanceof StartBase)
+				startTiles.add(tile);
+		return startTiles;
+	}
 
     public Point getMapSize() {
         int[] minMax = new int[4];
@@ -88,139 +40,95 @@ public class MapGraph {
         for (Tile tilee : tiles.values()) {
             int x = tilee.getPosition().x;
             int y = tilee.getPosition().y;
-            if (x < minMax[0]) {
+            if (x < minMax[0])
                 minMax[0] = x;
-            } else if (x > minMax[2]) {
+            else if (x > minMax[2])
                 minMax[2] = x;
-            }
-            if (y < minMax[1]) {
+            if (y < minMax[1])
                 minMax[1] = y;
-            } else if (y > minMax[3]) {
+            else if (y > minMax[3])
                 minMax[3] = y;
-            }
         }
-
-        return new Point(Math.abs(minMax[0] - minMax[2]), Math.abs(minMax[1]
-                - minMax[3]));
-    }
-
-    /**
-     * Returns the obstruction on the given orientation of the current tile.
-     * ofwel wall ofwel null
-     */
-    public Obstruction getObstruction(final Point point,
-            final Orientation orientation) {
-        return getTile(point).getEdge(orientation).getObstruction();
-    }
-
-    public Tile getTile(final Point point) {
-        return tiles.get(point);
-    }
-
-    public Collection<Tile> getTiles() {
-        return tiles.values();
+        return new Point(Math.abs(minMax[0] - minMax[2]), Math.abs(minMax[1] - minMax[3]));
     }
     
-    /**
-     * @return	All Tiles in this map that contain a StartBase.
-     */
-    public ArrayList<Tile> getStartTiles() {
-    	ArrayList<Tile> startTiles = new ArrayList<Tile>();
-    	
-		for (Tile t : getTiles())
-			if (t.getContent() instanceof StartBase){
-				startTiles.add(t);
-			System.out.println("added");
-			}
-		return startTiles;
-
-	}
-    // @SuppressWarnings("unused")
-    // private void removeTile(final Point point) {
-    // getTile(point).terminate();
-    // tiles.remove(point);
-    // }
-    
-    /**
-     * Flips all the seesaws with the given value to the other side.
-     */
-    public void flipSeesaw(int value) {
-    	for (Tile tile: getTiles())
-    		if(tile.getContent() instanceof Seesaw && tile.getContent().getValue() == value)
-    			((Seesaw) tile.getContent()).flipSeesaw();
-    }
-
-    public void mergeMap(MapGraph map2, Point map1tile1, Point map1tile2, Point map2tile1, Point map2tile2 ){
-	   	
-    	int translatedxmap1 = (int) (map1tile2.getX()-map1tile1.getX());
-    	int translatedymap1 = (int) (map1tile2.getY()-map1tile1.getY());
-    	
-    	int translatedxmap2 = (int) (map2tile2.getX()-map2tile1.getX());
-    	int translatedymap2 = (int) (map2tile2.getY()-map2tile1.getY());
-    	
-    	float sinA = (float) ((translatedymap1 - translatedxmap1/translatedxmap2*translatedymap2)/((Math.pow(translatedymap2, 2))/translatedxmap2 + translatedxmap2));
-    	float cosA = (float) ((translatedymap1 - translatedxmap2*sinA)/translatedymap2);
-    
-    	for(Tile tile:map2.getTiles()){
-    		int convertedX = (int) (cosA*tile.getPosition().getX() - sinA*tile.getPosition().getY() - cosA*map2tile1.getX()+sinA*map2tile1.getY() + map1tile1.getX());
-    		int convertedY = (int) (cosA*tile.getPosition().getY() + sinA*tile.getPosition().getX() - sinA*map2tile1.getX() - cosA*map2tile1.getY() + map1tile1.getY());
-
-    		if(!this.tiles.containsKey(new Point(convertedX, convertedY))){
-    			Tile copiedTile = tile.clone();
-    			setExistingTile(copiedTile);
-    		}
-    		
-    		else{
-    			for(Orientation orientation:Orientation.values()){
-    				if(this.getTile(new Point(convertedX, convertedY)).getEdge(orientation).getObstruction() == null)
-    				{
-    					this.getTile(new Point(convertedX, convertedY)).getEdge(orientation).setObstruction(
-    							tile.getEdge(orientation).getObstruction());    				
-    				}
-    			}
-    		}
-    	}
-    	
-    }
-    
-    private void setExistingTile(Tile tile){
-   	 Point point = tile.getPosition();
+    public void addTile(final Point point) {
+        Tile tile = new Tile(point);
         tiles.put(point, tile);
 
         Set<Tile> neighbourTiles = new HashSet<Tile>();
-        neighbourTiles.add(tiles.get(new Point((int) point.getX() - 1,
-                (int) point.getY())));
-        neighbourTiles.add(tiles.get(new Point((int) point.getX() + 1,
-                (int) point.getY())));
-        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
-                .getY() - 1)));
-        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
-                .getY() + 1)));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() - 1, (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() + 1, (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point.getY() - 1)));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point.getY() + 1)));
 
         for (final Tile neighbourTile : neighbourTiles) {
             Orientation orientation = null;
             if (neighbourTile != null)
-                if (tile.getPosition().getX() < neighbourTile.getPosition()
-                        .getX())
-                    orientation = Orientation.EAST;
-                else if (tile.getPosition().getX() > neighbourTile
-                        .getPosition().getX())
+                if (tile.getPosition().getX() < neighbourTile.getPosition().getX())
+                	orientation = Orientation.EAST;
+                else if (tile.getPosition().getX() > neighbourTile.getPosition().getX())
                     orientation = Orientation.WEST;
-                else if (tile.getPosition().getY() < neighbourTile
-                        .getPosition().getY())
+                else if (tile.getPosition().getY() < neighbourTile.getPosition().getY())
                     orientation = Orientation.SOUTH;
-                else if (tile.getPosition().getY() > neighbourTile
-                        .getPosition().getY())
+                else if (tile.getPosition().getY() > neighbourTile.getPosition().getY())
                     orientation = Orientation.NORTH;
-            if (orientation != null) {
-           	 if(neighbourTile.getEdge(orientation).getObstruction() != null){
-                tile.replaceEdge(orientation, neighbourTile.getEdge(orientation
-                        .getOppositeOrientation()));}
-           	 else{
-           		 neighbourTile.replaceEdge(orientation.getOppositeOrientation(), neighbourTile.getEdge(orientation));
-           	 }}}
-            }
-            
+            if (orientation != null)
+                tile.replaceEdge(orientation, neighbourTile.getEdgeAt(orientation.getOppositeOrientation()));
+        }
+    }
+
+    private void mergeMap(MapGraph map2, Point map1tile1, Point map1tile2, Point map2tile1, Point map2tile2 ) {
+    	int translatedxmap1 = (int) (map1tile2.getX()-map1tile1.getX());
+    	int translatedymap1 = (int) (map1tile2.getY()-map1tile1.getY());
+    	int translatedxmap2 = (int) (map2tile2.getX()-map2tile1.getX());
+    	int translatedymap2 = (int) (map2tile2.getY()-map2tile1.getY());
+    	float sinA = (float) ((translatedymap1 - translatedxmap1/translatedxmap2*translatedymap2)/((Math.pow(translatedymap2, 2))/translatedxmap2 + translatedxmap2));
+    	float cosA = (float) ((translatedymap1 - translatedxmap2*sinA)/translatedymap2);
+    	for(Tile tile:map2.getTiles()) {
+    		int convertedX = (int) (cosA*tile.getPosition().getX() - sinA*tile.getPosition().getY() - cosA*map2tile1.getX()+sinA*map2tile1.getY() + map1tile1.getX());
+    		int convertedY = (int) (cosA*tile.getPosition().getY() + sinA*tile.getPosition().getX() - sinA*map2tile1.getX() - cosA*map2tile1.getY() + map1tile1.getY());
+
+    		if(!this.tiles.containsKey(new Point(convertedX, convertedY))) {
+    			Tile copiedTile = tile.clone();
+    			setExistingTile(copiedTile);
+    		}
+    		else
+    			for(Orientation orientation:Orientation.values())
+    				if(this.getTile(new Point(convertedX, convertedY)).getEdgeAt(orientation).getObstruction() == null)
+    					this.getTile(new Point(convertedX, convertedY)).getEdgeAt(orientation).setObstruction(tile.getEdgeAt(orientation).getObstruction());
+    	}
+    }
+    
+    private void setExistingTile(Tile tile) {
+    	Point point = tile.getPosition();
+        tiles.put(point, tile);
+
+        Set<Tile> neighbourTiles = new HashSet<Tile>();
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() - 1, (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() + 1, (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point.getY() - 1)));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point.getY() + 1)));
+
+        for (final Tile neighbourTile : neighbourTiles) {
+        	Orientation orientation = null;
+        	if (neighbourTile != null)
+                if (tile.getPosition().getX() < neighbourTile.getPosition().getX())
+                    orientation = Orientation.EAST;
+                else if (tile.getPosition().getX() > neighbourTile.getPosition().getX())
+                    orientation = Orientation.WEST;
+                else if (tile.getPosition().getY() < neighbourTile.getPosition().getY())
+                    orientation = Orientation.SOUTH;
+                else if (tile.getPosition().getY() > neighbourTile.getPosition().getY())
+                    orientation = Orientation.NORTH;
+        	if (orientation != null) {
+        		if(neighbourTile.getEdgeAt(orientation).getObstruction() != null)
+        			tile.replaceEdge(orientation, neighbourTile.getEdgeAt(orientation.getOppositeOrientation()));
+        		else
+        			neighbourTile.replaceEdge(orientation.getOppositeOrientation(), neighbourTile.getEdgeAt(orientation));
+        	}
+        }
+    }
             
     @Override
     public String toString() {
@@ -231,16 +139,14 @@ public class MapGraph {
         for (Point point : tiles.keySet()) {
             final int x = (int) point.getX();
             final int y = (int) point.getY();
-            if (x < minX) {
+            if (x < minX)
                 minX = x;
-            } else if (x > maxX) {
+            else if (x > maxX)
                 maxX = x;
-            }
-            if (y < minY) {
+            if (y < minY)
                 minY = y;
-            } else if (y > maxY) {
+            else if (y > maxY)
                 maxY = y;
-            }
         }
 
         List<List<String>> columnListList = new ArrayList<List<String>>();
@@ -249,18 +155,16 @@ public class MapGraph {
             for (int y = minY; y <= maxY; y++) {
                 Tile tile = getTile(new Point(x, y));
                 List<String> tileString = new ArrayList<String>();
-
                 if (tile == null) {
                     tileString.add("0000");
                     tileString.add("0000");
                     tileString.add("0000");
-                } else {
+                }
+                else
                     for (String s : tile.toString().split("\n"))
                         tileString.add(s);
-                }
                 if (y != minY)
                     tileString.remove(0);
-
                 for (String s : tileString) {
                     if (x != minX)
                         s = s.substring(1, s.length());
@@ -272,12 +176,10 @@ public class MapGraph {
 
         String mapGraphString = "";
         for (int row = 0; row < columnListList.get(0).size(); row++) {
-            for (List<String> column : columnListList) {
+            for (List<String> column : columnListList)
                 mapGraphString += column.get(row);
-            }
             mapGraphString += "\n";
         }
-
         return mapGraphString;
     }
 }

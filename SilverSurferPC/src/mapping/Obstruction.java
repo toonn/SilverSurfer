@@ -32,7 +32,5 @@ public enum Obstruction {
         }
     };
 
-    public boolean isPassable() {
-        return true;
-    }
+    public abstract boolean isPassable();
 }

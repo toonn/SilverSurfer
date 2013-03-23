@@ -188,10 +188,7 @@ public class SimulationPilot extends AbstractPilot {
             mean = SimulationSensorData.getMWhiteLineLS();
             standardDeviation = SimulationSensorData.getSDWhiteLineLS();
         } else if (onBarcodeTile(coordinates[0], coordinates[1])) {
-            final int color = mapGraphLoaded
-                    .getTile(getMatrixPosition())
-                    .getContent()
-                    .getColorValue(coordinates[0] % sizeTile(),
+            final int color = ((Barcode)(mapGraphLoaded.getTile(getMatrixPosition()).getContent())).getColorValue(coordinates[0] % sizeTile(),
                             coordinates[1] % sizeTile());
             mean = SimulationSensorData.getMBarcodeTileLS(color);
             standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
@@ -219,9 +216,7 @@ public class SimulationPilot extends AbstractPilot {
     // True if the robot is on an edge and this edge is not a wall
     private boolean onWhiteLine(final double x, final double y) {
         return pointOnEdge(x, y)
-                && (mapGraphLoaded == null || mapGraphLoaded.getObstruction(
-                        getMatrixPosition(),
-                        Orientation.calculateOrientation(getAngle())) != Obstruction.WALL);
+                && (mapGraphLoaded == null || mapGraphLoaded.getTile(getMatrixPosition()).getEdgeAt(Orientation.calculateOrientation(getAngle())).getObstruction() != Obstruction.WALL);
     }
 
     // True if the robot is not on an edge, but on a tile containing a barcode.
@@ -267,13 +262,13 @@ public class SimulationPilot extends AbstractPilot {
 
         // Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een
         // maximum van 3)
-        if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL) {
-            tile = tile.getEdge(orientation).getNeighbour(tile);
-            if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL) {
-                tile = tile.getEdge(orientation).getNeighbour(tile);
-                if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL) {
-                    tile = tile.getEdge(orientation).getNeighbour(tile);
-                    if (tile.getEdge(orientation).getObstruction() != Obstruction.WALL)
+        if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL) {
+            tile = tile.getEdgeAt(orientation).getNeighbour(tile);
+            if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL) {
+                tile = tile.getEdgeAt(orientation).getNeighbour(tile);
+                if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL) {
+                    tile = tile.getEdgeAt(orientation).getNeighbour(tile);
+                    if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL)
                         return 250;
                     else
                         amountOfTilesVisible = 3;
@@ -307,11 +302,11 @@ public class SimulationPilot extends AbstractPilot {
     private int recursiveInfraRed(Point currentPoint, int nbOfTilesToLook) {
         if (nbOfTilesToLook < 0
                 || mapGraphLoaded.getTile(currentPoint)
-                        .getEdge(getOrientation()).getObstruction() == Obstruction.WALL
+                        .getEdgeAt(getOrientation()).getObstruction() == Obstruction.WALL
                 || mapGraphLoaded.getTile(currentPoint)
-                        .getEdge(getOrientation()).getObstruction() == Obstruction.SEESAW_DOWN)
+                        .getEdgeAt(getOrientation()).getObstruction() == Obstruction.SEESAW_DOWN)
             return (int) SimulationSensorData.getMNoInfraRedIS();
-        else if (mapGraphLoaded.getTile(currentPoint).getEdge(getOrientation())
+        else if (mapGraphLoaded.getTile(currentPoint).getEdgeAt(getOrientation())
                 .getObstruction() == Obstruction.SEESAW_UP)
             return (int) SimulationSensorData.getMSeesawIS();
         else
@@ -324,8 +319,7 @@ public class SimulationPilot extends AbstractPilot {
         if (mapGraphLoaded.getTile(getMatrixPosition()).getContent() == null
                 || !(mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode))
             return -1;
-        int value = mapGraphLoaded.getTile(getMatrixPosition()).getContent()
-                .getValue();
+        int value = mapGraphLoaded.getTile(getMatrixPosition()).getContent().getValue();
         return value;
     }
 

@@ -2,21 +2,14 @@ package mapping;
 
 public class StartBase extends TileContent{
 
-	private Orientation ori;
+	private Orientation orientation;
 	
-	protected StartBase(Tile tile, int value, Orientation ori) {
+	public StartBase(Tile tile, int value, Orientation orientation) {
 		super(tile, value);
-		this.ori = ori;
-	}
-
-	@Override
-	public int getColorValue(double x, double y) {
-		// TODO Auto-generated method stub
-		return 0;
+		this.orientation = orientation;
 	}
 	
 	public Orientation getOrientation() {
-		return ori;
+		return orientation;
 	}
-
 }

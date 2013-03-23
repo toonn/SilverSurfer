@@ -251,9 +251,9 @@ public class SimulatorPanel extends JPanel {
 
     private void setOnStartTile(PilotInterface pilot) {
     	
-    	for (Tile t : mapGraphLoaded.getStartTiles())
-			if (t.getContent().getValue() == pilot.getPlayerNumber()){
-				Point tPos = t.getPosition();
+    	for (Tile tile : mapGraphLoaded.getStartTiles())
+			if (tile.getContent().getValue() == pilot.getPlayerNumber()){
+				Point tPos = tile.getPosition();
 				pilot.setPosition(tPos.x*40+20,tPos.y*40+20);
 			}	
 	}

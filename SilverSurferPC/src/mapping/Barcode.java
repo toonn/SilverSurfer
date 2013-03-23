@@ -48,7 +48,6 @@ public class Barcode extends TileContent {
      *         on a white part of the barcode something else, when standing next
      *         to the barcode but on the same tile (brown underground)
      */
-    @Override
     public int getColorValue(final double x, final double y) {
         if (getDirection() == Orientation.NORTH
                 || getDirection() == Orientation.SOUTH) {
@@ -136,7 +135,7 @@ public class Barcode extends TileContent {
     	String binaryExp = "000000000000".concat(binaryRep);
     	int length = binaryExp.length();
     	//see barcode specification doc.
-    	System.out.println("player:" + binaryExp.substring(length-2,length));
+    	System.out.println("Barcodeklasse: playerofbarcode??:" + binaryExp.substring(length-2,length));
     	int playerNo = Integer.parseInt(binaryExp.substring(length-2,length),2);
     	return playerNo;
 	}

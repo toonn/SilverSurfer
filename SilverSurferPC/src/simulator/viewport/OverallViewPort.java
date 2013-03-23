@@ -39,8 +39,17 @@ public class OverallViewPort extends AbstractViewPort {
 			if(tile.getContent() instanceof Seesaw)
 				for(PilotInterface pilot : pilots) 
 					if(pilot.getMatrixPosition().equals(tile.getPosition()) && ((Seesaw)tile.getContent()).isUp()) {
-							mapGraphLoaded.flipSeesaw(tile.getContent().getValue());
-							pilot.getMapGraphConstructed().flipSeesaw(tile.getContent().getValue());
+							flipSeesaw(tile.getContent().getValue(), mapGraphLoaded);
+							flipSeesaw(tile.getContent().getValue(), pilot.getMapGraphConstructed());
 					}
 	}
+    
+    /**
+     * Flips all the seesaws with the given value to the other side.
+     */
+    private void flipSeesaw(int value, MapGraph map) {
+    	for (Tile tile: map.getTiles())
+    		if(tile.getContent() instanceof Seesaw && tile.getContent().getValue() == value)
+    			((Seesaw) tile.getContent()).flipSeesaw();
+    }
 }
