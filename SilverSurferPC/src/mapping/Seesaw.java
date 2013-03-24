@@ -3,15 +3,11 @@ package mapping;
 public class Seesaw extends TileContent {
 	
 	private Orientation orientation;
-	private boolean positionIsKnown;
+	private boolean closed = false;
+	private Seesaw otherSeesaw;
 
 	public Seesaw(final Tile tile, final Orientation orientation) {
 		super(tile, 0);
-		this.orientation = orientation;
-	}
-	
-	public Seesaw(final Tile tile, final Orientation orientation, int value) {
-		super(tile, value);
 		this.orientation = orientation;
 	}
 
@@ -40,12 +36,20 @@ public class Seesaw extends TileContent {
     public void setValue(final int value) {
         this.value = value;
     }
-    
-    public boolean getPositionIsKnown() {
-		return positionIsKnown;
+	
+	public boolean isClosed() {
+		return closed;
 	}
 	
-	public void setPositionIsKnown(boolean positionIsknown) {
-		this.positionIsKnown = positionIsknown;
+	public void switchClosed() {
+		closed = !closed;
+	}
+	
+	public Seesaw getOtherSeesaw() {
+		return otherSeesaw;
+	}
+	
+	public void setOtherSeesaw(Seesaw otherSeesaw) {
+		this.otherSeesaw = otherSeesaw;
 	}
 }

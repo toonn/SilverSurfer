@@ -217,6 +217,9 @@ public class MapReader {
             						index = i;
             				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setValue(index);
             				((Seesaw)(map.getTile(new Point(column,row+1)).getContent())).setValue(index);
+            				((Seesaw)(map.getTile(new Point(column,row+1)).getContent())).switchClosed();
+            				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column,row+1)).getContent()));
+            				((Seesaw)(map.getTile(new Point(column,row+1)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column,row)).getContent()));
             				map.getTile(new Point(column,row)).getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.SEESAW_DOWN);
             				map.getTile(new Point(column,row+1)).getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.SEESAW_UP);
             			}
@@ -226,6 +229,9 @@ public class MapReader {
             						index = i;
             				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setValue(index);
             				((Seesaw)(map.getTile(new Point(column,row+1)).getContent())).setValue(index);
+            				((Seesaw)(map.getTile(new Point(column,row)).getContent())).switchClosed();
+            				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column,row+1)).getContent()));
+            				((Seesaw)(map.getTile(new Point(column,row+1)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column,row)).getContent()));
             				map.getTile(new Point(column,row)).getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.SEESAW_UP);
             				map.getTile(new Point(column,row+1)).getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.SEESAW_DOWN);
             			}
@@ -241,6 +247,9 @@ public class MapReader {
             						index = i;
             				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setValue(index);
             				((Seesaw)(map.getTile(new Point(column-1,row)).getContent())).setValue(index);
+            				((Seesaw)(map.getTile(new Point(column-1,row)).getContent())).switchClosed();
+            				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column-1,row)).getContent()));
+            				((Seesaw)(map.getTile(new Point(column-1,row)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column,row)).getContent()));
             				map.getTile(new Point(column,row)).getEdgeAt(Orientation.EAST).setObstruction(Obstruction.SEESAW_DOWN);
             				map.getTile(new Point(column-1,row)).getEdgeAt(Orientation.WEST).setObstruction(Obstruction.SEESAW_UP);
             			}
@@ -250,6 +259,9 @@ public class MapReader {
             						index = i;
             				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setValue(index);
             				((Seesaw)(map.getTile(new Point(column-1,row)).getContent())).setValue(index);
+            				((Seesaw)(map.getTile(new Point(column,row)).getContent())).switchClosed();
+            				((Seesaw)(map.getTile(new Point(column,row)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column-1,row)).getContent()));
+            				((Seesaw)(map.getTile(new Point(column-1,row)).getContent())).setOtherSeesaw((Seesaw)(map.getTile(new Point(column,row)).getContent()));
             				map.getTile(new Point(column,row)).getEdgeAt(Orientation.EAST).setObstruction(Obstruction.SEESAW_UP);
             				map.getTile(new Point(column-1,row)).getEdgeAt(Orientation.WEST).setObstruction(Obstruction.SEESAW_DOWN);
             			}

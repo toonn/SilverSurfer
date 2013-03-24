@@ -2,6 +2,7 @@ package simulator.pilot;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.Vector;
 
 import peno.htttp.GameHandler;
 import peno.htttp.PlayerHandler;
@@ -9,11 +10,12 @@ import peno.htttp.PlayerHandler;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mapping.Tile;
 import mazeAlgorithm.ExploreThread;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-	private int originalTeamNumber;
+	private int originalPlayerNumber;
 	private int playerNumber;
 	private MapGraph mapGraphConstructed;
 	private Point2D.Double position;
@@ -25,17 +27,22 @@ public abstract class AbstractPilot implements PilotInterface {
 	protected PilotActions pilotActions = new PilotActions(this);
 	private ExploreThread exploreThread;
     private PlayerHandler handler;
+    private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
 
 	protected final double detectionDistanceUltrasonicSensorRobot = 26;
 
-	public AbstractPilot(int teamNumber) {
-		if(teamNumber < 0 || teamNumber > 3)
+	public AbstractPilot(int playerNumber) {
+		if(playerNumber < 0 || playerNumber > 3)
 			this.playerNumber = -1;
 		else
-			this.playerNumber = teamNumber;
-		originalTeamNumber = this.playerNumber;
+			this.playerNumber = playerNumber;
+		originalPlayerNumber = this.playerNumber;
 		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
 		reset();
+	}
+	
+	public Vector<Tile> getSeesawBarcodeTiles() {
+		return seesawBarcodeTiles;
 	}
 
 	@Override
@@ -103,7 +110,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	@Override
 	public void reset() {
-		playerNumber = originalTeamNumber;
+		playerNumber = originalPlayerNumber;
 		angle = 270;
 		speed = 2;
 		mapGraphConstructed = new MapGraph();
@@ -206,6 +213,8 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	private int getTravelSleepTime() {
 		switch (speed) {
+		case -1:
+			return 50;
 		case 1:
 			return 10;
 		case 2:

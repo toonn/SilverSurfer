@@ -14,6 +14,7 @@ import simulator.pilot.AbstractPilot;
 
 import mapping.ExtMath;
 import mapping.Orientation;
+import mapping.Seesaw;
 import mapping.Tile;
 
 public class ShortestPath {
@@ -24,12 +25,13 @@ public class ShortestPath {
     private Tile startTile;
     private Tile endTile;
     private AbstractPilot pilot;
+    private int extraCostSeesaw = 50000;
 
     public ShortestPath(final AbstractPilot pilot, final Tile startTile, final Tile endTile, final Vector<Tile> tiles) {
         this.pilot = pilot;
-        this.tiles = tiles;
         this.startTile = startTile;
         this.endTile = endTile;
+        this.tiles = tiles;
         for (final Tile tile : tiles)
             tile.setMarkingShortestPath(false);
     }
@@ -43,33 +45,36 @@ public class ShortestPath {
      * is , wordt deze tile verwijderd en checkt men de tile ervoor, enz...
      */
     private void deleteSuperfluousTiles() {
-        if (tilesPath.size() > 1)
-            for (int i = tilesPath.size() - 2; i != 0; i--)
-                if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areNeighbours(tilesPath.get(i + 1)))
-                    tilesPath.remove(i);
+    	for (int i = tilesPath.size() - 2; i > 0; i--)
+    		if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areNeighbours(tilesPath.get(i + 1)))
+    			tilesPath.remove(i);
     }
-
-    /**
-     * In deze methode wordt tilesPath gevuld.
-     */
+    
+    private boolean seesawIsPassableFromTile(Tile seesaw) {
+    	if(!((Seesaw) seesaw.getContent()).isUp())
+    		return true;
+    	else
+    		return false;
+    }
+    
     private void fillTilesPath(final Tile currentTile) {
         tilesPath.add(currentTile);
-
         if (currentTile.getManhattanValue() == 0) {
-            // endTile bereikt
             deleteSuperfluousTiles();
             return;
         }
 
-        // voeg neighbourTiles van de currentTile toe aan de queu
+        // voeg neighbourTiles van de currentTile toe aan de queue
         for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
-            if (neighbourTile != null && tiles.contains(neighbourTile) && !neighbourTile.isMarkedShortestPath()) {
-                neighbourTile.setCost(currentTile.getCost() + 1);
-                queue.add(neighbourTile);
+            if (tiles.contains(neighbourTile) && !neighbourTile.isMarkedShortestPath()) {
+            	if(! (neighbourTile.getContent() instanceof Seesaw) || seesawIsPassableFromTile(neighbourTile)) {
+                    neighbourTile.setCost(currentTile.getCost() + 1);
+                    queue.add(neighbourTile);
+            	}
             }
         }
 
-        // sorteer de queu: kleinste vooraan, nog niet getest
+        // sorteer de queue: grootste vooraan
         Collections.sort(queue, new Comparator<Tile>() {
             @Override
             public int compare(final Tile o1, final Tile o2) {
@@ -87,20 +92,10 @@ public class ShortestPath {
         if(queue.size() > 0) {
         	// remove the last tile from the queue and add it to the path
         	final Tile nextTile = queue.get(queue.size() - 1);
-        	removeTileFromQueue(nextTile);
+        	while (queue.contains(nextTile))
+                queue.remove(nextTile);
         	fillTilesPath(nextTile);
         }
-        
-    }
-    
-    private void removeTileFromQueue(final Tile tile) {
-    	// Multiple times in queue so multiple times remove.
-        while (queue.contains(tile))
-            queue.remove(tile);
-    }
-
-    private Vector<Tile> getTiles() {
-        return tiles;
     }
 
     /**
@@ -139,20 +134,19 @@ public class ShortestPath {
             // communicator.goToNextTile(orientation);
         }
 
-        for (final Object tile : getTiles())
+        for (final Object tile : tiles)
             ((Tile) tile).resetCost();
         return currentAmount;
     }
-
+    
     /**
-     * zet de heuristiek op elke tile afhankelijk van de endTile die
-     * heuristiekwaarde 0 krijgt.
+     * zet de heuristiek op elke tile afhankelijk van de endTile die heuristiekwaarde 0 krijgt.
      */
     private void setHeuristics() {
         for (final Tile tile : tiles) {
-            final int heuristic = (int) (Math.abs(endTile.getPosition().getX()
-                    - tile.getPosition().getX()) + Math.abs(endTile
-                    .getPosition().getY() - tile.getPosition().getY()));
+            int heuristic = (int) (Math.abs(endTile.getPosition().getX() - tile.getPosition().getX()) + Math.abs(endTile.getPosition().getY() - tile.getPosition().getY()));
+            if(tile.getContent() instanceof Seesaw)
+            	heuristic = heuristic + extraCostSeesaw;            
             tile.setManhattanValue(heuristic);
         }
     }

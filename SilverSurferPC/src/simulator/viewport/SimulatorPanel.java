@@ -1,7 +1,6 @@
 package simulator.viewport;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
@@ -250,12 +249,9 @@ public class SimulatorPanel extends JPanel {
     }
 
     private void setOnStartTile(PilotInterface pilot) {
-    	
     	for (Tile tile : mapGraphLoaded.getStartTiles())
-			if (tile.getContent().getValue() == pilot.getPlayerNumber()){
-				Point tPos = tile.getPosition();
-				pilot.setPosition(tPos.x*40+20,tPos.y*40+20);
-			}	
+			if (tile.getContent().getValue() == pilot.getPlayerNumber()) 
+				pilot.setPosition(tile.getPosition().x*40 + 20, tile.getPosition().y*40 + 20);
 	}
 
 	public void removeMapFile() {
@@ -269,6 +265,7 @@ public class SimulatorPanel extends JPanel {
     public void resetRobots() {
         stopSimulation();
 
+        principalPilot.reset();
         principalPilot.setPosition(20, 20);
         if (mapGraphLoaded != null)
         	setOnStartTile(principalPilot);
@@ -276,17 +273,13 @@ public class SimulatorPanel extends JPanel {
         principalViewPort.resetPath();
 
         if (mapGraphLoaded != null) {
-            if (simulatorPilots.size() == 3) {
-            	setOnStartTile(simulatorPilots.get(0));
-            	setOnStartTile(simulatorPilots.get(1));
-            	setOnStartTile(simulatorPilots.get(2));
-
-            }
-            for (AbstractPilot pilot : simulatorPilots){
+            for (AbstractPilot pilot : simulatorPilots) {
+                pilot.reset();
             	setOnStartTile(pilot);
                 pilot.reset();
             }
-            for (DummyPilot pilot : dummyPilots){
+            for (DummyPilot pilot : dummyPilots) {
+                pilot.reset();
             	setOnStartTile(pilot);
                 pilot.reset();
             }
@@ -295,6 +288,9 @@ public class SimulatorPanel extends JPanel {
                     ((UnitViewPort) viewPort).resetPath();
         }
 
+        if(mapGraphLoaded != null)
+        	; //TODO: reset wip
+        
         changeSpeed(2);
     }
 

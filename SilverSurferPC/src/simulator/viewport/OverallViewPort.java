@@ -30,11 +30,11 @@ public class OverallViewPort extends AbstractViewPort {
     
     @Override
     protected void paintComponent(final Graphics graph) {
-    	robotOnWip();
+    	robotOnSeesaw();
         super.paintComponent(graph);
     }
 	
-	private void robotOnWip() {
+	private void robotOnSeesaw() {
 		for(Tile tile : mapGraphLoaded.getTiles())
 			if(tile.getContent() instanceof Seesaw)
 				for(PilotInterface pilot : pilots) 

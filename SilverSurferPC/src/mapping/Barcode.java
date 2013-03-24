@@ -135,7 +135,6 @@ public class Barcode extends TileContent {
     	String binaryExp = "000000000000".concat(binaryRep);
     	int length = binaryExp.length();
     	//see barcode specification doc.
-    	System.out.println("Barcodeklasse: playerofbarcode??:" + binaryExp.substring(length-2,length));
     	int playerNo = Integer.parseInt(binaryExp.substring(length-2,length),2);
     	return playerNo;
 	}

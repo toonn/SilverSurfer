@@ -49,14 +49,10 @@ public class PilotActions {
 		if(barcode != -1) {
 			//Check if the barcode is a seesaw.
 			for(int i = 0; i < BarcodeCommand.SEESAW_START.length; i++) {
-				if(barcode == BarcodeCommand.SEESAW_START[i] || barcode == BarcodeCommand.SEESAW_START_INVERSE[i]) {
-					if(!seesawFound(BarcodeCommand.SEESAW_END[i], i))
-						; //TODO: cannot ride over seesaw
-				}
-				else if(barcode == BarcodeCommand.SEESAW_END[i] || barcode == BarcodeCommand.SEESAW_END_INVERSE[i]) {
-					if(!seesawFound(BarcodeCommand.SEESAW_START[i], i))
-						; //TODO: cannot ride over seesaw
-				}
+				if(barcode == BarcodeCommand.SEESAW_START[i] || barcode == BarcodeCommand.SEESAW_START_INVERSE[i])
+					seesawFound(BarcodeCommand.SEESAW_END[i], i);
+				else if(barcode == BarcodeCommand.SEESAW_END[i] || barcode == BarcodeCommand.SEESAW_END_INVERSE[i])
+					seesawFound(BarcodeCommand.SEESAW_START[i], i);
 			}
 			//Check if the barcode is a treasure.
 			for(int i = 0; i < BarcodeCommand.TREASURE_TEAM0.length; i++) {
@@ -75,30 +71,38 @@ public class PilotActions {
 		}
 	}
 	
-	private boolean seesawFound(int otherBarcode, int value) {
+	private void seesawFound(int otherBarcode, int value) {
 		// add the four next tiles to the map (the tile on nextPoint1 is already added by addBarcode())
 		Point nextPoint1 = pilot.getOrientation().getNext(pilot.getMatrixPosition());
 		Point nextPoint2 = pilot.getOrientation().getNext(nextPoint1);
 		Point nextPoint3 = pilot.getOrientation().getNext(nextPoint2);
 		Point nextPoint4 = pilot.getOrientation().getNext(nextPoint3);
-		pilot.getMapGraphConstructed().addTile(nextPoint2);
-		pilot.getMapGraphConstructed().addTile(nextPoint3);
-		pilot.getMapGraphConstructed().addTile(nextPoint4);
+		if(!pilot.getMapGraphConstructed().getTiles().contains(pilot.getMapGraphConstructed().getTile(nextPoint2))) { //So tiles do not get overwritten (needed to prevent concurrentmoderror)
+			pilot.getMapGraphConstructed().addTile(nextPoint2);
+			pilot.getMapGraphConstructed().addTile(nextPoint3);
+			pilot.getMapGraphConstructed().addTile(nextPoint4);
+		}
 		
 		// add the seesaw to the seesaw-tiles
-		Seesaw seesaw1 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint1), pilot.getOrientation().getOppositeOrientation(), value);
-		Seesaw seesaw2 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint2), pilot.getOrientation(), value);
+		Seesaw seesaw1 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint1), pilot.getOrientation().getOppositeOrientation());
+		Seesaw seesaw2 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint2), pilot.getOrientation());
+		seesaw1.setValue(value);
+		seesaw2.setValue(value);
+		seesaw1.setOtherSeesaw(seesaw2);
+		seesaw2.setOtherSeesaw(seesaw1);
 		pilot.getMapGraphConstructed().getTile(nextPoint1).setContent(seesaw1);
 		pilot.getMapGraphConstructed().getTile(nextPoint2).setContent(seesaw2);
-
 		
 		// add the right edges to the seesaw tiles and mark as explored
 		Obstruction closeObstruction = Obstruction.SEESAW_DOWN;
 		Obstruction farObstruction = Obstruction.SEESAW_UP;
+		seesaw2.switchClosed();
 		if(pilot.getInfraRedSensorValue() > 40 && pilot.getInfraRedSensorValue() < 60) {
 			//The seesaw is up
 			closeObstruction = Obstruction.SEESAW_UP;
 			farObstruction = Obstruction.SEESAW_DOWN;
+			seesaw1.switchClosed();
+			seesaw2.switchClosed();
 		}
 		for(Orientation orientation: Orientation.values()) {
 			if(orientation == pilot.getOrientation()) {
@@ -126,7 +130,10 @@ public class PilotActions {
 		pilot.getMapGraphConstructed().getTile(nextPoint3).setContent(barcode);
 		pilot.getMapGraphConstructed().getTile(nextPoint3).setMarkingExploreMaze(true);
 		
-		return closeObstruction == Obstruction.SEESAW_DOWN;
+		if(!pilot.getSeesawBarcodeTiles().contains(pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition())))
+			pilot.getSeesawBarcodeTiles().add(0, pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition())); //Add current barcode to list
+		if(!pilot.getSeesawBarcodeTiles().contains(pilot.getMapGraphConstructed().getTile(nextPoint3)))
+			pilot.getSeesawBarcodeTiles().add(0, pilot.getMapGraphConstructed().getTile(nextPoint3)); //Add other barcode to list
 	}
 	
 	private void treasureFound(int value) {

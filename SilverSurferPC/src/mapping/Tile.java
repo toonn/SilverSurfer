@@ -95,7 +95,15 @@ public class Tile {
     public ArrayList<Tile> getReachableNeighbours() {
         final ArrayList<Tile> neighbours = new ArrayList<Tile>();
         for (final Orientation orientation : Orientation.values())
-        	if(getEdgeAt(orientation).isPassable())
+        	if(getEdgeAt(orientation).getObstruction().isPassable())
+            	neighbours.add(getEdgeAt(orientation).getNeighbour(this));
+        return neighbours;
+    }
+
+    public ArrayList<Tile> getReachableNeighboursIgnoringSeesaw() {
+        final ArrayList<Tile> neighbours = new ArrayList<Tile>();
+        for (final Orientation orientation : Orientation.values())
+        	if(getEdgeAt(orientation).getObstruction() != Obstruction.WALL)
             	neighbours.add(getEdgeAt(orientation).getNeighbour(this));
         return neighbours;
     }
