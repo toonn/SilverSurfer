@@ -3,6 +3,7 @@ package mapping;
 public class Seesaw extends TileContent {
 	
 	private Orientation orientation;
+	private boolean positionIsKnown;
 
 	public Seesaw(final Tile tile, final Orientation orientation) {
 		super(tile, 0);
@@ -34,5 +35,17 @@ public class Seesaw extends TileContent {
 			if(edge.getObstruction() == Obstruction.SEESAW_UP)
 				return true;
 		return false;
+	}
+    
+    public void setValue(final int value) {
+        this.value = value;
+    }
+    
+    public boolean getPositionIsKnown() {
+		return positionIsKnown;
+	}
+	
+	public void setPositionIsKnown(boolean positionIsknown) {
+		this.positionIsKnown = positionIsknown;
 	}
 }

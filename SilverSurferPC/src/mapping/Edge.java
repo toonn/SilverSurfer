@@ -7,7 +7,7 @@ public class Edge {
 	
     private Tile tile1; //North or east side of this tile.
     private Tile tile2; //South or west side of this tile.
-    private Obstruction obstruction;
+    private Obstruction obstruction = Obstruction.WHITE_LINE;
     private Orientation orientation; //North or south: horizontal, west or east: vertical
     
     protected Tile getTile1() {

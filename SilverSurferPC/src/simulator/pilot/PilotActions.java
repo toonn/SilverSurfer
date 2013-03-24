@@ -49,12 +49,14 @@ public class PilotActions {
 		if(barcode != -1) {
 			//Check if the barcode is a seesaw.
 			for(int i = 0; i < BarcodeCommand.SEESAW_START.length; i++) {
-				if(barcode == BarcodeCommand.SEESAW_START[i] || barcode == BarcodeCommand.SEESAW_START_INVERSE[i])
+				if(barcode == BarcodeCommand.SEESAW_START[i] || barcode == BarcodeCommand.SEESAW_START_INVERSE[i]) {
 					if(!seesawFound(BarcodeCommand.SEESAW_END[i], i))
-						;//pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()).getEdge(pilot.getOrientation()).replaceObstruction(Obstruction.WALL);
-				else if(barcode == BarcodeCommand.SEESAW_END[i] || barcode == BarcodeCommand.SEESAW_END_INVERSE[i])
+						; //TODO: cannot ride over seesaw
+				}
+				else if(barcode == BarcodeCommand.SEESAW_END[i] || barcode == BarcodeCommand.SEESAW_END_INVERSE[i]) {
 					if(!seesawFound(BarcodeCommand.SEESAW_START[i], i))
-						;//pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()).getEdge(pilot.getOrientation()).replaceObstruction(Obstruction.WALL);
+						; //TODO: cannot ride over seesaw
+				}
 			}
 			//Check if the barcode is a treasure.
 			for(int i = 0; i < BarcodeCommand.TREASURE_TEAM0.length; i++) {
@@ -72,14 +74,9 @@ public class PilotActions {
 			}
 		}
 	}
-
-	/**
-	 * @param barcode, the value of the barcode on the other side of the seesaw
-	 * @param value, the value of the seesaw
-	 * @param right, true if the seesaw lies partitally to the left of this tile (given the orientation of the robot)
-	 */
+	
 	private boolean seesawFound(int otherBarcode, int value) {
-		// add the four next tiles to the map (the tile on nextPoint1 is allready added by addBarcode())
+		// add the four next tiles to the map (the tile on nextPoint1 is already added by addBarcode())
 		Point nextPoint1 = pilot.getOrientation().getNext(pilot.getMatrixPosition());
 		Point nextPoint2 = pilot.getOrientation().getNext(nextPoint1);
 		Point nextPoint3 = pilot.getOrientation().getNext(nextPoint2);
@@ -91,12 +88,8 @@ public class PilotActions {
 		// add the seesaw to the seesaw-tiles
 		Seesaw seesaw1 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint1), pilot.getOrientation().getOppositeOrientation(), value);
 		Seesaw seesaw2 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint2), pilot.getOrientation(), value);
-		//Seesaw seesaw3 = new Seesaw(pilot.getMapGraphConstructed().getTile(sidePoint1), pilot.getOrientation(), value);
-		//Seesaw seesaw4 = new Seesaw(pilot.getMapGraphConstructed().getTile(sidePoint2), pilot.getOrientation(), value);
 		pilot.getMapGraphConstructed().getTile(nextPoint1).setContent(seesaw1);
 		pilot.getMapGraphConstructed().getTile(nextPoint2).setContent(seesaw2);
-		//pilot.getMapGraphConstructed().addContentToCurrentTile(sidePoint1, seesaw3);
-		//pilot.getMapGraphConstructed().addContentToCurrentTile(sidePoint2, seesaw4);
 
 		
 		// add the right edges to the seesaw tiles and mark as explored
@@ -128,7 +121,7 @@ public class PilotActions {
 		for(Orientation orientation: Orientation.values())
 			if(orientation != pilot.getOrientation() && orientation != pilot.getOrientation().getOppositeOrientation())
 				pilot.getMapGraphConstructed().getTile(nextPoint3).getEdgeAt(orientation).setObstruction(Obstruction.WALL);
-		pilot.getMapGraphConstructed().getTile(nextPoint3).getEdgeAt(pilot.getOrientation()).setObstruction(farObstruction);
+		pilot.getMapGraphConstructed().getTile(nextPoint3).getEdgeAt(pilot.getOrientation().getOppositeOrientation()).setObstruction(farObstruction);
 		Barcode barcode = new Barcode(pilot.getMapGraphConstructed().getTile(nextPoint3), otherBarcode, pilot.getOrientation());
 		pilot.getMapGraphConstructed().getTile(nextPoint3).setContent(barcode);
 		pilot.getMapGraphConstructed().getTile(nextPoint3).setMarkingExploreMaze(true);

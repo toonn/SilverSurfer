@@ -228,15 +228,14 @@ public class SimulationPilot extends AbstractPilot {
 
     @Override
     public int getUltraSensorValue() {
-        try {
+    	try {
             return (int) Math.round(calculateDistanceToWall()
                     + (new Random().nextGaussian() * SimulationSensorData
                             .getSDUS()));
-        } catch (Exception e) {
-            System.out
-                    .println("[Exception] Exception at SimulationPilot.getUltraSensorValue()!");
-            return 0;
-        }
+    	} catch(Exception e) {
+    		System.out.println("Error in SimulationPilot.getUltraSensorValue()!");
+    		return 0;
+    	}
     }
 
     private double calculateDistanceToWall() {

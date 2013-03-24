@@ -73,26 +73,18 @@ public class ShortestPath {
         Collections.sort(queue, new Comparator<Tile>() {
             @Override
             public int compare(final Tile o1, final Tile o2) {
-            	
                 if (o1.getManhattanValue() + o1.getCost() < o2.getManhattanValue() + o2.getCost()) 
-                {
                     return 1;
-                }
                 else if (o1.getManhattanValue() + o1.getCost() == o2.getManhattanValue() + o2.getCost()) 
-                {
                     return 0;
-                } 
                 else 
-                {
                     return -1;
-                }
             }
         });
 
         currentTile.setMarkingShortestPath(true);
 
-        if(queue.size() > 0)
-        {
+        if(queue.size() > 0) {
         	// remove the last tile from the queue and add it to the path
         	final Tile nextTile = queue.get(queue.size() - 1);
         	removeTileFromQueue(nextTile);

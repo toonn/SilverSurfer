@@ -6,12 +6,12 @@ public class BarcodeCommand {
 	//Second ints of arrays are for robot 1 (above: he will belong to team 0, below: he will belong to team 1)
 	//...
 	//Een correct bord bevat van elke array 2 ints met verschillende index (bv barcodes 4,1,2,7 bij deze barcodes, dan zal robot 1 en 4 een team vormen en robot 2 en 3 ook.
-	public static final int[] TREASURE_TEAM0 = new int[]{11,1,2,3};
+	public static final int[] TREASURE_TEAM0 = new int[]{0,1,2,3};
 	public static final int[] TREASURE_TEAM0_INVERSE = new int[]{calcInv(TREASURE_TEAM0[0]),calcInv(TREASURE_TEAM0[1]),calcInv(TREASURE_TEAM0[2]),calcInv(TREASURE_TEAM0[3])};
 	public static final int[] TREASURE_TEAM1 = new int[]{4,5,6,7};
 	public static final int[] TREASURE_TEAM1_INVERSE = new int[]{calcInv(TREASURE_TEAM1[0]),calcInv(TREASURE_TEAM1[1]),calcInv(TREASURE_TEAM1[2]),calcInv(TREASURE_TEAM1[3])};
 	
-	public static final int[] SEESAW_START = new int[]{0,15,19};
+	public static final int[] SEESAW_START = new int[]{11,15,19};
 	public static final int[] SEESAW_START_INVERSE = new int[]{calcInv(SEESAW_START[0]),calcInv(SEESAW_START[1]),calcInv(SEESAW_START[2])};
 	public static final int[] SEESAW_END = new int[]{13,17,21};
 	public static final int[] SEESAW_END_INVERSE = new int[]{calcInv(SEESAW_END[0]),calcInv(SEESAW_END[1]),calcInv(SEESAW_END[2])};
