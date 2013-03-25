@@ -79,7 +79,7 @@ public class SimulationPilot extends AbstractPilot {
 
         // Mean value of the infrared sensor, when having an open seesaw in view
         public static final double getMSeesawIS() {
-            return 50;
+            return 120;
         }
 
         // Mean value of the infrared sensor, when the robot has no infrared in

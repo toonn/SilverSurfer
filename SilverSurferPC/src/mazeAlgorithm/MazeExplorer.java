@@ -1,8 +1,6 @@
 package mazeAlgorithm;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Vector;
 
 import simulator.pilot.AbstractPilot;
@@ -64,9 +62,10 @@ public class MazeExplorer {
 		
 		// Get next optimal tile.
 		Tile nextTile = getPriorityNextTile(currentTile);
-		if(allTiles.contains(nextTile)) {
+		while(allTiles.contains(nextTile)) {
 			currentTile = nextTile;
-			exploreTile(currentTile);
+			if(!currentTile.isMarkedExploreMaze())
+				exploreTile(currentTile);
 			for (final Tile neighbourTile : currentTile.getReachableNeighbours())
 				if (neighbourTile != null && !(neighbourTile.isMarkedExploreMaze()))
 					queue.add(neighbourTile);
@@ -82,16 +81,17 @@ public class MazeExplorer {
 			nextTile.setMarkingExploreMaze(true);
 			allTiles.add(nextTile);
 			removeTileFromQueue(nextTile);
-			
+
 			if (queue.isEmpty() || quit) {
 				System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
 				return;
 			}
 
 			nextTile = getPriorityNextTile(currentTile);
-			if(allTiles.contains(nextTile)) {
+			while(allTiles.contains(nextTile)) {
 				currentTile = nextTile;
-				exploreTile(currentTile);
+				if(!currentTile.isMarkedExploreMaze())
+					exploreTile(currentTile);
 				for (final Tile neighbourTile : currentTile.getReachableNeighbours())
 					if (neighbourTile != null && !(neighbourTile.isMarkedExploreMaze()))
 						queue.add(neighbourTile);
@@ -160,6 +160,7 @@ public class MazeExplorer {
 	private Tile searchAndCrossOpenSeesaw(Tile currentTile) {
 		//TODO: wat als seesaws niet gelijk zijn (dus op verschillend gebied uitkomen) -> geen random seesaw oversteken!
 		while(true) {
+			pilot.shuffleSeesawBarcodeTiles();
 			for(Tile tile : pilot.getSeesawBarcodeTiles()) {
 				if(isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
 					ShortestPath shortestPath = new ShortestPath(pilot, currentTile, tile, allTiles);
@@ -184,6 +185,14 @@ public class MazeExplorer {
 							removeTileFromQueue(endTile);
 							pilot.travel(20); //Zodat een eventuele barcode op volgende tile wel gelezen wordt maar de laatste barcode van de wip niet.
 							return endTile;
+						}
+					//Wip is gesloten, dus rij 1 tegel achteruit
+					for(Tile neighbour : currentTile.getReachableNeighboursIgnoringSeesaw())
+						if(!(neighbour.getContent() instanceof Seesaw)) {
+							shortestPath = new ShortestPath(pilot, currentTile, neighbour, allTiles);
+							currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
+							currentTile = neighbour;
+							checkExploredQueue();
 						}
 				}
 			}

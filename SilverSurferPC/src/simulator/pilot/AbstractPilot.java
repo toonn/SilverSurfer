@@ -3,6 +3,7 @@ package simulator.pilot;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Vector;
 
 import peno.htttp.GameHandler;
@@ -17,8 +18,8 @@ import mq.communicator.MQCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-	private int playerNumber;
-	private int teamNumber;
+	private int playerNumber = -1;
+	private int teamNumber = -1;
 	private MapGraph mapGraphConstructed;
 	private Point2D.Double position;
 	private double angle;
@@ -33,6 +34,9 @@ public abstract class AbstractPilot implements PilotInterface {
 	private Boolean gameon;
 	private MQCenter center;
 	protected final double detectionDistanceUltrasonicSensorRobot = 26;
+	private boolean teamMemberFound = false;
+	private int teamMemberPlayerNumber;
+	private Tile startingPositionOfTeamMember;
 
 	public AbstractPilot(int playerNumber) {
 		if(playerNumber < 0 || playerNumber > 3)
@@ -43,12 +47,33 @@ public abstract class AbstractPilot implements PilotInterface {
 		reset();
 	}
 	
+	public Tile getStartingPositionOfTeamMember() {
+		return startingPositionOfTeamMember;
+	}
+	
+	public boolean getTeamMemberFound() {
+		return teamMemberFound;
+	}
+	
+	public int getTeamMemberPlayerNumber() {
+		return teamMemberPlayerNumber;
+	}
+	
+	public void setTeamMemberFound(int teamMemberPlayerNumber) {
+		this.teamMemberFound = true;
+		this.teamMemberPlayerNumber = teamMemberPlayerNumber;
+	}
+	
 	public MQCenter getCenter() {
 		return center;
 	}
 	
 	public Vector<Tile> getSeesawBarcodeTiles() {
 		return seesawBarcodeTiles;
+	}
+	
+	public void shuffleSeesawBarcodeTiles() {
+		Collections.shuffle(seesawBarcodeTiles);
 	}
 
 	@Override
@@ -87,7 +112,6 @@ public abstract class AbstractPilot implements PilotInterface {
 			throw new IllegalStateException("The teamnumber can only be set to 4 or 5!");
 		else
 			this.teamNumber = teamNumber;
-			
 	}
 
 	@Override

@@ -370,8 +370,5 @@ public class SimulatorPanel extends JPanel {
 		}
 		getPrincipalPilot().setGameModus(true);
 		getPrincipalPilot().setupForGame();
-		
-		
-		
 	}
 }
