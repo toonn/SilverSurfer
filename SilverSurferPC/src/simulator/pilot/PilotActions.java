@@ -158,14 +158,13 @@ public class PilotActions {
 		pilot.travel(45);
 		pilot.travel(-45);
 		
-		if(pilot.isInGameModus())
-		{
-			pilot.getDefaultHandler().playerFoundObject(pilot.getCenter().getPlayerID(), pilot.getPlayerNumber());
-			findTeamMember();
+		if(pilot.isInGameModus()) {
+			try {
+				pilot.getCenter().getClient().foundObject();
+				pilot.getCenter().getClient().joinTeam(pilot.getTeamNumber());
+			} catch(Exception e) {
+				System.out.println("EXCEPTION! PILOTACTIONS!");
+			}
 		}
-	}
-	
-	private void findTeamMember() {
-		
 	}
 }

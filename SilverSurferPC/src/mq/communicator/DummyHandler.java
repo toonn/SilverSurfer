@@ -74,4 +74,22 @@ public class DummyHandler implements SpectatorHandler {
         // TODO Auto-generated method stub
 
     }
+
+	@Override
+	public void gameWon(int teamNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lockedSeesaw(String playerID, int playerNumber, int barcode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unlockedSeesaw(String playerID, int playerNumber, int barcode) {
+		// TODO Auto-generated method stub
+		
+	}
 }

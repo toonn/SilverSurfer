@@ -1,7 +1,10 @@
 package mq.communicator;
 
+import java.util.List;
+
 import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerHandler;
+import peno.htttp.Tile;
 import simulator.pilot.AbstractPilot;
 
 public class SimulHandler implements PlayerHandler {
@@ -41,13 +44,6 @@ public class SimulHandler implements PlayerHandler {
     }
 
     @Override
-    public void gameRolled(int playerNumber) {
-        // TODO Auto-generated method stub
-        System.out.println("game rolled " + playerNumber);
-
-    }
-
-    @Override
     public void playerJoined(String playerID) {
         // TODO Auto-generated method stub
         System.out.println("player joined " + playerID);
@@ -77,5 +73,36 @@ public class SimulHandler implements PlayerHandler {
         // TODO Auto-generated method stub
 
     }
+
+	@Override
+	public void gameWon(int teamNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gameRolled(int playerNumber, int objectNumber) {
+		// TODO Auto-generated method stub
+        System.out.println("game rolled " + playerNumber);
+		
+	}
+
+	@Override
+	public void teamConnected(String partnerID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void teamPosition(double x, double y, double angle) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void teamTilesReceived(List<Tile> tiles) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

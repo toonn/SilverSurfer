@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 
 import mapping.MapGraph;
 import mapping.MapReader;
+import mapping.Orientation;
+import mapping.StartBase;
 import mapping.Tile;
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
@@ -248,10 +250,20 @@ public class SimulatorPanel extends JPanel {
                 amountOfDummies);
     }
 
-    private void setOnStartTile(PilotInterface pilot) {
+    public void setOnStartTile(PilotInterface pilot) {
     	for (Tile tile : mapGraphLoaded.getStartTiles())
-			if (tile.getContent().getValue() == pilot.getPlayerNumber()) 
+			if (tile.getContent().getValue() == pilot.getPlayerNumber()) { 
 				pilot.setPosition(tile.getPosition().x*40 + 20, tile.getPosition().y*40 + 20);
+				Orientation orientation = ((StartBase)(tile.getContent())).getOrientation();
+				if(orientation == Orientation.NORTH)
+					pilot.setAngle(270);
+				if(orientation == Orientation.EAST)
+					pilot.setAngle(0);
+				if(orientation == Orientation.SOUTH)
+					pilot.setAngle(90);
+				if(orientation == Orientation.WEST)
+					pilot.setAngle(180);
+			}
 	}
 
 	public void removeMapFile() {
@@ -292,6 +304,25 @@ public class SimulatorPanel extends JPanel {
         	; //TODO: reset wip
         
         changeSpeed(2);
+    }
+    
+    public void makeReadyToPlay() {
+    	setOnStartTile(principalPilot);
+    	principalPilot.makeReadyToPlay();
+    	principalViewPort.resetPath();
+    	if (mapGraphLoaded != null) {
+            for (AbstractPilot pilot : simulatorPilots) {
+            	setOnStartTile(pilot);
+                pilot.makeReadyToPlay();
+            }
+            for (DummyPilot pilot : dummyPilots) {
+            	setOnStartTile(pilot);
+                pilot.makeReadyToPlay();
+            }
+            for (DummyViewPort viewPort : otherViewPorts)
+                if (viewPort instanceof UnitViewPort)
+                    ((UnitViewPort) viewPort).resetPath();
+        }
     }
 
     public void startSimulation() {
@@ -362,13 +393,13 @@ public class SimulatorPanel extends JPanel {
 		//Set game modus on x set up for game
 		for (PilotInterface p : dummyPilots){
 			p.setGameModus(true);
-			p.setupForGame();
+			p.setupForGame(this);
 		}
 		for (PilotInterface p : simulatorPilots){
 			p.setGameModus(true);
-			p.setupForGame();
+			p.setupForGame(this);
 		}
 		getPrincipalPilot().setGameModus(true);
-		getPrincipalPilot().setupForGame();
+		getPrincipalPilot().setupForGame(this);
 	}
 }

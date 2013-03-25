@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import peno.htttp.GameHandler;
 import peno.htttp.PlayerHandler;
+import simulator.viewport.SimulatorPanel;
 
 import mapping.MapGraph;
 import mapping.Obstruction;
@@ -31,7 +32,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private ExploreThread exploreThread;
     private PlayerHandler handler;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
-	private Boolean gameOn;
+	private boolean gameOn = false;
 	private MQCenter center;
 	protected final double detectionDistanceUltrasonicSensorRobot = 26;
 	private boolean teamMemberFound = false;
@@ -169,6 +170,12 @@ public abstract class AbstractPilot implements PilotInterface {
 		teamNumber = -1;
 		angle = 270;
 		speed = 2;
+		mapGraphConstructed = new MapGraph();
+		mapGraphConstructed.addTile(getMatrixPosition());
+	}
+	
+	@Override
+	public void makeReadyToPlay() {
 		mapGraphConstructed = new MapGraph();
 		mapGraphConstructed.addTile(getMatrixPosition());
 	}
@@ -336,20 +343,17 @@ public abstract class AbstractPilot implements PilotInterface {
 
     @Override
     public GameHandler getDefaultHandler() {
-        return this.handler;
+        return getCenter().getHandler();
     }
 
-    public void setupForGame(){
-    	if (isInGameModus()){
+    public void setupForGame(SimulatorPanel panel) {
+    	if (isInGameModus()) {
     		try {
-    			this.center = new MQCenter(this, "SILVER" + getPlayerNumber());
+    			this.center = new MQCenter(this, "SILVER" + getPlayerNumber(), panel);
 				getCenter().join();
-				getCenter().setReady(true);
 			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}

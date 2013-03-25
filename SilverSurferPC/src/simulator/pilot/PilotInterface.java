@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import peno.htttp.GameHandler;
+import simulator.viewport.SimulatorPanel;
 
 import mapping.MapGraph;
 
@@ -33,12 +34,14 @@ public interface PilotInterface {
     public abstract void setAngle(double angle);
 
     public abstract void reset();
+    
+    public abstract void makeReadyToPlay();
 
     public abstract GameHandler getDefaultHandler();
     
     public abstract void setGameModus(boolean onOff);
     
-    public abstract void setupForGame();
+    public abstract void setupForGame(SimulatorPanel panel);
     
     public abstract boolean isInGameModus();
 }

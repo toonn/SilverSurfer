@@ -39,8 +39,9 @@ public class MazeExplorer {
             for (final Object tile : allTiles)
                 ((Tile) tile).setMarkingExploreMaze(false);
     	} catch(NullPointerException e) {
-    		if(!quit)
-    			System.out.println("Exception in MazeExplorer!");
+    		//if(!quit)
+    			//System.out.println("Exception in MazeExplorer!");
+    		e.printStackTrace();
     	}
 	}
 
