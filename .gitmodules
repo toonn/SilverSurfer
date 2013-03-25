@@ -1,3 +1,6 @@
 [submodule "htttp"]
 	path = htttp
 	url = https://github.com/tgoossens/htttp-peno.git
+[submodule "htttp-peno"]
+	path = htttp-peno
+	url = https://github.com/tgoossens/htttp-peno.git
