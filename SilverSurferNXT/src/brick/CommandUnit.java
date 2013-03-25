@@ -13,7 +13,7 @@ public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
 	private static final double ANGLE_COEF_RIGHT = 1.74; //Amount of degrees needed for a 1 degree turn to the right.
-	private static final double ANGLE_COEF_LEFT = 1.73; //Amount of degrees needed for a 1 degree turn to the left.
+	private static final double ANGLE_COEF_LEFT = 1.72; //Amount of degrees needed for a 1 degree turn to the left.
     private static int SPEED = 200;
     
     private double x = 20;
