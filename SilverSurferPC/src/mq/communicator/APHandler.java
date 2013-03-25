@@ -1,5 +1,6 @@
 package mq.communicator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import peno.htttp.DisconnectReason;
@@ -97,6 +98,14 @@ public class APHandler implements PlayerHandler {
 		pilot.setUpdatePosition(true);
 		if(panel.getDummyPilot() != null)
 			panel.getDummyPilot().activate();
+		ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
+		for(mapping.Tile tile : pilot.getMapGraphConstructed().getTiles())
+			vector.add(new peno.htttp.Tile((long)tile.getPosition().getX(), (long)tile.getPosition().getY(), tile.getToken()));
+		try {
+			pilot.getCenter().getClient().sendTiles(vector);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -107,7 +116,7 @@ public class APHandler implements PlayerHandler {
 
 	@Override
 	public void teamTilesReceived(List<Tile> tiles) {
-		// TODO Auto-generated method stub
-		
+		for(peno.htttp.Tile tile : tiles)
+			System.out.println(tile.getToken());
 	}
 }
