@@ -31,4 +31,8 @@ public interface PilotInterface {
     public abstract void reset();
 
     public abstract GameHandler getDefaultHandler();
+    
+    public abstract void setGameModus(boolean onOff);
+    
+    public abstract boolean isInGameModus();
 }

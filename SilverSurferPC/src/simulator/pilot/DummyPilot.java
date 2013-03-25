@@ -17,6 +17,7 @@ public class DummyPilot implements PilotInterface {
     private double angle;
     private boolean active = false;
     private DummyHandler handler;
+	private boolean gameModus;
 
     public DummyPilot(int teamNumber) {
         if (teamNumber < 0 || teamNumber > 3)
@@ -118,4 +119,15 @@ public class DummyPilot implements PilotInterface {
     public SpectatorHandler getDefaultHandler() {
         return handler;
     }
+
+	@Override
+	public void setGameModus(boolean onOff) {
+		this.gameModus = onOff;
+		
+	}
+
+	@Override
+	public boolean isInGameModus() {
+		return gameModus;
+	}
 }
