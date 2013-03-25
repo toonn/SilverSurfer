@@ -330,7 +330,7 @@ public class GUIMenuBar extends JMenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-            	SilverSurferGUI.getSimulatorPanel().startSimulation();
+            	SilverSurferGUI.getSimulatorPanel().playGame();
             	System.out.println("[EXPLORE] Started playing Treasure Trek.");
             }
         });

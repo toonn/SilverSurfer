@@ -15,7 +15,6 @@ import mazeAlgorithm.ExploreThread;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-	private int originalPlayerNumber;
 	private int playerNumber;
 	private int teamNumber;
 	private MapGraph mapGraphConstructed;
@@ -58,6 +57,11 @@ public abstract class AbstractPilot implements PilotInterface {
 	public int getPlayerNumber() {
 		return playerNumber;
 	}
+	
+	@Override
+    public void setPlayerNumber(int teamNumber) {
+    	this.teamNumber = teamNumber;
+    }
 	
 	/**
 	 * Returns 0 or 1, indicating what team the robot is on.

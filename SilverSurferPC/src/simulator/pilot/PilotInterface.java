@@ -14,6 +14,8 @@ public interface PilotInterface {
 
     public abstract int getPlayerNumber();
     
+    public abstract void setPlayerNumber(int number);
+    
     public abstract int getTeamNumber();
 
     public abstract void setTeamNumber(int teamNumber);

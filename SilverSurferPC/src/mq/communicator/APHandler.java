@@ -39,7 +39,6 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void gameRolled(int playerNumber) {
-        getPilot().setPlayerNumber(playerNumber);
         System.out.println("game rolled " + playerNumber);
 
     }
