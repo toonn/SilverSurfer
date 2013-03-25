@@ -4,7 +4,7 @@
 # voorwerp 1 en 2 zijn een team en 3 en 4
 DeadEnd.N	Corner.N	T.N		Corner.E	DeadEnd.W	Corner.E
 Straight.S	Straight.N	Straight.N.02	Corner.W	Straight.E	T.E
-T.W		Corner.S	DeadEnd.S.o.2	DeadEnd.W.o.0	Straight.E.00	Corner.S
-Corner.W	T.N		Straight.E	Straight.E.05	DeadEnd.E.o.5	DeadEnd.N.o.7
+T.W		Corner.S	DeadEnd.S.V	DeadEnd.W.V	Straight.E.00	Corner.S
+Corner.W	T.N		Straight.E	Straight.E.05	DeadEnd.E.V	DeadEnd.N.V
 DeadEnd.W	T.E		DeadEnd.W	Straight.E	Corner.E	Straight.S.07
 Corner.W	T.S		Straight.E	Straight.E	T.S		Corner.S
