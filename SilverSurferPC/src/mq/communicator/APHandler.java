@@ -81,7 +81,7 @@ public class APHandler implements PlayerHandler {
 	public void gameRolled(int playerNumber, int objectNumber) {
 		// TODO Auto-generated method stub
     	getPilot().setPlayerNumber(playerNumber-1);
-        System.out.println("Game rolled, your number is " + playerNumber + " and your objectnumber is " + objectNumber + ".");
+        System.out.println("Game rolled, your number is " + (playerNumber-1) + " and your objectnumber is " + objectNumber + ".");
         panel.setOnStartTile(pilot);
         panel.makeReadyToPlay();
         try {
@@ -97,12 +97,15 @@ public class APHandler implements PlayerHandler {
 		// TODO Auto-generated method stub
 		System.out.println("Partner with nr " + partnerID + " has connected.");
 		pilot.setUpdatePosition(true);
+		if(panel.getDummyPilot() != null)
+			panel.getDummyPilot().activate();
 	}
 
 	@Override
 	public void teamPosition(double x, double y, double angle) {
-		// TODO Auto-generated method stub
-		System.out.println("I have received info: position " + x + ", " + y + " and angle " + angle);
+		//System.out.println("I have received info: position " + x + ", " + y + " and angle " + angle);
+		if(panel.getDummyPilot() != null)
+			panel.getDummyPilot().setMap(pilot.getMapGraphConstructed());
 	}
 
 	@Override

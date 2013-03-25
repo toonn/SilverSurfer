@@ -72,7 +72,6 @@ public class PilotActions {
 	}
 	
 	private void seesawFound(int otherBarcode, int value) {
-		boolean beenThereDoneThat = false;
 		// add the four next tiles to the map (the tile on nextPoint1 is already added by addBarcode())
 		Point nextPoint1 = pilot.getOrientation().getNext(pilot.getMatrixPosition());
 		Point nextPoint2 = pilot.getOrientation().getNext(nextPoint1);
@@ -84,8 +83,6 @@ public class PilotActions {
 			pilot.getMapGraphConstructed().addTile(nextPoint3);
 			pilot.getMapGraphConstructed().addTile(nextPoint4);
 		}
-		else
-			beenThereDoneThat = true;
 		
 		// add the seesaw to the seesaw-tiles
 		Seesaw seesaw1 = new Seesaw(pilot.getMapGraphConstructed().getTile(nextPoint1), pilot.getOrientation().getOppositeOrientation());

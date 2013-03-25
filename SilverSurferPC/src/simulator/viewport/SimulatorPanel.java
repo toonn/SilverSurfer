@@ -391,15 +391,19 @@ public class SimulatorPanel extends JPanel {
 
 	public void playGame() {
 		//Set game modus on x set up for game
-		for (PilotInterface p : dummyPilots){
+		for (PilotInterface p : dummyPilots) {
 			p.setGameModus(true);
 			p.setupForGame(this);
 		}
-		for (PilotInterface p : simulatorPilots){
+		for (PilotInterface p : simulatorPilots) {
 			p.setGameModus(true);
 			p.setupForGame(this);
 		}
 		getPrincipalPilot().setGameModus(true);
 		getPrincipalPilot().setupForGame(this);
+	}
+	
+	public DummyPilot getDummyPilot() {
+		return dummyPilots.iterator().next();
 	}
 }

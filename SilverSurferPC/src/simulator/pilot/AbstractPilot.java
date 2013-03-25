@@ -348,7 +348,7 @@ public abstract class AbstractPilot implements PilotInterface {
     public void setupForGame(SimulatorPanel panel) {
     	if (isInGameModus()) {
     		try {
-    			this.center = new MQCenter(this, "SILVER" + getPlayerNumber(), panel);
+    			this.center = new MQCenter(this, "SILVER" + getPlayerNumber() + System.currentTimeMillis(), panel);
 				getCenter().join();
 			} catch (IllegalStateException e) {
 				e.printStackTrace();

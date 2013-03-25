@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Set;
 
-import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 import mapping.MapGraph;
 import mapping.Seesaw;
@@ -52,40 +51,5 @@ public class OverallViewPort extends AbstractViewPort {
     	for (Tile tile: map.getTiles())
     		if(tile.getContent() instanceof Seesaw && tile.getContent().getValue() == value)
     			((Seesaw) tile.getContent()).flipSeesaw();
-    }
-    
-    private void updateTeamsNoDummies() {
-    	int teamPilot0 = -1;
-    	int teamPilot1 = -1;
-    	int teamPilot2 = -1;
-    	int teamPilot3 = -1;    	
-		for(PilotInterface pilot : pilots) {
-			if(pilot instanceof AbstractPilot) {
-				if(pilot.getPlayerNumber() == 0 && pilot.getTeamNumber() != -1)
-					teamPilot0 = pilot.getTeamNumber();
-				if(pilot.getPlayerNumber() == 1 && pilot.getTeamNumber() != -1)
-					teamPilot1 = pilot.getTeamNumber();
-				if(pilot.getPlayerNumber() == 2 && pilot.getTeamNumber() != -1)
-					teamPilot2 = pilot.getTeamNumber();
-				if(pilot.getPlayerNumber() == 3 && pilot.getTeamNumber() != -1)
-					teamPilot3 = pilot.getTeamNumber();
-			}
-		}
-		if(teamPilot0 != -1)
-			for(PilotInterface pilot : pilots)
-				if(pilot instanceof AbstractPilot && pilot.getPlayerNumber() != 0 && pilot.getTeamNumber() == teamPilot0)
-					((AbstractPilot)pilot).setTeamMemberFound(0);
-		if(teamPilot1 != -1)
-			for(PilotInterface pilot : pilots)
-				if(pilot instanceof AbstractPilot && pilot.getPlayerNumber() != 1 && pilot.getTeamNumber() == teamPilot1)
-					((AbstractPilot)pilot).setTeamMemberFound(1);
-		if(teamPilot2 != -1)
-			for(PilotInterface pilot : pilots)
-				if(pilot instanceof AbstractPilot && pilot.getPlayerNumber() != 2 && pilot.getTeamNumber() == teamPilot2)
-					((AbstractPilot)pilot).setTeamMemberFound(2);
-		if(teamPilot3 != -1)
-			for(PilotInterface pilot : pilots)
-				if(pilot instanceof AbstractPilot && pilot.getPlayerNumber() != 3 && pilot.getTeamNumber() == teamPilot3)
-					((AbstractPilot)pilot).setTeamMemberFound(3);
     }
 }
