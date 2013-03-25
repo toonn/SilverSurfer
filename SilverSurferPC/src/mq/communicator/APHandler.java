@@ -1,14 +1,9 @@
 package mq.communicator;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
-
-import javax.swing.Timer;
 
 import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerHandler;
-import peno.htttp.SpectatorHandler;
 import peno.htttp.Tile;
 import simulator.pilot.AbstractPilot;
 import simulator.viewport.SimulatorPanel;
@@ -17,18 +12,6 @@ public class APHandler implements PlayerHandler {
 
     private AbstractPilot pilot;
     private SimulatorPanel panel;
-    private int updateStatusFPS = 1;
-    private ActionListener updateStatus = new ActionListener() {
-
-        @Override
-        public void actionPerformed(final ActionEvent arg0) {
-        	try {
-        		pilot.getCenter().getClient().updatePosition(pilot.getPosition().x, pilot.getPosition().y, pilot.getAngle());
-        	} catch(Exception e) {
-        		
-        	}
-        }
-    };
 
     public APHandler(AbstractPilot pilot, SimulatorPanel panel) {
         this.pilot = pilot;
@@ -113,7 +96,7 @@ public class APHandler implements PlayerHandler {
 	public void teamConnected(String partnerID) {
 		// TODO Auto-generated method stub
 		System.out.println("Partner with nr " + partnerID + " has connected.");
-        new Timer(1000 / updateStatusFPS, updateStatus).start();
+		pilot.setUpdatePosition(true);
 	}
 
 	@Override

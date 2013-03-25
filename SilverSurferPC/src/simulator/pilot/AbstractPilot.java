@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Vector;
 
 import peno.htttp.GameHandler;
-import peno.htttp.PlayerHandler;
 import simulator.viewport.SimulatorPanel;
 
 import mapping.MapGraph;
@@ -30,7 +29,6 @@ public abstract class AbstractPilot implements PilotInterface {
 	protected boolean permaBarcodeStop = false;
 	protected PilotActions pilotActions = new PilotActions(this);
 	private ExploreThread exploreThread;
-    private PlayerHandler handler;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
 	private boolean gameOn = false;
 	private MQCenter center;
@@ -38,6 +36,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private boolean teamMemberFound = false;
 	private int teamMemberPlayerNumber;
 	private Tile startingPositionOfTeamMember;
+	private boolean canUpdatePosition = false;
 
 	public AbstractPilot(int playerNumber) {
 		if(playerNumber < 0 || playerNumber > 3)
@@ -357,6 +356,14 @@ public abstract class AbstractPilot implements PilotInterface {
 				e.printStackTrace();
 			}
     	}
+    }
+    
+    public boolean canUpdatePosition() {
+    	return canUpdatePosition;
+    }
+    
+    public void setUpdatePosition(boolean canUpdatePosition) {
+    	this.canUpdatePosition = canUpdatePosition;
     }
     
     protected abstract boolean crashImminent();
