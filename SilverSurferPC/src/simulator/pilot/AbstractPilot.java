@@ -30,7 +30,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private ExploreThread exploreThread;
     private PlayerHandler handler;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
-	private Boolean gameon;
+	private Boolean gameOn;
 	private MQCenter center;
 	protected final double detectionDistanceUltrasonicSensorRobot = 26;
 
@@ -65,8 +65,8 @@ public abstract class AbstractPilot implements PilotInterface {
 	}
 	
 	@Override
-    public void setPlayerNumber(int teamNumber) {
-    	this.teamNumber = teamNumber;
+    public void setPlayerNumber(int playerNumber) {
+    	this.playerNumber = playerNumber;
     }
 	
 	/**
@@ -110,14 +110,14 @@ public abstract class AbstractPilot implements PilotInterface {
 	 * Check if this Pilot is in gameModus (MQ is activated).
 	 */
 	public boolean isInGameModus() {
-		return gameon;
+		return gameOn;
 	}
 	
 	/**
 	 * Set this Pilot in it's gameModus.
 	 */
 	public void setGameModus(boolean onOff){
-		this.gameon = onOff;
+		this.gameOn = onOff;
 	}
 	
 	@Override
@@ -318,7 +318,7 @@ public abstract class AbstractPilot implements PilotInterface {
     public void setupForGame(){
     	if (isInGameModus()){
     		try {
-    			this.center = new MQCenter(this, "SILVER");
+    			this.center = new MQCenter(this, "SILVER" + getPlayerNumber());
 				getCenter().join();
 				getCenter().setReady(true);
 			} catch (IllegalStateException e) {

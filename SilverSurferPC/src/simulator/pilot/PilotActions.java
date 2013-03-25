@@ -159,5 +159,15 @@ public class PilotActions {
 		pilot.alignOnWhiteLine(); //fix barcode + whiteline first
 		pilot.rotate(-180);*/
 		pilot.travel(-45);
+		
+		if(pilot.isInGameModus())
+		{
+			pilot.getDefaultHandler().playerFoundObject(pilot.getCenter().getPlayerID(), pilot.getPlayerNumber());
+			findTeamMember();
+		}
+	}
+	
+	private void findTeamMember() {
+		
 	}
 }
