@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.List;
 
 import commands.BarcodeCommand;
 
@@ -11,8 +12,11 @@ public class MapReader {
 
     public static MapGraph createMapFromFile(final File txtFile) {
         final String[][] infoMatrix = createInfoMatrixFromFile(txtFile);
+        return createMapFromInfoMatrix(infoMatrix);
+    }
 
-        //Fill a graph with the information in infoMatrix.
+	public static MapGraph createMapFromInfoMatrix(final String[][] infoMatrix) {
+		//Fill a graph with the information in infoMatrix.
         MapGraph map = new MapGraph();
         for (int row = 0; row < infoMatrix.length; row++)
             for (int column = 0; column < infoMatrix[row].length; column++)
@@ -28,9 +32,18 @@ public class MapReader {
             }
         tagTreasures(infoMatrix, map);
         initializeSeesaws(infoMatrix, map);
+        for (Tile t : map.getTiles()) {
+        	System.out.println(t.getToken());
+		}
         return map;
-    }
+	}
 
+	public static MapGraph createMapFromTiles(List<peno.htttp.Tile> tiles){
+		for (peno.htttp.Tile tile : tiles) {
+			System.out.println("x: " + tile.getX() + " y: " + tile.getY() + " token: " + tile.getToken());
+		}
+		return null;
+	}
     private static String[][] createInfoMatrixFromFile(final File f) {
 	    int collums;
 	    int rows;

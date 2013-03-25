@@ -108,4 +108,14 @@ public enum Orientation {
     public abstract Orientation getCounterClockwiseOrientation();
 
     public abstract int getAngle();
+    
+    public static String toToken(Orientation o){
+    	if (o.equals(NORTH))
+    		return "N";
+    	else if (o.equals(EAST))
+    		return "E";
+    	else if (o.equals(SOUTH))
+    		return "S";
+    	else return "W";
+    }
 }

@@ -85,6 +85,14 @@ public class Tile {
         return edges.get(orientation);
     }
     
+    public int getAmtOfWalls(){
+    	int amt = 0;
+    	for (Edge edge : getEdges())
+			if(edge.getObstruction() == Obstruction.WALL)
+				amt++;
+    	return amt;
+    }
+    
     public ArrayList<Tile> getNeighbours() {
         final ArrayList<Tile> neighbours = new ArrayList<Tile>();
         for (final Orientation orientation : Orientation.values())
@@ -140,6 +148,74 @@ public class Tile {
     		tile.getEdgeAt(orientation).setObstruction(this.getEdgeAt(orientation).getObstruction());
     	
     	return tile;
+    }
+    
+    public String getToken(){
+    	String tokenHead = "";
+    	String orientationPart = "";
+
+    	if (this.getAmtOfWalls() == 4)
+    		tokenHead = "Closed";
+    	else if (this.getAmtOfWalls() == 3){
+    		tokenHead = "DeadEnd";
+    		for (Orientation o : Orientation.values())
+				if (getEdgeAt(o).getObstruction().equals(Obstruction.WHITE_LINE))
+					orientationPart += "."+ Orientation.toToken(o.getOppositeOrientation());
+    	}
+    	else if (this.getAmtOfWalls() == 2){
+    		if (getEdgeAt(Orientation.NORTH).equals(Obstruction.WALL) && getEdgeAt(Orientation.EAST).equals(Obstruction.WALL)){
+    			tokenHead = "Corner";
+    			orientationPart = ".N";
+    		}
+    		else if (getEdgeAt(Orientation.EAST).equals(Obstruction.WALL) && getEdgeAt(Orientation.SOUTH).equals(Obstruction.WALL)){
+    			tokenHead = "Corner";
+    			orientationPart = ".E";
+    		}
+    		else if (getEdgeAt(Orientation.SOUTH).equals(Obstruction.WALL) && getEdgeAt(Orientation.WEST).equals(Obstruction.WALL)){
+    			tokenHead = "Corner";
+    			orientationPart = ".S";
+    		}
+    		else if (getEdgeAt(Orientation.WEST).equals(Obstruction.WALL) && getEdgeAt(Orientation.NORTH).equals(Obstruction.WALL)){
+    			tokenHead = "Corner";
+    			orientationPart = ".W";
+    		}
+    		else {
+    			tokenHead = "Straight";
+    			if (getEdgeAt(Orientation.WEST).equals(Obstruction.WALL) && getEdgeAt(Orientation.EAST).equals(Obstruction.WALL))
+        			orientationPart = ".E";
+    			else
+    				orientationPart = ".N";
+
+    		}
+    	}
+    	else if (this.getAmtOfWalls() == 1){
+    		tokenHead = "T";
+    		for (Orientation o : Orientation.values())
+				if (getEdgeAt(o).getObstruction() == Obstruction.WALL)
+					orientationPart += "."+ Orientation.toToken(o);
+    	}
+    	else if (this.getAmtOfWalls() == 0)
+    		tokenHead = "Cross";
+    	
+    	String barcodePart = "";
+    	if (this.getContent() instanceof Barcode)
+    		barcodePart = "." + ((Barcode) this.getContent()).getValue();
+    	
+    	String startBasePart = "";
+    	if (this.getContent() instanceof StartBase)
+    		startBasePart = ".S" + ((StartBase) this.getContent()).getValue() + Orientation.toToken( ((StartBase) this.getContent()).getOrientation());
+    	
+    	String seesawPart = "";
+    	if (this.getContent() instanceof Seesaw){
+    		tokenHead = "Seesaw";
+    		orientationPart = "." + Orientation.toToken(((Seesaw)this.getContent()).getOrientation());
+    	}
+    	
+    	String treasurePart = "";
+    	if (this.getContent() instanceof TreasureObject)
+    		treasurePart = ".V";
+    	
+    	return tokenHead+orientationPart+barcodePart+startBasePart+seesawPart+treasurePart;
     }
 
     @Override
