@@ -15,8 +15,8 @@ import mazeAlgorithm.ExploreThread;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-	private int originalPlayerNumber;
 	private int playerNumber;
+	private int teamNumber;
 	private MapGraph mapGraphConstructed;
 	private Point2D.Double position;
 	private double angle;
@@ -28,6 +28,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private ExploreThread exploreThread;
     private PlayerHandler handler;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
+	private Boolean gameon;
 
 	protected final double detectionDistanceUltrasonicSensorRobot = 26;
 
@@ -36,7 +37,6 @@ public abstract class AbstractPilot implements PilotInterface {
 			this.playerNumber = -1;
 		else
 			this.playerNumber = playerNumber;
-		originalPlayerNumber = this.playerNumber;
 		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
 		reset();
 	}
@@ -52,24 +52,36 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	/**
 	 * Returns 0,1,2 or 3 indicating which treasure the pilot is looking for
-	 * Returns 4 or 5 when the treasure is found and the pilot knows what team it is in
-	 * Returns -1 if no valid team number is available
 	 */
 	@Override
 	public int getPlayerNumber() {
 		return playerNumber;
 	}
-
+	
+	@Override
+    public void setPlayerNumber(int teamNumber) {
+    	this.teamNumber = teamNumber;
+    }
+	
 	/**
-	 * The player number can only change when a robot has found its treasure and knows what team it is in
-	 * This means the team number can only be set to 4 or 5
+	 * Returns 0 or 1, indicating what team the robot is on.
+	 * Returns -1 when the team is not yet known.
 	 */
 	@Override
-	public void setPlayerNumber(int playerNumber) {
-		if(playerNumber == 4 || playerNumber == 5)
-			this.playerNumber = playerNumber;
-		else
+	public int getTeamNumber() {
+		return teamNumber;
+	}
+
+	/**
+	 * Set teamNumber to 0 or 1. Other values are not excepted.
+	 */
+	@Override
+	public void setTeamNumber(int teamNumber) {
+		if(teamNumber < 0 && teamNumber > 1)
 			throw new IllegalStateException("The teamnumber can only be set to 4 or 5!");
+		else
+			this.teamNumber = teamNumber;
+			
 	}
 
 	@Override
@@ -88,6 +100,20 @@ public abstract class AbstractPilot implements PilotInterface {
 				(int)Math.floor(getPosition().getY() / sizeTile()));
 	}
 
+	/**
+	 * Check if this Pilot is in gameModus (MQ is activated).
+	 */
+	public boolean isInGameModus() {
+		return gameon;
+	}
+	
+	/**
+	 * Set this Pilot in it's gameModus.
+	 */
+	public void setGameModus(boolean onOff){
+		this.gameon = onOff;
+	}
+	
 	@Override
 	public void setPosition(final double x, final double y) {
 		position.setLocation(x, y);
@@ -110,7 +136,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	@Override
 	public void reset() {
-		playerNumber = originalPlayerNumber;
+		teamNumber = -1;
 		angle = 270;
 		speed = 2;
 		mapGraphConstructed = new MapGraph();

@@ -8,12 +8,17 @@ import peno.htttp.GameHandler;
 import mapping.MapGraph;
 
 public interface PilotInterface {
+	
 
     public abstract double sizeTile();
 
     public abstract int getPlayerNumber();
+    
+    public abstract void setPlayerNumber(int number);
+    
+    public abstract int getTeamNumber();
 
-    public abstract void setPlayerNumber(int teamNumber);
+    public abstract void setTeamNumber(int teamNumber);
 
     public abstract MapGraph getMapGraphConstructed();
 
@@ -30,4 +35,8 @@ public interface PilotInterface {
     public abstract void reset();
 
     public abstract GameHandler getDefaultHandler();
+    
+    public abstract void setGameModus(boolean onOff);
+    
+    public abstract boolean isInGameModus();
 }

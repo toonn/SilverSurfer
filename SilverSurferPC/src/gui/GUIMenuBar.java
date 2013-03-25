@@ -323,8 +323,19 @@ public class GUIMenuBar extends JMenuBar {
             	System.out.println("[EXPLORE] Start exploration.");
             }
         });
+        
+        final JMenuItem playGameItem = new JMenuItem("Play Game");
+        exploreMenu.add(playGameItem);
+        playGameItem.addActionListener(new ActionListener() {
 
-        final JMenuItem resetRobotsItem = new JMenuItem("Stop exploration and reset robots");
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            	SilverSurferGUI.getSimulatorPanel().playGame();
+            	System.out.println("[EXPLORE] Started playing Treasure Trek.");
+            }
+        });
+
+        final JMenuItem resetRobotsItem = new JMenuItem("Stop and reset");
         exploreMenu.add(resetRobotsItem);
         resetRobotsItem.addActionListener(new ActionListener() {
 

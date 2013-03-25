@@ -150,7 +150,7 @@ public class PilotActions {
 	}
 	
 	private void pickUpItem(int team) {
-		pilot.setPlayerNumber(4 + team);
+		pilot.setTeamNumber(team);
 		pilot.travel(35);
 		pilot.alignOnWalls();
 		pilot.travel(10);

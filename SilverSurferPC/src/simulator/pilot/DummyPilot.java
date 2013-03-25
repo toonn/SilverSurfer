@@ -17,6 +17,7 @@ public class DummyPilot implements PilotInterface {
     private double angle;
     private boolean active = false;
     private DummyHandler handler;
+	private boolean gameModus;
 
     public DummyPilot(int teamNumber) {
         if (teamNumber < 0 || teamNumber > 3)
@@ -43,18 +44,9 @@ public class DummyPilot implements PilotInterface {
         return teamNumber;
     }
 
-    /**
-     * The team number can only change when a robot has found its treasure and
-     * knows what team it is in This means the team number can only be set to 4
-     * or 5
-     */
     @Override
     public void setPlayerNumber(int teamNumber) {
-        if (teamNumber == 4 || teamNumber == 5)
-            this.teamNumber = teamNumber;
-        else
-            throw new IllegalStateException(
-                    "The teamnumber can only be set to 4 or 5!");
+    	this.teamNumber = teamNumber;
     }
 
     @Override
@@ -118,4 +110,26 @@ public class DummyPilot implements PilotInterface {
     public SpectatorHandler getDefaultHandler() {
         return handler;
     }
+
+	@Override
+	public void setGameModus(boolean onOff) {
+		this.gameModus = onOff;
+		
+	}
+
+	@Override
+	public boolean isInGameModus() {
+		return gameModus;
+	}
+
+	@Override
+	public int getTeamNumber() {
+		return teamNumber;
+	}
+
+	@Override
+	public void setTeamNumber(int teamNumber) {
+		this.teamNumber = teamNumber;
+		
+	}
 }
