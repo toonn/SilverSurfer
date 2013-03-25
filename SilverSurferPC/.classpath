@@ -2,10 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/htttp"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="libs/commons-cli-1.1.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-1.2.jar"/>
 	<classpathentry kind="lib" path="libs/rabbitmq-client.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/htttp"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

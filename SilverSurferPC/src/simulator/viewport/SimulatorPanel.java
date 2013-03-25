@@ -404,6 +404,8 @@ public class SimulatorPanel extends JPanel {
 	}
 	
 	public DummyPilot getDummyPilot() {
-		return dummyPilots.iterator().next();
+		if(dummyPilots.iterator().hasNext())
+			return dummyPilots.iterator().next();
+		return null;
 	}
 }

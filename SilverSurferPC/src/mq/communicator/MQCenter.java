@@ -96,8 +96,9 @@ public class MQCenter {
     }
 
     public PlayerClient getClient() {
-		return client;
-	}
+        return client;
+    }
+
     /**
      * Use to join the game. Be aware: joining the game is not enough. Numbers
      * will be rolled, and you'll have to do some work before being able to
@@ -167,14 +168,14 @@ public class MQCenter {
                 System.err.println("Fout bij deelname: " + t.getMessage());
                 System.err.println("Opnieuw proberen...");
                 try {
-					client.join(stdCallback());
-				} catch (IllegalStateException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    client.join(stdCallback());
+                } catch (IllegalStateException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         };
     }

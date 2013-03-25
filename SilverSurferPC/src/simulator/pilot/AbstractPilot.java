@@ -17,328 +17,328 @@ import mazeAlgorithm.ExploreThread;
 import mq.communicator.MQCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
-
-	private int playerNumber = -1;
-	private int teamNumber = -1;
-	private MapGraph mapGraphConstructed;
-	private Point2D.Double position;
-	private double angle;
-	private int speed;
-	private boolean busyExecutingBarcode = false;
-	protected boolean readBarcodes = true;
-	protected boolean permaBarcodeStop = false;
-	protected PilotActions pilotActions = new PilotActions(this);
-	private ExploreThread exploreThread;
+    private int playerNumber = -1;
+    private int teamNumber = -1;
+    private MapGraph mapGraphConstructed;
+    private Point2D.Double position;
+    private double angle;
+    private int speed;
+    private boolean busyExecutingBarcode = false;
+    protected boolean readBarcodes = true;
+    protected boolean permaBarcodeStop = false;
+    protected PilotActions pilotActions = new PilotActions(this);
+    private ExploreThread exploreThread;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
-	private boolean gameOn = false;
-	private MQCenter center;
-	protected final double detectionDistanceUltrasonicSensorRobot = 26;
-	private boolean teamMemberFound = false;
-	private int teamMemberPlayerNumber;
-	private Tile startingPositionOfTeamMember;
-	private boolean canUpdatePosition = false;
+    private boolean gameOn = false;
+    private MQCenter center;
+    protected final double detectionDistanceUltrasonicSensorRobot = 26;
+    private boolean teamMemberFound = false;
+    private int teamMemberPlayerNumber;
+    private Tile startingPositionOfTeamMember;
+    private boolean canUpdatePosition = false;
 
-	public AbstractPilot(int playerNumber) {
-		if(playerNumber < 0 || playerNumber > 3)
-			this.playerNumber = -1;
-		else
-			this.playerNumber = playerNumber;
-		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
-		reset();
-	}
-	
-	public Tile getStartingPositionOfTeamMember() {
-		return startingPositionOfTeamMember;
-	}
-	
-	public boolean getTeamMemberFound() {
-		return teamMemberFound;
-	}
-	
-	public int getTeamMemberPlayerNumber() {
-		return teamMemberPlayerNumber;
-	}
-	
-	public void setTeamMemberFound(int teamMemberPlayerNumber) {
-		this.teamMemberFound = true;
-		this.teamMemberPlayerNumber = teamMemberPlayerNumber;
-	}
-	
-	public MQCenter getCenter() {
-		return center;
-	}
-	
-	public Vector<Tile> getSeesawBarcodeTiles() {
-		return seesawBarcodeTiles;
-	}
-	
-	public void shuffleSeesawBarcodeTiles() {
-		Collections.shuffle(seesawBarcodeTiles);
-	}
-
-	@Override
-	public double sizeTile() {
-		return 40;
-	}
-
-	/**
-	 * Returns 0,1,2 or 3 indicating which treasure the pilot is looking for
-	 */
-	@Override
-	public int getPlayerNumber() {
-		return playerNumber;
-	}
-	
-	@Override
-    public void setPlayerNumber(int playerNumber) {
-    	this.playerNumber = playerNumber;
+    public AbstractPilot(int playerNumber) {
+        if (playerNumber < 0 || playerNumber > 3)
+            this.playerNumber = -1;
+        else
+            this.playerNumber = playerNumber;
+        position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
+        reset();
     }
-	
-	/**
-	 * Returns 0 or 1, indicating what team the robot is on.
-	 * Returns -1 when the team is not yet known.
-	 */
-	@Override
-	public int getTeamNumber() {
-		return teamNumber;
-	}
 
-	/**
-	 * Set teamNumber to 0 or 1. Other values are not excepted.
-	 */
-	@Override
-	public void setTeamNumber(int teamNumber) {
-		if(teamNumber < 0 && teamNumber > 1)
-			throw new IllegalStateException("The teamnumber can only be set to 4 or 5!");
-		else
-			this.teamNumber = teamNumber;
-	}
+    public Tile getStartingPositionOfTeamMember() {
+        return startingPositionOfTeamMember;
+    }
 
-	@Override
-	public MapGraph getMapGraphConstructed() {
-		return mapGraphConstructed;
-	}
+    public boolean getTeamMemberFound() {
+        return teamMemberFound;
+    }
 
-	@Override
-	public Point2D.Double getPosition() {
-		return position;
-	}
+    public int getTeamMemberPlayerNumber() {
+        return teamMemberPlayerNumber;
+    }
 
-	@Override
-	public Point getMatrixPosition() {
-		return new Point((int)Math.floor(getPosition().getX() / sizeTile()),
-				(int)Math.floor(getPosition().getY() / sizeTile()));
-	}
+    public void setTeamMemberFound(int teamMemberPlayerNumber) {
+        this.teamMemberFound = true;
+        this.teamMemberPlayerNumber = teamMemberPlayerNumber;
+    }
 
-	/**
-	 * Check if this Pilot is in gameModus (MQ is activated).
-	 */
-	public boolean isInGameModus() {
-		return gameOn;
-	}
-	
-	/**
-	 * Set this Pilot in it's gameModus.
-	 */
-	public void setGameModus(boolean onOff){
-		this.gameOn = onOff;
-	}
-	
-	@Override
-	public void setPosition(final double x, final double y) {
-		position.setLocation(x, y);
-	}
+    public MQCenter getCenter() {
+        return center;
+    }
 
-	@Override
-	public double getAngle() {
-		return angle;
-	}
+    public Vector<Tile> getSeesawBarcodeTiles() {
+        return seesawBarcodeTiles;
+    }
 
-	@Override
-	public void setAngle(final double angle) {
-		if (angle > 360)
-			this.angle = angle - 360;
-		else if (angle < 0)
-			this.angle = angle + 360;
-		else
-			this.angle = angle;
-	}
+    public void shuffleSeesawBarcodeTiles() {
+        Collections.shuffle(seesawBarcodeTiles);
+    }
 
-	@Override
-	public void reset() {
-		teamNumber = -1;
-		angle = 270;
-		speed = 2;
-		mapGraphConstructed = new MapGraph();
-		mapGraphConstructed.addTile(getMatrixPosition());
-	}
-	
-	@Override
-	public void makeReadyToPlay() {
-		mapGraphConstructed = new MapGraph();
-		mapGraphConstructed.addTile(getMatrixPosition());
-	}
+    @Override
+    public double sizeTile() {
+        return 40;
+    }
 
-	public abstract String getConsoleTag();
+    /**
+     * Returns 0,1,2 or 3 indicating which treasure the pilot is looking for
+     */
+    @Override
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
 
-	public void setSpeed(int speed) {
-		this.speed = speed;
-	}
+    @Override
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
+    }
 
-	public Orientation getOrientation() {
-		return Orientation.calculateOrientation(getAngle());
-	}
+    /**
+     * Returns 0 or 1, indicating what team the robot is on. Returns -1 when the
+     * team is not yet known.
+     */
+    @Override
+    public int getTeamNumber() {
+        return teamNumber;
+    }
 
-	public abstract int getLightSensorValue();
+    /**
+     * Set teamNumber to 0 or 1. Other values are not excepted.
+     */
+    @Override
+    public void setTeamNumber(int teamNumber) {
+        if (teamNumber < 0 && teamNumber > 1)
+            throw new IllegalStateException(
+                    "The teamnumber can only be set to 4 or 5!");
+        else
+            this.teamNumber = teamNumber;
+    }
 
-	public abstract int getUltraSensorValue();
+    @Override
+    public MapGraph getMapGraphConstructed() {
+        return mapGraphConstructed;
+    }
 
-	public abstract int getInfraRedSensorValue();
+    @Override
+    public Point2D.Double getPosition() {
+        return position;
+    }
 
-	protected boolean checkForObstruction() {
-		if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot)
-			return true;
-		return false;
-	}
+    @Override
+    public Point getMatrixPosition() {
+        return new Point((int) Math.floor(getPosition().getX() / sizeTile()),
+                (int) Math.floor(getPosition().getY() / sizeTile()));
+    }
 
-	public void setObstructionOrTile() {
-		final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
-		if (checkForObstruction())
-			getMapGraphConstructed().getTile(getMatrixPosition())
-			.getEdgeAt(currentOrientation)
-			.setObstruction(Obstruction.WALL);
-		else {
-			getMapGraphConstructed().getTile(getMatrixPosition())
-			.getEdgeAt(currentOrientation)
-			.setObstruction(Obstruction.WHITE_LINE);
-			Point nextPoint = currentOrientation.getNext(getMatrixPosition());
-			if(mapGraphConstructed.getTile(nextPoint) == null)
-				getMapGraphConstructed().addTile(nextPoint);
-		}
-	}
+    /**
+     * Check if this Pilot is in gameModus (MQ is activated).
+     */
+    public boolean isInGameModus() {
+        return gameOn;
+    }
 
-	protected boolean pointOnEdge(final double x, final double y) {
-		double edgeMarge = 1.2;
-		return (x % sizeTile()) > sizeTile() - edgeMarge
-		|| (x % sizeTile()) < edgeMarge
-		|| (y % sizeTile()) > sizeTile() - edgeMarge
-		|| (y % sizeTile()) < edgeMarge;
-	}
+    /**
+     * Set this Pilot in it's gameModus.
+     */
+    public void setGameModus(boolean onOff) {
+        this.gameOn = onOff;
+    }
 
-	public void alignOnWhiteLine() {
-		travel(20);
-		rotate(-90);
-		rotate(90);
-		travel(20);
-	}
+    @Override
+    public void setPosition(final double x, final double y) {
+        position.setLocation(x, y);
+    }
 
-	public void alignOnWalls() {
-		rotate(90);
-		rotate(-90);
-		rotate(-90);
-		rotate(90);
-	}
+    @Override
+    public double getAngle() {
+        return angle;
+    }
 
-	public void travel(final double distance) {
-		double currentX = getPosition().getX();
-		double currentY = getPosition().getY();
-		double x;
-		double y;
-		Orientation travelOrientation = Orientation.calculateOrientation(getAngle());
-		if (distance < 0)
-			travelOrientation = travelOrientation.getOppositeOrientation();
-		for (int i = 1; i <= Math.abs(distance); i++) {
-			if (travelOrientation == Orientation.NORTH) {
-				x = currentX;
-				y = currentY - i;
-			}
-			else if (travelOrientation == Orientation.SOUTH) {
-				x = currentX;
-				y = currentY + i;
-			}
-			else if (travelOrientation == Orientation.EAST) {
-				x = currentX + i;
-				y = currentY;
-			}
-			else {
-				x = currentX - i;
-				y = currentY;
-			}
-			setPosition(x, y);
-			try {
-				Thread.sleep(getTravelSleepTime());
-			} catch (final InterruptedException e) {
+    @Override
+    public void setAngle(final double angle) {
+        if (angle > 360)
+            this.angle = angle - 360;
+        else if (angle < 0)
+            this.angle = angle + 360;
+        else
+            this.angle = angle;
+    }
 
-			}
-		}
-	}
+    @Override
+    public void reset() {
+        teamNumber = -1;
+        angle = 270;
+        speed = 2;
+        mapGraphConstructed = new MapGraph();
+        mapGraphConstructed.addTile(getMatrixPosition());
+    }
 
-	private int getTravelSleepTime() {
-		switch (speed) {
-		case -1:
-			return 50;
-		case 1:
-			return 10;
-		case 2:
-			return 7;
-		case 3:
-			return 5;
-		case 4:
-			return 3;
-		}
-		return 1;
-	}
+    @Override
+    public void makeReadyToPlay() {
+        mapGraphConstructed = new MapGraph();
+        mapGraphConstructed.addTile(getMatrixPosition());
+    }
 
-	public void rotate(final double alpha) {
-		double angle = getAngle();
-		for (int i = 1; i <= Math.abs(alpha); i++) {
-			if (alpha >= 0)
-				setAngle(angle + i);
-			else
-				setAngle(angle - i);
-			try {
-				Thread.sleep(getRotateSleepTime());
-			} catch (Exception e) {
+    public abstract String getConsoleTag();
 
-			}
-		}
-	}
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
 
-	private int getRotateSleepTime() {
-		return 5 - speed;
-	}
+    public Orientation getOrientation() {
+        return Orientation.calculateOrientation(getAngle());
+    }
 
-	protected abstract int readBarcode();
+    public abstract int getLightSensorValue();
 
-	public boolean isExecutingBarcode() {
-		return busyExecutingBarcode;
-	}
+    public abstract int getUltraSensorValue();
 
-	public void setBusyExecutingBarcode(boolean busy) {
-		busyExecutingBarcode = busy;
-	}
+    public abstract int getInfraRedSensorValue();
 
-	public void setReadBarcodes(boolean readBarcodes) {
-		this.readBarcodes = readBarcodes;
-	}
+    protected boolean checkForObstruction() {
+        if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot)
+            return true;
+        return false;
+    }
 
-	public boolean getPermaStopReadingBarcodes() {
-		return permaBarcodeStop;
-	}
+    public void setObstructionOrTile() {
+        final Orientation currentOrientation = Orientation
+                .calculateOrientation(getAngle());
+        if (checkForObstruction())
+            getMapGraphConstructed().getTile(getMatrixPosition())
+                    .getEdgeAt(currentOrientation)
+                    .setObstruction(Obstruction.WALL);
+        else {
+            getMapGraphConstructed().getTile(getMatrixPosition())
+                    .getEdgeAt(currentOrientation)
+                    .setObstruction(Obstruction.WHITE_LINE);
+            Point nextPoint = currentOrientation.getNext(getMatrixPosition());
+            if (mapGraphConstructed.getTile(nextPoint) == null)
+                getMapGraphConstructed().addTile(nextPoint);
+        }
+    }
 
-	public void permaStopReadingBarcodes() {
-		permaBarcodeStop = true;
-	}
+    protected boolean pointOnEdge(final double x, final double y) {
+        double edgeMarge = 1.2;
+        return (x % sizeTile()) > sizeTile() - edgeMarge
+                || (x % sizeTile()) < edgeMarge
+                || (y % sizeTile()) > sizeTile() - edgeMarge
+                || (y % sizeTile()) < edgeMarge;
+    }
 
-	public void startExploring() {
-		exploreThread = new ExploreThread(mapGraphConstructed.getTile(getMatrixPosition()), this);
-		exploreThread.start();
-	}
+    public void alignOnWhiteLine() {
+        travel(20);
+        rotate(-90);
+        rotate(90);
+        travel(20);
+    }
 
-	public void stopExploring() {
-		if(exploreThread != null && exploreThread.isAlive())
-			exploreThread.quit();
-	}
+    public void alignOnWalls() {
+        rotate(90);
+        rotate(-90);
+        rotate(-90);
+        rotate(90);
+    }
+
+    public void travel(final double distance) {
+        double currentX = getPosition().getX();
+        double currentY = getPosition().getY();
+        double x;
+        double y;
+        Orientation travelOrientation = Orientation
+                .calculateOrientation(getAngle());
+        if (distance < 0)
+            travelOrientation = travelOrientation.getOppositeOrientation();
+        for (int i = 1; i <= Math.abs(distance); i++) {
+            if (travelOrientation == Orientation.NORTH) {
+                x = currentX;
+                y = currentY - i;
+            } else if (travelOrientation == Orientation.SOUTH) {
+                x = currentX;
+                y = currentY + i;
+            } else if (travelOrientation == Orientation.EAST) {
+                x = currentX + i;
+                y = currentY;
+            } else {
+                x = currentX - i;
+                y = currentY;
+            }
+            setPosition(x, y);
+            try {
+                Thread.sleep(getTravelSleepTime());
+            } catch (final InterruptedException e) {
+
+            }
+        }
+    }
+
+    private int getTravelSleepTime() {
+        switch (speed) {
+        case -1:
+            return 50;
+        case 1:
+            return 10;
+        case 2:
+            return 7;
+        case 3:
+            return 5;
+        case 4:
+            return 3;
+        }
+        return 1;
+    }
+
+    public void rotate(final double alpha) {
+        double angle = getAngle();
+        for (int i = 1; i <= Math.abs(alpha); i++) {
+            if (alpha >= 0)
+                setAngle(angle + i);
+            else
+                setAngle(angle - i);
+            try {
+                Thread.sleep(getRotateSleepTime());
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    private int getRotateSleepTime() {
+        return 5 - speed;
+    }
+
+    protected abstract int readBarcode();
+
+    public boolean isExecutingBarcode() {
+        return busyExecutingBarcode;
+    }
+
+    public void setBusyExecutingBarcode(boolean busy) {
+        busyExecutingBarcode = busy;
+    }
+
+    public void setReadBarcodes(boolean readBarcodes) {
+        this.readBarcodes = readBarcodes;
+    }
+
+    public boolean getPermaStopReadingBarcodes() {
+        return permaBarcodeStop;
+    }
+
+    public void permaStopReadingBarcodes() {
+        permaBarcodeStop = true;
+    }
+
+    public void startExploring() {
+        exploreThread = new ExploreThread(
+                mapGraphConstructed.getTile(getMatrixPosition()), this);
+        exploreThread.start();
+    }
+
+    public void stopExploring() {
+        if (exploreThread != null && exploreThread.isAlive())
+            exploreThread.quit();
+    }
 
     @Override
     public GameHandler getDefaultHandler() {
@@ -359,12 +359,12 @@ public abstract class AbstractPilot implements PilotInterface {
     }
     
     public boolean canUpdatePosition() {
-    	return canUpdatePosition;
+        return canUpdatePosition;
     }
-    
+
     public void setUpdatePosition(boolean canUpdatePosition) {
-    	this.canUpdatePosition = canUpdatePosition;
+        this.canUpdatePosition = canUpdatePosition;
     }
-    
+
     protected abstract boolean crashImminent();
 }

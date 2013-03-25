@@ -25,29 +25,28 @@ public class APHandler implements PlayerHandler {
     @Override
     public void gameStarted() {
         getPilot().startExploring();
-        System.out.println("game started");
+        System.out.println("[HTTTP] Game started!");
 
     }
 
     @Override
     public void gameStopped() {
         // TODO Auto-generated method stub
-        System.out.println("game stopped");
+        System.out.println("[HTTTP] Game stopped!");
 
     }
 
     @Override
     public void gamePaused() {
         // TODO Auto-generated method stub
-        System.out.println("game paused");
+        System.out.println("[HTTTP] Game paused");
 
     }
 
     @Override
     public void playerJoined(String playerID) {
         // TODO Auto-generated method stub
-        System.out.println(playerID + " has joined the game!");
-
+        System.out.println("[HTTTP] " + playerID + " has joined the game!");
     }
 
     @Override
@@ -58,7 +57,6 @@ public class APHandler implements PlayerHandler {
     @Override
     public void playerDisconnected(String playerID, DisconnectReason reason) {
         // TODO Auto-generated method stub
-    	System.out.println("test "+ playerID + " " + reason + " playerDisconnected");
     }
 
     @Override
@@ -68,7 +66,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void playerFoundObject(String playerID, int playerNumber) {
-        System.out.println(playerID + " " + playerNumber + " has found object!!!");
+        System.out.println("[HTTTP] Player " + playerNumber + " (" + playerID + ") has found his object!");
     }
 
 	@Override
@@ -81,7 +79,7 @@ public class APHandler implements PlayerHandler {
 	public void gameRolled(int playerNumber, int objectNumber) {
 		// TODO Auto-generated method stub
     	getPilot().setPlayerNumber(playerNumber-1);
-        System.out.println("Game rolled, your number is " + (playerNumber-1) + " and your objectnumber is " + objectNumber + ".");
+        System.out.println("[HTTTP] Game rolled, your number is " + (playerNumber-1) + " and your objectnumber is " + objectNumber + ".");
         panel.setOnStartTile(pilot);
         panel.makeReadyToPlay();
         try {
@@ -95,7 +93,7 @@ public class APHandler implements PlayerHandler {
 	@Override
 	public void teamConnected(String partnerID) {
 		// TODO Auto-generated method stub
-		System.out.println("Partner with nr " + partnerID + " has connected.");
+		System.out.println("[HTTTP] Partner (" + partnerID + ") has connected.");
 		pilot.setUpdatePosition(true);
 		if(panel.getDummyPilot() != null)
 			panel.getDummyPilot().activate();
@@ -103,8 +101,7 @@ public class APHandler implements PlayerHandler {
 
 	@Override
 	public void teamPosition(double x, double y, double angle) {
-		//System.out.println("I have received info: position " + x + ", " + y + " and angle " + angle);
-		if(panel.getDummyPilot() != null)
+		if(panel.getDummyPilot() != null) //Test, is niet correct dus mag veranderd worden (zet dummy position en angle)
 			panel.getDummyPilot().setMap(pilot.getMapGraphConstructed());
 	}
 
