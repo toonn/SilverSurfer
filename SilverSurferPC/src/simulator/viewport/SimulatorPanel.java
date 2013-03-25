@@ -250,20 +250,13 @@ public class SimulatorPanel extends JPanel {
                 amountOfDummies);
     }
 
-    public void setOnStartTile(PilotInterface pilot) {
-    	for (Tile tile : mapGraphLoaded.getStartTiles())
-			if (tile.getContent().getValue() == pilot.getPlayerNumber()) { 
+    private void setOnStartTile(PilotInterface pilot) {
+		for (Tile tile : mapGraphLoaded.getStartTiles()) {
+			if (tile.getContent().getValue() == pilot.getPlayerNumber()) {
 				pilot.setPosition(tile.getPosition().x*40 + 20, tile.getPosition().y*40 + 20);
-				Orientation orientation = ((StartBase)(tile.getContent())).getOrientation();
-				if(orientation == Orientation.NORTH)
-					pilot.setAngle(270);
-				if(orientation == Orientation.EAST)
-					pilot.setAngle(0);
-				if(orientation == Orientation.SOUTH)
-					pilot.setAngle(90);
-				if(orientation == Orientation.WEST)
-					pilot.setAngle(180);
+				pilot.setAngle(((StartBase) tile.getContent()).getOrientation().getAngle());
 			}
+		}
 	}
 
 	public void removeMapFile() {

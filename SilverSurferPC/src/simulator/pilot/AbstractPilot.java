@@ -43,6 +43,7 @@ public abstract class AbstractPilot implements PilotInterface {
         else
             this.playerNumber = playerNumber;
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
+        angle = 270;
         reset();
     }
 
@@ -167,7 +168,6 @@ public abstract class AbstractPilot implements PilotInterface {
     @Override
     public void reset() {
         teamNumber = -1;
-        angle = 270;
         speed = 2;
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
