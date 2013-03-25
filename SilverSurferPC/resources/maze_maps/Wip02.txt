@@ -1,10 +1,8 @@
 6 6
 
-# voorwerpen hebben nummers 1,2,3,4
-# voorwerp 1 en 2 zijn een team en 3 en 4
 Corner.N	T.N		T.N		Corner.E	DeadEnd.W	Corner.E
 Straight.S.11	DeadEnd.S	Straight.N.02	Corner.W	Straight.E	T.E
-T.W.s.N00	Corner.E.s.N00	DeadEnd.S.o.2	DeadEnd.W.o.0	Straight.E.00	Corner.S
-T.W.s.S10	Corner.S.s.S10	T.N		Straight.E.05	DeadEnd.E.o.5	DeadEnd.N.o.7
+Seesaw.N	Closed	DeadEnd.S.V	DeadEnd.W.V	Straight.E.00	Corner.S
+Seesaw.S	Closed	Corner.N	Straight.E.05	DeadEnd.E.V	DeadEnd.N.V
 Straight.S.13	DeadEnd.N	Corner.W	Straight.E	Corner.E	Straight.S.07
 Corner.W	T.S		Straight.E	Straight.E	T.S		Corner.S

@@ -39,9 +39,11 @@ public class MazeExplorer {
             algorithm(startTile);
             for (final Object tile : allTiles)
                 ((Tile) tile).setMarkingExploreMaze(false);
+
         } catch (NullPointerException e) {
-            if (!quit)
-                System.out.println("Exception in MazeExplorer!");
+            // if(!quit)
+            // System.out.println("Exception in MazeExplorer!");
+            e.printStackTrace();
         }
     }
 
@@ -64,9 +66,10 @@ public class MazeExplorer {
 
         // Get next optimal tile.
         Tile nextTile = getPriorityNextTile(currentTile);
-        if (allTiles.contains(nextTile)) {
+        while (allTiles.contains(nextTile)) {
             currentTile = nextTile;
-            exploreTile(currentTile);
+            if (!currentTile.isMarkedExploreMaze())
+                exploreTile(currentTile);
             for (final Tile neighbourTile : currentTile
                     .getReachableNeighbours())
                 if (neighbourTile != null
@@ -93,9 +96,10 @@ public class MazeExplorer {
             }
 
             nextTile = getPriorityNextTile(currentTile);
-            if (allTiles.contains(nextTile)) {
+            while (allTiles.contains(nextTile)) {
                 currentTile = nextTile;
-                exploreTile(currentTile);
+                if (!currentTile.isMarkedExploreMaze())
+                    exploreTile(currentTile);
                 for (final Tile neighbourTile : currentTile
                         .getReachableNeighbours())
                     if (neighbourTile != null
@@ -186,6 +190,7 @@ public class MazeExplorer {
         // TODO: wat als seesaws niet gelijk zijn (dus op verschillend gebied
         // uitkomen) -> geen random seesaw oversteken!
         while (true) {
+            pilot.shuffleSeesawBarcodeTiles();
             for (Tile tile : pilot.getSeesawBarcodeTiles()) {
                 if (isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
                     ShortestPath shortestPath = new ShortestPath(pilot,
@@ -218,6 +223,17 @@ public class MazeExplorer {
                                               // maar de laatste barcode van de
                                               // wip niet.
                             return endTile;
+                        }
+                    // Wip is gesloten, dus rij 1 tegel achteruit
+                    for (Tile neighbour : currentTile
+                            .getReachableNeighboursIgnoringSeesaw())
+                        if (!(neighbour.getContent() instanceof Seesaw)) {
+                            shortestPath = new ShortestPath(pilot, currentTile,
+                                    neighbour, allTiles);
+                            currentAmount = shortestPath.goShortestPath(align,
+                                    currentAmount, amountOfTilesUntilAlign);
+                            currentTile = neighbour;
+                            checkExploredQueue();
                         }
                 }
             }
@@ -360,4 +376,5 @@ public class MazeExplorer {
     public void quit() {
         quit = true;
     }
+
 }

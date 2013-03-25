@@ -2,10 +2,11 @@ package mq.communicator;
 
 import java.io.IOException;
 
+import mq.communicator.Config;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.ConnectionParameters;
 
 public class MQ {
     /**
@@ -33,14 +34,15 @@ public class MQ {
      * @throws IOException
      */
     public static Connection createConnection() throws IOException {
-        ConnectionParameters params = new ConnectionParameters();
-        params.setUsername(Config.USER_NAME);
-        params.setPassword(Config.PASSWORD);
-        params.setVirtualHost(Config.VIRTUAL_HOST);
-        params.setRequestedHeartbeat(0);
-        ConnectionFactory factory = new ConnectionFactory(params);
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setUsername(Config.USER_NAME);
+        factory.setPassword(Config.PASSWORD);
+        factory.setVirtualHost(Config.VIRTUAL_HOST);
+        factory.setRequestedHeartbeat(0);
+        factory.setHost(Config.HOST_NAME);
+        factory.setPort(Config.PORT);
 
-        Connection conn = factory.newConnection(Config.HOST_NAME, Config.PORT);
+        Connection conn = factory.newConnection();
 
         return conn;
     }

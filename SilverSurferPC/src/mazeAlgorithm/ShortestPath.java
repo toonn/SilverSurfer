@@ -130,6 +130,13 @@ public class ShortestPath {
                 pilot.travel(40);
                 currentAmount--;
             }
+            if(pilot.canUpdatePosition()) {
+            	try {
+                	pilot.getCenter().getClient().updatePosition(pilot.getPosition().x, pilot.getPosition().y, pilot.getAngle());
+            	} catch(Exception e) {
+            		
+            	}
+            }
             // TODO goToNextTile checkte of er geAligned moest worden.
             // communicator.goToNextTile(orientation);
         }

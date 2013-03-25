@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 import peno.htttp.SpectatorHandler;
+import simulator.viewport.SimulatorPanel;
 
 import mapping.MapGraph;
 import mq.communicator.DummyHandler;
@@ -92,6 +93,12 @@ public class DummyPilot implements PilotInterface {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
     }
+	
+	@Override
+	public void makeReadyToPlay() {
+		mapGraphConstructed = new MapGraph();
+		mapGraphConstructed.addTile(getMatrixPosition());
+	}
 
     public void setMap(MapGraph newMap) {
         this.mapGraphConstructed = newMap;
@@ -134,7 +141,7 @@ public class DummyPilot implements PilotInterface {
 	}
 
 	@Override
-	public void setupForGame() {
+	public void setupForGame(SimulatorPanel panel) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -7,6 +7,7 @@ import peno.htttp.Callback;
 import peno.htttp.PlayerClient;
 
 import simulator.pilot.AbstractPilot;
+import simulator.viewport.SimulatorPanel;
 
 import com.rabbitmq.client.Connection;
 
@@ -39,7 +40,7 @@ public class MQCenter {
      * @throws NullPointerException
      *             : if pilot == null.
      */
-    public MQCenter(AbstractPilot pilot, String playerID)
+    public MQCenter(AbstractPilot pilot, String playerID, SimulatorPanel panel)
             throws NullPointerException {
 
         Random random = new Random();
@@ -50,7 +51,7 @@ public class MQCenter {
         else {
 
             this.pilot = pilot;
-            handler = new APHandler(pilot);
+            handler = new APHandler(pilot, panel);
 
             try {
                 conn = MQ.createConnection();
@@ -121,8 +122,7 @@ public class MQCenter {
      *             : When
      */
     public void setReady(boolean ready) throws IOException {
-        if (client.canStart())
-            client.setReady(true);
+    	client.setReady(true);
     }
 
     /**

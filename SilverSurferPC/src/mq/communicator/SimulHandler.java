@@ -1,7 +1,10 @@
 package mq.communicator;
 
+import java.util.List;
+
 import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerHandler;
+import peno.htttp.Tile;
 import simulator.pilot.AbstractPilot;
 
 public class SimulHandler implements PlayerHandler {
@@ -18,8 +21,9 @@ public class SimulHandler implements PlayerHandler {
 
     @Override
     public void gameStarted() {
-        // TODO Auto-generated method stub
+    	// TODO Auto-generated method stub
         System.out.println("game started");
+        pilot.startExploring();
 
     }
 
@@ -27,6 +31,7 @@ public class SimulHandler implements PlayerHandler {
     public void gameStopped() {
         // TODO Auto-generated method stub
         System.out.println("game stopped");
+        pilot.stopExploring();
 
     }
 
@@ -34,13 +39,7 @@ public class SimulHandler implements PlayerHandler {
     public void gamePaused() {
         // TODO Auto-generated method stub
         System.out.println("game paused");
-
-    }
-
-    @Override
-    public void gameRolled(int playerNumber) {
-        // TODO Auto-generated method stub
-        System.out.println("game rolled " + playerNumber);
+        pilot.stopExploring();
 
     }
 
@@ -74,5 +73,36 @@ public class SimulHandler implements PlayerHandler {
         // TODO Auto-generated method stub
 
     }
+
+	@Override
+	public void gameWon(int teamNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gameRolled(int playerNumber, int objectNumber) {
+		// TODO Auto-generated method stub
+        System.out.println("game rolled " + playerNumber);
+		
+	}
+
+	@Override
+	public void teamConnected(String partnerID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void teamPosition(double x, double y, double angle) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void teamTilesReceived(List<Tile> tiles) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -1,15 +1,21 @@
 package mq.communicator;
 
+import java.util.List;
+
 import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerHandler;
+import peno.htttp.Tile;
 import simulator.pilot.AbstractPilot;
+import simulator.viewport.SimulatorPanel;
 
 public class APHandler implements PlayerHandler {
 
     private AbstractPilot pilot;
+    private SimulatorPanel panel;
 
-    public APHandler(AbstractPilot pilot) {
+    public APHandler(AbstractPilot pilot, SimulatorPanel panel) {
         this.pilot = pilot;
+        this.panel = panel;
     }
 
     public AbstractPilot getPilot() {
@@ -38,41 +44,70 @@ public class APHandler implements PlayerHandler {
     }
 
     @Override
-    public void gameRolled(int playerNumber) {
-    	getPilot().setPlayerNumber(playerNumber);
-        System.out.println("game rolled " + playerNumber);
-
-    }
-
-    @Override
     public void playerJoined(String playerID) {
         // TODO Auto-generated method stub
-        System.out.println("player joined " + playerID);
+        System.out.println(playerID + " has joined the game!");
 
     }
 
     @Override
     public void playerJoining(String playerID) {
-        // TODO Auto-generated method stub
-
+    	
     }
 
     @Override
     public void playerDisconnected(String playerID, DisconnectReason reason) {
         // TODO Auto-generated method stub
-
+    	System.out.println("test "+ playerID + " " + reason + " playerDisconnected");
     }
 
     @Override
     public void playerReady(String playerID, boolean isReady) {
-        // TODO Auto-generated method stub
-
+    	
     }
 
     @Override
     public void playerFoundObject(String playerID, int playerNumber) {
-        // TODO Auto-generated method stub
-
+        System.out.println(playerID + " " + playerNumber + " has found object!!!");
     }
 
+	@Override
+	public void gameWon(int teamNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gameRolled(int playerNumber, int objectNumber) {
+		// TODO Auto-generated method stub
+    	getPilot().setPlayerNumber(playerNumber-1);
+        System.out.println("Game rolled, your number is " + playerNumber + " and your objectnumber is " + objectNumber + ".");
+        panel.setOnStartTile(pilot);
+        panel.makeReadyToPlay();
+        try {
+        	pilot.getCenter().setReady(true);
+        } catch(Exception e) {
+        	
+        }
+		
+	}
+
+	@Override
+	public void teamConnected(String partnerID) {
+		// TODO Auto-generated method stub
+		System.out.println("Partner with nr " + partnerID + " has connected.");
+		pilot.setUpdatePosition(true);
+	}
+
+	@Override
+	public void teamPosition(double x, double y, double angle) {
+		// TODO Auto-generated method stub
+		System.out.println("I have received info: position " + x + ", " + y + " and angle " + angle);
+	}
+
+	@Override
+	public void teamTilesReceived(List<Tile> tiles) {
+		// TODO Auto-generated method stub
+		
+	}
 }

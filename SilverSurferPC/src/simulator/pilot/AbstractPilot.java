@@ -3,10 +3,11 @@ package simulator.pilot;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Vector;
 
 import peno.htttp.GameHandler;
-import peno.htttp.PlayerHandler;
+import simulator.viewport.SimulatorPanel;
 
 import mapping.MapGraph;
 import mapping.Obstruction;
@@ -16,9 +17,8 @@ import mazeAlgorithm.ExploreThread;
 import mq.communicator.MQCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
-
-    private int playerNumber;
-    private int teamNumber;
+    private int playerNumber = -1;
+    private int teamNumber = -1;
     private MapGraph mapGraphConstructed;
     private Point2D.Double position;
     private double angle;
@@ -28,11 +28,14 @@ public abstract class AbstractPilot implements PilotInterface {
     protected boolean permaBarcodeStop = false;
     protected PilotActions pilotActions = new PilotActions(this);
     private ExploreThread exploreThread;
-    private PlayerHandler handler;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
-    private Boolean gameon;
+    private boolean gameOn = false;
     private MQCenter center;
     protected final double detectionDistanceUltrasonicSensorRobot = 26;
+    private boolean teamMemberFound = false;
+    private int teamMemberPlayerNumber;
+    private Tile startingPositionOfTeamMember;
+    private boolean canUpdatePosition = false;
 
     public AbstractPilot(int playerNumber) {
         if (playerNumber < 0 || playerNumber > 3)
@@ -43,12 +46,33 @@ public abstract class AbstractPilot implements PilotInterface {
         reset();
     }
 
+    public Tile getStartingPositionOfTeamMember() {
+        return startingPositionOfTeamMember;
+    }
+
+    public boolean getTeamMemberFound() {
+        return teamMemberFound;
+    }
+
+    public int getTeamMemberPlayerNumber() {
+        return teamMemberPlayerNumber;
+    }
+
+    public void setTeamMemberFound(int teamMemberPlayerNumber) {
+        this.teamMemberFound = true;
+        this.teamMemberPlayerNumber = teamMemberPlayerNumber;
+    }
+
     public MQCenter getCenter() {
         return center;
     }
 
     public Vector<Tile> getSeesawBarcodeTiles() {
         return seesawBarcodeTiles;
+    }
+
+    public void shuffleSeesawBarcodeTiles() {
+        Collections.shuffle(seesawBarcodeTiles);
     }
 
     @Override
@@ -65,8 +89,8 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     @Override
-    public void setPlayerNumber(int teamNumber) {
-        this.teamNumber = teamNumber;
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
     }
 
     /**
@@ -88,7 +112,6 @@ public abstract class AbstractPilot implements PilotInterface {
                     "The teamnumber can only be set to 4 or 5!");
         else
             this.teamNumber = teamNumber;
-
     }
 
     @Override
@@ -111,14 +134,14 @@ public abstract class AbstractPilot implements PilotInterface {
      * Check if this Pilot is in gameModus (MQ is activated).
      */
     public boolean isInGameModus() {
-        return gameon;
+        return gameOn;
     }
 
     /**
      * Set this Pilot in it's gameModus.
      */
     public void setGameModus(boolean onOff) {
-        this.gameon = onOff;
+        this.gameOn = onOff;
     }
 
     @Override
@@ -146,6 +169,12 @@ public abstract class AbstractPilot implements PilotInterface {
         teamNumber = -1;
         angle = 270;
         speed = 2;
+        mapGraphConstructed = new MapGraph();
+        mapGraphConstructed.addTile(getMatrixPosition());
+    }
+
+    @Override
+    public void makeReadyToPlay() {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
     }
@@ -313,23 +342,29 @@ public abstract class AbstractPilot implements PilotInterface {
 
     @Override
     public GameHandler getDefaultHandler() {
-        return this.handler;
+        return getCenter().getHandler();
     }
 
-    public void setupForGame() {
+    public void setupForGame(SimulatorPanel panel) {
         if (isInGameModus()) {
             try {
-                this.center = new MQCenter(this, "SILVER");
+                this.center = new MQCenter(this, "SILVER" + getPlayerNumber(),
+                        panel);
                 getCenter().join();
-                getCenter().setReady(true);
             } catch (IllegalStateException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean canUpdatePosition() {
+        return canUpdatePosition;
+    }
+
+    public void setUpdatePosition(boolean canUpdatePosition) {
+        this.canUpdatePosition = canUpdatePosition;
     }
 
     protected abstract boolean crashImminent();
