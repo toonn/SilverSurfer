@@ -1,8 +1,0 @@
-4 5
-
-#begin zeker op 0,0
-DeadEnd.W	Straight.E	T.N	Corner.E
-Corner.E	DeadEnd.W	Corner.S	Straight.S
-T.S	DeadEnd.E	Corner.N	Corner.S
-Corner.N	Straight.E	Corner.S	Corner.N
-Corner.W	Straight.E	DeadEnd.E	T.W

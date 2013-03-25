@@ -38,5 +38,7 @@ public interface PilotInterface {
     
     public abstract void setGameModus(boolean onOff);
     
+    public abstract void setupForGame();
+    
     public abstract boolean isInGameModus();
 }
