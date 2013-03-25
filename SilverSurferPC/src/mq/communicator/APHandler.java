@@ -18,7 +18,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void gameStarted() {
-        // TODO Auto-generated method stub
+        getPilot().startExploring();
         System.out.println("game started");
 
     }
@@ -39,6 +39,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void gameRolled(int playerNumber) {
+    	getPilot().setPlayerNumber(playerNumber);
         System.out.println("game rolled " + playerNumber);
 
     }

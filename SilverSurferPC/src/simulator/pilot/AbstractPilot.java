@@ -2,6 +2,7 @@ package simulator.pilot;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.Vector;
 
 import peno.htttp.GameHandler;
@@ -12,6 +13,7 @@ import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Tile;
 import mazeAlgorithm.ExploreThread;
+import mq.communicator.MQCenter;
 
 public abstract class AbstractPilot implements PilotInterface {
 
@@ -29,7 +31,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private PlayerHandler handler;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
 	private Boolean gameon;
-
+	private MQCenter center;
 	protected final double detectionDistanceUltrasonicSensorRobot = 26;
 
 	public AbstractPilot(int playerNumber) {
@@ -39,6 +41,10 @@ public abstract class AbstractPilot implements PilotInterface {
 			this.playerNumber = playerNumber;
 		position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
 		reset();
+	}
+	
+	public MQCenter getCenter() {
+		return center;
 	}
 	
 	public Vector<Tile> getSeesawBarcodeTiles() {
@@ -309,5 +315,21 @@ public abstract class AbstractPilot implements PilotInterface {
         return this.handler;
     }
 
+    public void setupForGame(){
+    	if (isInGameModus()){
+    		try {
+    			this.center = new MQCenter(this, "SILVER");
+				getCenter().join();
+				getCenter().setReady(true);
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    }
+    
     protected abstract boolean crashImminent();
 }

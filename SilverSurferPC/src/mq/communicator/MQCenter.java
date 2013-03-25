@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import peno.htttp.Callback;
+import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerClient;
 
 import simulator.pilot.AbstractPilot;
@@ -17,7 +18,7 @@ public class MQCenter {
 
     private Connection conn;
     private AbstractPilot pilot;
-    private RobotHandler handler;
+    private APHandler handler;
     private PlayerClient client;
 
     private String gameID = "ZilverTreasureTrek";
@@ -50,7 +51,7 @@ public class MQCenter {
         else {
 
             this.pilot = pilot;
-            handler = new RobotHandler(pilot);
+            handler = new APHandler(pilot);
 
             try {
                 conn = MQ.createConnection();
@@ -86,7 +87,7 @@ public class MQCenter {
         return playerID;
     }
 
-    public RobotHandler getHandler() {
+    public APHandler getHandler() {
         return handler;
     }
 
@@ -94,6 +95,9 @@ public class MQCenter {
         return gameID;
     }
 
+    public PlayerClient getClient() {
+		return client;
+	}
     /**
      * Use to join the game. Be aware: joining the game is not enough. Numbers
      * will be rolled, and you'll have to do some work before being able to
@@ -161,9 +165,17 @@ public class MQCenter {
 
             @Override
             public void onFailure(Throwable t) {
-                // TODO Oeps, er liep iets fout
-                // Laat de gebruiker iets weten
                 System.err.println("Fout bij deelname: " + t.getMessage());
+                System.err.println("Opnieuw proberen...");
+                try {
+					client.join(stdCallback());
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         };
     }
