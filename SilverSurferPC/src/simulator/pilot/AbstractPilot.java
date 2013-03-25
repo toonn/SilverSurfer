@@ -28,6 +28,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	private ExploreThread exploreThread;
     private PlayerHandler handler;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
+	private Boolean gameon;
 
 	protected final double detectionDistanceUltrasonicSensorRobot = 26;
 
@@ -88,6 +89,20 @@ public abstract class AbstractPilot implements PilotInterface {
 				(int)Math.floor(getPosition().getY() / sizeTile()));
 	}
 
+	/**
+	 * Check if this Pilot is in gameModus (MQ is activated).
+	 */
+	public boolean isInGameModus() {
+		return gameon;
+	}
+	
+	/**
+	 * Set this Pilot in it's gameModus.
+	 */
+	public void setGameModus(boolean onOff){
+		this.gameon = onOff;
+	}
+	
 	@Override
 	public void setPosition(final double x, final double y) {
 		position.setLocation(x, y);

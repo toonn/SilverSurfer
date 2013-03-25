@@ -8,6 +8,7 @@ import peno.htttp.GameHandler;
 import mapping.MapGraph;
 
 public interface PilotInterface {
+	
 
     public abstract double sizeTile();
 
