@@ -132,4 +132,10 @@ public class DummyPilot implements PilotInterface {
 		this.teamNumber = teamNumber;
 		
 	}
+
+	@Override
+	public void setupForGame() {
+		// TODO Auto-generated method stub
+		
+	}
 }
