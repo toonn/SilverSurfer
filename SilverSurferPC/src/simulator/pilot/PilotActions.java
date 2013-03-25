@@ -157,5 +157,15 @@ public class PilotActions {
 		pilot.setTeamNumber(team);
 		pilot.travel(45);
 		pilot.travel(-45);
+		
+		if(pilot.isInGameModus())
+		{
+			pilot.getDefaultHandler().playerFoundObject(pilot.getCenter().getPlayerID(), pilot.getPlayerNumber());
+			findTeamMember();
+		}
+	}
+	
+	private void findTeamMember() {
+		
 	}
 }

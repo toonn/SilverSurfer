@@ -18,8 +18,9 @@ public class SimulHandler implements PlayerHandler {
 
     @Override
     public void gameStarted() {
-        // TODO Auto-generated method stub
+    	// TODO Auto-generated method stub
         System.out.println("game started");
+        pilot.startExploring();
 
     }
 
@@ -27,6 +28,7 @@ public class SimulHandler implements PlayerHandler {
     public void gameStopped() {
         // TODO Auto-generated method stub
         System.out.println("game stopped");
+        pilot.stopExploring();
 
     }
 
@@ -34,6 +36,7 @@ public class SimulHandler implements PlayerHandler {
     public void gamePaused() {
         // TODO Auto-generated method stub
         System.out.println("game paused");
+        pilot.stopExploring();
 
     }
 
