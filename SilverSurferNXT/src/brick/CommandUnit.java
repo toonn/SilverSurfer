@@ -241,7 +241,18 @@ public class CommandUnit {
 		while(lightSensor.getLightValue() < treshold);
 		WT.setSecondQuit(true);
 		while(WT.isAlive());
-		moveForwardWithoutBarcode((int)Math.floor(20*LENGTH_COEF));
+		
+		try {
+			Thread.sleep(500);
+		} catch(Exception e) {
+			
+		}
+		
+		turnAngle((int)Math.ceil(-ANGLE_COEF_LEFT*90));
+		int value = ultrasonicSensor.getDistance();
+		if(value != 20 && value < 26)
+			moveForwardWithoutBarcode((int)Math.round((value-20)*LENGTH_COEF));
+		turnAngle((int)Math.floor(ANGLE_COEF_RIGHT*90));
     }
     
     private void alignOnWalls() {
