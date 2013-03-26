@@ -112,7 +112,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void teamPosition(double x, double y, double angle) {
-
+    	System.out.println("[HTTTP] Position of my teammate is: " + x + ", " + y + " and his angle is " + angle);
     }
 
     @Override

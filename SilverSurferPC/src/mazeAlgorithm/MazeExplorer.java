@@ -1,6 +1,5 @@
 package mazeAlgorithm;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -374,6 +373,7 @@ public class MazeExplorer {
                                               // volgende tile wel gelezen wordt
                                               // maar de laatste barcode van de
                                               // wip niet.
+                            //TODO: whiteline! want onnauwkeurig na wip!
                             return endTile;
                         }
                     }
@@ -411,5 +411,4 @@ public class MazeExplorer {
             e.printStackTrace();
         }
     }
-
 }
