@@ -113,7 +113,6 @@ public class APHandler implements PlayerHandler {
 
 	@Override
 	public void teamTilesReceived(List<Tile> tiles) {
-		System.out.println("Tiles received!");
 		Point point1 = null, point2 = null, ourPoint1 = null, ourPoint2 = null;
 		String[] info;
 		for(peno.htttp.Tile tile : tiles) {
@@ -149,7 +148,7 @@ public class APHandler implements PlayerHandler {
 		}
 		if(point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null) {
 			System.out.println("[HTTTP] Similar tiles found! " + point1 + " " + ourPoint1 + " -- " + point2 + " " + ourPoint2);
-			//pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1, point2);
+			panel.getDummyPilot().setMap(pilot.getMapGraphConstructed().generateMapFromTiles(tiles));
 		}
 		else
 			System.out.println("[HTTTP] No similar tiles found yet!");

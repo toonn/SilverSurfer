@@ -111,11 +111,20 @@ public class MapGraph {
         }
     }
     
-    /*public MapGraph generateMapFromTiles(List<peno.htttp.Tile> tiles) {
+    public MapGraph generateMapFromTiles(List<peno.htttp.Tile> tiles) {
     	MapGraph map = new MapGraph();
+    	for(peno.htttp.Tile receivedTile : tiles) {
+    		Point point = new Point((int)receivedTile.getX(), (int)receivedTile.getY());
+    		map.addTile(point);
+    		Tile tile = map.getTile(point);
+    		String[] seperatedInfoIJ = receivedTile.getToken().split("\\.");
+    		MapReader.generateStructures(seperatedInfoIJ, tile);
+    		MapReader.generateObjects(seperatedInfoIJ, tile);
+    	}
+    	return map;
     }
 
-    public void mergeMap(List<peno.htttp.Tile> map2, Point map1tile1, Point map1tile2,
+    /*public void mergeMap(List<peno.htttp.Tile> map2, Point map1tile1, Point map1tile2,
             Point map2tile1, Point map2tile2) {
         int translatedxmap1 = (int) (map1tile2.getX() - map1tile1.getX());
         int translatedymap1 = (int) (map1tile2.getY() - map1tile1.getY());

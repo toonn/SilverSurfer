@@ -91,7 +91,7 @@ public class MapReader {
         return false;
     }
 
-	private static void generateStructures(final String[] seperatedInfoIJ, Tile tile) {
+	public static void generateStructures(final String[] seperatedInfoIJ, Tile tile) {
 		if (seperatedInfoIJ[0].equals("Cross"))
 		    createCrossFromTile(tile);
 		else if (seperatedInfoIJ[0].equals("Straight"))
@@ -156,7 +156,7 @@ public class MapReader {
     	tile.setContent(saw);
     }
 
-	private static void generateObjects(final String[] seperatedInfoIJ, Tile tile) {
+	public static void generateObjects(final String[] seperatedInfoIJ, Tile tile) {
 		//An extra value has been found.
 		if (seperatedInfoIJ.length == 3) {
 			//An object has been specified.
@@ -182,7 +182,7 @@ public class MapReader {
     /**
      * Make sure all treasure-objects get tagged in a correct way.
      */
-	private static void tagTreasures(final String[][] infoMatrix, MapGraph map) {
+	public static void tagTreasures(final String[][] infoMatrix, MapGraph map) {
 		for (int row = 0; row < infoMatrix.length; row++)
             for (int column = 0; column < infoMatrix[row].length; column++)
             	if(map.getTile(new Point(column,row)) != null && map.getTile(new Point(column,row)).getContent() != null && map.getTile(new Point(column,row)).getContent() instanceof TreasureObject) {
@@ -213,7 +213,7 @@ public class MapReader {
             	}
 	}
     
-    private static void initializeSeesaws(final String[][] infoMatrix, MapGraph map) {
+    public static void initializeSeesaws(final String[][] infoMatrix, MapGraph map) {
 		for (int row = 0; row < infoMatrix.length; row++)
             for (int column = 0; column < infoMatrix[row].length; column++) 
             	if(map.getTile(new Point(column,row)) != null && map.getTile(new Point(column,row)).getContent() != null && map.getTile(new Point(column,row)).getContent() instanceof Seesaw) {
