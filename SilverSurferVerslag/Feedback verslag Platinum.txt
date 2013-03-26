@@ -1,0 +1,212 @@
+_____________________________________________________________________________________________________________________________________
+
+Feedback verslag team Platinum (door team Zilver)
+
+_____________________________________________________________________________________________________________________________________
+
+
+
+ALGEMENE OPMERKINGEN
+
+
+-(s) de en het doolhof worden door elkaar gebruikt
+
+-(s) scoutmaze en scoutMaze worden door elkaar gebruikt
+
+-(s) heel erg veel verwijzingen. ook eerst naar figuur 3 naar naar 4 en dan terug naar figuur 3..
+
+-(s) Verslag is geschreven in de "we" vorm. Verliest een beetje de objectiviteit.
+
+-(s) De tekst is vlot te lezen en er zijn geen moeilijke stukken. Alles is goed te begrijpen.
+
+-(s) Opbouw van het verslag is ok.
+-(s) Soms zeer vaag, maar meestal wordt alles goed uitgelegd.
+
+
+
+
+
+* Samenvatting *
+
+
+
+-De samenvatting is eerder een inleiding: jullie omschrijven enkel de opdracht.
+Je zou hier in het kort moeten vertellen wat er speciaal is aan jullie
+
+invulling van de opdracht.
+
+
+- (s) het werkend spel wordt niet uitgelegd. Dus nu weet de lezer niet goed wat het doel is van de laatste demo.
+
+
+
+
+
+
+* 1 Inleiding *
+
+
+
+-De tweede pararaaf is goed, mooie beschrijving van de opdracht :)
+
+-Ik weet niet of het nodig is te vertellen wat waar staat
+(je bent net de inhoudsopgave gepasseerd), maar misschien mag het wel.
+
+
+
+
+
+
+* 2 Robot *
+
+
+
+-Je geeft in de inleiding een korte uitleg van wat komt, maar
+onder het volgende subtiteltje (bouw robot) zeg je ongeveer hetzelfde.
+
+
+- (s) Zie ook 1 voor het gebruikte plan hiervoor: niet echt duidelijk naarwaar er verwezen wordt ..
+
+- (s) De alternatieven zijn niet besproken. Zou wel interessant zijn om de ontwerpbeslissingen te weten en de motieven.
+
+
+
+2.1.1.
+
+-Het lijkt me beter de vereisten echt op te sommen ipv tussen haakjes.
+
+-Wat som je juist op in de eerste opsomming? De redenen waarom het oude ontwerp
+niet goed was? Omdat je zowel de nadelen van het oude als de voordelen van het niewe
+vermelt is dat niet zo duidelijk.
+
+-Een opsomming zou geen volzinnen moeten bevatten, denk ik.
+
+-Ik weet niet wat je bedoelt met 'multiplex-systemen' (voetnoot)
+
+
+
+2.1.2
+
+-Je vermeldt wel naar om welke figuur het gaat, maar pas aan het einde van je uitleg.
+
+Ik was bij de uitleg van de doolhofsegmenten-test de naar figuur 3 aan het kijken
+en snapte er niets van omdat ik eigenlijk naar figuur 4 hoorde te kijken.
+
+-Het lijkt me onlogisch dat je eerst naar figuur 3 moet kijken, dan naar 4 en dan weer naar 3.
+
+Met subfigures (een LaTeX-packet) kan je de figuren handig bij elkaar plaatsen.
+
+-Een beetje muggeziften: soms schrijf je ScoutMaze en soms Scoutmaze.
+
+
+-(s) zie ook 5. Hiermee wordt dan sectie 5 bedoeld?
+
+- (s) laatste zin of scout algoritme. Zin is verkeerd. de "te" moet weggelaten worden.
+
+- (s) achten moet maar met 1 t als het in tegenwoordige tijd is.
+
+
+
+
+2.2 
+
+
+- (s) De uitleg over de infraroodsensor klopt niet. De inifraroodsensor gaat geen waarden tussen 0 en 9 teruggeven.
+De infraroodsensor bestaat uit 5 verschillende sensoren en door het gemiddelde tussen 2 deelsensoren te nemen,
+kun je berekenen vanwaar het infraroodlicht komt. De sensor zal de range geven. 
+
+2.3
+
+-Je verwijst naar figuur 7 en 8. Wat is er gebeurt met figuur 6?
+
+(ok, later heb je het wel over figuur 6, maar voor de lezer is het vreemd dat de volgorde niet klopt)
+
+-Vanaf dat je het over de bouw hebt, zou ik een nieuwe paragraaf beginnen.
+-Hoewel het tekstje volgens mij korter kan, leg je wel mooi alle problemen met de wip uit :)
+
+
+- (s) "Bij het oprijden van de wip was het slippen van de wielen een probleem voor
+de accuratesse.
+Dit is vooral te wijten aan het vuil zijn van het wippaneel." Dit is maar een vreemd excuus
+
+
+
+
+
+
+
+* 3 Algoritmes *
+
+
+
+
+3.1
+
+
+-(s) Wat waren de problemen en hoe zijn ze opgelost? robuuster is te vaag.
+
+- veel verwijzingen voor een klein stukje tekst.
+
+3.2
+-Mooi dat je het verken-algoritme opsplitst in verschillende onderdelen,
+dit maakt het makkelijker te begrijpen.
+- (s) "Het was niet robuust genoeg: botsingen en geaccumuleerde afwijkingen deden het algoritme
+falen.
+Bovendien vonden we het algoritme en haar datastructuren te complex om de code snel en grondig
+te begrijpen,
+te onderhouden en uit te breiden." Weer heel vaag en dat het algoritme en haar datastructuren te complex zijn dat is inderdaad jullie probleem,
+maar dan moet je er iets aan doen. 
+
+
+
+
+
+* 4 Software *
+
+
+
+-"In deze secie bespreken we de het design van onze software".
+Dit is wel duidelijk uit de titel (+ "de het" klopt niet)
+
+
+
+4.1.1
+
+-Op figuur 10 zou je direct moeten kunnen zien wat de basis-verbanden zijn tussen de klasses.
+Nu moet je zitten puzzelen. De figuur zelf is wel mooi gemaakt, maar de vakjes zouden iets overzichtelijker geplaatst kunnen worden.
+
+
+
+4.1.2
+
+-Je verwijst naar 4.1.1, een sectie die de lezer net gelezen heeft. Je mag er wel vanuit gaan dat hij dat nog weet ;)
+
+-GRASP patterns: verwijs naar SWOP in een referentie, niet in de tekst.
+
+
+
+4.3
+
+-De figuren die de GUI weergeven zijn eigenlijk te klein om er iets op te kunnen zien.
+
+
+
+
+
+
+* Besluit *
+
+
+-"fysische ontwerp", ik neem aan dat je fysiek ontwerp bedoelt.
+
+-Wat je veranderde ten opzichte van de vorige demo hoort niet thuis in het besluit. Dit klinkt meer als een kritische reflectie ofzo.
+
+
+
+
+-(s) "We dachten vorige demo .."  Dit komt niet goed over in een wetenschappelijk verslag. Geen onderbouwing.
+
+-(s) Besluit lijkt meer op een evalutatie ten opzichte van de vorige demo. Heel veel we.. en we denken.. we dachten.. 
+
+
+
