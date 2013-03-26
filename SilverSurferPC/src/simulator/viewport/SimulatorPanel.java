@@ -250,7 +250,7 @@ public class SimulatorPanel extends JPanel {
                 amountOfDummies);
     }
 
-    private void setOnStartTile(PilotInterface pilot) {
+    public void setOnStartTile(PilotInterface pilot) {
 		for (Tile tile : mapGraphLoaded.getStartTiles()) {
 			if (tile.getContent().getValue() == pilot.getPlayerNumber()) {
 				pilot.setPosition(tile.getPosition().x*40 + 20, tile.getPosition().y*40 + 20);
