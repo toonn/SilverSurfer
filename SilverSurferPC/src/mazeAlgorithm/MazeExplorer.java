@@ -332,10 +332,14 @@ public class MazeExplorer {
                 queue.remove(queuetile);
         	if(queuetile.isMarkedExploreMaze())
         		queue.remove(queuetile);
-        	for(Tile allTilesTile : allTiles)
-        		if(allTilesTile.getPosition().x == queuetile.getPosition().x && allTilesTile.getPosition().y == queuetile.getPosition().y)
-        			;//queue.remove(queuetile);
         }
+    	for(Tile allTilesTile : allTiles)
+            for (Tile queuetile : queue) {
+            	if(allTilesTile.getPosition().x == queuetile.getPosition().x && allTilesTile.getPosition().y == queuetile.getPosition().y) {
+            		queue.remove(queuetile);
+            		break;
+            	}
+            }
     }
 
     private Tile searchAndCrossOpenSeesaw(Tile currentTile) {
