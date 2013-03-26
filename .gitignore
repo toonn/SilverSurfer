@@ -47,4 +47,5 @@ bin
 *.aux
 *.toc
 *.pdf
-
+*.tex.bak
+.classpath
