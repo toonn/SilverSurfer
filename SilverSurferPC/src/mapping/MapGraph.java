@@ -110,8 +110,12 @@ public class MapGraph {
                         .getEdgeAt(orientation.getOppositeOrientation()));
         }
     }
+    
+    /*public MapGraph generateMapFromTiles(List<peno.htttp.Tile> tiles) {
+    	MapGraph map = new MapGraph();
+    }
 
-    private void mergeMap(Vector<Tile> map2, Point map1tile1, Point map1tile2,
+    public void mergeMap(List<peno.htttp.Tile> map2, Point map1tile1, Point map1tile2,
             Point map2tile1, Point map2tile2) {
         int translatedxmap1 = (int) (map1tile2.getX() - map1tile1.getX());
         int translatedymap1 = (int) (map1tile2.getY() - map1tile1.getY());
@@ -133,21 +137,19 @@ public class MapGraph {
                 translatedymap2, 2)) / translatedxmap2 + translatedxmap2));
         cosA = (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2);
         }
-        for (Tile tile : map2) {
-            int convertedX = (int) (cosA * tile.getPosition().getX() - sinA
-                    * tile.getPosition().getY() - cosA * map2tile1.getX()
+        for (peno.htttp.Tile tile : map2) {
+            int convertedX = (int) (cosA * tile.getX() - sinA
+                    * tile.getY() - cosA * map2tile1.getX()
                     + sinA * map2tile1.getY() + map1tile1.getX());
-            int convertedY = (int) (cosA * tile.getPosition().getY() + sinA
-                    * tile.getPosition().getX() - sinA * map2tile1.getX()
+            int convertedY = (int) (cosA * tile.getY() + sinA
+                    * tile.getX() - sinA * map2tile1.getX()
                     - cosA * map2tile1.getY() + map1tile1.getY());
 
             if (!this.tiles.containsKey(new Point(convertedX, convertedY))) {
-                Tile copiedTile = tile.clone();
+                mapping.Tile copiedTile = new mapping.Tile(new Point(convertedX, convertedY));//tile.clone();
                 for(Orientation orientation : Orientation.values()){
                 	copiedTile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA)).setObstruction(tile.getEdgeAt(orientation).getObstruction());
                 }
-                copiedTile.getPosition().x = convertedX;
-                copiedTile.getPosition().y = convertedY;
                 setExistingTile(copiedTile);
             } else
                 for (Orientation orientation : Orientation.values())
@@ -159,7 +161,7 @@ public class MapGraph {
                                         tile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA))
                                                 .getObstruction());
         }
-    }
+    }*/
 
     private void setExistingTile(Tile tile) {
         Point point = tile.getPosition();

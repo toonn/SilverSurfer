@@ -136,7 +136,7 @@ public class Tile {
         edge.setOrientation(orientation);
     }
     
-    @Override
+    /*@Override
     public Tile clone() {
     	Point point = new Point();
     	point.setLocation(this.getPosition());
@@ -148,7 +148,7 @@ public class Tile {
     		tile.getEdgeAt(orientation).setObstruction(this.getEdgeAt(orientation).getObstruction());
     	
     	return tile;
-    }
+    }*/
     
     public String getToken(){
     	String tokenHead = "";

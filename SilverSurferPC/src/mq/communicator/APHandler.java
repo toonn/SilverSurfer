@@ -1,7 +1,13 @@
 package mq.communicator;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+
+import mapping.Barcode;
+import mapping.MapGraph;
+import mapping.Seesaw;
+import mapping.TreasureObject;
 
 import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerHandler;
@@ -107,6 +113,45 @@ public class APHandler implements PlayerHandler {
 
 	@Override
 	public void teamTilesReceived(List<Tile> tiles) {
-
+		System.out.println("Tiles received!");
+		Point point1 = null, point2 = null, ourPoint1 = null, ourPoint2 = null;
+		String[] info;
+		for(peno.htttp.Tile tile : tiles) {
+			info = tile.getToken().split("\\.");
+			if(info.length == 3 && !info[2].equals("V"))
+				for(mapping.Tile ourTile : pilot.getMapGraphConstructed().getTiles()) {
+					if(ourTile.getContent() instanceof Barcode && ourTile.getContent().getValue() == Integer.valueOf(info[2])) {
+						point1 = new Point((int)tile.getX(), (int)tile.getY());
+						ourPoint1 = ourTile.getPosition();
+						
+						Point pointN = new Point((int)point1.getX(), (int)point1.getY()+1);
+						Point pointZ = new Point((int)point1.getX(), (int)point1.getY()-1);
+						Point pointE = new Point((int)point1.getX()+1, (int)point1.getY());
+						Point pointW = new Point((int)point1.getX()-1, (int)point1.getY());
+						for(peno.htttp.Tile tileNZ : tiles) {
+							String[] infoTileNZ = tileNZ.getToken().split("\\.");
+							if(tileNZ.getX() == pointN.x && tileNZ.getY() == pointN.y && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2].equals("V"))))
+								point2 = pointN;
+							else if(tileNZ.getX() == pointZ.x && tileNZ.getY() == pointZ.y && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2].equals("V"))))
+								point2 = pointZ;
+							else if(tileNZ.getX() == pointE.x && tileNZ.getY() == pointE.y && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2].equals("V"))))
+								point2 = pointE;
+							else if(tileNZ.getX() == pointW.x && tileNZ.getY() == pointW.y && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2].equals("V"))))
+								point2 = pointW;
+						}
+						
+						for(mapping.Tile ourTileNZ : ourTile.getReachableNeighboursIgnoringSeesaw()) {
+							if(ourTileNZ.getContent() instanceof Seesaw || ourTileNZ.getContent() instanceof TreasureObject)
+								ourPoint2 = ourTileNZ.getPosition();
+						}
+					}
+				}
+		}
+		if(point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null) {
+			System.out.println("[HTTTP] Similar tiles found! " + point1 + " " + ourPoint1 + " -- " + point2 + " " + ourPoint2);
+			//pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1, point2);
+		}
+		else
+			System.out.println("[HTTTP] No similar tiles found yet!");
 	}
 }
