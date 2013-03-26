@@ -1,6 +1,7 @@
 package mapping;
 
 import java.awt.Point;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 public class MapGraph {
 
@@ -109,17 +111,29 @@ public class MapGraph {
         }
     }
 
-    private void mergeMap(MapGraph map2, Point map1tile1, Point map1tile2,
+    private void mergeMap(Vector<Tile> map2, Point map1tile1, Point map1tile2,
             Point map2tile1, Point map2tile2) {
         int translatedxmap1 = (int) (map1tile2.getX() - map1tile1.getX());
         int translatedymap1 = (int) (map1tile2.getY() - map1tile1.getY());
         int translatedxmap2 = (int) (map2tile2.getX() - map2tile1.getX());
         int translatedymap2 = (int) (map2tile2.getY() - map2tile1.getY());
-        float sinA = (float) ((translatedymap1 - translatedxmap1
+        float sinA;
+        float cosA;
+        if(translatedxmap2 == 0){
+        	sinA = - translatedxmap1/translatedymap2;
+        	cosA = translatedymap1/translatedymap2;
+        }
+        else if(translatedymap2 == 0){
+        	cosA = translatedxmap1/translatedxmap2;
+        	sinA = translatedymap1/translatedxmap2;
+        }
+        else{
+        sinA = (float) ((translatedymap1 - translatedxmap1
                 / translatedxmap2 * translatedymap2) / ((Math.pow(
                 translatedymap2, 2)) / translatedxmap2 + translatedxmap2));
-        float cosA = (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2);
-        for (Tile tile : map2.getTiles()) {
+        cosA = (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2);
+        }
+        for (Tile tile : map2) {
             int convertedX = (int) (cosA * tile.getPosition().getX() - sinA
                     * tile.getPosition().getY() - cosA * map2tile1.getX()
                     + sinA * map2tile1.getY() + map1tile1.getX());
@@ -129,6 +143,11 @@ public class MapGraph {
 
             if (!this.tiles.containsKey(new Point(convertedX, convertedY))) {
                 Tile copiedTile = tile.clone();
+                for(Orientation orientation : Orientation.values()){
+                	copiedTile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA)).setObstruction(tile.getEdgeAt(orientation).getObstruction());
+                }
+                copiedTile.getPosition().x = convertedX;
+                copiedTile.getPosition().y = convertedY;
                 setExistingTile(copiedTile);
             } else
                 for (Orientation orientation : Orientation.values())
@@ -137,7 +156,7 @@ public class MapGraph {
                         this.getTile(new Point(convertedX, convertedY))
                                 .getEdgeAt(orientation)
                                 .setObstruction(
-                                        tile.getEdgeAt(orientation)
+                                        tile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA))
                                                 .getObstruction());
         }
     }
@@ -233,5 +252,81 @@ public class MapGraph {
             mapGraphString += "\n";
         }
         return mapGraphString;
+    }
+    
+    public static void main(String[] args) {
+		MapGraph map = new MapGraph();
+		for(int i = 0; i < 4; i++){
+			for(int j=0; j<4; j++){
+				map.addTile(new Point(i,j));
+			}
+		}
+		map.getTile(new Point(0,0)).getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(0,0)).getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(1,0)).getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(2,0)).getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(2,0)).getEdgeAt(Orientation.EAST).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(0,1)).getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(0,2)).getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(0,2)).getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.WALL);
+		map.getTile(new Point(0,3)).getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		
+		for(int i = 0; i < 4; i++){
+			for(int j=0; j<4; j++){
+				System.out.println(i + " en " + j);
+				System.out.println(map.getTile(new Point(i,j)).getEdgeAt(Orientation.NORTH).getObstruction());
+				System.out.println(map.getTile(new Point(i,j)).getEdgeAt(Orientation.EAST).getObstruction());
+				System.out.println(map.getTile(new Point(i,j)).getEdgeAt(Orientation.SOUTH).getObstruction());
+				System.out.println(map.getTile(new Point(i,j)).getEdgeAt(Orientation.WEST).getObstruction());
+				System.out.println("  ");
+
+			}
+		}
+		Vector<Tile> tiles = new Vector<Tile>();
+		Tile tile1 = new Tile(new Point(0,0));
+		Tile tile2 = new Tile(new Point(1,0));
+		Tile tile3 = new Tile(new Point(0,1));
+		Tile tile4 = new Tile(new Point(0,-1));
+		Tile tile5 = new Tile(new Point(0,-2));
+		tile1.getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WHITE_LINE);
+		tile1.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		tile1.getEdgeAt(Orientation.EAST).setObstruction(Obstruction.WHITE_LINE);
+		tile1.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.WHITE_LINE);
+		tile2.getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WALL);
+		tile2.getEdgeAt(Orientation.EAST).setObstruction(Obstruction.WALL);
+		tile2.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WHITE_LINE);
+		tile2.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.WALL);
+		tile3.getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WHITE_LINE);
+		tile3.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		tile3.getEdgeAt(Orientation.EAST).setObstruction(Obstruction.WALL);
+		tile3.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.WALL);
+		tile5.getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WALL);
+		tile5.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		tile5.getEdgeAt(Orientation.EAST).setObstruction(Obstruction.WALL);
+		tile5.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.WHITE_LINE);
+		tile4.getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.WHITE_LINE);
+		tile4.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.WALL);
+		tile4.getEdgeAt(Orientation.EAST).setObstruction(Obstruction.WALL);
+		tile4.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.WHITE_LINE);
+		tiles.add(tile3);
+		tiles.add(tile1);
+		tiles.add(tile2);
+		tiles.add(tile4);
+		tiles.add(tile5);
+		
+		map.mergeMap(tiles, new Point(1,3), new Point(2,3), new Point(1,0), new Point(0,0));
+
+		System.out.println("=================================================");
+		
+		for(Tile tile:map.getTiles()){
+				System.out.println(tile.getPosition().getX() + " en " + tile.getPosition().getY());
+				System.out.println(tile.getEdgeAt(Orientation.NORTH).getObstruction());
+				System.out.println(tile.getEdgeAt(Orientation.EAST).getObstruction());
+				System.out.println(tile.getEdgeAt(Orientation.SOUTH).getObstruction());
+				System.out.println(tile.getEdgeAt(Orientation.WEST).getObstruction());
+				System.out.println("  ");
+		}
+
+		
     }
 }
