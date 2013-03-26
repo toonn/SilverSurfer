@@ -74,6 +74,20 @@ public class MapGraph {
         return expanse;
     }
 
+    public MapGraph generateMapFromTiles(List<peno.htttp.Tile> tiles) {
+        MapGraph map = new MapGraph();
+        for (peno.htttp.Tile receivedTile : tiles) {
+            Point point = new Point((int) receivedTile.getX(),
+                    (int) receivedTile.getY());
+            map.addTile(point);
+            Tile tile = map.getTile(point);
+            String[] seperatedInfoIJ = receivedTile.getToken().split("\\.");
+            MapReader.generateStructures(seperatedInfoIJ, tile);
+            MapReader.generateObjects(seperatedInfoIJ, tile);
+        }
+        return map;
+    }
+
     public Point getMapSize() {
         int[] minMax = new int[4];
         Tile tile = tiles.values().iterator().next();
@@ -100,28 +114,7 @@ public class MapGraph {
                 - minMax[3]));
     }
 
-    public ArrayList<Tile> getStartTiles() {
-        ArrayList<Tile> startTiles = new ArrayList<Tile>();
-        for (Tile tile : getTiles()) {
-            if (tile.getContent() instanceof StartBase) {
-                startTiles.add(tile);
-            }
-        }
-        return startTiles;
-    }
-
-    public Tile getTile(final Point point) {
-        return tiles.get(point);
-    }
-
-    public Collection<Tile> getTiles() {
-        return tiles.values();
-    }
-
     /*
-     * public MapGraph generateMapFromTiles(List<peno.htttp.Tile> tiles) {
-     * MapGraph map = new MapGraph(); }
-     * 
      * public void mergeMap(List<peno.htttp.Tile> map2, Point map1tile1, Point
      * map1tile2, Point map2tile1, Point map2tile2) { int translatedxmap1 =
      * (int) (map1tile2.getX() - map1tile1.getX()); int translatedymap1 = (int)
@@ -154,6 +147,24 @@ public class MapGraph {
      * tile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA))
      * .getObstruction()); } }
      */
+
+    public ArrayList<Tile> getStartTiles() {
+        ArrayList<Tile> startTiles = new ArrayList<Tile>();
+        for (Tile tile : getTiles()) {
+            if (tile.getContent() instanceof StartBase) {
+                startTiles.add(tile);
+            }
+        }
+        return startTiles;
+    }
+
+    public Tile getTile(final Point point) {
+        return tiles.get(point);
+    }
+
+    public Collection<Tile> getTiles() {
+        return tiles.values();
+    }
 
     @Override
     public String toString() {
