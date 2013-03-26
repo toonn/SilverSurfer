@@ -1,6 +1,7 @@
 package mapping;
 
 import java.awt.Point;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 public class MapGraph {
 
@@ -109,17 +111,29 @@ public class MapGraph {
         }
     }
 
-    private void mergeMap(MapGraph map2, Point map1tile1, Point map1tile2,
+    private void mergeMap(Vector<Tile> map2, Point map1tile1, Point map1tile2,
             Point map2tile1, Point map2tile2) {
         int translatedxmap1 = (int) (map1tile2.getX() - map1tile1.getX());
         int translatedymap1 = (int) (map1tile2.getY() - map1tile1.getY());
         int translatedxmap2 = (int) (map2tile2.getX() - map2tile1.getX());
         int translatedymap2 = (int) (map2tile2.getY() - map2tile1.getY());
-        float sinA = (float) ((translatedymap1 - translatedxmap1
+        float sinA;
+        float cosA;
+        if(translatedxmap2 == 0){
+        	sinA = - translatedxmap1/translatedymap2;
+        	cosA = translatedymap1/translatedymap2;
+        }
+        else if(translatedymap2 == 0){
+        	cosA = translatedxmap1/translatedxmap2;
+        	sinA = translatedymap1/translatedxmap2;
+        }
+        else{
+        sinA = (float) ((translatedymap1 - translatedxmap1
                 / translatedxmap2 * translatedymap2) / ((Math.pow(
                 translatedymap2, 2)) / translatedxmap2 + translatedxmap2));
-        float cosA = (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2);
-        for (Tile tile : map2.getTiles()) {
+        cosA = (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2);
+        }
+        for (Tile tile : map2) {
             int convertedX = (int) (cosA * tile.getPosition().getX() - sinA
                     * tile.getPosition().getY() - cosA * map2tile1.getX()
                     + sinA * map2tile1.getY() + map1tile1.getX());
@@ -129,6 +143,11 @@ public class MapGraph {
 
             if (!this.tiles.containsKey(new Point(convertedX, convertedY))) {
                 Tile copiedTile = tile.clone();
+                for(Orientation orientation : Orientation.values()){
+                	copiedTile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA)).setObstruction(tile.getEdgeAt(orientation).getObstruction());
+                }
+                copiedTile.getPosition().x = convertedX;
+                copiedTile.getPosition().y = convertedY;
                 setExistingTile(copiedTile);
             } else
                 for (Orientation orientation : Orientation.values())
@@ -137,7 +156,7 @@ public class MapGraph {
                         this.getTile(new Point(convertedX, convertedY))
                                 .getEdgeAt(orientation)
                                 .setObstruction(
-                                        tile.getEdgeAt(orientation)
+                                        tile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA))
                                                 .getObstruction());
         }
     }
@@ -234,4 +253,6 @@ public class MapGraph {
         }
         return mapGraphString;
     }
+    
+   
 }

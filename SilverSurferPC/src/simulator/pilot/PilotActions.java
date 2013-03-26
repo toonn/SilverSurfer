@@ -22,9 +22,13 @@ public class PilotActions {
 		pilot.setReadBarcodes(false);
 		
 		//Change the current tile into a straight and mark it explored.
-		for(Orientation orientation: Orientation.values())
+		for(Orientation orientation: Orientation.values()){
 			if(orientation != pilot.getOrientation() &&	orientation != pilot.getOrientation().getOppositeOrientation())
 				pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()).getEdgeAt(orientation).setObstruction( Obstruction.WALL);
+			else{
+				pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()).getEdgeAt(orientation).setObstruction( Obstruction.WHITE_LINE);
+			}
+		}
 		pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()).setMarkingExploreMaze(true);
 		
 		//Add the tile at the end of the straight to the map.
@@ -124,9 +128,11 @@ public class PilotActions {
 		
 		// change the third tile into a straight, add the other barcode and mark as explored
 		for(Orientation orientation: Orientation.values())
-			if(orientation != pilot.getOrientation() && orientation != pilot.getOrientation().getOppositeOrientation())
+			if(orientation != pilot.getOrientation() && orientation != pilot.getOrientation().getOppositeOrientation()){
 				pilot.getMapGraphConstructed().getTile(nextPoint3).getEdgeAt(orientation).setObstruction(Obstruction.WALL);
+}
 		pilot.getMapGraphConstructed().getTile(nextPoint3).getEdgeAt(pilot.getOrientation().getOppositeOrientation()).setObstruction(farObstruction);
+		pilot.getMapGraphConstructed().getTile(nextPoint3).getEdgeAt(pilot.getOrientation()).setObstruction(Obstruction.WHITE_LINE);
 		Barcode barcode = new Barcode(pilot.getMapGraphConstructed().getTile(nextPoint3), otherBarcode, pilot.getOrientation());
 		pilot.getMapGraphConstructed().getTile(nextPoint3).setContent(barcode);
 		pilot.getMapGraphConstructed().getTile(nextPoint3).setMarkingExploreMaze(true);

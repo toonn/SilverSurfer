@@ -23,6 +23,24 @@ public enum Orientation {
         public final int getAngle() {
             return 270;
         }
+
+		@Override
+		public Orientation orientationRotatedOver(float sinA, float cosA) {
+			if(sinA == 0){
+				if(cosA == 1){
+					return NORTH;
+				}
+				else 
+					return SOUTH;
+			}
+			else if(sinA == 1){
+				return WEST;
+			}
+			else if(sinA == -1)
+				return EAST;
+			return null;
+		}
+        
     },
     EAST {
         @Override
@@ -44,6 +62,23 @@ public enum Orientation {
         public final int getAngle() {
             return 0;
         }
+        
+        @Override
+		public Orientation orientationRotatedOver(float sinA, float cosA) {
+			if(sinA == 0){
+				if(cosA == 1){
+					return EAST;
+				}
+				else 
+					return WEST;
+			}
+			else if(sinA == 1){
+				return NORTH;
+			}
+			else if(sinA == -1)
+				return SOUTH;
+			return null;
+		}
     },
     SOUTH {
         @Override
@@ -65,6 +100,23 @@ public enum Orientation {
         public final int getAngle() {
             return 90;
         }
+        
+        @Override
+		public Orientation orientationRotatedOver(float sinA, float cosA) {
+			if(sinA == 0){
+				if(cosA == 1){
+					return SOUTH;
+				}
+				else 
+					return NORTH;
+			}
+			else if(sinA == 1){
+				return EAST;
+			}
+			else if(sinA == -1)
+				return WEST;
+			return null;
+		}
     },
     WEST {
         @Override
@@ -86,6 +138,23 @@ public enum Orientation {
         public final int getAngle() {
             return 180;
         }
+        
+        @Override
+		public Orientation orientationRotatedOver(float sinA, float cosA) {
+			if(sinA == 0){
+				if(cosA == 1){
+					return WEST;
+				}
+				else 
+					return EAST;
+			}
+			else if(sinA == 1){
+				return SOUTH;
+			}
+			else if(sinA == -1)
+				return NORTH;
+			return null;
+		}
     };
 
     public static Orientation calculateOrientation(final double angle) {
@@ -118,4 +187,7 @@ public enum Orientation {
     		return "S";
     	else return "W";
     }
+    
+    public abstract Orientation orientationRotatedOver(float sinA, float cosA);
+    
 }
