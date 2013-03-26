@@ -12,8 +12,11 @@ public class DummyHandler implements SpectatorHandler {
         this.pilot = pilot;
     }
 
-    public PilotInterface getPilot() {
-        return pilot;
+    @Override
+    public void gamePaused() {
+        // TODO Auto-generated method stub
+        System.out.println("game paused");
+
     }
 
     @Override
@@ -31,9 +34,30 @@ public class DummyHandler implements SpectatorHandler {
     }
 
     @Override
-    public void gamePaused() {
+    public void gameWon(int teamNumber) {
         // TODO Auto-generated method stub
-        System.out.println("game paused");
+
+    }
+
+    public PilotInterface getPilot() {
+        return pilot;
+    }
+
+    @Override
+    public void lockedSeesaw(String playerID, int playerNumber, int barcode) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void playerDisconnected(String playerID, DisconnectReason reason) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void playerFoundObject(String playerID, int playerNumber) {
+        // TODO Auto-generated method stub
 
     }
 
@@ -51,19 +75,7 @@ public class DummyHandler implements SpectatorHandler {
     }
 
     @Override
-    public void playerDisconnected(String playerID, DisconnectReason reason) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void playerReady(String playerID, boolean isReady) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void playerFoundObject(String playerID, int playerNumber) {
         // TODO Auto-generated method stub
 
     }
@@ -75,21 +87,9 @@ public class DummyHandler implements SpectatorHandler {
 
     }
 
-	@Override
-	public void gameWon(int teamNumber) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void unlockedSeesaw(String playerID, int playerNumber, int barcode) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void lockedSeesaw(String playerID, int playerNumber, int barcode) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unlockedSeesaw(String playerID, int playerNumber, int barcode) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 }

@@ -3,7 +3,6 @@ package unused;
 import java.io.IOException;
 import java.util.Date;
 
-
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

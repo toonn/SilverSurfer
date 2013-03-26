@@ -5,7 +5,6 @@ import java.util.Random;
 
 import peno.htttp.Callback;
 import peno.htttp.PlayerClient;
-
 import simulator.pilot.AbstractPilot;
 import simulator.viewport.SimulatorPanel;
 
@@ -46,9 +45,9 @@ public class MQCenter {
         Random random = new Random();
         this.playerID = playerID + random.nextInt(99999);
 
-        if (pilot == null)
+        if (pilot == null) {
             throw new NullPointerException("null is not a valid pilot!");
-        else {
+        } else {
 
             this.pilot = pilot;
             handler = new APHandler(pilot, panel);
@@ -70,10 +69,34 @@ public class MQCenter {
     }
 
     /**
+     * Signal the fact that you found your object.
+     * 
+     * @throws IOException
+     *             : connection error.
+     * @throws IllegalStateException
+     *             : when no game is started etc.
+     */
+    public void foundObject() throws IllegalStateException, IOException {
+        client.foundObject();
+    }
+
+    public PlayerClient getClient() {
+        return client;
+    }
+
+    /**
      * @return The Connection this MessageCenter uses to send messages across.
      */
     public Connection getConn() {
         return conn;
+    }
+
+    public String getGameID() {
+        return gameID;
+    }
+
+    public APHandler getHandler() {
+        return handler;
     }
 
     /**
@@ -85,18 +108,6 @@ public class MQCenter {
 
     public String getPlayerID() {
         return playerID;
-    }
-
-    public APHandler getHandler() {
-        return handler;
-    }
-
-    public String getGameID() {
-        return gameID;
-    }
-
-    public PlayerClient getClient() {
-        return client;
     }
 
     /**
@@ -122,19 +133,38 @@ public class MQCenter {
      *             : When
      */
     public void setReady(boolean ready) throws IOException {
-    	client.setReady(true);
+        client.setReady(true);
     }
 
     /**
-     * Signal the fact that you found your object.
-     * 
-     * @throws IOException
-     *             : connection error.
-     * @throws IllegalStateException
-     *             : when no game is started etc.
+     * @return The standard Callback used to join a game. For usage: see the
+     *         join() void.
      */
-    public void foundObject() throws IllegalStateException, IOException {
-        client.foundObject();
+    private Callback<Void> stdCallback() {
+        return new Callback<Void>() {
+            @Override
+            public void onFailure(Throwable t) {
+                System.err.println("[HTTTP] Fout bij deelname: "
+                        + t.getMessage());
+                System.err.println("[HTTTP] Opnieuw proberen...");
+                try {
+                    client.join(stdCallback());
+                } catch (IllegalStateException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                // TODO Succesvolle deelname
+                System.out.println("[HTTTP] Succesvolle deelname door "
+                        + getPlayerID());
+            }
+        };
     }
 
     /**
@@ -148,36 +178,6 @@ public class MQCenter {
     public void updatePosition(int x, int y, int angle)
             throws IllegalStateException, IOException {
         client.updatePosition(x, y, angle);
-    }
-
-    /**
-     * @return The standard Callback used to join a game. For usage: see the
-     *         join() void.
-     */
-    private Callback<Void> stdCallback() {
-        return new Callback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                // TODO Succesvolle deelname
-                System.out
-                        .println("[HTTTP] Succesvolle deelname door " + getPlayerID());
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                System.err.println("[HTTTP] Fout bij deelname: " + t.getMessage());
-                System.err.println("[HTTTP] Opnieuw proberen...");
-                try {
-                    client.join(stdCallback());
-                } catch (IllegalStateException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        };
     }
 
 }

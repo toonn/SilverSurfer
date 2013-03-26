@@ -15,7 +15,7 @@ public abstract class TileContent {
     public Point getPosition() {
         return tile.getPosition();
     }
-    
+
     public int getValue() {
         return value;
     }

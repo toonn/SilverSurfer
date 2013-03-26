@@ -3,13 +3,12 @@ package mazeAlgorithm;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import simulator.pilot.AbstractPilot;
-
 import mapping.Barcode;
 import mapping.ExtMath;
 import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
+import simulator.pilot.AbstractPilot;
 
 public class MazeExplorer {
 
@@ -27,35 +26,21 @@ public class MazeExplorer {
         this.startTile = startTile;
         this.pilot = pilot;
         this.align = align;
-        this.currentAmount = amountOfTilesUntilAlign;
-    }
-
-    /**
-     * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
-     */
-    public void startExploringMaze() {
-        try {
-            allTiles.add(startTile);
-            algorithm(startTile);
-            for (final Object tile : allTiles)
-                ((Tile) tile).setMarkingExploreMaze(false);
-
-        } catch (NullPointerException e) {
-            // if(!quit)
-            // System.out.println("Exception in MazeExplorer!");
-            e.printStackTrace();
-        }
+        currentAmount = amountOfTilesUntilAlign;
     }
 
     private void algorithm(Tile currentTile) {
         // Explore tile and set current tile on "Explored".
-        if (!currentTile.isMarkedExploreMaze())
+        if (!currentTile.isMarkedExploreMaze()) {
             exploreTile(currentTile);
+        }
 
         // Update queue.
-        for (final Tile neighbourTile : currentTile.getReachableNeighbours())
-            if (neighbourTile != null && !(neighbourTile.isMarkedExploreMaze()))
+        for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
+            if (neighbourTile != null && !(neighbourTile.isMarkedExploreMaze())) {
                 queue.add(neighbourTile);
+            }
+        }
 
         // Algorithm finished?
         if (queue.isEmpty() || quit) {
@@ -68,13 +53,16 @@ public class MazeExplorer {
         Tile nextTile = getPriorityNextTile(currentTile);
         while (allTiles.contains(nextTile)) {
             currentTile = nextTile;
-            if (!currentTile.isMarkedExploreMaze())
+            if (!currentTile.isMarkedExploreMaze()) {
                 exploreTile(currentTile);
+            }
             for (final Tile neighbourTile : currentTile
-                    .getReachableNeighbours())
+                    .getReachableNeighbours()) {
                 if (neighbourTile != null
-                        && !(neighbourTile.isMarkedExploreMaze()))
+                        && !(neighbourTile.isMarkedExploreMaze())) {
                     queue.add(neighbourTile);
+                }
+            }
             if (queue.isEmpty() || quit) {
                 System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber()
                         + " has finished exploring.");
@@ -98,13 +86,16 @@ public class MazeExplorer {
             nextTile = getPriorityNextTile(currentTile);
             while (allTiles.contains(nextTile)) {
                 currentTile = nextTile;
-                if (!currentTile.isMarkedExploreMaze())
+                if (!currentTile.isMarkedExploreMaze()) {
                     exploreTile(currentTile);
+                }
                 for (final Tile neighbourTile : currentTile
-                        .getReachableNeighbours())
+                        .getReachableNeighbours()) {
                     if (neighbourTile != null
-                            && !(neighbourTile.isMarkedExploreMaze()))
+                            && !(neighbourTile.isMarkedExploreMaze())) {
                         queue.add(neighbourTile);
+                    }
+                }
                 if (queue.isEmpty() || quit) {
                     System.out.println("[EXPLORE] Robot "
                             + pilot.getPlayerNumber()
@@ -145,6 +136,110 @@ public class MazeExplorer {
     }
 
     /**
+     * Checks whether the queue only contains unexplored tiles and whether all
+     * unexplored tiles are in the queue. For, it is possible that a pilot
+     * explores and adds some tiles by itself. For example, when he finds a
+     * barcode that says that there is a treasure - and a dead-end - on the next
+     * tile.
+     */
+    private void checkExploredQueue() {
+        for (Tile tile : pilot.getMapGraphConstructed().getTiles()) {
+            if (!allTiles.contains(tile) && !queue.contains(tile)) {
+                if (tile.isMarkedExploreMaze()) {
+                    allTiles.add(tile);
+                } else {
+                    queue.add(tile);
+                }
+            }
+        }
+    }
+
+    /**
+     * checkt of alle neighbourTiles al gecheckt zijn, indien ja niet meer nodig
+     * om nextTile nog te checken.
+     */
+    private boolean doesHaveOtherNeighboursToCheck(final Tile nextTile) {
+        int j = 0;
+        // if (!nextTile.isStraightTile())
+        for (final Tile neighbourTile : nextTile.getNeighbours()) {
+            if (neighbourTile != null && neighbourTile.isMarkedExploreMaze()) {
+                j++;
+            }
+        }
+        if (j == 4) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checkt voor alle neighbours of ze al behandeld zijn. Indien niet, checkt
+     * of er een muur tussen staat. Indien wel, plaats een muur. Indien niet,
+     * voeg een nieuwe lege tile toe op de juiste plaats.
+     */
+    private void exploreTile(final Tile currentTile) {
+        // numbervariable met als inhoud het getal van de orientatie (N = 1,...)
+        int numberVariable = pilot.getOrientation().ordinal();
+
+        // Array met alle buren van deze tile
+        final ArrayList<Tile> array = currentTile.getNeighbours();
+
+        for (int i = 0; i < 4; i++) {
+            // Do nothing if tile with numbervariable as orientation is already
+            // done
+            if (array.get(numberVariable) != null
+                    && (array.get(numberVariable).isMarkedExploreMaze())) {
+                ;
+            } else {
+                double angle = (((numberVariable - pilot.getOrientation()
+                        .ordinal()) * 90) + 360) % 360;
+                angle = ExtMath.getSmallestAngle(angle);
+                pilot.rotate(angle);
+                pilot.setObstructionOrTile();
+            }
+            // Next orientation
+            numberVariable = numberVariable + 1;
+            if (numberVariable == 4) {
+                numberVariable = 0;
+            }
+        }
+
+        // zet het mark-veld van de currentTile op true zodat deze niet meer
+        // opnieuw in de queue terecht kan komen
+        currentTile.setMarkingExploreMaze(true);
+    }
+
+    private Tile getOtherEndOfSeesaw(Tile tile) {
+        for (Tile neighbour : tile.getReachableNeighboursIgnoringSeesaw()) {
+            if (neighbour != null && neighbour.getContent() instanceof Seesaw) {
+                for (Tile nextNeighbour : neighbour
+                        .getReachableNeighboursIgnoringSeesaw()) {
+                    if (nextNeighbour != null
+                            && nextNeighbour.getContent() instanceof Seesaw) {
+                        for (Tile nextNextNeighbour : nextNeighbour
+                                .getReachableNeighboursIgnoringSeesaw()) {
+                            if (nextNextNeighbour != null
+                                    && nextNextNeighbour.getContent() instanceof Barcode) {
+                                for (Tile nextNextNextNeighbour : nextNextNeighbour
+                                        .getReachableNeighboursIgnoringSeesaw()) {
+                                    if (nextNextNextNeighbour != null
+                                            && !(nextNextNextNeighbour
+                                                    .getContent() instanceof Seesaw)
+                                            && !nextNextNextNeighbour
+                                                    .equals(tile)) {
+                                        return nextNextNextNeighbour;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check for every orientation whether the given tile has a neighbour tile
      * that is worth visiting. If none of them is, give the last tile from the
      * queue.
@@ -153,36 +248,90 @@ public class MazeExplorer {
      * @return
      */
     private Tile getPriorityNextTile(final Tile currentTile) {
-        if (isGoodNextTile(currentTile, pilot.getOrientation()))
+        if (isGoodNextTile(currentTile, pilot.getOrientation())) {
             return currentTile.getEdgeAt(pilot.getOrientation()).getNeighbour(
                     currentTile);
-        else if (isGoodNextTile(currentTile, pilot.getOrientation()
-                .getCounterClockwiseOrientation()))
+        } else if (isGoodNextTile(currentTile, pilot.getOrientation()
+                .getCounterClockwiseOrientation())) {
             return currentTile.getEdgeAt(
                     pilot.getOrientation().getCounterClockwiseOrientation())
                     .getNeighbour(currentTile);
-        else if (isGoodNextTile(currentTile, pilot.getOrientation()
-                .getCounterClockwiseOrientation().getOppositeOrientation()))
+        } else if (isGoodNextTile(currentTile, pilot.getOrientation()
+                .getCounterClockwiseOrientation().getOppositeOrientation())) {
             return currentTile.getEdgeAt(
                     pilot.getOrientation().getCounterClockwiseOrientation()
                             .getOppositeOrientation())
                     .getNeighbour(currentTile);
-        else if (isGoodNextTile(currentTile, pilot.getOrientation()
-                .getOppositeOrientation()))
+        } else if (isGoodNextTile(currentTile, pilot.getOrientation()
+                .getOppositeOrientation())) {
             return currentTile.getEdgeAt(
                     pilot.getOrientation().getOppositeOrientation())
                     .getNeighbour(currentTile);
-        else {
+        } else {
             Tile loopdetect = queue.lastElement();
             Tile tile = queue.lastElement();
             while (!isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
                 queue.remove(tile);
                 queue.add(0, tile);
                 tile = queue.lastElement();
-                if (tile.equals(loopdetect))
+                if (tile.equals(loopdetect)) {
                     return searchAndCrossOpenSeesaw(currentTile);
+                }
             }
             return queue.lastElement();
+        }
+    }
+
+    /**
+     * A tile next to the current tile (in the given orientation) is a good one
+     * to visit if: - the edge between the currentTile is passable - the tile is
+     * existing - the tile is in the queue
+     * 
+     * @param currentTile
+     * @param orientation
+     * @return
+     */
+    private boolean isGoodNextTile(final Tile currentTile,
+            final Orientation orientation) {
+        return currentTile.getEdgeAt(orientation).isPassable()
+                && currentTile.getEdgeAt(orientation).getNeighbour(currentTile) != null
+                && queue.contains(currentTile.getEdgeAt(orientation)
+                        .getNeighbour(currentTile));
+    }
+
+    private boolean isReachableWithoutWip(Tile currentTile, Tile endTile,
+            Vector<Tile> tilesPath) {
+        tilesPath.add(currentTile);
+        for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
+            if (neighbourTile.equals(endTile)) {
+                return true;
+            }
+            if (!tilesPath.contains(neighbourTile)
+                    && allTiles.contains(neighbourTile)
+                    && !(neighbourTile.getContent() instanceof Seesaw)) {
+                if (isReachableWithoutWip(neighbourTile, endTile, tilesPath)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void quit() {
+        quit = true;
+    }
+
+    private void removeTileFromQueue(final Tile tile) {
+        // Multiple times in queue so multiple times remove.
+        while (queue.contains(tile)) {
+            queue.remove(tile);
+        }
+        // TODO: Somehow some tiles do not get removed... Investigate!
+        for (Tile queuetile : queue) {
+            if (queuetile.getPosition().x == tile.getPosition().x
+                    && queuetile.getPosition().y == tile.getPosition().y) {
+                queue.remove(queuetile);
+            }
         }
     }
 
@@ -205,7 +354,7 @@ public class MazeExplorer {
                         }
                     }
                     for (Tile neighbour : currentTile
-                            .getReachableNeighboursIgnoringSeesaw())
+                            .getReachableNeighboursIgnoringSeesaw()) {
                         if (neighbour.getContent() instanceof Seesaw
                                 && !((Seesaw) neighbour.getContent())
                                         .isClosed()) {
@@ -213,8 +362,9 @@ public class MazeExplorer {
                             pilot.setReadBarcodes(false);
                             pilot.travel(140);
                             pilot.setReadBarcodes(true);
-                            if (!allTiles.contains(endTile))
+                            if (!allTiles.contains(endTile)) {
                                 allTiles.add(endTile);
+                            }
                             removeTileFromQueue(endTile);
                             pilot.travel(20); // Zodat een eventuele barcode op
                                               // volgende tile wel gelezen wordt
@@ -222,9 +372,10 @@ public class MazeExplorer {
                                               // wip niet.
                             return endTile;
                         }
+                    }
                     // Wip is gesloten, dus rij 1 tegel achteruit
                     for (Tile neighbour : currentTile
-                            .getReachableNeighboursIgnoringSeesaw())
+                            .getReachableNeighboursIgnoringSeesaw()) {
                         if (!(neighbour.getContent() instanceof Seesaw)) {
                             shortestPath = new ShortestPath(pilot, currentTile,
                                     neighbour, allTiles);
@@ -233,146 +384,28 @@ public class MazeExplorer {
                             currentTile = neighbour;
                             checkExploredQueue();
                         }
+                    }
                 }
             }
         }
     }
 
-    private Tile getOtherEndOfSeesaw(Tile tile) {
-        for (Tile neighbour : tile.getReachableNeighboursIgnoringSeesaw())
-            if (neighbour != null && neighbour.getContent() instanceof Seesaw)
-                for (Tile nextNeighbour : neighbour
-                        .getReachableNeighboursIgnoringSeesaw())
-                    if (nextNeighbour != null
-                            && nextNeighbour.getContent() instanceof Seesaw)
-                        for (Tile nextNextNeighbour : nextNeighbour
-                                .getReachableNeighboursIgnoringSeesaw())
-                            if (nextNextNeighbour != null
-                                    && nextNextNeighbour.getContent() instanceof Barcode)
-                                for (Tile nextNextNextNeighbour : nextNextNeighbour
-                                        .getReachableNeighboursIgnoringSeesaw())
-                                    if (nextNextNextNeighbour != null
-                                            && !(nextNextNextNeighbour
-                                                    .getContent() instanceof Seesaw)
-                                            && !nextNextNextNeighbour
-                                                    .equals(tile))
-                                        return nextNextNextNeighbour;
-        return null;
-    }
-
-    private boolean isReachableWithoutWip(Tile currentTile, Tile endTile,
-            Vector<Tile> tilesPath) {
-        tilesPath.add(currentTile);
-        for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
-            if (neighbourTile.equals(endTile))
-                return true;
-            if (!tilesPath.contains(neighbourTile)
-                    && allTiles.contains(neighbourTile)
-                    && !(neighbourTile.getContent() instanceof Seesaw))
-                if (isReachableWithoutWip(neighbourTile, endTile, tilesPath))
-                    return true;
-        }
-        return false;
-    }
-
     /**
-     * Checks whether the queue only contains unexplored tiles and whether all
-     * unexplored tiles are in the queue. For, it is possible that a pilot
-     * explores and adds some tiles by itself. For example, when he finds a
-     * barcode that says that there is a treasure - and a dead-end - on the next
-     * tile.
+     * Deze methode wordt opgeroepen als het object het algoritme moet uitvoeren
      */
-    private void checkExploredQueue() {
-        for (Tile tile : pilot.getMapGraphConstructed().getTiles())
-            if (!allTiles.contains(tile) && !queue.contains(tile)) {
-                if (tile.isMarkedExploreMaze())
-                    allTiles.add(tile);
-                else
-                    queue.add(tile);
+    public void startExploringMaze() {
+        try {
+            allTiles.add(startTile);
+            algorithm(startTile);
+            for (final Object tile : allTiles) {
+                ((Tile) tile).setMarkingExploreMaze(false);
             }
-    }
 
-    /**
-     * Checkt voor alle neighbours of ze al behandeld zijn. Indien niet, checkt
-     * of er een muur tussen staat. Indien wel, plaats een muur. Indien niet,
-     * voeg een nieuwe lege tile toe op de juiste plaats.
-     */
-    private void exploreTile(final Tile currentTile) {
-        // numbervariable met als inhoud het getal van de orientatie (N = 1,...)
-        int numberVariable = pilot.getOrientation().ordinal();
-
-        // Array met alle buren van deze tile
-        final ArrayList<Tile> array = currentTile.getNeighbours();
-
-        for (int i = 0; i < 4; i++) {
-            // Do nothing if tile with numbervariable as orientation is already
-            // done
-            if (array.get(numberVariable) != null
-                    && (array.get(numberVariable).isMarkedExploreMaze()))
-                ;
-            else {
-                double angle = (((numberVariable - pilot.getOrientation()
-                        .ordinal()) * 90) + 360) % 360;
-                angle = ExtMath.getSmallestAngle(angle);
-                pilot.rotate(angle);
-                pilot.setObstructionOrTile();
-            }
-            // Next orientation
-            numberVariable = numberVariable + 1;
-            if (numberVariable == 4)
-                numberVariable = 0;
+        } catch (NullPointerException e) {
+            // if(!quit)
+            // System.out.println("Exception in MazeExplorer!");
+            e.printStackTrace();
         }
-
-        // zet het mark-veld van de currentTile op true zodat deze niet meer
-        // opnieuw in de queue terecht kan komen
-        currentTile.setMarkingExploreMaze(true);
-    }
-
-    /**
-     * checkt of alle neighbourTiles al gecheckt zijn, indien ja niet meer nodig
-     * om nextTile nog te checken.
-     */
-    private boolean doesHaveOtherNeighboursToCheck(final Tile nextTile) {
-        int j = 0;
-        // if (!nextTile.isStraightTile())
-        for (final Tile neighbourTile : nextTile.getNeighbours())
-            if (neighbourTile != null && neighbourTile.isMarkedExploreMaze())
-                j++;
-        if (j == 4)
-            return false;
-        return true;
-    }
-
-    /**
-     * A tile next to the current tile (in the given orientation) is a good one
-     * to visit if: - the edge between the currentTile is passable - the tile is
-     * existing - the tile is in the queue
-     * 
-     * @param currentTile
-     * @param orientation
-     * @return
-     */
-    private boolean isGoodNextTile(final Tile currentTile,
-            final Orientation orientation) {
-        return currentTile.getEdgeAt(orientation).isPassable()
-                && currentTile.getEdgeAt(orientation).getNeighbour(currentTile) != null
-                && queue.contains(currentTile.getEdgeAt(orientation)
-                        .getNeighbour(currentTile));
-    }
-
-    private void removeTileFromQueue(final Tile tile) {
-        // Multiple times in queue so multiple times remove.
-        while (queue.contains(tile))
-            queue.remove(tile);
-        // TODO: Somehow some tiles do not get removed... Investigate!
-        for (Tile queuetile : queue)
-            if (queuetile.getPosition().x == tile.getPosition().x
-                    && queuetile.getPosition().y == tile.getPosition().y)
-                queue.remove(queuetile);
-    }
-
-    public void quit() {
-        quit = true;
     }
 
 }

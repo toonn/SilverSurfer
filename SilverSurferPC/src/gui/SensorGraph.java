@@ -18,13 +18,15 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class SensorGraph extends JPanel {
 
-	private Timer timer;
-	private boolean pause = false;
+    private Timer timer;
+    private boolean pause = false;
     private final int numberOfValuesToPlotLS = 100;
     private final int numberOfValuesToPlotUS = 100;
     private int repaintPeriodInms = 10;
-    private final Queue<Integer> LS = new ArrayBlockingQueue<Integer>(numberOfValuesToPlotLS);
-    private final Queue<Integer> US = new ArrayBlockingQueue<Integer>(numberOfValuesToPlotUS);
+    private final Queue<Integer> LS = new ArrayBlockingQueue<Integer>(
+            numberOfValuesToPlotLS);
+    private final Queue<Integer> US = new ArrayBlockingQueue<Integer>(
+            numberOfValuesToPlotUS);
     private ActionListener repaintSensorGraph = new ActionListener() {
 
         @Override
@@ -34,21 +36,12 @@ public class SensorGraph extends JPanel {
     };
 
     public SensorGraph() {
-        for (int i = 0; i < numberOfValuesToPlotLS; i++)
+        for (int i = 0; i < numberOfValuesToPlotLS; i++) {
             LS.offer(0);
-        for (int i = 0; i < numberOfValuesToPlotUS; i++)
+        }
+        for (int i = 0; i < numberOfValuesToPlotUS; i++) {
             US.offer(250);
-        timer = new Timer(repaintPeriodInms, repaintSensorGraph);
-        timer.start();
-    }
-    
-    public void togglePause() {
-    	pause = !pause;
-    	if(pause)
-    		repaintPeriodInms = 10000000;
-    	else
-    		repaintPeriodInms = 10;
-    	timer.stop();
+        }
         timer = new Timer(repaintPeriodInms, repaintSensorGraph);
         timer.start();
     }
@@ -64,7 +57,8 @@ public class SensorGraph extends JPanel {
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
         final Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
 
         final int w = getWidth();
         final int h = getHeight();
@@ -177,5 +171,17 @@ public class SensorGraph extends JPanel {
         // Dividing line between sensors
         g2.setColor(Color.gray);
         g2.fill(new Rectangle(wLS - 3, 0, 6, h));
+    }
+
+    public void togglePause() {
+        pause = !pause;
+        if (pause) {
+            repaintPeriodInms = 10000000;
+        } else {
+            repaintPeriodInms = 10;
+        }
+        timer.stop();
+        timer = new Timer(repaintPeriodInms, repaintSensorGraph);
+        timer.start();
     }
 }

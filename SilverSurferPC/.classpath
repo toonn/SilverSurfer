@@ -6,6 +6,5 @@
 	<classpathentry kind="lib" path="libs/rabbitmq-client.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/htttp"/>
-	<classpathentry kind="lib" path="libs/commons-cli-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

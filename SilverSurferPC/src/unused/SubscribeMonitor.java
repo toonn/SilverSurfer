@@ -3,7 +3,6 @@ package unused;
 import java.io.IOException;
 
 import mq.communicator.Config;
-
 import simulator.pilot.AbstractPilot;
 
 import com.rabbitmq.client.AMQP;
@@ -24,46 +23,50 @@ public class SubscribeMonitor {
     private Connection conn = null;
     private Channel channel = null;
     private AbstractPilot clientPilot;
-    
-    public SubscribeMonitor(String monitor_key, Channel ch, Connection co, AbstractPilot client) {
-    	
-    	if(monitor_key == null || ch == null || co == null || client == null)
-    		throw new NullPointerException("Please, don't use null as a parameter? :(");
-    	
+
+    public SubscribeMonitor(String monitor_key, Channel ch, Connection co,
+            AbstractPilot client) {
+
+        if (monitor_key == null || ch == null || co == null || client == null) {
+            throw new NullPointerException(
+                    "Please, don't use null as a parameter? :(");
+        }
+
         this.monitor_key = monitor_key;
-        this.conn = co;
-        this.channel = ch;
-        this.clientPilot = client;
+        conn = co;
+        channel = ch;
+        clientPilot = client;
 
     }
-    
+
     /**
-     * @return	The Monitor's channel.
+     * @return The Monitor's channel.
      */
     public Channel getChannel() {
         return channel;
     }
 
     /**
-     * @return	The Monitor's connection.
+     * @return The AbstractPilot this monitor is working for.
+     */
+    public AbstractPilot getClientPilot() {
+        return clientPilot;
+    }
+
+    /**
+     * @return The Monitor's connection.
      */
     public Connection getConn() {
         return conn;
     }
 
     /**
-     * @return	The monitor key this monitor is monitoring on.
+     * @return The monitor key this monitor is monitoring on.
      */
     public String getMonitor_key() {
         return monitor_key;
     }
 
-    /**
-     * @return	The AbstractPilot this monitor is working for.
-     */
-    public AbstractPilot getClientPilot() {
-		return clientPilot;
-	}
     /**
      * Sets up the monitor so it listens to the queue declared in the
      * constructor.
@@ -120,15 +123,14 @@ public class SubscribeMonitor {
                             System.out.println(String.format("@%d: %s -> %s",
                                     properties.getTimestamp().getTime(),
                                     envelope.getRoutingKey(), new String(body)));
-                            //FW: the message to the right Pilot.
-                            //TODO: process message before forwarding??
-                           
-                           
+                            // FW: the message to the right Pilot.
+                            // TODO: process message before forwarding??
+
                             // send an ack to the server so it can remove the
                             // message from
                             // the queue.
                             getChannel().basicAck(deliveryTag, false);
-                            //TODO maak échte processcode
+                            // TODO maak ï¿½chte processcode
                         }
                     });
 

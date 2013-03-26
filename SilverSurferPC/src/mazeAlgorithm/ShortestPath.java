@@ -10,12 +10,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
-import simulator.pilot.AbstractPilot;
-
 import mapping.ExtMath;
 import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
+import simulator.pilot.AbstractPilot;
 
 public class ShortestPath {
 
@@ -27,13 +26,15 @@ public class ShortestPath {
     private AbstractPilot pilot;
     private int extraCostSeesaw = 50000;
 
-    public ShortestPath(final AbstractPilot pilot, final Tile startTile, final Tile endTile, final Vector<Tile> tiles) {
+    public ShortestPath(final AbstractPilot pilot, final Tile startTile,
+            final Tile endTile, final Vector<Tile> tiles) {
         this.pilot = pilot;
         this.startTile = startTile;
         this.endTile = endTile;
         this.tiles = tiles;
-        for (final Tile tile : tiles)
+        for (final Tile tile : tiles) {
             tile.setMarkingShortestPath(false);
+        }
     }
 
     /**
@@ -45,18 +46,14 @@ public class ShortestPath {
      * is , wordt deze tile verwijderd en checkt men de tile ervoor, enz...
      */
     private void deleteSuperfluousTiles() {
-    	for (int i = tilesPath.size() - 2; i > 0; i--)
-    		if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areNeighbours(tilesPath.get(i + 1)))
-    			tilesPath.remove(i);
+        for (int i = tilesPath.size() - 2; i > 0; i--) {
+            if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1)
+                    || !tilesPath.get(i).areNeighbours(tilesPath.get(i + 1))) {
+                tilesPath.remove(i);
+            }
+        }
     }
-    
-    private boolean seesawIsPassableFromTile(Tile seesaw) {
-    	if(!((Seesaw) seesaw.getContent()).isUp())
-    		return true;
-    	else
-    		return false;
-    }
-    
+
     private void fillTilesPath(final Tile currentTile) {
         tilesPath.add(currentTile);
         if (currentTile.getManhattanValue() == 0) {
@@ -66,11 +63,13 @@ public class ShortestPath {
 
         // voeg neighbourTiles van de currentTile toe aan de queue
         for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
-            if (tiles.contains(neighbourTile) && !neighbourTile.isMarkedShortestPath()) {
-            	if(! (neighbourTile.getContent() instanceof Seesaw) || seesawIsPassableFromTile(neighbourTile)) {
+            if (tiles.contains(neighbourTile)
+                    && !neighbourTile.isMarkedShortestPath()) {
+                if (!(neighbourTile.getContent() instanceof Seesaw)
+                        || seesawIsPassableFromTile(neighbourTile)) {
                     neighbourTile.setCost(currentTile.getCost() + 1);
                     queue.add(neighbourTile);
-            	}
+                }
             }
         }
 
@@ -78,23 +77,27 @@ public class ShortestPath {
         Collections.sort(queue, new Comparator<Tile>() {
             @Override
             public int compare(final Tile o1, final Tile o2) {
-                if (o1.getManhattanValue() + o1.getCost() < o2.getManhattanValue() + o2.getCost()) 
+                if (o1.getManhattanValue() + o1.getCost() < o2
+                        .getManhattanValue() + o2.getCost()) {
                     return 1;
-                else if (o1.getManhattanValue() + o1.getCost() == o2.getManhattanValue() + o2.getCost()) 
+                } else if (o1.getManhattanValue() + o1.getCost() == o2
+                        .getManhattanValue() + o2.getCost()) {
                     return 0;
-                else 
+                } else {
                     return -1;
+                }
             }
         });
 
         currentTile.setMarkingShortestPath(true);
 
-        if(queue.size() > 0) {
-        	// remove the last tile from the queue and add it to the path
-        	final Tile nextTile = queue.get(queue.size() - 1);
-        	while (queue.contains(nextTile))
+        if (queue.size() > 0) {
+            // remove the last tile from the queue and add it to the path
+            final Tile nextTile = queue.get(queue.size() - 1);
+            while (queue.contains(nextTile)) {
                 queue.remove(nextTile);
-        	fillTilesPath(nextTile);
+            }
+            fillTilesPath(nextTile);
         }
     }
 
@@ -105,70 +108,94 @@ public class ShortestPath {
      * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
      * alle tiles terug op hun initiele waarde gezet.
      */
-    public int goShortestPath(boolean align, int amount, int amountOfTilesUntilAlign) {
+    public int goShortestPath(boolean align, int amount,
+            int amountOfTilesUntilAlign) {
         int currentAmount = amount;
         setHeuristics();
         startTile.setCost(0);
         fillTilesPath(startTile);
-        if (tilesPath.size() == 1)
+        if (tilesPath.size() == 1) {
             return currentAmount;
+        }
         for (int i = 0; i < tilesPath.size() - 1; i++) {
-        	Orientation orientation = null;
-        	for(Orientation ori : Orientation.values())
-        		if(tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
-        			orientation = ori;
-            if(pilot.getReadBarcodes())
-                pilot.setReadBarcodes(false);
-            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
-            if(align && currentAmount == 0) {
-                if (tilesPath.size() - i > 2) {
-                	if(pilot.getReadBarcodes())
-                		pilot.setReadBarcodes(false);
+            Orientation orientation = null;
+            for (Orientation ori : Orientation.values()) {
+                if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1)
+                        .getEdgeAt(ori.getOppositeOrientation())) {
+                    orientation = ori;
                 }
-                else {
-                	if(!pilot.getReadBarcodes())
-                		pilot.setReadBarcodes(true);
-                }
-            	pilot.alignOnWhiteLine();
-            	currentAmount = amountOfTilesUntilAlign;
             }
-            else {
+            if (pilot.getReadBarcodes()) {
+                pilot.setReadBarcodes(false);
+            }
+            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation
+                    .getAngle() - pilot.getAngle())));
+            if (align && currentAmount == 0) {
+                if (tilesPath.size() - i > 2) {
+                    if (pilot.getReadBarcodes()) {
+                        pilot.setReadBarcodes(false);
+                    }
+                } else {
+                    if (!pilot.getReadBarcodes()) {
+                        pilot.setReadBarcodes(true);
+                    }
+                }
+                pilot.alignOnWhiteLine();
+                currentAmount = amountOfTilesUntilAlign;
+            } else {
                 pilot.travel(20);
                 if (tilesPath.size() - i > 2) {
-                	if(pilot.getReadBarcodes())
-                		pilot.setReadBarcodes(false);
-                }
-                else {
-                	if(!pilot.getReadBarcodes())
-                		pilot.setReadBarcodes(true);
+                    if (pilot.getReadBarcodes()) {
+                        pilot.setReadBarcodes(false);
+                    }
+                } else {
+                    if (!pilot.getReadBarcodes()) {
+                        pilot.setReadBarcodes(true);
+                    }
                 }
                 pilot.travel(20);
                 currentAmount--;
             }
-            if(pilot.canUpdatePosition()) {
-            	try {
-                	pilot.getCenter().getClient().updatePosition(pilot.getPosition().x, pilot.getPosition().y, pilot.getAngle());
-            	} catch(Exception e) {
-            		
-            	}
+            if (pilot.canUpdatePosition()) {
+                try {
+                    pilot.getCenter()
+                            .getClient()
+                            .updatePosition(pilot.getPosition().x,
+                                    pilot.getPosition().y, pilot.getAngle());
+                } catch (Exception e) {
+
+                }
             }
             // TODO goToNextTile checkte of er geAligned moest worden.
             // communicator.goToNextTile(orientation);
         }
 
-        for (final Object tile : tiles)
+        for (final Object tile : tiles) {
             ((Tile) tile).resetCost();
+        }
         return currentAmount;
     }
-    
+
+    private boolean seesawIsPassableFromTile(Tile seesaw) {
+        if (!((Seesaw) seesaw.getContent()).isUp()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
-     * zet de heuristiek op elke tile afhankelijk van de endTile die heuristiekwaarde 0 krijgt.
+     * zet de heuristiek op elke tile afhankelijk van de endTile die
+     * heuristiekwaarde 0 krijgt.
      */
     private void setHeuristics() {
         for (final Tile tile : tiles) {
-            int heuristic = (int) (Math.abs(endTile.getPosition().getX() - tile.getPosition().getX()) + Math.abs(endTile.getPosition().getY() - tile.getPosition().getY()));
-            if(tile.getContent() instanceof Seesaw)
-            	heuristic = heuristic + extraCostSeesaw;            
+            int heuristic = (int) (Math.abs(endTile.getPosition().getX()
+                    - tile.getPosition().getX()) + Math.abs(endTile
+                    .getPosition().getY() - tile.getPosition().getY()));
+            if (tile.getContent() instanceof Seesaw) {
+                heuristic = heuristic + extraCostSeesaw;
+            }
             tile.setManhattanValue(heuristic);
         }
     }

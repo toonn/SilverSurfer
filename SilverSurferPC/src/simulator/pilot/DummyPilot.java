@@ -4,11 +4,10 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
-import peno.htttp.SpectatorHandler;
-import simulator.viewport.SimulatorPanel;
-
 import mapping.MapGraph;
 import mq.communicator.DummyHandler;
+import peno.htttp.SpectatorHandler;
+import simulator.viewport.SimulatorPanel;
 
 public class DummyPilot implements PilotInterface {
 
@@ -18,21 +17,43 @@ public class DummyPilot implements PilotInterface {
     private double angle;
     private boolean active = false;
     private DummyHandler handler;
-	private boolean gameModus;
+    private boolean gameModus;
 
     public DummyPilot(int teamNumber) {
-        if (teamNumber < 0 || teamNumber > 3)
+        if (teamNumber < 0 || teamNumber > 3) {
             this.teamNumber = -1;
-        else
+        } else {
             this.teamNumber = teamNumber;
+        }
 
         handler = new DummyHandler(this);
         reset();
     }
 
+    public void activate() {
+        active = true;
+        // TODO
+    }
+
     @Override
-    public double sizeTile() {
-        return 40;
+    public double getAngle() {
+        return angle;
+    }
+
+    @Override
+    public SpectatorHandler getDefaultHandler() {
+        return handler;
+    }
+
+    @Override
+    public MapGraph getMapGraphConstructed() {
+        return mapGraphConstructed;
+    }
+
+    @Override
+    public Point getMatrixPosition() {
+        return new Point((int) (getPosition().getX() / sizeTile()),
+                (int) (getPosition().getY() / sizeTile()));
     }
 
     /**
@@ -46,44 +67,28 @@ public class DummyPilot implements PilotInterface {
     }
 
     @Override
-    public void setPlayerNumber(int teamNumber) {
-    	this.teamNumber = teamNumber;
-    }
-
-    @Override
-    public MapGraph getMapGraphConstructed() {
-        return mapGraphConstructed;
-    }
-
-    @Override
     public Double getPosition() {
         return position;
     }
 
     @Override
-    public Point getMatrixPosition() {
-        return new Point((int) (getPosition().getX() / sizeTile()),
-                (int) (getPosition().getY() / sizeTile()));
+    public int getTeamNumber() {
+        return teamNumber;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     @Override
-    public void setPosition(final double x, final double y) {
-        position.setLocation(x, y);
+    public boolean isInGameModus() {
+        return gameModus;
     }
 
     @Override
-    public double getAngle() {
-        return angle;
-    }
-
-    @Override
-    public void setAngle(final double angle) {
-        if (angle > 360)
-            this.angle = angle - 360;
-        else if (angle < 0)
-            this.angle = angle + 360;
-        else
-            this.angle = angle;
+    public void makeReadyToPlay() {
+        mapGraphConstructed = new MapGraph();
+        mapGraphConstructed.addTile(getMatrixPosition());
     }
 
     @Override
@@ -93,56 +98,52 @@ public class DummyPilot implements PilotInterface {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
     }
-	
-	@Override
-	public void makeReadyToPlay() {
-		mapGraphConstructed = new MapGraph();
-		mapGraphConstructed.addTile(getMatrixPosition());
-	}
 
-    public void setMap(MapGraph newMap) {
-        this.mapGraphConstructed = newMap;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void activate() {
-        active = true;
-        // TODO
+    @Override
+    public void setAngle(final double angle) {
+        if (angle > 360) {
+            this.angle = angle - 360;
+        } else if (angle < 0) {
+            this.angle = angle + 360;
+        } else {
+            this.angle = angle;
+        }
     }
 
     @Override
-    public SpectatorHandler getDefaultHandler() {
-        return handler;
+    public void setGameModus(boolean onOff) {
+        gameModus = onOff;
+
     }
 
-	@Override
-	public void setGameModus(boolean onOff) {
-		this.gameModus = onOff;
-		
-	}
+    public void setMap(MapGraph newMap) {
+        mapGraphConstructed = newMap;
+    }
 
-	@Override
-	public boolean isInGameModus() {
-		return gameModus;
-	}
+    @Override
+    public void setPlayerNumber(int teamNumber) {
+        this.teamNumber = teamNumber;
+    }
 
-	@Override
-	public int getTeamNumber() {
-		return teamNumber;
-	}
+    @Override
+    public void setPosition(final double x, final double y) {
+        position.setLocation(x, y);
+    }
 
-	@Override
-	public void setTeamNumber(int teamNumber) {
-		this.teamNumber = teamNumber;
-		
-	}
+    @Override
+    public void setTeamNumber(int teamNumber) {
+        this.teamNumber = teamNumber;
 
-	@Override
-	public void setupForGame(SimulatorPanel panel) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
+
+    @Override
+    public void setupForGame(SimulatorPanel panel) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public double sizeTile() {
+        return 40;
+    }
 }

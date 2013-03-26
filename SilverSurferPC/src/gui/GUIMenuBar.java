@@ -31,6 +31,182 @@ public class GUIMenuBar extends JMenuBar {
         setBackground(new Color(221, 230, 231));
     }
 
+    private JMenu createEmptyMenu() {
+        JMenu emptyMenu = new JMenu("     ");
+        emptyMenu.setEnabled(false);
+        return emptyMenu;
+    }
+
+    private JMenu getConnectionMenu() {
+        connectionMenu = new JMenu("Connection");
+
+        final JMenuItem connectItem = new JMenuItem("Connect...");
+        connectionMenu.add(connectItem);
+        connectItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().connect();
+                System.out.println("[CONNECTION] Connection established.");
+            }
+        });
+
+        final JMenuItem disconnectItem = new JMenuItem("Disconnect...");
+        connectionMenu.add(disconnectItem);
+        disconnectItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                SilverSurferGUI.getSimulatorPanel().disconnect();
+                System.out
+                        .println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
+            }
+        });
+
+        return connectionMenu;
+    }
+
+    private JMenu getExploreMenu() {
+        exploreMenu = new JMenu("Explore");
+
+        final JMenuItem exploreItem = new JMenuItem("Explore map");
+        exploreMenu.add(exploreItem);
+        exploreItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                SilverSurferGUI.getSimulatorPanel().startSimulation();
+                System.out.println("[EXPLORE] Start exploration.");
+            }
+        });
+
+        final JMenuItem playGameItem = new JMenuItem("Play Game");
+        exploreMenu.add(playGameItem);
+        playGameItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                SilverSurferGUI.getSimulatorPanel().playGame();
+                System.out.println("[EXPLORE] Started playing Treasure Trek.");
+            }
+        });
+
+        final JMenuItem resetRobotsItem = new JMenuItem("Stop and reset");
+        exploreMenu.add(resetRobotsItem);
+        resetRobotsItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().resetRobots();
+                System.out
+                        .println("[EXPLORE] Exploration stopped and robots resetted (might have to do multiple times).");
+            }
+        });
+
+        return exploreMenu;
+    }
+
+    private JMenu getMapMenu() {
+        mapMenu = new JMenu("Map");
+
+        final JMenuItem addDummyItem = new JMenuItem("Add dummy");
+        mapMenu.add(addDummyItem);
+        addDummyItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().addDummy();
+            }
+        });
+
+        final JMenuItem loadMapNormalItem = new JMenuItem("Load map");
+        mapMenu.add(loadMapNormalItem);
+        loadMapNormalItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final FileDialog prompt = new FileDialog(frame, "Select maze:",
+                        FileDialog.LOAD);
+                prompt.setDirectory("resources/maze_maps");
+                prompt.setVisible(true);
+
+                final File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
+                prompt.dispose();
+
+                if (mapFile.exists()) {
+                    System.out.println("[MAP] Loading map ...");
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 1,
+                            0);
+                    System.out.println("[MAP] Map loaded!");
+                }
+            }
+
+        });
+
+        final JMenuItem loadMapWithDummiesItem = new JMenuItem(
+                "Load map with 1 dummy");
+        mapMenu.add(loadMapWithDummiesItem);
+        loadMapWithDummiesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final FileDialog prompt = new FileDialog(frame, "Select maze:",
+                        FileDialog.LOAD);
+                prompt.setDirectory("resources/maze_maps");
+                prompt.setVisible(true);
+
+                final File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
+                prompt.dispose();
+
+                if (mapFile.exists()) {
+                    System.out.println("[MAP] Loading map ...");
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 2,
+                            1);
+                    System.out.println("[MAP] Map loaded!");
+                }
+            }
+
+        });
+
+        final JMenuItem loadMapWithoutDummiesItem = new JMenuItem(
+                "Load map with 3 sims");
+        mapMenu.add(loadMapWithoutDummiesItem);
+        loadMapWithoutDummiesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final FileDialog prompt = new FileDialog(frame, "Select maze:",
+                        FileDialog.LOAD);
+                prompt.setDirectory("resources/maze_maps");
+                prompt.setVisible(true);
+
+                final File mapFile = new File(prompt.getDirectory()
+                        + prompt.getFile()); // Load and display selection
+                prompt.dispose();
+
+                if (mapFile.exists()) {
+                    System.out.println("[MAP] Loading map ...");
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 4,
+                            0);
+                    System.out.println("[MAP] Map loaded!");
+                }
+            }
+
+        });
+
+        final JMenuItem removeMapItem = new JMenuItem("Remove map");
+        mapMenu.add(removeMapItem);
+        removeMapItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().removeMapFile();
+                System.out.println("[MAP] Map removed!");
+            }
+        });
+
+        return mapMenu;
+    }
+
     private JMenu getScreenMenu() {
         screenMenu = new JMenu("Screen");
 
@@ -150,7 +326,8 @@ public class GUIMenuBar extends JMenuBar {
             }
         });
 
-        final JMenuItem veryFastSpeedAllItem = new JMenuItem("Very Fast Speed (all)");
+        final JMenuItem veryFastSpeedAllItem = new JMenuItem(
+                "Very Fast Speed (all)");
         speedMenu.add(veryFastSpeedAllItem);
         veryFastSpeedAllItem.addActionListener(new ActionListener() {
 
@@ -181,172 +358,6 @@ public class GUIMenuBar extends JMenuBar {
         });
 
         return speedMenu;
-    }
-    
-    private JMenu createEmptyMenu() {
-    	JMenu emptyMenu = new JMenu("     ");
-    	emptyMenu.setEnabled(false);
-    	return emptyMenu;
-    }
-
-    private JMenu getConnectionMenu() {
-        connectionMenu = new JMenu("Connection");
-        
-        final JMenuItem connectItem = new JMenuItem("Connect...");
-        connectionMenu.add(connectItem);
-        connectItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().connect();
-            	System.out.println("[CONNECTION] Connection established.");
-            }
-        });
-
-        final JMenuItem disconnectItem = new JMenuItem("Disconnect...");
-        connectionMenu.add(disconnectItem);
-        disconnectItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                SilverSurferGUI.getSimulatorPanel().disconnect();
-                System.out.println("[CONNECTION] Connection succesfully closed. Entered simulator mode.");
-            }
-        });
-
-        return connectionMenu;
-    }
-
-    private JMenu getMapMenu() {
-        mapMenu = new JMenu("Map");
-
-        final JMenuItem addDummyItem = new JMenuItem("Add dummy");
-        mapMenu.add(addDummyItem);
-        addDummyItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-            	SilverSurferGUI.getSimulatorPanel().addDummy();
-            }
-        });
-
-        final JMenuItem loadMapNormalItem = new JMenuItem("Load map");
-        mapMenu.add(loadMapNormalItem);
-        loadMapNormalItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final FileDialog prompt = new FileDialog(frame, "Select maze:", FileDialog.LOAD);
-                prompt.setDirectory("resources/maze_maps");
-                prompt.setVisible(true);
-
-                final File mapFile = new File(prompt.getDirectory()
-                        + prompt.getFile()); // Load and display selection
-                prompt.dispose();
-                
-                if(mapFile.exists()) {
-                    System.out.println("[MAP] Loading map ...");
-                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 1, 0);
-                    System.out.println("[MAP] Map loaded!");
-                }
-            }
-
-        });
-
-        final JMenuItem loadMapWithDummiesItem = new JMenuItem("Load map with 1 dummy");
-        mapMenu.add(loadMapWithDummiesItem);
-        loadMapWithDummiesItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final FileDialog prompt = new FileDialog(frame, "Select maze:", FileDialog.LOAD);
-                prompt.setDirectory("resources/maze_maps");
-                prompt.setVisible(true);
-
-                final File mapFile = new File(prompt.getDirectory()
-                        + prompt.getFile()); // Load and display selection
-                prompt.dispose();
-                
-                if(mapFile.exists()) {
-                    System.out.println("[MAP] Loading map ...");
-                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 2, 1);
-                    System.out.println("[MAP] Map loaded!");
-                }
-            }
-
-        });
-
-        final JMenuItem loadMapWithoutDummiesItem = new JMenuItem("Load map with 3 sims");
-        mapMenu.add(loadMapWithoutDummiesItem);
-        loadMapWithoutDummiesItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final FileDialog prompt = new FileDialog(frame, "Select maze:", FileDialog.LOAD);
-                prompt.setDirectory("resources/maze_maps");
-                prompt.setVisible(true);
-
-                final File mapFile = new File(prompt.getDirectory()
-                        + prompt.getFile()); // Load and display selection
-                prompt.dispose();
-                
-                if(mapFile.exists()) {
-                    System.out.println("[MAP] Loading map ...");
-                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 4, 0);
-                    System.out.println("[MAP] Map loaded!");
-                }
-            }
-
-        });
-
-        final JMenuItem removeMapItem = new JMenuItem("Remove map");
-        mapMenu.add(removeMapItem);
-        removeMapItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-            	SilverSurferGUI.getSimulatorPanel().removeMapFile();
-                System.out.println("[MAP] Map removed!");
-            }
-        });
-
-        return mapMenu;
-    }
-
-    private JMenu getExploreMenu() {
-        exploreMenu = new JMenu("Explore");
-
-        final JMenuItem exploreItem = new JMenuItem("Explore map");
-        exploreMenu.add(exploreItem);
-        exploreItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-            	SilverSurferGUI.getSimulatorPanel().startSimulation();
-            	System.out.println("[EXPLORE] Start exploration.");
-            }
-        });
-        
-        final JMenuItem playGameItem = new JMenuItem("Play Game");
-        exploreMenu.add(playGameItem);
-        playGameItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-            	SilverSurferGUI.getSimulatorPanel().playGame();
-            	System.out.println("[EXPLORE] Started playing Treasure Trek.");
-            }
-        });
-
-        final JMenuItem resetRobotsItem = new JMenuItem("Stop and reset");
-        exploreMenu.add(resetRobotsItem);
-        resetRobotsItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().resetRobots();
-            	System.out.println("[EXPLORE] Exploration stopped and robots resetted (might have to do multiple times).");
-            }
-        });
-
-        return exploreMenu;
     }
 }
 

@@ -15,8 +15,18 @@ public class RobotHandler implements PlayerHandler {
         this.pilot = pilot;
     }
 
-    public AbstractPilot getPilot() {
-        return pilot;
+    @Override
+    public void gamePaused() {
+        // TODO Auto-generated method stub
+        System.out.println("game paused");
+
+    }
+
+    @Override
+    public void gameRolled(int playerNumber, int objectNumber) {
+        // TODO Auto-generated method stub
+        System.out.println("game rolled " + playerNumber);
+
     }
 
     @Override
@@ -34,9 +44,24 @@ public class RobotHandler implements PlayerHandler {
     }
 
     @Override
-    public void gamePaused() {
+    public void gameWon(int teamNumber) {
         // TODO Auto-generated method stub
-        System.out.println("game paused");
+
+    }
+
+    public AbstractPilot getPilot() {
+        return pilot;
+    }
+
+    @Override
+    public void playerDisconnected(String playerID, DisconnectReason reason) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void playerFoundObject(String playerID, int playerNumber) {
+        // TODO Auto-generated method stub
 
     }
 
@@ -54,52 +79,27 @@ public class RobotHandler implements PlayerHandler {
     }
 
     @Override
-    public void playerDisconnected(String playerID, DisconnectReason reason) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void playerReady(String playerID, boolean isReady) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void playerFoundObject(String playerID, int playerNumber) {
+    public void teamConnected(String partnerID) {
         // TODO Auto-generated method stub
 
     }
 
-	@Override
-	public void gameWon(int teamNumber) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void teamPosition(double x, double y, double angle) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void gameRolled(int playerNumber, int objectNumber) {
-		// TODO Auto-generated method stub
-        System.out.println("game rolled " + playerNumber);
-		
-	}
+    }
 
-	@Override
-	public void teamConnected(String partnerID) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void teamTilesReceived(List<Tile> tiles) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void teamPosition(double x, double y, double angle) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void teamTilesReceived(List<Tile> tiles) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
 }

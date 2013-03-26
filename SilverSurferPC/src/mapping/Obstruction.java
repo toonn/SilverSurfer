@@ -8,19 +8,19 @@ public enum Obstruction {
         }
     },
     SEESAW_UP {
-    	@Override
+        @Override
         public boolean isPassable() {
             return false;
         }
     },
     SEESAW_FLIP {
-    	@Override
+        @Override
         public boolean isPassable() {
             return true;
         }
     },
     SEESAW_DOWN {
-    	@Override
+        @Override
         public boolean isPassable() {
             return true;
         }

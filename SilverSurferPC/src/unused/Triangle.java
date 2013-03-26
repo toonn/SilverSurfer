@@ -2,7 +2,6 @@ package unused;
 
 import java.awt.Polygon;
 
-
 //Gelijkbenige driehoek met 2 basishoeken A en B,
 //een tophoek C en het zwaartepunt Z
 //als de driehoek naar boven wijst (alpha = 270 graden) , staat A links tov C en B rechts.

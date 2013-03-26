@@ -9,8 +9,9 @@ import simulator.pilot.PilotInterface;
 
 @SuppressWarnings("serial")
 public class DummyViewPort extends AbstractViewPort {
-	
-    public DummyViewPort(Set<? extends PilotInterface> pilotSet, Color[] teamColors) {
+
+    public DummyViewPort(Set<? extends PilotInterface> pilotSet,
+            Color[] teamColors) {
         super(pilotSet, teamColors);
     }
 

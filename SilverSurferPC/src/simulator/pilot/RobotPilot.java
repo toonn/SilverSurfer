@@ -23,6 +23,46 @@ public class RobotPilot extends AbstractPilot {
         }
     }
 
+    @Override
+    public void alignOnWalls() {
+        busy = true;
+        communicator.sendCommand(Command.ALIGN_WALL);
+        super.rotate(90);
+        super.rotate(-90);
+        super.rotate(-90);
+        super.rotate(90);
+        waitUntilDone();
+    }
+
+    @Override
+    public void alignOnWhiteLine() {
+        busy = true;
+        communicator.sendCommand(Command.ALIGN_WHITE_LINE);
+        super.travel(40);
+        waitUntilDone();
+        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode()) {
+            pilotActions.barcodeFound();
+        }
+        setBusyExecutingBarcode(false);
+    }
+
+    @Override
+    protected boolean checkForObstruction() {
+        busy = true;
+        communicator.sendCommand(Command.CHECK_FOR_OBSTRUCTION);
+        waitUntilDone();
+        if (statusInfoBuffer.getExtraUltrasonicSensorValue() < detectionDistanceUltrasonicSensorRobot) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean crashImminent() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     public void endConnection() {
         try {
             communicator.closeRobotConnection();
@@ -35,28 +75,14 @@ public class RobotPilot extends AbstractPilot {
         return busy;
     }
 
-    public void robotDone() {
-        busy = false;
-    }
-
     @Override
     public String getConsoleTag() {
         return "[ROBOT]";
     }
 
     @Override
-    public void setSpeed(int speed) {
-        busy = true;
-        if (speed == 1)
-            communicator.sendCommand(Command.SLOW_SPEED);
-        else if (speed == 2)
-            communicator.sendCommand(Command.NORMAL_SPEED);
-        else if (speed == 3)
-            communicator.sendCommand(Command.FAST_SPEED);
-        else
-            communicator.sendCommand(Command.VERY_FAST_SPEED);
-        super.setSpeed(speed);
-        waitUntilDone();
+    public int getInfraRedSensorValue() {
+        return statusInfoBuffer.getLatestInfraRedSensorInfo();
     }
 
     @Override
@@ -70,51 +96,20 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    public int getInfraRedSensorValue() {
-        return statusInfoBuffer.getLatestInfraRedSensorInfo();
-    }
-
-    @Override
-    protected boolean checkForObstruction() {
+    public void permaStopReadingBarcodes() {
         busy = true;
-        communicator.sendCommand(Command.CHECK_FOR_OBSTRUCTION);
-        waitUntilDone();
-        if (statusInfoBuffer.getExtraUltrasonicSensorValue() < detectionDistanceUltrasonicSensorRobot)
-            return true;
-        return false;
-    }
-
-    @Override
-    public void alignOnWhiteLine() {
-        busy = true;
-        communicator.sendCommand(Command.ALIGN_WHITE_LINE);
-		super.travel(40);
-        waitUntilDone();
-        if(readBarcodes && !permaBarcodeStop && isExecutingBarcode()) 
-			pilotActions.barcodeFound();
-        setBusyExecutingBarcode(false);
-    }
-
-    @Override
-    public void alignOnWalls() {
-        busy = true;
-        communicator.sendCommand(Command.ALIGN_WALL);
-        super.rotate(90);
-        super.rotate(-90);
-        super.rotate(-90);
-        super.rotate(90);
+        communicator.sendCommand(Command.PERMA_STOP_READING_BARCODES);
+        super.permaStopReadingBarcodes();
         waitUntilDone();
     }
 
     @Override
-    public void travel(final double distance) {
-        busy = true;
-        communicator.sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
-        super.travel(distance);
-        waitUntilDone();
-        if(readBarcodes && !permaBarcodeStop && isExecutingBarcode()) 
-			pilotActions.barcodeFound();
-        setBusyExecutingBarcode(false);
+    protected int readBarcode() {
+        return statusInfoBuffer.getBarcode();
+    }
+
+    public void robotDone() {
+        busy = false;
     }
 
     @Override
@@ -127,41 +122,53 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    protected int readBarcode() {
-        return statusInfoBuffer.getBarcode();
-    }
-
-    @Override
     public void setReadBarcodes(boolean readBarcodes) {
         busy = true;
-        if (readBarcodes)
+        if (readBarcodes) {
             communicator.sendCommand(Command.START_READING_BARCODES);
-        else
+        } else {
             communicator.sendCommand(Command.STOP_READING_BARCODES);
+        }
         super.setReadBarcodes(readBarcodes);
         waitUntilDone();
     }
 
     @Override
-    public void permaStopReadingBarcodes() {
+    public void setSpeed(int speed) {
         busy = true;
-        communicator.sendCommand(Command.PERMA_STOP_READING_BARCODES);
-        super.permaStopReadingBarcodes();
+        if (speed == 1) {
+            communicator.sendCommand(Command.SLOW_SPEED);
+        } else if (speed == 2) {
+            communicator.sendCommand(Command.NORMAL_SPEED);
+        } else if (speed == 3) {
+            communicator.sendCommand(Command.FAST_SPEED);
+        } else {
+            communicator.sendCommand(Command.VERY_FAST_SPEED);
+        }
+        super.setSpeed(speed);
         waitUntilDone();
+    }
+
+    @Override
+    public void travel(final double distance) {
+        busy = true;
+        communicator
+                .sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
+        super.travel(distance);
+        waitUntilDone();
+        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode()) {
+            pilotActions.barcodeFound();
+        }
+        setBusyExecutingBarcode(false);
     }
 
     private void waitUntilDone() {
         try {
-            while (busy)
+            while (busy) {
                 Thread.sleep(100);
+            }
         } catch (Exception e) {
 
         }
-    }
-
-    @Override
-    protected boolean crashImminent() {
-        // TODO Auto-generated method stub
-        return false;
     }
 }

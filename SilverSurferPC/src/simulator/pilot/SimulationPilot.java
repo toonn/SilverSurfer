@@ -65,6 +65,17 @@ public class SimulationPilot extends AbstractPilot {
             }
         }
 
+        // Mean value of the infrared sensor, when the robot has no infrared in
+        // view
+        public static final double getMNoInfraRedIS() {
+            return 2;
+        }
+
+        // Mean value of the infrared sensor, when having an open seesaw in view
+        public static final double getMSeesawIS() {
+            return 120;
+        }
+
         // Mean value of the light sensor, when standing a white line under
         // given circumstances.
         public static final double getMWhiteLineLS() {
@@ -81,17 +92,6 @@ public class SimulationPilot extends AbstractPilot {
                     return 55;
                 }
             }
-        }
-
-        // Mean value of the infrared sensor, when having an open seesaw in view
-        public static final double getMSeesawIS() {
-            return 120;
-        }
-
-        // Mean value of the infrared sensor, when the robot has no infrared in
-        // view
-        public static final double getMNoInfraRedIS() {
-            return 2;
         }
 
         // Standard Deviation of the light sensor, when standing on a panel

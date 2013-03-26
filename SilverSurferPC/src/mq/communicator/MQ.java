@@ -2,8 +2,6 @@ package mq.communicator;
 
 import java.io.IOException;
 
-import mq.communicator.Config;
-
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;

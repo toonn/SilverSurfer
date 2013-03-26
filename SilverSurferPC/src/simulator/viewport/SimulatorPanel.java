@@ -13,31 +13,46 @@ import javax.swing.JPanel;
 
 import mapping.MapGraph;
 import mapping.MapReader;
-import mapping.Orientation;
 import mapping.StartBase;
 import mapping.Tile;
 import simulator.pilot.AbstractPilot;
-import simulator.pilot.PilotInterface;
-import simulator.pilot.SimulationPilot;
-import simulator.pilot.RobotPilot;
 import simulator.pilot.DummyPilot;
+import simulator.pilot.PilotInterface;
+import simulator.pilot.RobotPilot;
+import simulator.pilot.SimulationPilot;
 
 @SuppressWarnings("serial")
 public class SimulatorPanel extends JPanel {
+    // Enkel bruikbaar door simulators (mapgraphLoaded en robotposities nodig)
+    public static boolean robotOn(final Point2D.Double point) {
+        for (PilotInterface pilot : simulatorPilots) {
+            if (point.equals(pilot.getPosition())) {
+                return true;
+            }
+        }
+        for (PilotInterface pilot : dummyPilots) {
+            if (point.equals(pilot.getPosition())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private GroupLayout simulatorLayout;
 
     private OverallViewPort overallViewPort;
-
     private static AbstractPilot principalPilot;
-    private UnitViewPort principalViewPort;
 
+    private UnitViewPort principalViewPort;
     private static List<AbstractPilot> simulatorPilots;
     private static List<DummyPilot> dummyPilots;
-    private List<DummyViewPort> otherViewPorts;
 
+    private List<DummyViewPort> otherViewPorts;
     private Color[] teamColors;
     private int speed;
     private String mapName = "/";
+
     private MapGraph mapGraphLoaded;
 
     public SimulatorPanel(Color[] teamColors) {
@@ -45,6 +60,109 @@ public class SimulatorPanel extends JPanel {
         createSims(false, 1, 0); // (Robot or not, amount of players, amount of
                                  // dummies) -> only (_, 1, 0), (_, 2, 1) or (_,
                                  // 4, 0) is in use and checked!
+    }
+
+    public void addDummy() {
+        stopSimulation();
+        mapName = "/";
+        mapGraphLoaded = null;
+        overallViewPort = null;
+        createSims(principalPilot instanceof RobotPilot, 2, 1);
+    }
+
+    public void changeSpeed(final int value) {
+        speed = value;
+        principalPilot.setSpeed(value);
+        for (AbstractPilot pilot : simulatorPilots) {
+            pilot.setSpeed(value);
+        }
+    }
+
+    public void changeSpeedMainRobot(final int value) {
+        speed = value;
+        principalPilot.setSpeed(value);
+    }
+
+    public void connect() {
+        stopSimulation();
+        mapName = "/";
+        mapGraphLoaded = null;
+        overallViewPort = null;
+        principalPilot = new RobotPilot(0);
+        createSims(true, 1, 0);
+    }
+
+    private void createSims(boolean robot, int amount, int amountOfDummies) {
+        if (!robot) {
+            principalPilot = new SimulationPilot(0, mapGraphLoaded);
+        }
+        Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
+        principalPilotSet.add(principalPilot);
+        principalViewPort = new UnitViewPort(principalPilotSet, teamColors);
+
+        simulatorPilots = new ArrayList<AbstractPilot>();
+        dummyPilots = new ArrayList<DummyPilot>();
+        otherViewPorts = new ArrayList<DummyViewPort>();
+
+        // Creates dummies
+        for (int i = 0; i < amountOfDummies; i++) {
+            dummyPilots.add(new DummyPilot(i + 1));
+        }
+        for (DummyPilot pilot : dummyPilots) {
+            Set<DummyPilot> dummyPilotSet = new HashSet<DummyPilot>();
+            dummyPilotSet.add(pilot);
+            otherViewPorts.add(new DummyViewPort(dummyPilotSet, teamColors));
+        }
+
+        // Creates non-dummies
+        for (int i = 0; i < amount - 1 - amountOfDummies; i++) {
+            simulatorPilots.add(new SimulationPilot(amountOfDummies + i + 1,
+                    mapGraphLoaded));
+        }
+        for (AbstractPilot pilot : simulatorPilots) {
+            Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
+            simulatorPilotSet.add(pilot);
+            otherViewPorts.add(new UnitViewPort(simulatorPilotSet, teamColors));
+        }
+
+        showSims();
+
+        resetRobots();
+    }
+
+    public void disconnect() {
+        if (principalPilot instanceof RobotPilot) {
+            ((RobotPilot) principalPilot).endConnection();
+        }
+        principalPilot = new SimulationPilot(0, mapGraphLoaded);
+        stopSimulation();
+        mapName = "/";
+        mapGraphLoaded = null;
+        overallViewPort = null;
+        createSims(false, 1, 0);
+    }
+
+    public DummyPilot getDummyPilot() {
+        if (dummyPilots.iterator().hasNext()) {
+            return dummyPilots.iterator().next();
+        }
+        return null;
+    }
+
+    public MapGraph getMapGraphLoaded() {
+        return mapGraphLoaded;
+    }
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public AbstractPilot getPrincipalPilot() {
+        return principalPilot;
+    }
+
+    public int getSpeed() {
+        return speed;
     }
 
     private void initialization(Color[] teamColors) {
@@ -55,39 +173,102 @@ public class SimulatorPanel extends JPanel {
         simulatorLayout.setAutoCreateContainerGaps(true);
     }
 
-    private void createSims(boolean robot, int amount, int amountOfDummies) {
-        if (!robot)
-            principalPilot = new SimulationPilot(0, mapGraphLoaded);
-        Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
-        principalPilotSet.add(principalPilot);
-        principalViewPort = new UnitViewPort(principalPilotSet, teamColors);
+    public void makeReadyToPlay() {
+        setOnStartTile(principalPilot);
+        principalPilot.makeReadyToPlay();
+        principalViewPort.resetPath();
+        if (mapGraphLoaded != null) {
+            for (AbstractPilot pilot : simulatorPilots) {
+                setOnStartTile(pilot);
+                pilot.makeReadyToPlay();
+            }
+            for (DummyPilot pilot : dummyPilots) {
+                setOnStartTile(pilot);
+                pilot.makeReadyToPlay();
+            }
+            for (DummyViewPort viewPort : otherViewPorts) {
+                if (viewPort instanceof UnitViewPort) {
+                    ((UnitViewPort) viewPort).resetPath();
+                }
+            }
+        }
+    }
 
-        simulatorPilots = new ArrayList<AbstractPilot>();
-        dummyPilots = new ArrayList<DummyPilot>();
-        otherViewPorts = new ArrayList<DummyViewPort>();
+    public void playGame() {
+        // Set game modus on x set up for game
+        for (PilotInterface p : dummyPilots) {
+            p.setGameModus(true);
+            p.setupForGame(this);
+        }
+        for (PilotInterface p : simulatorPilots) {
+            p.setGameModus(true);
+            p.setupForGame(this);
+        }
+        getPrincipalPilot().setGameModus(true);
+        getPrincipalPilot().setupForGame(this);
+    }
 
-        // Creates dummies
-        for (int i = 0; i < amountOfDummies; i++)
-            dummyPilots.add(new DummyPilot(i + 1));
-        for (DummyPilot pilot : dummyPilots) {
-            Set<DummyPilot> dummyPilotSet = new HashSet<DummyPilot>();
-            dummyPilotSet.add(pilot);
-            otherViewPorts.add(new DummyViewPort(dummyPilotSet, teamColors));
+    public void removeMapFile() {
+        stopSimulation();
+        mapName = "/";
+        mapGraphLoaded = null;
+        overallViewPort = null;
+        createSims(principalPilot instanceof RobotPilot, 1, 0);
+    }
+
+    public void resetRobots() {
+        stopSimulation();
+
+        principalPilot.reset();
+        principalPilot.setPosition(20, 20);
+        if (mapGraphLoaded != null) {
+            setOnStartTile(principalPilot);
+        }
+        principalPilot.reset();
+        principalViewPort.resetPath();
+
+        if (mapGraphLoaded != null) {
+            for (AbstractPilot pilot : simulatorPilots) {
+                pilot.reset();
+                setOnStartTile(pilot);
+                pilot.reset();
+            }
+            for (DummyPilot pilot : dummyPilots) {
+                pilot.reset();
+                setOnStartTile(pilot);
+                pilot.reset();
+            }
+            for (DummyViewPort viewPort : otherViewPorts) {
+                if (viewPort instanceof UnitViewPort) {
+                    ((UnitViewPort) viewPort).resetPath();
+                }
+            }
         }
 
-        // Creates non-dummies
-        for (int i = 0; i < amount - 1 - amountOfDummies; i++)
-            simulatorPilots.add(new SimulationPilot(amountOfDummies + i + 1,
-                    mapGraphLoaded));
-        for (AbstractPilot pilot : simulatorPilots) {
-            Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
-            simulatorPilotSet.add(pilot);
-            otherViewPorts.add(new UnitViewPort(simulatorPilotSet, teamColors));
+        if (mapGraphLoaded != null) {
+            ; // TODO: reset wip
         }
 
-        showSims();
+        changeSpeed(2);
+    }
 
-        resetRobots();
+    public void setMapFile(File mapFile, int amount, int amountOfDummies) {
+        stopSimulation();
+        mapName = mapFile.getName();
+        mapGraphLoaded = MapReader.createMapFromFile(mapFile);
+        createSims(principalPilot instanceof RobotPilot, amount,
+                amountOfDummies);
+    }
+
+    public void setOnStartTile(PilotInterface pilot) {
+        for (Tile tile : mapGraphLoaded.getStartTiles()) {
+            if (tile.getContent().getValue() == pilot.getPlayerNumber()) {
+                pilot.setPosition(tile.getPosition().x * 40 + 20,
+                        tile.getPosition().y * 40 + 20);
+                pilot.setAngle(((StartBase) tile.getContent()).getOrientation()
+                        .getAngle());
+            }
+        }
     }
 
     private void showSims() {
@@ -214,148 +395,22 @@ public class SimulatorPanel extends JPanel {
         validate();
     }
 
-    public void connect() {
-        stopSimulation();
-        mapName = "/";
-        mapGraphLoaded = null;
-        overallViewPort = null;
-        principalPilot = new RobotPilot(0);
-        createSims(true, 1, 0);
-    }
-
-    public void disconnect() {
-        if (principalPilot instanceof RobotPilot)
-            ((RobotPilot) principalPilot).endConnection();
-        principalPilot = new SimulationPilot(0, mapGraphLoaded);
-        stopSimulation();
-        mapName = "/";
-        mapGraphLoaded = null;
-        overallViewPort = null;
-        createSims(false, 1, 0);
-    }
-
-    public void addDummy() {
-        stopSimulation();
-        mapName = "/";
-        mapGraphLoaded = null;
-        overallViewPort = null;
-        createSims(principalPilot instanceof RobotPilot, 2, 1);
-    }
-
-    public void setMapFile(File mapFile, int amount, int amountOfDummies) {
-        stopSimulation();
-        mapName = mapFile.getName();
-        mapGraphLoaded = MapReader.createMapFromFile(mapFile);
-        createSims(principalPilot instanceof RobotPilot, amount,
-                amountOfDummies);
-    }
-
-    public void setOnStartTile(PilotInterface pilot) {
-		for (Tile tile : mapGraphLoaded.getStartTiles()) {
-			if (tile.getContent().getValue() == pilot.getPlayerNumber()) {
-				pilot.setPosition(tile.getPosition().x*40 + 20, tile.getPosition().y*40 + 20);
-				pilot.setAngle(((StartBase) tile.getContent()).getOrientation().getAngle());
-			}
-		}
-	}
-
-	public void removeMapFile() {
-        stopSimulation();
-        mapName = "/";
-        mapGraphLoaded = null;
-        overallViewPort = null;
-        createSims(principalPilot instanceof RobotPilot, 1, 0);
-    }
-
-    public void resetRobots() {
-        stopSimulation();
-
-        principalPilot.reset();
-        principalPilot.setPosition(20, 20);
-        if (mapGraphLoaded != null)
-        	setOnStartTile(principalPilot);
-        principalPilot.reset();
-        principalViewPort.resetPath();
-
-        if (mapGraphLoaded != null) {
-            for (AbstractPilot pilot : simulatorPilots) {
-                pilot.reset();
-            	setOnStartTile(pilot);
-                pilot.reset();
-            }
-            for (DummyPilot pilot : dummyPilots) {
-                pilot.reset();
-            	setOnStartTile(pilot);
-                pilot.reset();
-            }
-            for (DummyViewPort viewPort : otherViewPorts)
-                if (viewPort instanceof UnitViewPort)
-                    ((UnitViewPort) viewPort).resetPath();
-        }
-
-        if(mapGraphLoaded != null)
-        	; //TODO: reset wip
-        
-        changeSpeed(2);
-    }
-    
-    public void makeReadyToPlay() {
-    	setOnStartTile(principalPilot);
-    	principalPilot.makeReadyToPlay();
-    	principalViewPort.resetPath();
-    	if (mapGraphLoaded != null) {
-            for (AbstractPilot pilot : simulatorPilots) {
-            	setOnStartTile(pilot);
-                pilot.makeReadyToPlay();
-            }
-            for (DummyPilot pilot : dummyPilots) {
-            	setOnStartTile(pilot);
-                pilot.makeReadyToPlay();
-            }
-            for (DummyViewPort viewPort : otherViewPorts)
-                if (viewPort instanceof UnitViewPort)
-                    ((UnitViewPort) viewPort).resetPath();
-        }
-    }
-
     public void startSimulation() {
         principalPilot.startExploring();
-        for (AbstractPilot pilot : simulatorPilots)
+        for (AbstractPilot pilot : simulatorPilots) {
             pilot.startExploring();
+        }
     }
 
     private void stopSimulation() {
         principalPilot.stopExploring();
-        for (AbstractPilot pilot : simulatorPilots)
+        for (AbstractPilot pilot : simulatorPilots) {
             pilot.stopExploring();
+        }
     }
 
-    public void changeSpeedMainRobot(final int value) {
-        speed = value;
-        principalPilot.setSpeed(value);
-    }
-
-    public void changeSpeed(final int value) {
-        speed = value;
-        principalPilot.setSpeed(value);
-        for (AbstractPilot pilot : simulatorPilots)
-            pilot.setSpeed(value);
-    }
-
-    public AbstractPilot getPrincipalPilot() {
-        return principalPilot;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public String getMapName() {
-        return mapName;
-    }
-
-    public MapGraph getMapGraphLoaded() {
-        return mapGraphLoaded;
+    public void travelPrincipalPilot(double distance) {
+        principalPilot.travel(distance);
     }
 
     public void turnLeftPrincipalPilot(double alpha) {
@@ -365,40 +420,4 @@ public class SimulatorPanel extends JPanel {
     public void turnRightPrincipalPilot(double alpha) {
         principalPilot.rotate(alpha);
     }
-
-    public void travelPrincipalPilot(double distance) {
-        principalPilot.travel(distance);
-    }
-
-    // Enkel bruikbaar door simulators (mapgraphLoaded en robotposities nodig)
-    public static boolean robotOn(final Point2D.Double point) {
-        for (PilotInterface pilot : simulatorPilots)
-            if (point.equals(pilot.getPosition()))
-                return true;
-        for (PilotInterface pilot : dummyPilots)
-            if (point.equals(pilot.getPosition()))
-                return true;
-
-        return false;
-    }
-
-	public void playGame() {
-		//Set game modus on x set up for game
-		for (PilotInterface p : dummyPilots) {
-			p.setGameModus(true);
-			p.setupForGame(this);
-		}
-		for (PilotInterface p : simulatorPilots) {
-			p.setGameModus(true);
-			p.setupForGame(this);
-		}
-		getPrincipalPilot().setGameModus(true);
-		getPrincipalPilot().setupForGame(this);
-	}
-	
-	public DummyPilot getDummyPilot() {
-		if(dummyPilots.iterator().hasNext())
-			return dummyPilots.iterator().next();
-		return null;
-	}
 }
