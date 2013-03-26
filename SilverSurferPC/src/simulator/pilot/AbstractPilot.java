@@ -227,10 +227,7 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void alignOnWhiteLine() {
-        travel(20);
-        rotate(-90);
-        rotate(90);
-        travel(20);
+    	travel(40);
     }
 
     public void alignOnWalls() {
@@ -315,6 +312,10 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void setBusyExecutingBarcode(boolean busy) {
         busyExecutingBarcode = busy;
+    }
+    
+    public boolean getReadBarcodes() {
+    	return readBarcodes;
     }
 
     public void setReadBarcodes(boolean readBarcodes) {

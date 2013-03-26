@@ -13,7 +13,7 @@ public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
 	private static final double ANGLE_COEF_RIGHT = 1.74; //Amount of degrees needed for a 1 degree turn to the right.
-	private static final double ANGLE_COEF_LEFT = 1.72; //Amount of degrees needed for a 1 degree turn to the left.
+	private static final double ANGLE_COEF_LEFT = 1.71; //Amount of degrees needed for a 1 degree turn to the left.
     private static int SPEED = 200;
     
     private double x = 20;
@@ -84,7 +84,9 @@ public class CommandUnit {
                 case (Command.ALIGN_WHITE_LINE):
                     System.out.println("White line.");
                     CU.updatePosition(40);
-                    CU.alignOnWhiteLine();
+                    int resultAlign = CU.alignOnWhiteLine();
+	    			if(resultAlign != -1)
+	    				CU.sendStringToUnit("[BC] " + resultAlign);
                     CU.stopRobot();
                     break;
                 case (Command.ALIGN_WALL):
@@ -217,12 +219,35 @@ public class CommandUnit {
     
     private int moveForward(int distance) {
     	if(readBarcodes && !permaBarcodeStop) {
-    		BT = new BarcodeThread("BT", distance, lightSensor, LENGTH_COEF);
+        	int distance1, distance2;
+        	if(distance > 5) {
+        		distance1 = 5;
+        		distance2 = distance - 5;
+        	}
+        	else {
+        		distance1 = 0;
+        		distance2 = distance;
+        	}
+    		Motor.A.rotate(distance1, true);
+    		Motor.B.rotate(distance1);
+    		BT = new BarcodeThread("BT", lightSensor, 0);
     		BT.start();
-    		while(BT.isAlive() && lightSensor.getLightValue() >= 40);
-    		if(BT.isAlive()) {
-    			BT.changeBool();
-    			while(!BT.getBool());
+    		Motor.A.rotate(distance2, true);
+    		Motor.B.rotate(distance2, true);
+    		while(Motor.A.isMoving() && !BT.getFound());
+    		stopRobot();
+    		boolean found = BT.getFound();
+    		BT.changeBool();
+    		if(found) {
+    			BT = new BarcodeThread("BT", lightSensor, LENGTH_COEF, 1);
+    			BT.start();
+    			try {
+    				Thread.sleep(500);
+        			while(Motor.A.isMoving());
+    				Thread.sleep(500);
+    			} catch(Exception e) {
+    				
+    			}
     			return BT.getResult();
     		}
     	}
@@ -231,28 +256,24 @@ public class CommandUnit {
     	return -1;
     }
 
-    private void alignOnWhiteLine() {
-    	int treshold = 51;
-    	WhitelineThread WT = new WhitelineThread("WT", LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT);
+    private int alignOnWhiteLine() {
+    	int treshold = 54;
+    	WhitelineThread WT = new WhitelineThread("WT", ultrasonicSensor, LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT);
 		WT.start();		
 		while(lightSensor.getLightValue() < treshold);
 		while(lightSensor.getLightValue() >= treshold);
-		WT.setFirstQuit(true);
-		while(lightSensor.getLightValue() < treshold);
-		WT.setSecondQuit(true);
-		while(WT.isAlive());
-		
 		try {
+			Thread.sleep(35);
+			while(lightSensor.getLightValue() >= treshold);
+			WT.setFirstQuit(true);
 			Thread.sleep(500);
 		} catch(Exception e) {
 			
 		}
-		
-		turnAngle((int)Math.ceil(-ANGLE_COEF_LEFT*90));
-		int value = ultrasonicSensor.getDistance();
-		if(value != 20 && value < 26)
-			moveForwardWithoutBarcode((int)Math.round((value-20)*LENGTH_COEF));
-		turnAngle((int)Math.floor(ANGLE_COEF_RIGHT*90));
+		while(lightSensor.getLightValue() < treshold);
+		WT.setSecondQuit(true);
+		while(WT.isAlive());		
+		return moveForward((int)Math.round(20*LENGTH_COEF));
     }
     
     private void alignOnWalls() {
@@ -279,3 +300,37 @@ public class CommandUnit {
     	}
     }
 }
+
+
+/*
+int treshold = 54;
+WhitelineThread WT = new WhitelineThread("WT", LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT);
+WT.start();		
+while(lightSensor.getLightValue() < treshold);
+while(lightSensor.getLightValue() >= treshold);
+WT.setFirstQuit(true);
+while(lightSensor.getLightValue() < treshold);
+WT.setSecondQuit(true);
+while(WT.isAlive());
+
+try {
+	Thread.sleep(500);
+	turnAngle((int)Math.ceil(-ANGLE_COEF_LEFT*90));
+	Thread.sleep(250);
+	int value = ultrasonicSensor.getDistance();
+	if(value != 20 && value < 26) {
+		Motor.A.setSpeed(50);
+		Motor.B.setSpeed(50);
+		moveForwardWithoutBarcode((int)Math.round((value-20)*LENGTH_COEF));
+		Motor.A.setSpeed(SPEED);
+		Motor.B.setSpeed(SPEED);
+	}
+	Thread.sleep(250);
+	turnAngle((int)Math.floor(ANGLE_COEF_RIGHT*90));
+	Thread.sleep(500);
+} catch(Exception e) {
+	
+}
+
+moveForwardWithoutBarcode((int)Math.round(20*LENGTH_COEF));
+*/

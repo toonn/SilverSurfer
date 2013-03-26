@@ -152,8 +152,9 @@ public class PilotActions {
 	
 	private void pickUpItem(int team) {
 		pilot.setTeamNumber(team);
-		pilot.travel(45);
-		pilot.travel(-45);
+		pilot.alignOnWhiteLine();
+		pilot.travel(6);
+		pilot.travel(-46);
 		
 		if(pilot.isInGameModus()) {
 			try {

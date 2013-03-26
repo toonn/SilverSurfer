@@ -18,7 +18,7 @@ public class MazeExplorer {
     private Tile startTile;
     private AbstractPilot pilot;
     private boolean align;
-    private final int amountOfTilesUntilAlign = 100000;
+    private final int amountOfTilesUntilAlign = 0;
     private int currentAmount;
     private boolean quit = false;
 
@@ -187,8 +187,6 @@ public class MazeExplorer {
     }
 
     private Tile searchAndCrossOpenSeesaw(Tile currentTile) {
-        // TODO: wat als seesaws niet gelijk zijn (dus op verschillend gebied
-        // uitkomen) -> geen random seesaw oversteken!
         while (true) {
             pilot.shuffleSeesawBarcodeTiles();
             for (Tile tile : pilot.getSeesawBarcodeTiles()) {

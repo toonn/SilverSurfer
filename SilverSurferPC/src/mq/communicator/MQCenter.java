@@ -160,13 +160,13 @@ public class MQCenter {
             public void onSuccess(Void result) {
                 // TODO Succesvolle deelname
                 System.out
-                        .println("Succesvolle deelname door " + getPlayerID());
+                        .println("[HTTTP] Succesvolle deelname door " + getPlayerID());
             }
 
             @Override
             public void onFailure(Throwable t) {
-                System.err.println("Fout bij deelname: " + t.getMessage());
-                System.err.println("Opnieuw proberen...");
+                System.err.println("[HTTTP] Fout bij deelname: " + t.getMessage());
+                System.err.println("[HTTTP] Opnieuw proberen...");
                 try {
                     client.join(stdCallback());
                 } catch (IllegalStateException e) {

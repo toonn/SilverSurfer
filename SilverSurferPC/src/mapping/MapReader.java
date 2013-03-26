@@ -32,9 +32,6 @@ public class MapReader {
             }
         tagTreasures(infoMatrix, map);
         initializeSeesaws(infoMatrix, map);
-        for (Tile t : map.getTiles()) {
-        	System.out.println(t.getToken());
-		}
         return map;
 	}
 

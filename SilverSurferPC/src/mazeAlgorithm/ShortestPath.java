@@ -117,17 +117,32 @@ public class ShortestPath {
         	for(Orientation ori : Orientation.values())
         		if(tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
         			orientation = ori;
-            if (tilesPath.size() - i > 2)
+            if(pilot.getReadBarcodes())
                 pilot.setReadBarcodes(false);
-            else
-                pilot.setReadBarcodes(true);
             pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
             if(align && currentAmount == 0) {
+                if (tilesPath.size() - i > 2) {
+                	if(pilot.getReadBarcodes())
+                		pilot.setReadBarcodes(false);
+                }
+                else {
+                	if(!pilot.getReadBarcodes())
+                		pilot.setReadBarcodes(true);
+                }
             	pilot.alignOnWhiteLine();
             	currentAmount = amountOfTilesUntilAlign;
             }
             else {
-                pilot.travel(40);
+                pilot.travel(20);
+                if (tilesPath.size() - i > 2) {
+                	if(pilot.getReadBarcodes())
+                		pilot.setReadBarcodes(false);
+                }
+                else {
+                	if(!pilot.getReadBarcodes())
+                		pilot.setReadBarcodes(true);
+                }
+                pilot.travel(20);
                 currentAmount--;
             }
             if(pilot.canUpdatePosition()) {

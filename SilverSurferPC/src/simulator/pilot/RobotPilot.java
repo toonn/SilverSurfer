@@ -88,11 +88,11 @@ public class RobotPilot extends AbstractPilot {
     public void alignOnWhiteLine() {
         busy = true;
         communicator.sendCommand(Command.ALIGN_WHITE_LINE);
-		super.travel(20);
-		super.rotate(-90);
-		super.rotate(90);
-		super.travel(20);
+		super.travel(40);
         waitUntilDone();
+        if(readBarcodes && !permaBarcodeStop && isExecutingBarcode()) 
+			pilotActions.barcodeFound();
+        setBusyExecutingBarcode(false);
     }
 
     @Override
@@ -109,8 +109,7 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public void travel(final double distance) {
         busy = true;
-        communicator
-                .sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
+        communicator.sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
         super.travel(distance);
         waitUntilDone();
         if(readBarcodes && !permaBarcodeStop && isExecutingBarcode()) 
