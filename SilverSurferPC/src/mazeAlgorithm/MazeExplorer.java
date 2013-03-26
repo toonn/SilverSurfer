@@ -1,5 +1,6 @@
 package mazeAlgorithm;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -64,7 +65,7 @@ public class MazeExplorer {
                 }
             }
             if (queue.isEmpty() || quit) {
-                System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber()
+                System.out.println("[EXPLORE] Robot " + (pilot.getPlayerNumber()+1)
                         + " has finished exploring.");
                 return;
             }
@@ -326,12 +327,15 @@ public class MazeExplorer {
         while (queue.contains(tile)) {
             queue.remove(tile);
         }
-        // TODO: Somehow some tiles do not get removed... Investigate!
+        // TODO: Somehow some tiles do not get removed... Investigate! AND FIX THAT LAST DAMN THING :(
         for (Tile queuetile : queue) {
-            if (queuetile.getPosition().x == tile.getPosition().x
-                    && queuetile.getPosition().y == tile.getPosition().y) {
+            if (queuetile.getPosition().x == tile.getPosition().x && queuetile.getPosition().y == tile.getPosition().y)
                 queue.remove(queuetile);
-            }
+        	if(queuetile.isMarkedExploreMaze())
+        		queue.remove(queuetile);
+        	for(Tile allTilesTile : allTiles)
+        		if(allTilesTile.getPosition().x == queuetile.getPosition().x && allTilesTile.getPosition().y == queuetile.getPosition().y)
+        			;//queue.remove(queuetile);
         }
     }
 

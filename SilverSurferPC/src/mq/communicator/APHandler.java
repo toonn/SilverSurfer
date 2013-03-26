@@ -176,8 +176,8 @@ public class APHandler implements PlayerHandler {
                 && ourPoint2 != null) {
             System.out.println("[HTTTP] Similar tiles found! " + point1 + " "
                     + ourPoint1 + " -- " + point2 + " " + ourPoint2);
-            panel.getDummyPilot().setMap(
-                    pilot.getMapGraphConstructed().generateMapFromTiles(tiles));
+            if(panel.getDummyPilot() != null)
+            	panel.getDummyPilot().setMap(pilot.getMapGraphConstructed().generateMapFromTiles(tiles));
         } else
             System.out.println("[HTTTP] No similar tiles found yet!");
     }
