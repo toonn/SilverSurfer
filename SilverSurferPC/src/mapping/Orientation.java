@@ -15,6 +15,11 @@ public enum Orientation {
         }
 
         @Override
+        public final Orientation getClockwiseOrientation() {
+            return EAST;
+        }
+
+        @Override
         public final Point getNext(Point point) {
             return new Point(point.x, point.y - 1);
         }
@@ -27,16 +32,15 @@ public enum Orientation {
         @Override
         public Orientation orientationRotatedOver(float sinA, float cosA) {
             if (sinA == 0) {
-                if (cosA == 1) {
+                if (cosA == 1)
                     return NORTH;
-                } else {
+                else
                     return SOUTH;
-                }
-            } else if (sinA == 1) {
-                return WEST;
-            } else if (sinA == -1) {
-                return EAST;
             }
+            else if (sinA == 1)
+                return WEST;
+            else if (sinA == -1)
+                return EAST;
             return null;
         }
 
@@ -50,6 +54,11 @@ public enum Orientation {
         @Override
         public final Orientation getCounterClockwiseOrientation() {
             return NORTH;
+        }
+
+        @Override
+        public final Orientation getClockwiseOrientation() {
+            return SOUTH;
         }
 
         @Override
@@ -90,6 +99,11 @@ public enum Orientation {
         }
 
         @Override
+        public final Orientation getClockwiseOrientation() {
+            return WEST;
+        }
+
+        @Override
         public final Point getNext(Point point) {
             return new Point(point.x, point.y + 1);
         }
@@ -127,6 +141,11 @@ public enum Orientation {
         }
 
         @Override
+        public final Orientation getClockwiseOrientation() {
+            return NORTH;
+        }
+
+        @Override
         public final Point getNext(Point point) {
             return new Point(point.x - 1, point.y);
         }
@@ -155,38 +174,37 @@ public enum Orientation {
 
     public static Orientation calculateOrientation(final double angle) {
         Orientation orientation;
-        if (angle >= 315 || angle < 45) {
+        if (angle >= 315 || angle < 45)
             orientation = EAST;
-        } else if (angle >= 45 && angle < 135) {
+        else if (angle >= 45 && angle < 135)
             orientation = SOUTH;
-        } else if (angle >= 135 && angle < 225) {
+        else if (angle >= 135 && angle < 225)
             orientation = WEST;
-        } else {
+        else
             orientation = NORTH;
-        }
         return orientation;
     }
 
     public static String toToken(Orientation o) {
-        if (o.equals(NORTH)) {
+        if (o.equals(NORTH))
             return "N";
-        } else if (o.equals(EAST)) {
+        else if (o.equals(EAST))
             return "E";
-        } else if (o.equals(SOUTH)) {
+        else if (o.equals(SOUTH))
             return "S";
-        } else {
+        else
             return "W";
-        }
     }
 
     public abstract int getAngle();
 
     public abstract Orientation getCounterClockwiseOrientation();
+    
+    public abstract Orientation getClockwiseOrientation();
 
     public abstract Point getNext(Point point);
 
     public abstract Orientation getOppositeOrientation();
 
     public abstract Orientation orientationRotatedOver(float sinA, float cosA);
-
 }

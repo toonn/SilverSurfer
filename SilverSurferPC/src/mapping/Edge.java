@@ -8,8 +8,51 @@ public class Edge {
     private Tile tile1; // North or east side of this tile.
     private Tile tile2; // South or west side of this tile.
     private Obstruction obstruction = null;
-    private Orientation orientation; // North or south: horizontal, west or
-                                     // east: vertical
+    private Orientation orientation; // North/south: horizontal, west/east: vertical
+
+    protected Tile getTile1() {
+        return tile1;
+    }
+
+    protected Tile getTile2() {
+        return tile2;
+    }
+
+    public Obstruction getObstruction() {
+        return obstruction;
+    }
+
+    public void setObstruction(final Obstruction obstruction) {
+        this.obstruction = obstruction;
+    }
+
+    protected void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
+    }
+
+    protected void setTileAtRightField(final Orientation orientation,
+            final Tile tile) {
+        if (tile != null && !(tile.getEdgeAt(orientation) == this)) {
+            return;
+        }
+        if (orientation == Orientation.NORTH || orientation == Orientation.EAST) {
+            tile1 = tile;
+        } else {
+            tile2 = tile;
+        }
+    }
+
+    public Tile getNeighbour(final Tile tile) {
+        if (tile1 != null && tile1.equals(tile)) {
+            return tile2;
+        } else {
+            return tile1;
+        }
+    }
+
+    public boolean isPassable() {
+        return (getObstruction() == null || getObstruction().isPassable());
+    }
 
     public Point2D.Double[] getEndPoints() {
         Orientation orientation = null;
@@ -56,54 +99,6 @@ public class Edge {
         points[1] = point2;
 
         return points;
-    }
-
-    public Tile getNeighbour(final Tile tile) {
-        if (tile1 != null && tile1.equals(tile)) {
-            return tile2;
-        } else {
-            return tile1;
-        }
-    }
-
-    public Obstruction getObstruction() {
-        return obstruction;
-    }
-
-    public Orientation getOrientation() {
-        return orientation;
-    }
-
-    protected Tile getTile1() {
-        return tile1;
-    }
-
-    protected Tile getTile2() {
-        return tile2;
-    }
-
-    public boolean isPassable() {
-        return (getObstruction() == null || getObstruction().isPassable());
-    }
-
-    public void setObstruction(final Obstruction obstruction) {
-        this.obstruction = obstruction;
-    }
-
-    public void setOrientation(Orientation orientation) {
-        this.orientation = orientation;
-    }
-
-    public void setTileAtRightField(final Orientation orientation,
-            final Tile tile) {
-        if (tile != null && !(tile.getEdgeAt(orientation) == this)) {
-            return;
-        }
-        if (orientation == Orientation.NORTH || orientation == Orientation.EAST) {
-            tile1 = tile;
-        } else {
-            tile2 = tile;
-        }
     }
 
     @Override

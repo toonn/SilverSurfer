@@ -1,13 +1,12 @@
 package mq.communicator;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 
 import mapping.Barcode;
+import mapping.MapReader;
 import mapping.Seesaw;
 import mapping.TreasureObject;
-
 import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerHandler;
 import peno.htttp.Tile;
@@ -32,19 +31,16 @@ public class APHandler implements PlayerHandler {
     public void gameStarted() {
         getPilot().startExploring();
         System.out.println("[HTTTP] Game started!");
-
     }
 
     @Override
     public void gameStopped() {
         System.out.println("[HTTTP] Game stopped!");
-
     }
 
     @Override
     public void gamePaused() {
         System.out.println("[HTTTP] Game paused!");
-
     }
 
     @Override
@@ -69,8 +65,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void playerFoundObject(String playerID, int playerNumber) {
-        System.out.println("[HTTTP] Player " + playerNumber + " (" + playerID
-                + ") has found his object!");
+        System.out.println("[HTTTP] Player " + playerNumber + " (" + playerID + ") has found his object!");
     }
 
     @Override
@@ -94,11 +89,11 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void teamConnected(String partnerID) {
-        System.out
-                .println("[HTTTP] Partner (" + partnerID + ") has connected.");
-        pilot.setUpdatePosition(true);
+        System.out.println("[HTTTP] Partner (" + partnerID + ") has connected.");
+        pilot.setTeamMemberFound(partnerID);
         if (panel.getDummyPilot() != null)
             panel.getDummyPilot().activate();
+        /*
         ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
         for (mapping.Tile tile : pilot.getMapGraphConstructed().getTiles())
             vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(),
@@ -107,12 +102,12 @@ public class APHandler implements PlayerHandler {
             pilot.getCenter().getClient().sendTiles(vector);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
     public void teamPosition(double x, double y, double angle) {
-    	System.out.println("[HTTTP] Position of my teammate is: " + x + ", " + y + " and his angle is " + angle);
+    	//System.out.println("[HTTTP] Position of my teammate is: " + x + ", " + y + " and his angle is " + angle);
     }
 
     @Override
@@ -129,7 +124,6 @@ public class APHandler implements PlayerHandler {
                                     .valueOf(info[2])) {
                         point1 = new Point((int) tile.getX(), (int) tile.getY());
                         ourPoint1 = ourTile.getPosition();
-
                         Point pointN = new Point((int) point1.getX(),
                                 (int) point1.getY() + 1);
                         Point pointZ = new Point((int) point1.getX(),
@@ -177,7 +171,7 @@ public class APHandler implements PlayerHandler {
             System.out.println("[HTTTP] Similar tiles found! " + point1 + " "
                     + ourPoint1 + " -- " + point2 + " " + ourPoint2);
             if(panel.getDummyPilot() != null)
-            	panel.getDummyPilot().setMap(pilot.getMapGraphConstructed().generateMapFromTiles(tiles));
+            	panel.getDummyPilot().setMap(MapReader.createMapFromTiles(tiles));
         } else
             System.out.println("[HTTTP] No similar tiles found yet!");
     }

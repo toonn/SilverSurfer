@@ -152,5 +152,4 @@ public class Barcode extends TileContent {
         }
         return 0 + body + 0;
     }
-
 }

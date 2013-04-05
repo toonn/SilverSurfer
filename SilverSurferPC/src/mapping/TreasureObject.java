@@ -12,17 +12,14 @@ public class TreasureObject extends TileContent {
 
     public int getColor() {
         int color = -1;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++)
             if (value == BarcodeCommand.TREASURE_TEAM0[i]
-                    || value == BarcodeCommand.TREASURE_TEAM0_INVERSE[i]
+            		|| value == BarcodeCommand.TREASURE_TEAM0_INVERSE[i]
                     || value == BarcodeCommand.TREASURE_TEAM1[i]
-                    || value == BarcodeCommand.TREASURE_TEAM1_INVERSE[i]) {
+                    || value == BarcodeCommand.TREASURE_TEAM1_INVERSE[i])
                 color = i; // Team color (0 to 3)
-            }
-        }
-        if (color == -1) {
+        if (color == -1)
             color = 6; // Gray color
-        }
         return color;
     }
 

@@ -25,31 +25,16 @@ public class SilverSurferGUI {
 
     private static JFrame frame = new JFrame("Silver Surfer Command Center");
     private static JSpinner angle, length;
-    private static JButton zoomInButton, zoomOutButton, turnLeftButton,
-            turnRightButton, moveButton;
-    private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4,
-            infoLabel5, infoLabel6, infoLabel7, infoLabel8, infoLabel9,
-            infoLabel10, infoLabel11, infoLabel12;
-    private static JLabel legendLabel1, legendLabel2, legendLabel3,
-            legendLabel4, legendLabel5, legendLabel6, legendLabel7;
-    private static JPanel legendPanel, scalePanel, directionPanel, infoPanel;
+    private static JButton turnLeftButton, turnRightButton, moveButton;
+    private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7, infoLabel8;
+    private static JLabel infoLabel9, infoLabel10, infoLabel11, infoLabel12, infoLabel13, infoLabel14, infoLabel15, infoLabel16;
+    private static JLabel infoLabel17, infoLabel18;
+    private static JLabel legendLabel1, legendLabel2, legendLabel3, legendLabel4, legendLabel5, legendLabel6, legendLabel7;
+    private static JPanel legendPanel, inputPanel, infoPanel;
     private static SimulatorPanel simulatorPanel;
     private static SensorGraph sensorPanel;
-
-    public static SimulatorPanel getSimulatorPanel() {
-        return simulatorPanel;
-    }
-
-    public static void main(final String[] args) {
-        final SilverSurferGUI SSG = new SilverSurferGUI();
-        SSG.initializePanels();
-        SSG.simulatorPanel();
-        new Timer(1000 / SSG.updateStatusFPS, SSG.updateStatus).start();
-    }
-
     private GUIMenuBar menuBar;
     private int updateStatusFPS = 10;
-
     private ActionListener updateStatus = new ActionListener() {
 
         @Override
@@ -57,175 +42,114 @@ public class SilverSurferGUI {
             updateStatus();
         }
     };
-
-    private Color[] teamColors = new Color[] { new Color(249, 244, 99),
-            new Color(242, 150, 60), new Color(145, 254, 126),
-            new Color(114, 225, 246), new Color(134, 46, 250),
-            new Color(255, 63, 72), new Color(139, 137, 137) }; // Yellow,
-                                                                // Orange,
-                                                                // Green, Blue,
-                                                                // Purple, Red,
-                                                                // Gray
-
-    private void addListeners() {
-        zoomInButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                zoomIn();
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-
-        });
-        zoomOutButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                zoomOut();
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-
-        });
-        turnLeftButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                simulatorPanel.turnLeftPrincipalPilot(Integer.parseInt(angle
-                        .getValue().toString()));
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-        });
-        turnRightButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                simulatorPanel.turnRightPrincipalPilot(Integer.parseInt(angle
-                        .getValue().toString()));
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-        });
-        moveButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                simulatorPanel.travelPrincipalPilot(Integer.parseInt(length
-                        .getValue().toString()));
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-        });
+    //Yellow, Orange, Green, Blue, Purple, Red, Gray
+    private static Color[] teamColors = new Color[] {new Color(249, 244, 99), new Color(242, 150, 60), new Color(145, 254, 126), new Color(114, 225, 246), new Color(134, 46, 250), new Color(255, 63, 72), new Color(139, 137, 137)};
+    
+    public static void main(final String[] args) {
+        final SilverSurferGUI SSG = new SilverSurferGUI();
+        SSG.initializePanels();
+        SSG.setupView();
+        new Timer(1000 / SSG.updateStatusFPS, SSG.updateStatus).start();
     }
 
-    private void directionPanel() {
-        final JLabel angleLabel = new JLabel("Angle (degrees)",
-                SwingConstants.CENTER);
+    public static SimulatorPanel getSimulatorPanel() {
+        return simulatorPanel;
+    }
 
-        final SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0,
-                1080, 1);
+    public void toggleInputPanel() {
+        if (inputPanel.isVisible())
+            inputPanel.setVisible(false);
+        else
+            inputPanel.setVisible(true);
+    }
+
+    public void toggleInfoPanel() {
+        if (infoPanel.isVisible()) {
+            legendPanel.setVisible(false);
+            infoPanel.setVisible(false);
+        } else {
+            legendPanel.setVisible(true);
+            infoPanel.setVisible(true);
+        }
+    }
+
+    public void toggleSensorPanel() {
+        if (sensorPanel.isVisible())
+            sensorPanel.setVisible(false);
+        else
+            sensorPanel.setVisible(true);
+    }
+
+    public void pauseSensorPanel() {
+        sensorPanel.togglePause();
+    }
+
+    public void updateStatus() {
+        AbstractPilot pilot = simulatorPanel.getPrincipalPilot();
+        int ultraSensorValue = pilot.getUltraSensorValue();
+        int lightSensorValue = pilot.getLightSensorValue();
+        int infraSensorValue = pilot.getInfraRedSensorValue();
+        
+        sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue);
+
+        infoLabel1.setText("----- VIEW -----");
+        infoLabel2.setText(simulatorPanel.getMapName());
+        infoLabel3.setText(simulatorPanel.getView());
+        infoLabel4.setText("----- INFO -----");
+        infoLabel5.setText("Bluetooth: " + (pilot instanceof RobotPilot));
+        infoLabel6.setText("Speed level: " + simulatorPanel.getSpeed());
+        infoLabel7.setText("Player number: " + pilot.getPlayerNumber());
+        infoLabel8.setText("Player name: " + pilot.getPlayerName());
+        infoLabel9.setText("Team member name: " + pilot.getTeamMemberName());
+        infoLabel10.setText("Team number: " + pilot.getTeamNumber());
+        infoLabel11.setText("----- POSITION -----");
+        infoLabel12.setText("Coordinates: (" + pilot.getPosition().getX() + ", " + pilot.getPosition().getY() + ")");
+        infoLabel13.setText("Angle: " + pilot.getAngle());
+        infoLabel14.setText("----- SENSORS -----");
+        infoLabel15.setText("Ultrasonic: " + ultraSensorValue);
+        infoLabel16.setText("Light: " + lightSensorValue);
+        infoLabel17.setText("Infrared: " + infraSensorValue);
+    }
+
+    private void initializePanels() {
+        menuBar = new GUIMenuBar(this, frame);
+        inputPanel();
+        legendPanel();
+        infoPanel();
+        sensorPanel();
+        simulatorPanel = new SimulatorPanel(teamColors);
+        addListeners();
+    }
+
+    private void inputPanel() {
+        final JLabel angleLabel = new JLabel("Angle (degrees)", SwingConstants.CENTER);
+        final SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0, 1080, 1);
         angle = new JSpinner(angleModel);
-
-        final ImageIcon turnLeftIcon = new ImageIcon(
-                "resources/direction_arrows/turnleft.png",
-                "A leftward turning arrow");
+        final ImageIcon turnLeftIcon = new ImageIcon("resources/direction_arrows/turnleft.png", "A leftward turning arrow");
         turnLeftButton = new JButton(turnLeftIcon);
         turnLeftButton.setOpaque(false);
         turnLeftButton.setContentAreaFilled(false);
         turnLeftButton.setBorderPainted(false);
-        final ImageIcon turnRightIcon = new ImageIcon(
-                "resources/direction_arrows/turnright.png",
-                "A rightward turning arrow");
+        final ImageIcon turnRightIcon = new ImageIcon("resources/direction_arrows/turnright.png", "A rightward turning arrow");
         turnRightButton = new JButton(turnRightIcon);
         turnRightButton.setOpaque(false);
         turnRightButton.setContentAreaFilled(false);
         turnRightButton.setBorderPainted(false);
-        final JLabel lengthLabel = new JLabel("Length (centimeters)",
-                SwingConstants.CENTER);
-
-        final SpinnerNumberModel lenghtModel = new SpinnerNumberModel(40,
-                -1000, 1000, 1);
+        
+        final JLabel lengthLabel = new JLabel("Length (centimeters)", SwingConstants.CENTER);
+        final SpinnerNumberModel lenghtModel = new SpinnerNumberModel(40, -1000, 1000, 1);
         length = new JSpinner(lenghtModel);
-
-        final ImageIcon moveIcon = new ImageIcon(
-                "resources/direction_arrows/move.png", "A straightahead arrow");
+        final ImageIcon moveIcon = new ImageIcon("resources/direction_arrows/move.png", "A straightahead arrow");
         moveButton = new JButton(moveIcon);
         moveButton.setOpaque(false);
         moveButton.setContentAreaFilled(false);
         moveButton.setBorderPainted(false);
 
-        directionPanel = new JPanel();
-        directionPanel.setOpaque(false);
+        inputPanel = new JPanel();
+        inputPanel.setOpaque(false);
 
-        final GroupLayout directionLayout = new GroupLayout(directionPanel);
-        directionPanel.setLayout(directionLayout);
+        final GroupLayout directionLayout = new GroupLayout(inputPanel);
+        inputPanel.setLayout(directionLayout);
         directionLayout.setAutoCreateGaps(true);
         directionLayout.setAutoCreateContainerGaps(true);
         directionLayout
@@ -261,59 +185,7 @@ public class SilverSurferGUI {
                                         .addComponent(length)
                                         .addComponent(moveButton)));
 
-        directionPanel.setVisible(false);
-    }
-
-    private void infoPanel() {
-        infoLabel1 = new JLabel("", SwingConstants.CENTER);
-        infoLabel2 = new JLabel("", SwingConstants.CENTER);
-        infoLabel3 = new JLabel("", SwingConstants.CENTER);
-        infoLabel4 = new JLabel("", SwingConstants.CENTER);
-        infoLabel5 = new JLabel("", SwingConstants.CENTER);
-        infoLabel6 = new JLabel("", SwingConstants.CENTER);
-        infoLabel7 = new JLabel("", SwingConstants.CENTER);
-        infoLabel8 = new JLabel("", SwingConstants.CENTER);
-        infoLabel9 = new JLabel("", SwingConstants.CENTER);
-        infoLabel10 = new JLabel("", SwingConstants.CENTER);
-        infoLabel11 = new JLabel("", SwingConstants.CENTER);
-        infoLabel12 = new JLabel("", SwingConstants.CENTER);
-
-        infoPanel = new JPanel();
-        infoPanel.setOpaque(false);
-
-        final GroupLayout outputLayout = new GroupLayout(infoPanel);
-        infoPanel.setLayout(outputLayout);
-        outputLayout.setAutoCreateGaps(true);
-        outputLayout.setAutoCreateContainerGaps(true);
-        outputLayout.setHorizontalGroup(outputLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(infoLabel1).addComponent(infoLabel2)
-                .addComponent(infoLabel3).addComponent(infoLabel4)
-                .addComponent(infoLabel5).addComponent(infoLabel6)
-                .addComponent(infoLabel7).addComponent(infoLabel8)
-                .addComponent(infoLabel9).addComponent(infoLabel10)
-                .addComponent(infoLabel11).addComponent(infoLabel12));
-        outputLayout.setVerticalGroup(outputLayout.createSequentialGroup()
-                .addComponent(infoLabel1).addComponent(infoLabel2)
-                .addComponent(infoLabel3).addComponent(infoLabel4)
-                .addComponent(infoLabel5).addComponent(infoLabel6)
-                .addComponent(infoLabel7).addComponent(infoLabel8)
-                .addComponent(infoLabel9).addComponent(infoLabel10)
-                .addComponent(infoLabel11).addComponent(infoLabel12));
-
-        infoPanel.setVisible(false);
-    }
-
-    private void initializePanels() {
-        legendPanel();
-        scalePanel();
-        directionPanel();
-        infoPanel();
-        sensorPanel();
-
-        menuBar = new GUIMenuBar(this, frame);
-
-        addListeners();
+        inputPanel.setVisible(false);
     }
 
     private void legendPanel() {
@@ -361,38 +233,56 @@ public class SilverSurferGUI {
         legendPanel.setVisible(false);
     }
 
-    public void pauseSensorPanel() {
-        sensorPanel.togglePause();
-    }
+    private void infoPanel() {
+        infoLabel1 = new JLabel("", SwingConstants.CENTER);
+        infoLabel2 = new JLabel("", SwingConstants.CENTER);
+        infoLabel3 = new JLabel("", SwingConstants.CENTER);
+        infoLabel4 = new JLabel("", SwingConstants.CENTER);
+        infoLabel5 = new JLabel("", SwingConstants.CENTER);
+        infoLabel6 = new JLabel("", SwingConstants.CENTER);
+        infoLabel7 = new JLabel("", SwingConstants.CENTER);
+        infoLabel8 = new JLabel("", SwingConstants.CENTER);
+        infoLabel9 = new JLabel("", SwingConstants.CENTER);
+        infoLabel10 = new JLabel("", SwingConstants.CENTER);
+        infoLabel11 = new JLabel("", SwingConstants.CENTER);
+        infoLabel12 = new JLabel("", SwingConstants.CENTER);
+        infoLabel13 = new JLabel("", SwingConstants.CENTER);
+        infoLabel14 = new JLabel("", SwingConstants.CENTER);
+        infoLabel15 = new JLabel("", SwingConstants.CENTER);
+        infoLabel16 = new JLabel("", SwingConstants.CENTER);
+        infoLabel17 = new JLabel("", SwingConstants.CENTER);
+        infoLabel18 = new JLabel("", SwingConstants.CENTER);
 
-    private void scalePanel() {
-        final ImageIcon MagnifyIcon = new ImageIcon(
-                "resources/magnifiers/Magnify.png", "A magnifier");
-        zoomInButton = new JButton(MagnifyIcon);
-        zoomInButton.setOpaque(false);
-        zoomInButton.setContentAreaFilled(false);
-        zoomInButton.setBorderPainted(false);
-        final ImageIcon DeMagnifyIcon = new ImageIcon(
-                "resources/magnifiers/Demagnify.png", "A demagnifier");
-        zoomOutButton = new JButton(DeMagnifyIcon);
-        zoomOutButton.setOpaque(false);
-        zoomOutButton.setContentAreaFilled(false);
-        zoomOutButton.setBorderPainted(false);
+        infoPanel = new JPanel();
+        infoPanel.setOpaque(false);
 
-        scalePanel = new JPanel();
-        scalePanel.setOpaque(false);
-
-        final GroupLayout scaleLayout = new GroupLayout(scalePanel);
-        scalePanel.setLayout(scaleLayout);
-        scaleLayout.setAutoCreateGaps(true);
-        scaleLayout.setAutoCreateContainerGaps(true);
-        scaleLayout.setHorizontalGroup(scaleLayout.createSequentialGroup()
-                .addComponent(zoomInButton).addComponent(zoomOutButton));
-        scaleLayout.setVerticalGroup(scaleLayout
+        final GroupLayout outputLayout = new GroupLayout(infoPanel);
+        infoPanel.setLayout(outputLayout);
+        outputLayout.setAutoCreateGaps(true);
+        outputLayout.setAutoCreateContainerGaps(true);
+        outputLayout.setHorizontalGroup(outputLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(zoomInButton).addComponent(zoomOutButton));
+                .addComponent(infoLabel1).addComponent(infoLabel2)
+                .addComponent(infoLabel3).addComponent(infoLabel4)
+                .addComponent(infoLabel5).addComponent(infoLabel6)
+                .addComponent(infoLabel7).addComponent(infoLabel8)
+                .addComponent(infoLabel9).addComponent(infoLabel10)
+                .addComponent(infoLabel11).addComponent(infoLabel12)
+                .addComponent(infoLabel13).addComponent(infoLabel14)
+                .addComponent(infoLabel15).addComponent(infoLabel16)
+                .addComponent(infoLabel17).addComponent(infoLabel18));
+        outputLayout.setVerticalGroup(outputLayout.createSequentialGroup()
+                .addComponent(infoLabel1).addComponent(infoLabel2)
+                .addComponent(infoLabel3).addComponent(infoLabel4)
+                .addComponent(infoLabel5).addComponent(infoLabel6)
+                .addComponent(infoLabel7).addComponent(infoLabel8)
+                .addComponent(infoLabel9).addComponent(infoLabel10)
+                .addComponent(infoLabel11).addComponent(infoLabel12)
+                .addComponent(infoLabel13).addComponent(infoLabel14)
+                .addComponent(infoLabel15).addComponent(infoLabel16)
+                .addComponent(infoLabel17).addComponent(infoLabel18));
 
-        scalePanel.setVisible(false);
+        infoPanel.setVisible(false);
     }
 
     private void sensorPanel() {
@@ -401,9 +291,7 @@ public class SilverSurferGUI {
         sensorPanel.setVisible(false);
     }
 
-    private void simulatorPanel() {
-        simulatorPanel = new SimulatorPanel(teamColors);
-
+    private void setupView() {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221, 230, 231));
@@ -418,9 +306,8 @@ public class SilverSurferGUI {
                         frameLayout
                                 .createParallelGroup(
                                         GroupLayout.Alignment.CENTER)
+                                .addComponent(inputPanel)
                                 .addComponent(legendPanel)
-                                .addComponent(scalePanel)
-                                .addComponent(directionPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout
@@ -432,16 +319,15 @@ public class SilverSurferGUI {
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addGroup(
                         frameLayout.createSequentialGroup()
+                                .addComponent(inputPanel)
                                 .addComponent(legendPanel)
-                                .addComponent(scalePanel)
-                                .addComponent(directionPanel)
                                 .addComponent(infoPanel))
                 .addGroup(
                         frameLayout.createSequentialGroup()
                                 .addComponent(simulatorPanel)
                                 .addComponent(sensorPanel, 170, 170, 170)));
-        frameLayout.linkSize(SwingConstants.HORIZONTAL, directionPanel);
-        frameLayout.linkSize(SwingConstants.VERTICAL, directionPanel);
+        frameLayout.linkSize(SwingConstants.HORIZONTAL, inputPanel);
+        frameLayout.linkSize(SwingConstants.VERTICAL, inputPanel);
 
         frame.pack();
         frame.setSize(1000, 800);
@@ -450,65 +336,72 @@ public class SilverSurferGUI {
         System.out.println("[CONNECTION] Entered simulator mode.");
     }
 
-    public void toggleInfoPanel() {
-        if (infoPanel.isVisible()) {
-            legendPanel.setVisible(false);
-            infoPanel.setVisible(false);
-        } else {
-            legendPanel.setVisible(true);
-            infoPanel.setVisible(true);
-        }
-    }
+    private void addListeners() {
+    	turnLeftButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(final MouseEvent arg0) {
+                simulatorPanel.turnLeftPrincipalPilot(Integer.parseInt(angle.getValue().toString()));
+            }
 
-    public void toggleInputPanel() {
-        if (scalePanel.isVisible()) {
-            scalePanel.setVisible(false);
-            directionPanel.setVisible(false);
-        } else {
-            scalePanel.setVisible(true);
-            directionPanel.setVisible(true);
-        }
-    }
+            @Override
+            public void mouseEntered(final MouseEvent arg0) {
+            }
 
-    public void toggleSensorPanel() {
-        if (sensorPanel.isVisible()) {
-            sensorPanel.setVisible(false);
-        } else {
-            sensorPanel.setVisible(true);
-        }
-    }
+            @Override
+            public void mouseExited(final MouseEvent arg0) {
+            }
 
-    public void updateStatus() {
-        AbstractPilot pilot = simulatorPanel.getPrincipalPilot();
-        boolean robotConnected = pilot instanceof RobotPilot;
-        int ultraSensorValue = pilot.getUltraSensorValue();
-        int lightSensorValue = pilot.getLightSensorValue();
-        int infraSensorValue = pilot.getInfraRedSensorValue();
+            @Override
+            public void mousePressed(final MouseEvent arg0) {
+            }
 
-        sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue);
+            @Override
+            public void mouseReleased(final MouseEvent arg0) {
+            }
+        });
+        turnRightButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(final MouseEvent arg0) {
+                simulatorPanel.turnRightPrincipalPilot(Integer.parseInt(angle.getValue().toString()));
+            }
 
-        infoLabel1.setText("Bluetooth: " + robotConnected);
-        infoLabel2.setText("Speed level: " + simulatorPanel.getSpeed());
-        infoLabel3.setText(simulatorPanel.getMapName());
-        infoLabel4.setText("-------------------");
-        infoLabel5.setText("Ultrasonicsensor: " + ultraSensorValue);
-        infoLabel6.setText("Lightsensor: " + lightSensorValue);
-        infoLabel7.setText("Infraressensor: " + infraSensorValue);
-        infoLabel8.setText("-------------------");
-        infoLabel9.setText("Coordinates: (" + pilot.getPosition().getX() + ", "
-                + pilot.getPosition().getY() + ")");
-        infoLabel10.setText("Angle: " + pilot.getAngle());
-        if (robotConnected) {
-            infoLabel11.setText("-------------------");
-            infoLabel12.setText("Busy: " + ((RobotPilot) pilot).getBusy());
-        }
-    }
+            @Override
+            public void mouseEntered(final MouseEvent arg0) {
+            }
 
-    public void zoomIn() {
+            @Override
+            public void mouseExited(final MouseEvent arg0) {
+            }
 
-    }
+            @Override
+            public void mousePressed(final MouseEvent arg0) {
+            }
 
-    public void zoomOut() {
+            @Override
+            public void mouseReleased(final MouseEvent arg0) {
+            }
+        });
+        moveButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(final MouseEvent arg0) {
+                simulatorPanel.travelPrincipalPilot(Integer.parseInt(length.getValue().toString()));
+            }
 
+            @Override
+            public void mouseEntered(final MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseExited(final MouseEvent arg0) {
+            }
+
+            @Override
+            public void mousePressed(final MouseEvent arg0) {
+            }
+
+            @Override
+            public void mouseReleased(final MouseEvent arg0) {
+            }
+        });
     }
 }

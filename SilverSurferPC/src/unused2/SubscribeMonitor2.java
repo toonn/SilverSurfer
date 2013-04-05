@@ -1,4 +1,5 @@
-package mq.communicator;
+package unused2;
+/*package mq.communicator;
 
 import java.io.IOException;
 
@@ -10,12 +11,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-/**
- * A program that monitors "race.*" messages
- * 
- * @author bart.vanbrabant@cs.kuleuven.be
- * 
- */
 public class SubscribeMonitor {
 
     private String monitor_key = "demo.silver";
@@ -38,38 +33,22 @@ public class SubscribeMonitor {
 
     }
 
-    /**
-     * @return The Monitor's channel.
-     */
     public Channel getChannel() {
         return channel;
     }
 
-    /**
-     * @return The AbstractPilot this monitor is working for.
-     */
     public AbstractPilot getClientPilot() {
         return clientPilot;
     }
 
-    /**
-     * @return The Monitor's connection.
-     */
     public Connection getConn() {
         return conn;
     }
 
-    /**
-     * @return The monitor key this monitor is monitoring on.
-     */
     public String getMonitor_key() {
         return monitor_key;
     }
 
-    /**
-     * Sets up the monitor so it listens to the queue declared in the
-     * constructor.
-     */
     public void start() {
         try {
 
@@ -139,9 +118,6 @@ public class SubscribeMonitor {
 
     }
 
-    /**
-     * Quit listening to the queue.
-     */
     public void stop() {
         try {
             getChannel().close();
@@ -152,4 +128,4 @@ public class SubscribeMonitor {
             e.printStackTrace();
         }
     }
-}
+}*/

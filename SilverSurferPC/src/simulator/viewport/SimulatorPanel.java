@@ -23,43 +23,33 @@ import simulator.pilot.SimulationPilot;
 
 @SuppressWarnings("serial")
 public class SimulatorPanel extends JPanel {
-    // Enkel bruikbaar door simulators (mapgraphLoaded en robotposities nodig)
-    public static boolean robotOn(final Point2D.Double point) {
-        for (PilotInterface pilot : simulatorPilots) {
-            if (point.equals(pilot.getPosition())) {
-                return true;
-            }
-        }
-        for (PilotInterface pilot : dummyPilots) {
-            if (point.equals(pilot.getPosition())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     private GroupLayout simulatorLayout;
-
     private OverallViewPort overallViewPort;
     private static AbstractPilot principalPilot;
-
     private UnitViewPort principalViewPort;
     private static List<AbstractPilot> simulatorPilots;
     private static List<DummyPilot> dummyPilots;
-
     private List<DummyViewPort> otherViewPorts;
     private Color[] teamColors;
     private int speed;
     private String mapName = "/";
-
+    private String view = "/";
     private MapGraph mapGraphLoaded;
 
     public SimulatorPanel(Color[] teamColors) {
         initialization(teamColors);
-        createSims(false, 1, 0); // (Robot or not, amount of players, amount of
-                                 // dummies) -> only (_, 1, 0), (_, 2, 1) or (_,
-                                 // 4, 0) is in use and checked!
+        //(Robot or not, amount of players, amount of dummies)
+        //Only (_, 1, 0), (_, 2, 1) or (_, 4, 0) is in use and checked!
+        createSims(false, 1, 0); 
+    }
+
+    private void initialization(Color[] teamColors) {
+        this.teamColors = teamColors;
+        simulatorLayout = new GroupLayout(this);
+        setLayout(simulatorLayout);
+        simulatorLayout.setAutoCreateGaps(true);
+        simulatorLayout.setAutoCreateContainerGaps(true);
     }
 
     public void addDummy() {
@@ -91,11 +81,17 @@ public class SimulatorPanel extends JPanel {
         principalPilot = new RobotPilot(0);
         createSims(true, 1, 0);
     }
+    
+    public void showDummyMap() {        
+    	ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
+    	for (mapping.Tile tile : principalPilot.getMapGraphConstructed().getTiles()) 
+            vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
+    	this.getDummyPilot().setMap(MapReader.createMapFromTiles(vector));
+    }
 
     private void createSims(boolean robot, int amount, int amountOfDummies) {
-        if (!robot) {
+        if (!robot)
             principalPilot = new SimulationPilot(0, mapGraphLoaded);
-        }
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
         principalViewPort = new UnitViewPort(principalPilotSet, teamColors);
@@ -105,9 +101,8 @@ public class SimulatorPanel extends JPanel {
         otherViewPorts = new ArrayList<DummyViewPort>();
 
         // Creates dummies
-        for (int i = 0; i < amountOfDummies; i++) {
+        for (int i = 0; i < amountOfDummies; i++)
             dummyPilots.add(new DummyPilot(i + 1));
-        }
         for (DummyPilot pilot : dummyPilots) {
             Set<DummyPilot> dummyPilotSet = new HashSet<DummyPilot>();
             dummyPilotSet.add(pilot);
@@ -115,10 +110,8 @@ public class SimulatorPanel extends JPanel {
         }
 
         // Creates non-dummies
-        for (int i = 0; i < amount - 1 - amountOfDummies; i++) {
-            simulatorPilots.add(new SimulationPilot(amountOfDummies + i + 1,
-                    mapGraphLoaded));
-        }
+        for (int i = 0; i < amount - 1 - amountOfDummies; i++)
+            simulatorPilots.add(new SimulationPilot(amountOfDummies + i + 1, mapGraphLoaded));
         for (AbstractPilot pilot : simulatorPilots) {
             Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
             simulatorPilotSet.add(pilot);
@@ -131,9 +124,8 @@ public class SimulatorPanel extends JPanel {
     }
 
     public void disconnect() {
-        if (principalPilot instanceof RobotPilot) {
+        if (principalPilot instanceof RobotPilot)
             ((RobotPilot) principalPilot).endConnection();
-        }
         principalPilot = new SimulationPilot(0, mapGraphLoaded);
         stopSimulation();
         mapName = "/";
@@ -143,9 +135,8 @@ public class SimulatorPanel extends JPanel {
     }
 
     public DummyPilot getDummyPilot() {
-        if (dummyPilots.iterator().hasNext()) {
+        if (dummyPilots.iterator().hasNext())
             return dummyPilots.iterator().next();
-        }
         return null;
     }
 
@@ -156,6 +147,10 @@ public class SimulatorPanel extends JPanel {
     public String getMapName() {
         return mapName;
     }
+    
+    public String getView() {
+    	return view;
+    }
 
     public AbstractPilot getPrincipalPilot() {
         return principalPilot;
@@ -163,14 +158,6 @@ public class SimulatorPanel extends JPanel {
 
     public int getSpeed() {
         return speed;
-    }
-
-    private void initialization(Color[] teamColors) {
-        this.teamColors = teamColors;
-        simulatorLayout = new GroupLayout(this);
-        setLayout(simulatorLayout);
-        simulatorLayout.setAutoCreateGaps(true);
-        simulatorLayout.setAutoCreateContainerGaps(true);
     }
 
     public void makeReadyToPlay() {
@@ -286,7 +273,7 @@ public class SimulatorPanel extends JPanel {
                         .createSequentialGroup()
                         .addComponent(principalViewPort)
                         .addComponent(otherViewPorts.get(0)));
-                System.out.println("[VIEW] 1 robot and 1 dummy robot, no map");
+                view = "1 robot and 1 dummy robot, no map";
             } else { // Enkel eigen sim zonder map (default start)
                 simulatorLayout.setHorizontalGroup(simulatorLayout
                         .createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -294,7 +281,7 @@ public class SimulatorPanel extends JPanel {
                 simulatorLayout.setVerticalGroup(simulatorLayout
                         .createSequentialGroup()
                         .addComponent(principalViewPort));
-                System.out.println("[VIEW] 1 robot, no map");
+                view = "1 robot, no map";
             }
         } else {
             Set<PilotInterface> allPilots = new HashSet<PilotInterface>(
@@ -322,8 +309,7 @@ public class SimulatorPanel extends JPanel {
                                 simulatorLayout.createSequentialGroup()
                                         .addComponent(principalViewPort)
                                         .addComponent(otherViewPorts.get(0))));
-                System.out
-                        .println("[VIEW] 1 robot and 1 dummy robot, with map");
+                view = "1 robot and 1 dummy robot, with map";
             } else if (otherViewPorts.size() == 3) { // Eigen sim en 3 andere
                                                      // sims met map
                 simulatorLayout
@@ -378,8 +364,7 @@ public class SimulatorPanel extends JPanel {
                                                                 .addComponent(
                                                                         otherViewPorts
                                                                                 .get(2)))));
-                System.out
-                        .println("[VIEW] 1 robot and 3 simulated robots, with map");
+                view = "1 robot and 3 simulated robots, with map";
             } else { // Enkel eigen sim met map
                 simulatorLayout.setHorizontalGroup(simulatorLayout
                         .createSequentialGroup().addComponent(overallViewPort)
@@ -388,7 +373,7 @@ public class SimulatorPanel extends JPanel {
                         .createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(overallViewPort)
                         .addComponent(principalViewPort));
-                System.out.println("[VIEW] 1 robot, with map");
+                view = "1 robot, with map";
             }
         }
 
@@ -419,5 +404,16 @@ public class SimulatorPanel extends JPanel {
 
     public void turnRightPrincipalPilot(double alpha) {
         principalPilot.rotate(alpha);
+    }
+    
+    // Enkel bruikbaar door simulators (mapgraphLoaded en robotposities nodig)
+    public static boolean robotOn(final Point2D.Double point) {
+        for (PilotInterface pilot : simulatorPilots)
+            if (point.equals(pilot.getPosition()))
+                return true;
+        for (PilotInterface pilot : dummyPilots)
+            if (point.equals(pilot.getPosition()))
+                return true;
+        return false;
     }
 }

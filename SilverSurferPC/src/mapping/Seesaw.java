@@ -16,13 +16,11 @@ public class Seesaw extends TileContent {
      * vice versa.
      */
     public void flipSeesaw() {
-        for (Edge edge : tile.getEdges()) {
-            if (edge.getObstruction() == Obstruction.SEESAW_DOWN) {
+        for (Edge edge : tile.getEdges())
+            if (edge.getObstruction() == Obstruction.SEESAW_DOWN)
                 edge.setObstruction(Obstruction.SEESAW_UP);
-            } else if (edge.getObstruction() == Obstruction.SEESAW_UP) {
+            else if (edge.getObstruction() == Obstruction.SEESAW_UP)
                 edge.setObstruction(Obstruction.SEESAW_DOWN);
-            }
-        }
     }
 
     public Orientation getOrientation() {
@@ -38,11 +36,9 @@ public class Seesaw extends TileContent {
     }
 
     public boolean isUp() {
-        for (Edge edge : tile.getEdges()) {
-            if (edge.getObstruction() == Obstruction.SEESAW_UP) {
+        for (Edge edge : tile.getEdges())
+            if (edge.getObstruction() == Obstruction.SEESAW_UP)
                 return true;
-            }
-        }
         return false;
     }
 

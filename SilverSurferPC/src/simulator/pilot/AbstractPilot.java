@@ -32,9 +32,9 @@ public abstract class AbstractPilot implements PilotInterface {
     private MQCenter center;
     protected final double detectionDistanceUltrasonicSensorRobot = 26;
     private boolean teamMemberFound = false;
-    private int teamMemberPlayerNumber;
+    private String playerName = "/";
+    private String teamMemberName = "/";
     private Tile startingPositionOfTeamMember;
-    private boolean canUpdatePosition = false;
 
     public AbstractPilot(int playerNumber) {
         if (playerNumber < 0 || playerNumber > 3) {
@@ -56,10 +56,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void alignOnWhiteLine() {
         travel(40);
-    }
-
-    public boolean canUpdatePosition() {
-        return canUpdatePosition;
     }
 
     protected boolean checkForObstruction() {
@@ -143,8 +139,12 @@ public abstract class AbstractPilot implements PilotInterface {
         return teamMemberFound;
     }
 
-    public int getTeamMemberPlayerNumber() {
-        return teamMemberPlayerNumber;
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public String getTeamMemberName() {
+        return teamMemberName;
     }
 
     /**
@@ -232,7 +232,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
     @Override
     public void setAngle(final double angle) {
-        if (angle > 360) {
+        if (angle >= 360) {
             this.angle = angle - 360;
         } else if (angle < 0) {
             this.angle = angle + 360;
@@ -254,20 +254,14 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void setObstructionOrTile() {
-        final Orientation currentOrientation = Orientation
-                .calculateOrientation(getAngle());
-        if (checkForObstruction()) {
-            getMapGraphConstructed().getTile(getMatrixPosition())
-                    .getEdgeAt(currentOrientation)
-                    .setObstruction(Obstruction.WALL);
-        } else {
-            getMapGraphConstructed().getTile(getMatrixPosition())
-                    .getEdgeAt(currentOrientation)
-                    .setObstruction(Obstruction.WHITE_LINE);
+        final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
+        if (checkForObstruction())
+            getMapGraphConstructed().getTile(getMatrixPosition()).getEdgeAt(currentOrientation).setObstruction(Obstruction.WALL);
+        else {
+            getMapGraphConstructed().getTile(getMatrixPosition()).getEdgeAt(currentOrientation).setObstruction(Obstruction.WHITE_LINE);
             Point nextPoint = currentOrientation.getNext(getMatrixPosition());
-            if (mapGraphConstructed.getTile(nextPoint) == null) {
+            if (mapGraphConstructed.getTile(nextPoint) == null)
                 getMapGraphConstructed().addTile(nextPoint);
-            }
         }
     }
 
@@ -289,34 +283,25 @@ public abstract class AbstractPilot implements PilotInterface {
         this.speed = speed;
     }
 
-    public void setTeamMemberFound(int teamMemberPlayerNumber) {
+    public void setTeamMemberFound(String teamMemberName) {
         teamMemberFound = true;
-        this.teamMemberPlayerNumber = teamMemberPlayerNumber;
+        this.teamMemberName = teamMemberName;
     }
 
     /**
-     * Set teamNumber to 0 or 1. Other values are not excepted.
+     * Set teamNumber to 0 or 1. Other values are not accepted.
      */
     @Override
     public void setTeamNumber(int teamNumber) {
-        if (teamNumber < 0 && teamNumber > 1) {
-            throw new IllegalStateException(
-                    "The teamnumber can only be set to 4 or 5!");
-        } else {
-            this.teamNumber = teamNumber;
-        }
-    }
-
-    public void setUpdatePosition(boolean canUpdatePosition) {
-        this.canUpdatePosition = canUpdatePosition;
+    	this.teamNumber = teamNumber;
     }
 
     @Override
     public void setupForGame(SimulatorPanel panel) {
         if (isInGameModus()) {
             try {
-                center = new MQCenter(this, "SILVER" + getPlayerNumber()
-                        + System.currentTimeMillis(), panel);
+            	playerName = "SILVER" + getPlayerNumber();
+                center = new MQCenter(this, playerName, panel);
                 getCenter().join();
             } catch (IllegalStateException e) {
                 e.printStackTrace();

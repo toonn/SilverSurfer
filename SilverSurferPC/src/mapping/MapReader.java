@@ -11,47 +11,15 @@ import commands.BarcodeCommand;
 public class MapReader {
 
     public static MapGraph createMapFromFile(final File txtFile) {
-        final String[][] infoMatrix = createInfoMatrixFromFile(txtFile);
-        return createMapFromInfoMatrix(infoMatrix);
-    }
-
-    public static MapGraph createMapFromInfoMatrix(final String[][] infoMatrix) {
-        // Fill a graph with the information in infoMatrix.
-        MapGraph map = new MapGraph();
-        for (int row = 0; row < infoMatrix.length; row++)
-            for (int column = 0; column < infoMatrix[row].length; column++)
-                map.addTile(new Point(column, row));
-
-        for (int row = 0; row < infoMatrix.length; row++)
-            for (int column = 0; column < infoMatrix[row].length; column++) {
-                final String[] seperatedInfoIJ = infoMatrix[row][column]
-                        .split("\\.");
-                Point pointIJ = new Point(column, row);
-                Tile tileIJ = map.getTile(pointIJ);
-                generateStructures(seperatedInfoIJ, tileIJ);
-                generateObjects(seperatedInfoIJ, tileIJ);
-            }
-        tagTreasures(infoMatrix, map);
-        initializeSeesaws(infoMatrix, map);
-        return map;
-    }
-
-    public static MapGraph createMapFromTiles(List<peno.htttp.Tile> tiles) {
-        for (peno.htttp.Tile tile : tiles) {
-            System.out.println("x: " + tile.getX() + " y: " + tile.getY()
-                    + " token: " + tile.getToken());
-        }
-        return null;
+        return createMapFromInfoMatrix(createInfoMatrixFromFile(txtFile));
     }
 
     private static String[][] createInfoMatrixFromFile(final File f) {
-        int collums;
-        int rows;
+        int collums, rows;
         String strRead;
         try {
             // Setup I/O
-            final BufferedReader readbuffer = new BufferedReader(
-                    new FileReader(f));
+            final BufferedReader readbuffer = new BufferedReader(new FileReader(f));
 
             // Read first line, extract Map-dimensions.
             strRead = readbuffer.readLine();
@@ -78,15 +46,13 @@ public class MapReader {
             readbuffer.close();
             return tileTypes;
         } catch (final Exception e) {
-            System.err
-                    .println("[I/O] Sorry, something went wrong reading the File.");
+            System.err.println("[I/O] Sorry, something went wrong reading the File.");
             return new String[0][0];
         }
     }
 
     /**
-     * Checks if this String has any character that isn't a
-     * whitespace-character.
+     * Checks if this String has any character that isn't a whitespace-character.
      */
     private static boolean isValuableString(final String string) {
         final char[] chars = new char[string.length()];
@@ -97,8 +63,22 @@ public class MapReader {
         return false;
     }
 
-    public static void generateStructures(final String[] seperatedInfoIJ,
-            Tile tile) {
+    private static MapGraph createMapFromInfoMatrix(final String[][] infoMatrix) {
+        MapGraph map = new MapGraph();
+        for (int row = 0; row < infoMatrix.length; row++)
+            for (int column = 0; column < infoMatrix[row].length; column++) {
+                String[] seperatedInfoIJ = infoMatrix[row][column].split("\\.");
+                map.addTile(new Point(column, row));
+                Tile tileIJ = map.getTile(new Point(column, row));
+                generateStructures(seperatedInfoIJ, tileIJ);
+                generateObjects(seperatedInfoIJ, tileIJ);
+            }
+        tagTreasures(map);
+        initializeSeesaws(map);
+        return map;
+    }
+
+    private static void generateStructures(final String[] seperatedInfoIJ, Tile tile) {
         if (seperatedInfoIJ[0].equals("Cross"))
             createCrossFromTile(tile);
         else if (seperatedInfoIJ[0].equals("Straight"))
@@ -119,7 +99,7 @@ public class MapReader {
                     switchStringToOrientation(seperatedInfoIJ[1]));
         else
             throw new IllegalArgumentException(
-                    "MapReader.generateStructures: Unchecked structure in the map!");
+                    "MapReader.generateStructures(): Unchecked structure in the map!");
     }
 
     private static void createCrossFromTile(final Tile tile) {
@@ -179,7 +159,7 @@ public class MapReader {
         tile.setContent(saw);
     }
 
-    public static void generateObjects(final String[] seperatedInfoIJ, Tile tile) {
+    private static void generateObjects(final String[] seperatedInfoIJ, Tile tile) {
         // An extra value has been found.
         if (seperatedInfoIJ.length == 3) {
             // An object has been specified.
@@ -191,224 +171,93 @@ public class MapReader {
                 Character player = seperatedInfoIJ[2].charAt(1);
                 int playerNumber = Character.getNumericValue(player);
                 Character oriChar = seperatedInfoIJ[2].charAt(2);
-                Orientation orientation = switchStringToOrientation(oriChar
-                        .toString());
+                Orientation orientation = switchStringToOrientation(oriChar.toString());
                 StartBase base = new StartBase(tile, playerNumber, orientation);
                 tile.setContent(base);
             }
 
             // A Barcode has been specified.
             else
-                tile.setContent(new Barcode(tile, Integer
-                        .valueOf(seperatedInfoIJ[2]),
-                        switchStringToOrientation(seperatedInfoIJ[1])));
+                tile.setContent(new Barcode(tile, Integer.valueOf(seperatedInfoIJ[2]), switchStringToOrientation(seperatedInfoIJ[1])));
         }
     }
 
     /**
      * Make sure all treasure-objects get tagged in a correct way.
      */
-    public static void tagTreasures(final String[][] infoMatrix, MapGraph map) {
-        for (int row = 0; row < infoMatrix.length; row++)
-            for (int column = 0; column < infoMatrix[row].length; column++)
-                if (map.getTile(new Point(column, row)) != null
-                        && map.getTile(new Point(column, row)).getContent() != null
-                        && map.getTile(new Point(column, row)).getContent() instanceof TreasureObject) {
-                    TreasureObject treasure = ((TreasureObject) map.getTile(
-                            new Point(column, row)).getContent());
-
-                    // Get location of barcode value.
-                    Orientation orientation = switchStringToOrientation(
-                            infoMatrix[row][column].split("\\.")[1])
-                            .getOppositeOrientation();
-
-                    // Get the player-number from the right barcode and update
-                    // the object with it.
-                    if (orientation.equals(Orientation.NORTH))
-                        treasure.setValue(Barcode.getPlayerNumberFrom(Integer
-                                .valueOf(infoMatrix[row - 1][column]
-                                        .split("\\.")[2])));
-                    else if (orientation.equals(Orientation.EAST))
-                        treasure.setValue(Barcode.getPlayerNumberFrom(Integer
-                                .valueOf(infoMatrix[row][column + 1]
-                                        .split("\\.")[2])));
-                    else if (orientation.equals(Orientation.SOUTH))
-                        treasure.setValue(Barcode.getPlayerNumberFrom(Integer
-                                .valueOf(infoMatrix[row + 1][column]
-                                        .split("\\.")[2])));
-                    else if (orientation.equals(Orientation.WEST))
-                        treasure.setValue(Barcode.getPlayerNumberFrom(Integer
-                                .valueOf(infoMatrix[row][column - 1]
-                                        .split("\\.")[2])));
-
-                    // Get the team-number from the right barcode and update the
-                    // object with it.
-                    if (orientation.equals(Orientation.NORTH))
-                        treasure.setTeamNumber(Barcode
-                                .getTeamNumberFrom(Integer
-                                        .valueOf(infoMatrix[row - 1][column]
-                                                .split("\\.")[2])));
-                    else if (orientation.equals(Orientation.EAST))
-                        treasure.setTeamNumber(Barcode
-                                .getTeamNumberFrom(Integer
-                                        .valueOf(infoMatrix[row][column + 1]
-                                                .split("\\.")[2])));
-                    else if (orientation.equals(Orientation.SOUTH))
-                        treasure.setTeamNumber(Barcode
-                                .getTeamNumberFrom(Integer
-                                        .valueOf(infoMatrix[row + 1][column]
-                                                .split("\\.")[2])));
-                    else if (orientation.equals(Orientation.WEST))
-                        treasure.setTeamNumber(Barcode
-                                .getTeamNumberFrom(Integer
-                                        .valueOf(infoMatrix[row][column - 1]
-                                                .split("\\.")[2])));
-                }
+    private static void tagTreasures(MapGraph map) {
+    	for(Tile tile : map.getTiles())
+    		if (tile.getContent() != null && tile.getContent() instanceof TreasureObject) {
+    			TreasureObject treasure = (TreasureObject)tile.getContent();
+    			Orientation orientation = switchStringToOrientation(tile.getToken().split("\\.")[1]).getOppositeOrientation();
+    			Tile neighbour = tile.getEdgeAt(orientation).getNeighbour(tile);
+    			treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(neighbour.getToken().split("\\.")[2])));
+    			treasure.setTeamNumber(Barcode.getTeamNumberFrom(Integer.valueOf(neighbour.getToken().split("\\.")[2])));
+    		}
     }
 
-    public static void initializeSeesaws(final String[][] infoMatrix,
-            MapGraph map) {
-        for (int row = 0; row < infoMatrix.length; row++)
-            for (int column = 0; column < infoMatrix[row].length; column++)
-                if (map.getTile(new Point(column, row)) != null
-                        && map.getTile(new Point(column, row)).getContent() != null
-                        && map.getTile(new Point(column, row)).getContent() instanceof Seesaw) {
-                    if (switchStringToOrientation(infoMatrix[row][column]
-                            .split("\\.")[1]) == Orientation.NORTH) {
-                        int firstBarcode = Integer
-                                .valueOf(infoMatrix[row - 1][column]
-                                        .split("\\.")[2]);
-                        int secondBarcode = Integer
-                                .valueOf(infoMatrix[row + 2][column]
-                                        .split("\\.")[2]);
-                        int index = 0;
-                        if (firstBarcode < secondBarcode) {
-                            for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
-                                if (firstBarcode == BarcodeCommand.SEESAW_START[i]
-                                        || firstBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
-                                    index = i;
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column, row + 1))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column, row + 1))
-                                    .getContent())).switchClosed();
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column, row + 1))
-                                            .getContent()));
-                            ((Seesaw) (map.getTile(new Point(column, row + 1))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column, row))
-                                            .getContent()));
-                            map.getTile(new Point(column, row))
-                                    .getEdgeAt(Orientation.NORTH)
-                                    .setObstruction(Obstruction.SEESAW_DOWN);
-                            map.getTile(new Point(column, row + 1))
-                                    .getEdgeAt(Orientation.SOUTH)
-                                    .setObstruction(Obstruction.SEESAW_UP);
-                        } else {
-                            for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
-                                if (secondBarcode == BarcodeCommand.SEESAW_START[i]
-                                        || secondBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
-                                    index = i;
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column, row + 1))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent())).switchClosed();
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column, row + 1))
-                                            .getContent()));
-                            ((Seesaw) (map.getTile(new Point(column, row + 1))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column, row))
-                                            .getContent()));
-                            map.getTile(new Point(column, row))
-                                    .getEdgeAt(Orientation.NORTH)
-                                    .setObstruction(Obstruction.SEESAW_UP);
-                            map.getTile(new Point(column, row + 1))
-                                    .getEdgeAt(Orientation.SOUTH)
-                                    .setObstruction(Obstruction.SEESAW_DOWN);
-                        }
-                        map.getTile(new Point(column, row))
-                                .getEdgeAt(Orientation.SOUTH)
-                                .setObstruction(Obstruction.SEESAW_FLIP);
-                    } else if (switchStringToOrientation(infoMatrix[row][column]
-                            .split("\\.")[1]) == Orientation.EAST) {
-                        int firstBarcode = Integer
-                                .valueOf(infoMatrix[row][column + 1]
-                                        .split("\\.")[2]);
-                        int secondBarcode = Integer
-                                .valueOf(infoMatrix[row][column - 2]
-                                        .split("\\.")[2]);
-                        int index = 0;
-                        if (firstBarcode < secondBarcode) {
-                            for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
-                                if (firstBarcode == BarcodeCommand.SEESAW_START[i]
-                                        || firstBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
-                                    index = i;
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column - 1, row))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column - 1, row))
-                                    .getContent())).switchClosed();
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column - 1, row))
-                                            .getContent()));
-                            ((Seesaw) (map.getTile(new Point(column - 1, row))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column, row))
-                                            .getContent()));
-                            map.getTile(new Point(column, row))
-                                    .getEdgeAt(Orientation.EAST)
-                                    .setObstruction(Obstruction.SEESAW_DOWN);
-                            map.getTile(new Point(column - 1, row))
-                                    .getEdgeAt(Orientation.WEST)
-                                    .setObstruction(Obstruction.SEESAW_UP);
-                        } else {
-                            for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
-                                if (secondBarcode == BarcodeCommand.SEESAW_START[i]
-                                        || secondBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
-                                    index = i;
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column - 1, row))
-                                    .getContent())).setValue(index);
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent())).switchClosed();
-                            ((Seesaw) (map.getTile(new Point(column, row))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column - 1, row))
-                                            .getContent()));
-                            ((Seesaw) (map.getTile(new Point(column - 1, row))
-                                    .getContent()))
-                                    .setOtherSeesaw((Seesaw) (map
-                                            .getTile(new Point(column, row))
-                                            .getContent()));
-                            map.getTile(new Point(column, row))
-                                    .getEdgeAt(Orientation.EAST)
-                                    .setObstruction(Obstruction.SEESAW_UP);
-                            map.getTile(new Point(column - 1, row))
-                                    .getEdgeAt(Orientation.WEST)
-                                    .setObstruction(Obstruction.SEESAW_DOWN);
-                        }
-                        map.getTile(new Point(column, row))
-                                .getEdgeAt(Orientation.WEST)
-                                .setObstruction(Obstruction.SEESAW_FLIP);
-                    }
-                }
+    private static void initializeSeesaws(MapGraph map) {
+    	for(Tile tile : map.getTiles())
+    		if (tile.getContent() != null && tile.getContent() instanceof Seesaw) {
+    			if (switchStringToOrientation(tile.getToken().split("\\.")[1]) == Orientation.NORTH) {
+    				Tile northBarcodeTile = tile.getNorthNeighbour();
+    				Tile southBarcodeTile = tile.getSouthNeighbour().getSouthNeighbour();
+    				Tile southSeesawTile = tile.getSouthNeighbour();
+    				int firstBarcode = Integer.valueOf(northBarcodeTile.getToken().split("\\.")[2]);
+    				int secondBarcode = Integer.valueOf(southBarcodeTile.getToken().split("\\.")[2]);
+    				int index = 0;
+    				if (firstBarcode < secondBarcode) {
+    					for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
+    						if (firstBarcode == BarcodeCommand.SEESAW_START[i] || firstBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
+    							index = i;
+    					((Seesaw)(southSeesawTile.getContent())).switchClosed();
+    					tile.getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.SEESAW_DOWN);
+    					southSeesawTile.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.SEESAW_UP);
+    				}
+    				else {
+    					for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
+    						if (secondBarcode == BarcodeCommand.SEESAW_START[i] || secondBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
+    							index = i;
+    					((Seesaw)(tile.getContent())).switchClosed();
+    					tile.getEdgeAt(Orientation.NORTH).setObstruction(Obstruction.SEESAW_UP);
+    					southSeesawTile.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.SEESAW_DOWN);
+    				}
+					((Seesaw)(tile.getContent())).setValue(index);
+					((Seesaw)(southSeesawTile.getContent())).setValue(index);
+					((Seesaw)(tile.getContent())).setOtherSeesaw((Seesaw)(southSeesawTile.getContent()));
+					((Seesaw)(southSeesawTile.getContent())).setOtherSeesaw((Seesaw)(tile.getContent()));
+    				tile.getEdgeAt(Orientation.SOUTH).setObstruction(Obstruction.SEESAW_FLIP);
+    			}
+    			else if (switchStringToOrientation(tile.getToken().split("\\.")[1]) == Orientation.EAST) {
+    				Tile eastBarcodeTile = tile.getEastNeighbour();
+    				Tile westBarcodeTile = tile.getWestNeighbour().getWestNeighbour();
+    				Tile westSeesawTile = tile.getWestNeighbour();
+    				int firstBarcode = Integer.valueOf(eastBarcodeTile.getToken().split("\\.")[2]);
+    				int secondBarcode = Integer.valueOf(westBarcodeTile.getToken().split("\\.")[2]);
+    				int index = 0;
+    				if (firstBarcode < secondBarcode) {
+    					for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
+    						if (firstBarcode == BarcodeCommand.SEESAW_START[i] || firstBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
+    							index = i;
+    					((Seesaw)(westSeesawTile.getContent())).switchClosed();
+    					tile.getEdgeAt(Orientation.EAST).setObstruction(Obstruction.SEESAW_DOWN);
+    					westSeesawTile.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.SEESAW_UP);
+    				}
+    				else {
+    					for (int i = 0; i < BarcodeCommand.SEESAW_START.length; i++)
+    						if (secondBarcode == BarcodeCommand.SEESAW_START[i] || secondBarcode == BarcodeCommand.SEESAW_START_INVERSE[i])
+    							index = i;
+    					((Seesaw)(tile.getContent())).switchClosed();
+    					tile.getEdgeAt(Orientation.EAST).setObstruction(Obstruction.SEESAW_UP);
+    					westSeesawTile.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.SEESAW_DOWN);
+    				}
+					((Seesaw)(tile.getContent())).setValue(index);
+					((Seesaw)(westSeesawTile.getContent())).setValue(index);
+					((Seesaw)(tile.getContent())).setOtherSeesaw((Seesaw)(westSeesawTile.getContent()));
+					((Seesaw)(westSeesawTile.getContent())).setOtherSeesaw((Seesaw)(tile.getContent()));
+    				tile.getEdgeAt(Orientation.WEST).setObstruction(Obstruction.SEESAW_FLIP);
+    			}
+    		}
     }
 
     private static Orientation switchStringToOrientation(final String string) {
@@ -420,5 +269,26 @@ public class MapReader {
             return Orientation.EAST;
         else
             return Orientation.WEST;
+    }
+
+    public static MapGraph createMapFromTiles(List<peno.htttp.Tile> tiles) {
+        MapGraph map = new MapGraph();
+        for (peno.htttp.Tile receivedTile : tiles) {
+            Point point = new Point((int) receivedTile.getX(), (int) receivedTile.getY());
+            map.addTile(point);
+            Tile tile = map.getTile(point);
+            String[] seperatedInfoIJ = receivedTile.getToken().split("\\.");
+            MapReader.generateStructures(seperatedInfoIJ, tile);
+            MapReader.generateObjects(seperatedInfoIJ, tile);
+        }
+        for(Tile tile : map.getTiles())
+            if(tile.getContent() != null && tile.getContent() instanceof TreasureObject) {
+            	TreasureObject treasure = (TreasureObject)tile.getContent();
+            	Orientation orientation = MapReader.switchStringToOrientation(tile.getToken().split("\\.")[1]).getOppositeOrientation();
+            	Tile neighbour = tile.getEdgeAt(orientation).getNeighbour(tile);
+            	treasure.setValue(Barcode.getPlayerNumberFrom(Integer.valueOf(neighbour.getToken().split("\\.")[2])));
+            	treasure.setTeamNumber(Barcode.getTeamNumberFrom(Integer.valueOf(neighbour.getToken().split("\\.")[2])));
+            }
+        return map;
     }
 }

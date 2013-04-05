@@ -7,6 +7,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class MQ {
+	
     /**
      * Create a channel on the given connection. This method will also configure
      * a message exchange and message queue based on the configuration in the

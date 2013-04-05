@@ -84,7 +84,7 @@ public class PilotActions {
                     treasureFound(barcode);
                     // The barcode and object belongs to the robot with number
                     // i.
-                    if (i == pilot.getPlayerNumber()) {
+                    if (i == pilot.getPlayerNumber() && pilot.getTeamNumber() == -1) {
                         int team = 0;
                         if (barcode == BarcodeCommand.TREASURE_TEAM1[i]
                                 || barcode == BarcodeCommand.TREASURE_TEAM1_INVERSE[i]) {
@@ -122,21 +122,12 @@ public class PilotActions {
         Point nextPoint3 = pilot.getOrientation().getNext(nextPoint2);
         Point nextPoint4 = pilot.getOrientation().getNext(nextPoint3);
         // If the wip is discovered the first time
-        if (!pilot.getMapGraphConstructed().getTiles()
-                .contains(pilot.getMapGraphConstructed().getTile(nextPoint2))) { // So
-                                                                                 // tiles
-                                                                                 // do
-                                                                                 // not
-                                                                                 // get
-                                                                                 // overwritten
-                                                                                 // (needed
-                                                                                 // to
-                                                                                 // prevent
-                                                                                 // concurrentmoderror)
+        if (!pilot.getMapGraphConstructed().getTiles().contains(pilot.getMapGraphConstructed().getTile(nextPoint2)))
             pilot.getMapGraphConstructed().addTile(nextPoint2);
+        if (!pilot.getMapGraphConstructed().getTiles().contains(pilot.getMapGraphConstructed().getTile(nextPoint3)))
             pilot.getMapGraphConstructed().addTile(nextPoint3);
+        if (!pilot.getMapGraphConstructed().getTiles().contains(pilot.getMapGraphConstructed().getTile(nextPoint4)))
             pilot.getMapGraphConstructed().addTile(nextPoint4);
-        }
 
         // add the seesaw to the seesaw-tiles
         Seesaw seesaw1 = new Seesaw(pilot.getMapGraphConstructed().getTile(

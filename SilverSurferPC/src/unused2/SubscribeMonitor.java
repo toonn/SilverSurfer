@@ -1,4 +1,5 @@
-package mq.intrfce;
+package unused2;
+/*package mq.intrfce;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,12 +11,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-/**
- * A program that monitors "race.*" messages
- * 
- * @author bart.vanbrabant@cs.kuleuven.be
- * 
- */
+
 public class SubscribeMonitor {
     public static final String MONITOR_KEY = "demo.silver";
 
@@ -90,4 +86,4 @@ public class SubscribeMonitor {
             e.printStackTrace(System.err);
         }
     }
-}
+}*/

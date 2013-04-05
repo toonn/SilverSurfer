@@ -1,4 +1,5 @@
-package mq.intrfce;
+package unused2;
+/*package mq.intrfce;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,13 +15,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-/**
- * A program that uses a AMQP server to publish events. At a fixed interval it
- * publishes a random generated number when the race is started.
- * 
- * @author bart.vanbrabant@cs.kuleuven.be
- * 
- */
+
 public class EventPusher {
     public static void main(String[] args) {
         EventPusher ep = new EventPusher();
@@ -57,12 +52,7 @@ public class EventPusher {
         run();
     }
 
-    /**
-     * This method blocks until a newline is entered on stdin. If a newline is
-     * read, it will stop the race and clean up the program so it can exit.
-     * 
-     * @throws IOException
-     */
+
     private void listenForExit() throws IOException {
         // wait for ENTER on newline to cleanup and exit
         BufferedReader stdin = new BufferedReader(new InputStreamReader(
@@ -79,12 +69,6 @@ public class EventPusher {
         System.exit(0);
     }
 
-    /**
-     * Sets up a consumer to listen for launch events. If launch messages are
-     * received the race is started or stopped.
-     * 
-     * @throws IOException
-     */
     private void listenForLaunch() throws IOException {
         // create a queue for this program. Because the queue is only used by
         // this
@@ -142,10 +126,6 @@ public class EventPusher {
         });
     }
 
-    /**
-     * This method does all the work of this class. It sets up all connections,
-     * listens for launch events and generates the events while racing.
-     */
     public void run() {
         try {
             setup();
@@ -174,11 +154,6 @@ public class EventPusher {
         }
     }
 
-    /**
-     * Send a string message to an amqp server
-     * 
-     * @param message
-     */
     private void sendMessage(String message) {
         // set some properties of the message
         AMQP.BasicProperties props = new AMQP.BasicProperties();
@@ -201,12 +176,6 @@ public class EventPusher {
         }
     }
 
-    /**
-     * Set up the connection to the server and ask a team name to derive the
-     * routing key.
-     * 
-     * @throws IOException
-     */
     public void setup() throws IOException {
         // create connection to the AMQP server and create a channel to the
         // exchange (See Config.EXCHANGE_NAME)
@@ -240,21 +209,16 @@ public class EventPusher {
         timer.schedule(task, 0, 2000);
     }
 
-    /**
-     * Start the race
-     */
     private void startRace() {
         sendMessage("started");
         System.out.println("Race started");
         racing = true;
     }
 
-    /**
-     * Stop the race
-     */
     private void stopRace() {
         sendMessage("stopped");
         System.out.println("Race stopped");
         racing = false;
     }
 }
+*/

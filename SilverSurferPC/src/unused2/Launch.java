@@ -1,4 +1,5 @@
-package mq.intrfce;
+package unused2;
+/*package mq.intrfce;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,12 +10,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
-/**
- * A program that uses a AMQP server to send a start signal for a race.
- * 
- * @author bart.vanbrabant@cs.kuleuven.be
- * 
- */
+
 public class Launch {
     public static void main(String[] args) {
         try {
@@ -74,4 +70,4 @@ public class Launch {
             System.exit(1);
         }
     }
-}
+}*/

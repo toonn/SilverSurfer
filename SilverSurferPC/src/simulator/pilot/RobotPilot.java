@@ -71,10 +71,6 @@ public class RobotPilot extends AbstractPilot {
         }
     }
 
-    public boolean getBusy() {
-        return busy;
-    }
-
     @Override
     public String getConsoleTag() {
         return "[ROBOT]";
@@ -156,17 +152,15 @@ public class RobotPilot extends AbstractPilot {
                 .sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
         super.travel(distance);
         waitUntilDone();
-        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode()) {
+        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
             pilotActions.barcodeFound();
-        }
         setBusyExecutingBarcode(false);
     }
 
     private void waitUntilDone() {
         try {
-            while (busy) {
+            while (busy)
                 Thread.sleep(100);
-            }
         } catch (Exception e) {
 
         }

@@ -36,12 +36,10 @@ public class SensorGraph extends JPanel {
     };
 
     public SensorGraph() {
-        for (int i = 0; i < numberOfValuesToPlotLS; i++) {
+        for (int i = 0; i < numberOfValuesToPlotLS; i++)
             LS.offer(0);
-        }
-        for (int i = 0; i < numberOfValuesToPlotUS; i++) {
+        for (int i = 0; i < numberOfValuesToPlotUS; i++) 
             US.offer(250);
-        }
         timer = new Timer(repaintPeriodInms, repaintSensorGraph);
         timer.start();
     }
@@ -131,9 +129,8 @@ public class SensorGraph extends JPanel {
             LSValOld = LSValNew;
             LSValNew = LSValue;
 
-            if (LSValOld == -1) {
+            if (LSValOld == -1)
                 continue;
-            }
 
             g2.setColor(Color.orange);
             g2.draw(new Line2D.Double(LSIndex * graphWidth / (2 * LS.size()),
@@ -175,11 +172,10 @@ public class SensorGraph extends JPanel {
 
     public void togglePause() {
         pause = !pause;
-        if (pause) {
+        if (pause)
             repaintPeriodInms = 10000000;
-        } else {
+        else
             repaintPeriodInms = 10;
-        }
         timer.stop();
         timer = new Timer(repaintPeriodInms, repaintSensorGraph);
         timer.start();

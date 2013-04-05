@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
-import mapping.ExtMath;
 import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
@@ -18,6 +17,7 @@ import simulator.pilot.AbstractPilot;
 
 public class ShortestPath {
 
+	private MazeExplorer explorer;
     private final ArrayList<Tile> queue = new ArrayList<Tile>();
     private final Vector<Tile> tilesPath = new Vector<Tile>();
     private Vector<Tile> tiles;
@@ -26,9 +26,9 @@ public class ShortestPath {
     private AbstractPilot pilot;
     private int extraCostSeesaw = 50000;
 
-    public ShortestPath(final AbstractPilot pilot, final Tile startTile,
-            final Tile endTile, final Vector<Tile> tiles) {
-        this.pilot = pilot;
+    public ShortestPath(MazeExplorer explorer, final AbstractPilot pilot, final Tile startTile, final Tile endTile, final Vector<Tile> tiles) {
+        this.explorer = explorer;
+    	this.pilot = pilot;
         this.startTile = startTile;
         this.endTile = endTile;
         this.tiles = tiles;
@@ -47,10 +47,8 @@ public class ShortestPath {
      */
     private void deleteSuperfluousTiles() {
         for (int i = tilesPath.size() - 2; i > 0; i--) {
-            if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1)
-                    || !tilesPath.get(i).areNeighbours(tilesPath.get(i + 1))) {
+            if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areReachableNeighbours(tilesPath.get(i + 1)))
                 tilesPath.remove(i);
-            }
         }
     }
 
@@ -63,10 +61,8 @@ public class ShortestPath {
 
         // voeg neighbourTiles van de currentTile toe aan de queue
         for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
-            if (tiles.contains(neighbourTile)
-                    && !neighbourTile.isMarkedShortestPath()) {
-                if (!(neighbourTile.getContent() instanceof Seesaw)
-                        || seesawIsPassableFromTile(neighbourTile)) {
+            if (tiles.contains(neighbourTile) && !neighbourTile.isMarkedShortestPath()) {
+                if (!(neighbourTile.getContent() instanceof Seesaw)) {
                     neighbourTile.setCost(currentTile.getCost() + 1);
                     queue.add(neighbourTile);
                 }
@@ -119,17 +115,12 @@ public class ShortestPath {
         }
         for (int i = 0; i < tilesPath.size() - 1; i++) {
             Orientation orientation = null;
-            for (Orientation ori : Orientation.values()) {
-                if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1)
-                        .getEdgeAt(ori.getOppositeOrientation())) {
+            for (Orientation ori : Orientation.values())
+                if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
                     orientation = ori;
-                }
-            }
-            if (pilot.getReadBarcodes()) {
+            if (pilot.getReadBarcodes())
                 pilot.setReadBarcodes(false);
-            }
-            pilot.rotate((int) ExtMath.getSmallestAngle((int) (orientation
-                    .getAngle() - pilot.getAngle())));
+            pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
             if (align && currentAmount == 0) {
                 if (tilesPath.size() - i > 2) {
                     if (pilot.getReadBarcodes()) {
@@ -156,16 +147,6 @@ public class ShortestPath {
                 pilot.travel(20);
                 currentAmount--;
             }
-            if (pilot.canUpdatePosition()) {
-                try {
-                    pilot.getCenter()
-                            .getClient()
-                            .updatePosition(pilot.getPosition().x,
-                                    pilot.getPosition().y, pilot.getAngle());
-                } catch (Exception e) {
-
-                }
-            }
             // TODO goToNextTile checkte of er geAligned moest worden.
             // communicator.goToNextTile(orientation);
         }
@@ -179,14 +160,6 @@ public class ShortestPath {
         	
         }
         return currentAmount;
-    }
-
-    private boolean seesawIsPassableFromTile(Tile seesaw) {
-        if (!((Seesaw) seesaw.getContent()).isUp()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

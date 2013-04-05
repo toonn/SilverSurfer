@@ -1,4 +1,5 @@
-package mq.intrfce;
+package unused2;
+/*package mq.intrfce;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,12 +12,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.GetResponse;
 
-/**
- * A program that monitors "race.*" messages
- * 
- * @author bart.vanbrabant@cs.kuleuven.be
- * 
- */
+
 public class PollMonitor {
     public static final String MONITOR_KEY = "demo.*";
 
@@ -117,3 +113,4 @@ public class PollMonitor {
         }
     }
 }
+*/

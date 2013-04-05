@@ -1,4 +1,4 @@
-package mq.intrfce;
+package unused2;
 
 import java.io.IOException;
 
