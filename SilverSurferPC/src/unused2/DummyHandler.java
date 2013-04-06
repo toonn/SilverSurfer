@@ -1,4 +1,5 @@
-package mq.communicator;
+package unused2;
+/*package mq.communicator;
 
 import peno.htttp.DisconnectReason;
 import peno.htttp.SpectatorHandler;
@@ -92,4 +93,4 @@ public class DummyHandler implements SpectatorHandler {
         // TODO Auto-generated method stub
 
     }
-}
+}*/

@@ -75,11 +75,12 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void gameRolled(int playerNumber, int objectNumber) {
-        getPilot().setPlayerNumber(playerNumber - 1);
+        pilot.setPlayerNumber(playerNumber - 1);
         System.out.println("[HTTTP] Game rolled, your number is "
                 + (playerNumber - 1) + " and your objectnumber is "
                 + objectNumber + ".");
-        panel.makeReadyToPlay();
+        panel.makeReadyToPlay(pilot);
+        panel.resetAllPaths();
         try {
             pilot.getCenter().setReady(true);
         } catch (Exception e) {
@@ -91,23 +92,15 @@ public class APHandler implements PlayerHandler {
     public void teamConnected(String partnerID) {
         System.out.println("[HTTTP] Partner (" + partnerID + ") has connected.");
         pilot.setTeamMemberFound(partnerID);
-        if (panel.getDummyPilot() != null)
-            panel.getDummyPilot().activate();
-        /*
-        ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
-        for (mapping.Tile tile : pilot.getMapGraphConstructed().getTiles())
-            vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(),
-                    (long) tile.getPosition().getY(), tile.getToken()));
-        try {
-            pilot.getCenter().getClient().sendTiles(vector);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+        pilot.getTeamPilot().activate();
     }
 
     @Override
     public void teamPosition(double x, double y, double angle) {
-    	//System.out.println("[HTTTP] Position of my teammate is: " + x + ", " + y + " and his angle is " + angle);
+    	if(pilot.getTeamPilot().isActive()) {
+    		pilot.getTeamPilot().setPosition(x, y);
+    		pilot.getTeamPilot().setAngle(angle);
+    	}
     }
 
     @Override
@@ -166,12 +159,10 @@ public class APHandler implements PlayerHandler {
                     }
                 }
         }
-        if (point1 != null && point2 != null && ourPoint1 != null
-                && ourPoint2 != null) {
-            System.out.println("[HTTTP] Similar tiles found! " + point1 + " "
-                    + ourPoint1 + " -- " + point2 + " " + ourPoint2);
-            if(panel.getDummyPilot() != null)
-            	panel.getDummyPilot().setMap(MapReader.createMapFromTiles(tiles));
+        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null) {
+            System.out.println("[HTTTP] Similar tiles found! " + point1 + " " + ourPoint1 + " -- " + point2 + " " + ourPoint2);
+            if(pilot.getTeamPilot().isActive())
+            	pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(tiles));
         } else
             System.out.println("[HTTTP] No similar tiles found yet!");
     }

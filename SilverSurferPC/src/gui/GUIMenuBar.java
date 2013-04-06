@@ -33,16 +33,6 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getScreenMenu() {
         screenMenu = new JMenu("Screen");
 
-        final JMenuItem testPanel = new JMenuItem("test map");
-        screenMenu.add(testPanel);
-        testPanel.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().showDummyMap();
-            }
-        });
-
         final JMenuItem inputPanel = new JMenuItem("Show/Hide inputpanel");
         screenMenu.add(inputPanel);
         inputPanel.addActionListener(new ActionListener() {
@@ -231,19 +221,9 @@ public class GUIMenuBar extends JMenuBar {
     private JMenu getMapMenu() {
         mapMenu = new JMenu("Map");
 
-        final JMenuItem addDummyItem = new JMenuItem("Add dummy");
-        mapMenu.add(addDummyItem);
-        addDummyItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                SilverSurferGUI.getSimulatorPanel().addDummy();
-            }
-        });
-
-        final JMenuItem loadMapNormalItem = new JMenuItem("Load map");
-        mapMenu.add(loadMapNormalItem);
-        loadMapNormalItem.addActionListener(new ActionListener() {
+        final JMenuItem loadMapOnePlayerItem = new JMenuItem("Load map (1 player)");
+        mapMenu.add(loadMapOnePlayerItem);
+        loadMapOnePlayerItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 final FileDialog prompt = new FileDialog(frame, "Select maze:",
@@ -257,18 +237,17 @@ public class GUIMenuBar extends JMenuBar {
 
                 if (mapFile.exists()) {
                     System.out.println("[MAP] Loading map ...");
-                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 1,
-                            0);
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 1, true);
                     System.out.println("[MAP] Map loaded!");
                 }
             }
 
         });
 
-        final JMenuItem loadMapWithDummiesItem = new JMenuItem(
-                "Load map with 1 dummy");
-        mapMenu.add(loadMapWithDummiesItem);
-        loadMapWithDummiesItem.addActionListener(new ActionListener() {
+        final JMenuItem loadMapTwoPlayersItem = new JMenuItem(
+                "Load map (2 players)");
+        mapMenu.add(loadMapTwoPlayersItem);
+        loadMapTwoPlayersItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 final FileDialog prompt = new FileDialog(frame, "Select maze:",
@@ -282,18 +261,17 @@ public class GUIMenuBar extends JMenuBar {
 
                 if (mapFile.exists()) {
                     System.out.println("[MAP] Loading map ...");
-                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 2,
-                            1);
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 2, true);
                     System.out.println("[MAP] Map loaded!");
                 }
             }
 
         });
 
-        final JMenuItem loadMapWithoutDummiesItem = new JMenuItem(
-                "Load map with 3 sims");
-        mapMenu.add(loadMapWithoutDummiesItem);
-        loadMapWithoutDummiesItem.addActionListener(new ActionListener() {
+        final JMenuItem loadMapFourPlayersItem = new JMenuItem(
+                "Load map (4 players)");
+        mapMenu.add(loadMapFourPlayersItem);
+        loadMapFourPlayersItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 final FileDialog prompt = new FileDialog(frame, "Select maze:",
@@ -307,8 +285,7 @@ public class GUIMenuBar extends JMenuBar {
 
                 if (mapFile.exists()) {
                     System.out.println("[MAP] Loading map ...");
-                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 4,
-                            0);
+                    SilverSurferGUI.getSimulatorPanel().setMapFile(mapFile, 4, false);
                     System.out.println("[MAP] Map loaded!");
                 }
             }

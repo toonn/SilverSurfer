@@ -5,28 +5,20 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 import mapping.MapGraph;
-import mq.communicator.DummyHandler;
-import peno.htttp.SpectatorHandler;
+import mq.communicator.APHandler;
 import simulator.viewport.SimulatorPanel;
 
 public class DummyPilot implements PilotInterface {
 
-    private int teamNumber;
+    private int teamNumber = -1;
     private MapGraph mapGraphConstructed;
     private Point2D.Double position;
     private double angle;
     private boolean active = false;
-    private DummyHandler handler;
+    private APHandler handler;
     private boolean gameModus;
 
-    public DummyPilot(int teamNumber) {
-        if (teamNumber < 0 || teamNumber > 3) {
-            this.teamNumber = -1;
-        } else {
-            this.teamNumber = teamNumber;
-        }
-
-        handler = new DummyHandler(this);
+    public DummyPilot() {
         reset();
     }
 
@@ -41,7 +33,7 @@ public class DummyPilot implements PilotInterface {
     }
 
     @Override
-    public SpectatorHandler getDefaultHandler() {
+    public APHandler getDefaultHandler() {
         return handler;
     }
 
@@ -54,16 +46,6 @@ public class DummyPilot implements PilotInterface {
     public Point getMatrixPosition() {
         return new Point((int) (getPosition().getX() / sizeTile()),
                 (int) (getPosition().getY() / sizeTile()));
-    }
-
-    /**
-     * Returns 0,1,2 or 3 indicating which treasure the pilot is looking for
-     * Returns 4 or 5 when the treasure is found and the pilot knows what team
-     * it is in Returns -1 if no valid team number is available
-     */
-    @Override
-    public int getPlayerNumber() {
-        return teamNumber;
     }
 
     @Override
@@ -93,6 +75,7 @@ public class DummyPilot implements PilotInterface {
 
     @Override
     public void reset() {
+    	active = false;
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
         angle = 270;
         mapGraphConstructed = new MapGraph();

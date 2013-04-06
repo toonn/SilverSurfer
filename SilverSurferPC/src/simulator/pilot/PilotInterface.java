@@ -4,20 +4,18 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import mapping.MapGraph;
-import peno.htttp.GameHandler;
+import mq.communicator.APHandler;
 import simulator.viewport.SimulatorPanel;
 
 public interface PilotInterface {
 
     public abstract double getAngle();
 
-    public abstract GameHandler getDefaultHandler();
+    public abstract APHandler getDefaultHandler();
 
     public abstract MapGraph getMapGraphConstructed();
 
     public abstract Point getMatrixPosition();
-
-    public abstract int getPlayerNumber();
 
     public abstract Point2D.Double getPosition();
 

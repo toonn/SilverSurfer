@@ -1,5 +1,6 @@
 package mazeAlgorithm;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -116,6 +117,17 @@ public class MazeExplorer {
         for (final Tile neighbourTile : currentTile.getReachableNeighbours())
             if (neighbourTile != null && !neighbourTile.isMarkedExploreMaze() && !queue.contains(neighbourTile))
                 queue.add(neighbourTile);
+
+    	if(pilot.getTeamPilot().isActive()) {
+        	ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
+        	for (mapping.Tile tile : pilot.getMapGraphConstructed().getTiles()) 
+                vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
+        	try {
+                pilot.getCenter().getClient().sendTiles(vector);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    	}
     }
     
     private Tile getPriorityNextTile(final Tile currentTile) {

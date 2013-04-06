@@ -30,6 +30,7 @@ import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
 import mapping.TreasureObject;
+import simulator.pilot.AbstractPilot;
 import simulator.pilot.DummyPilot;
 import simulator.pilot.PilotInterface;
 
@@ -213,8 +214,8 @@ public abstract class AbstractViewPort extends JPanel {
             if (!(pilot instanceof DummyPilot)
                     || ((DummyPilot) pilot).isActive()) {
                 AffineTransform oldTransform = g2.getTransform();
-                if (pilot.getTeamNumber() < 0) {
-                    g2.setColor(teamColors[pilot.getPlayerNumber()]);
+                if (!(pilot instanceof DummyPilot) && pilot.getTeamNumber() < 0) {
+                    g2.setColor(teamColors[((AbstractPilot)pilot).getPlayerNumber()]);
                 } else {
                     g2.setColor(teamColors[4 + pilot.getTeamNumber()]);
                 }

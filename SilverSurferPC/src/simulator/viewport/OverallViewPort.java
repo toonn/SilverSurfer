@@ -8,6 +8,7 @@ import java.util.Set;
 import mapping.MapGraph;
 import mapping.Seesaw;
 import mapping.Tile;
+import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 
 @SuppressWarnings("serial")
@@ -15,7 +16,7 @@ public class OverallViewPort extends AbstractViewPort {
 
     private MapGraph mapGraphLoaded;
 
-    public OverallViewPort(Set<PilotInterface> pilotSet,
+    public OverallViewPort(Set<AbstractPilot> pilotSet,
             MapGraph mapGraphLoaded, Color[] teamColors) {
         super(pilotSet, teamColors);
         this.mapGraphLoaded = mapGraphLoaded;

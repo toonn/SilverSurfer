@@ -11,11 +11,12 @@ import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Tile;
 import mazeAlgorithm.ExploreThread;
+import mq.communicator.APHandler;
 import mq.communicator.MQCenter;
-import peno.htttp.GameHandler;
 import simulator.viewport.SimulatorPanel;
 
 public abstract class AbstractPilot implements PilotInterface {
+	
     private int playerNumber = -1;
     private int teamNumber = -1;
     private MapGraph mapGraphConstructed;
@@ -35,6 +36,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private String playerName = "/";
     private String teamMemberName = "/";
     private Tile startingPositionOfTeamMember;
+    private DummyPilot teamPilot = new DummyPilot();
 
     public AbstractPilot(int playerNumber) {
         if (playerNumber < 0 || playerNumber > 3) {
@@ -45,6 +47,10 @@ public abstract class AbstractPilot implements PilotInterface {
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
         angle = 270;
         reset();
+    }
+    
+    public DummyPilot getTeamPilot() {
+    	return teamPilot;
     }
 
     public void alignOnWalls() {
@@ -79,7 +85,7 @@ public abstract class AbstractPilot implements PilotInterface {
     public abstract String getConsoleTag();
 
     @Override
-    public GameHandler getDefaultHandler() {
+    public APHandler getDefaultHandler() {
         return getCenter().getHandler();
     }
 
@@ -109,7 +115,6 @@ public abstract class AbstractPilot implements PilotInterface {
     /**
      * Returns 0,1,2 or 3 indicating which treasure the pilot is looking for
      */
-    @Override
     public int getPlayerNumber() {
         return playerNumber;
     }
@@ -212,6 +217,7 @@ public abstract class AbstractPilot implements PilotInterface {
         speed = 2;
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
+        teamPilot.reset();
     }
 
     public void rotate(final double alpha) {
@@ -300,7 +306,7 @@ public abstract class AbstractPilot implements PilotInterface {
     public void setupForGame(SimulatorPanel panel) {
         if (isInGameModus()) {
             try {
-            	playerName = "SILVER" + getPlayerNumber();
+            	playerName = "SILVER" + getPlayerNumber() + "_" + System.currentTimeMillis();
                 center = new MQCenter(this, playerName, panel);
                 getCenter().join();
             } catch (IllegalStateException e) {

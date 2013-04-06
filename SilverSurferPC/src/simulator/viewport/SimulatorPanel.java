@@ -27,10 +27,11 @@ public class SimulatorPanel extends JPanel {
     private GroupLayout simulatorLayout;
     private OverallViewPort overallViewPort;
     private static AbstractPilot principalPilot;
-    private UnitViewPort principalViewPort;
-    private static List<AbstractPilot> simulatorPilots;
-    private static List<DummyPilot> dummyPilots;
-    private List<DummyViewPort> otherViewPorts;
+    private UnitViewPort principalUnitViewPort;
+    private DummyViewPort principalDummyViewPort;
+    private static List<SimulationPilot> simulatorPilots;
+    private List<UnitViewPort> simulatorViewPorts;
+    private List<DummyViewPort> simulatorDummyViewPorts;
     private Color[] teamColors;
     private int speed;
     private String mapName = "/";
@@ -39,9 +40,9 @@ public class SimulatorPanel extends JPanel {
 
     public SimulatorPanel(Color[] teamColors) {
         initialization(teamColors);
-        //(Robot or not, amount of players, amount of dummies)
-        //Only (_, 1, 0), (_, 2, 1) or (_, 4, 0) is in use and checked!
-        createSims(false, 1, 0); 
+        //(Robot or not, amount of players, show dummies)
+        //Only (_, 1, true), (_, 2, true) or (_, 4, false) is in use and checked!
+        createSims(false, 1, true); 
     }
 
     private void initialization(Color[] teamColors) {
@@ -52,25 +53,193 @@ public class SimulatorPanel extends JPanel {
         simulatorLayout.setAutoCreateContainerGaps(true);
     }
 
-    public void addDummy() {
+    private void createSims(boolean robot, int amount, boolean showDummies) {
+        if (!robot)
+            principalPilot = new SimulationPilot(0, mapGraphLoaded);
+        Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
+        principalPilotSet.add(principalPilot);
+        principalUnitViewPort = new UnitViewPort(principalPilotSet, teamColors);
+        Set<DummyPilot> principalDummyPilotSet = new HashSet<DummyPilot>();
+        principalDummyPilotSet.add(principalPilot.getTeamPilot());
+        principalDummyViewPort = new DummyViewPort(principalDummyPilotSet, teamColors);
+
+        simulatorPilots = new ArrayList<SimulationPilot>();
+        simulatorViewPorts = new ArrayList<UnitViewPort>();
+        simulatorDummyViewPorts = new ArrayList<DummyViewPort>();
+
+        for (int i = 1; i < amount; i++)
+            simulatorPilots.add(new SimulationPilot(i, mapGraphLoaded));
+        for (SimulationPilot pilot : simulatorPilots) {
+            Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
+            simulatorPilotSet.add(pilot);
+            simulatorViewPorts.add(new UnitViewPort(simulatorPilotSet, teamColors));
+            Set<DummyPilot> simulatorDummyPilotSet = new HashSet<DummyPilot>();
+            simulatorDummyPilotSet.add(pilot.getTeamPilot());
+            simulatorDummyViewPorts.add(new DummyViewPort(simulatorDummyPilotSet, teamColors));
+        }
+
+        showSims(showDummies);
+
+        resetRobots();
+    }
+
+    private void showSims(boolean showDummies) {
+        removeAll();
+        invalidate();
+
+        if (mapGraphLoaded == null) { //1 robot
+        	showOnePlayer(showDummies, false);
+        	if(showDummies)
+        		view = "1 robot + dummy";
+        	else
+        		view = "1 robot";
+        } else {
+            Set<AbstractPilot> allPilots = new HashSet<AbstractPilot>(simulatorPilots);
+            allPilots.add(principalPilot);
+            overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded, teamColors);
+
+            if(simulatorViewPorts.size() == 3) { //4 robots without dummies
+                showFourPlayers(showDummies);
+                view = "4 robots + map";
+            } else if(simulatorViewPorts.size() == 1) { //2 robots with dummies
+                showTwoPlayers(showDummies);
+                view = "2 robots + dummies + map";
+            } else { //1 robot
+            	showOnePlayer(showDummies, true);
+            	if(showDummies)
+            		view = "1 robot + dummy + map";
+            	else
+            		view = "1 robot + map";
+            }
+        }
+
+        validate();
+    }
+    
+    private void showOnePlayer(boolean showDummies, boolean showMap) {
+    	if(showMap) {
+        	if(showDummies) {
+        		simulatorLayout.setHorizontalGroup(simulatorLayout.createSequentialGroup()
+                        .addComponent(overallViewPort)
+                        .addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        		.addComponent(principalUnitViewPort)
+                        		.addComponent(principalDummyViewPort)));
+        		simulatorLayout.setVerticalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(overallViewPort)
+                        .addGroup(simulatorLayout.createSequentialGroup()
+                        		.addComponent(principalUnitViewPort)
+                        		.addComponent(principalDummyViewPort)));
+        	} else {
+        		simulatorLayout.setHorizontalGroup(simulatorLayout
+        				.createParallelGroup(GroupLayout.Alignment.CENTER)
+        				.addComponent(principalUnitViewPort));
+        		simulatorLayout.setVerticalGroup(simulatorLayout
+        				.createSequentialGroup()
+        				.addComponent(principalUnitViewPort));
+        	}
+    	} else {
+        	if(showDummies) {
+        		simulatorLayout.setHorizontalGroup(simulatorLayout
+        				.createParallelGroup(GroupLayout.Alignment.CENTER)
+        				.addComponent(principalUnitViewPort)
+        				.addComponent(principalDummyViewPort));
+        		simulatorLayout.setVerticalGroup(simulatorLayout
+        				.createSequentialGroup()
+        				.addComponent(principalUnitViewPort)
+        				.addComponent(principalDummyViewPort));
+        	} else {
+        		simulatorLayout.setHorizontalGroup(simulatorLayout
+        				.createParallelGroup(GroupLayout.Alignment.CENTER)
+        				.addComponent(principalUnitViewPort));
+        		simulatorLayout.setVerticalGroup(simulatorLayout
+        				.createSequentialGroup()
+        				.addComponent(principalUnitViewPort));
+        	}
+    	}
+    }
+    
+    private void showTwoPlayers(boolean showDummies) {
+    	simulatorLayout.setHorizontalGroup(simulatorLayout.createSequentialGroup()
+                .addComponent(overallViewPort)
+                .addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                		.addGroup(simulatorLayout.createSequentialGroup()
+                				.addComponent(principalUnitViewPort)
+                				.addComponent(principalDummyViewPort))
+                		.addGroup(simulatorLayout.createSequentialGroup()
+                				.addComponent(simulatorViewPorts.get(0))
+                				.addComponent(simulatorDummyViewPorts.get(0)))));
+    	simulatorLayout.setVerticalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(overallViewPort)
+                .addGroup(simulatorLayout.createSequentialGroup()
+                		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                				.addComponent(principalUnitViewPort)
+                				.addComponent(principalDummyViewPort))
+                		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                				.addComponent(simulatorViewPorts.get(0))
+                				.addComponent(simulatorDummyViewPorts.get(0)))));
+    }
+    
+    private void showFourPlayers(boolean showDummies) {
+    	simulatorLayout.setHorizontalGroup(simulatorLayout.createSequentialGroup()
+                .addComponent(overallViewPort)
+                .addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                		.addGroup(simulatorLayout.createSequentialGroup()
+                				.addComponent(principalUnitViewPort)
+                				.addComponent(simulatorViewPorts.get(0)))
+                		.addGroup(simulatorLayout.createSequentialGroup()
+                				.addComponent(simulatorViewPorts.get(1))
+                				.addComponent(simulatorViewPorts.get(2)))));
+    	simulatorLayout.setVerticalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(overallViewPort)
+                .addGroup(simulatorLayout.createSequentialGroup()
+                		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                				.addComponent(principalUnitViewPort)
+                				.addComponent(simulatorViewPorts.get(0)))
+                		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                				.addComponent(simulatorViewPorts.get(1))
+                				.addComponent(simulatorViewPorts.get(2)))));
+    }
+
+    public void resetRobots() {
+        stopSimulation();
+
+        principalPilot.reset();
+        principalPilot.setPosition(20, 20);
+        if (mapGraphLoaded != null)
+            setOnStartTile(principalPilot);
+        principalPilot.reset();
+        principalUnitViewPort.resetPath();
+
+        if (mapGraphLoaded != null) {
+            for (SimulationPilot pilot : simulatorPilots) {
+                pilot.reset();
+                setOnStartTile(pilot);
+                pilot.reset();
+            }
+            for (UnitViewPort viewPort : simulatorViewPorts)
+            	viewPort.resetPath();
+        }
+
+        if (mapGraphLoaded != null) {
+            ; // TODO: reset wip
+        }
+
+        changeSpeed(2);
+    }
+
+    public void setMapFile(File mapFile, int amount, boolean showDummies) {
+        stopSimulation();
+        mapName = mapFile.getName();
+        mapGraphLoaded = MapReader.createMapFromFile(mapFile);
+        createSims(principalPilot instanceof RobotPilot, amount, showDummies);
+    }
+
+    public void removeMapFile() {
         stopSimulation();
         mapName = "/";
         mapGraphLoaded = null;
         overallViewPort = null;
-        createSims(principalPilot instanceof RobotPilot, 2, 1);
-    }
-
-    public void changeSpeed(final int value) {
-        speed = value;
-        principalPilot.setSpeed(value);
-        for (AbstractPilot pilot : simulatorPilots) {
-            pilot.setSpeed(value);
-        }
-    }
-
-    public void changeSpeedMainRobot(final int value) {
-        speed = value;
-        principalPilot.setSpeed(value);
+        createSims(principalPilot instanceof RobotPilot, 1, true);
     }
 
     public void connect() {
@@ -79,48 +248,7 @@ public class SimulatorPanel extends JPanel {
         mapGraphLoaded = null;
         overallViewPort = null;
         principalPilot = new RobotPilot(0);
-        createSims(true, 1, 0);
-    }
-    
-    public void showDummyMap() {        
-    	ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
-    	for (mapping.Tile tile : principalPilot.getMapGraphConstructed().getTiles()) 
-            vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
-    	this.getDummyPilot().setMap(MapReader.createMapFromTiles(vector));
-    }
-
-    private void createSims(boolean robot, int amount, int amountOfDummies) {
-        if (!robot)
-            principalPilot = new SimulationPilot(0, mapGraphLoaded);
-        Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
-        principalPilotSet.add(principalPilot);
-        principalViewPort = new UnitViewPort(principalPilotSet, teamColors);
-
-        simulatorPilots = new ArrayList<AbstractPilot>();
-        dummyPilots = new ArrayList<DummyPilot>();
-        otherViewPorts = new ArrayList<DummyViewPort>();
-
-        // Creates dummies
-        for (int i = 0; i < amountOfDummies; i++)
-            dummyPilots.add(new DummyPilot(i + 1));
-        for (DummyPilot pilot : dummyPilots) {
-            Set<DummyPilot> dummyPilotSet = new HashSet<DummyPilot>();
-            dummyPilotSet.add(pilot);
-            otherViewPorts.add(new DummyViewPort(dummyPilotSet, teamColors));
-        }
-
-        // Creates non-dummies
-        for (int i = 0; i < amount - 1 - amountOfDummies; i++)
-            simulatorPilots.add(new SimulationPilot(amountOfDummies + i + 1, mapGraphLoaded));
-        for (AbstractPilot pilot : simulatorPilots) {
-            Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
-            simulatorPilotSet.add(pilot);
-            otherViewPorts.add(new UnitViewPort(simulatorPilotSet, teamColors));
-        }
-
-        showSims();
-
-        resetRobots();
+        createSims(true, 1, true);
     }
 
     public void disconnect() {
@@ -131,13 +259,58 @@ public class SimulatorPanel extends JPanel {
         mapName = "/";
         mapGraphLoaded = null;
         overallViewPort = null;
-        createSims(false, 1, 0);
+        createSims(false, 1, true);
     }
 
-    public DummyPilot getDummyPilot() {
-        if (dummyPilots.iterator().hasNext())
-            return dummyPilots.iterator().next();
-        return null;
+    public void changeSpeed(final int value) {
+        speed = value;
+        principalPilot.setSpeed(value);
+        for (SimulationPilot pilot : simulatorPilots) {
+            pilot.setSpeed(value);
+        }
+    }
+
+    public void changeSpeedMainRobot(final int value) {
+        speed = value;
+        principalPilot.setSpeed(value);
+    }
+
+    public void makeReadyToPlay(AbstractPilot pilot) {
+        setOnStartTile(pilot);
+        pilot.makeReadyToPlay();
+        pilot.getTeamPilot().makeReadyToPlay();
+    }
+
+    public void setOnStartTile(AbstractPilot pilot) {
+    	if(mapGraphLoaded != null)
+            for (Tile tile : mapGraphLoaded.getStartTiles()) {
+                if (tile.getContent().getValue() == pilot.getPlayerNumber()) {
+                    pilot.setPosition(tile.getPosition().x * 40 + 20,
+                            tile.getPosition().y * 40 + 20);
+                    pilot.setAngle(((StartBase) tile.getContent()).getOrientation()
+                            .getAngle());
+                }
+            }
+    }
+    
+    public void resetAllPaths() {
+        principalUnitViewPort.resetPath();
+        for (UnitViewPort viewPort : simulatorViewPorts)
+        	viewPort.resetPath();
+    }
+
+    public void playGame() {
+        // Set game modus on x set up for game
+        for (SimulationPilot pilot : simulatorPilots) {
+            pilot.setGameModus(true);
+            pilot.setupForGame(this);
+        }
+        principalPilot.setGameModus(true);
+        principalPilot.setupForGame(this);
+    }
+
+    public AbstractPilot getPrincipalPilot() {
+        return principalPilot;
     }
 
     public MapGraph getMapGraphLoaded() {
@@ -152,232 +325,8 @@ public class SimulatorPanel extends JPanel {
     	return view;
     }
 
-    public AbstractPilot getPrincipalPilot() {
-        return principalPilot;
-    }
-
     public int getSpeed() {
         return speed;
-    }
-
-    public void makeReadyToPlay() {
-        setOnStartTile(principalPilot);
-        principalPilot.makeReadyToPlay();
-        principalViewPort.resetPath();
-        if (mapGraphLoaded != null) {
-            for (AbstractPilot pilot : simulatorPilots) {
-                setOnStartTile(pilot);
-                pilot.makeReadyToPlay();
-            }
-            for (DummyPilot pilot : dummyPilots) {
-                setOnStartTile(pilot);
-                pilot.makeReadyToPlay();
-            }
-            for (DummyViewPort viewPort : otherViewPorts) {
-                if (viewPort instanceof UnitViewPort) {
-                    ((UnitViewPort) viewPort).resetPath();
-                }
-            }
-        }
-    }
-
-    public void playGame() {
-        // Set game modus on x set up for game
-        for (PilotInterface p : dummyPilots) {
-            p.setGameModus(true);
-            p.setupForGame(this);
-        }
-        for (PilotInterface p : simulatorPilots) {
-            p.setGameModus(true);
-            p.setupForGame(this);
-        }
-        getPrincipalPilot().setGameModus(true);
-        getPrincipalPilot().setupForGame(this);
-    }
-
-    public void removeMapFile() {
-        stopSimulation();
-        mapName = "/";
-        mapGraphLoaded = null;
-        overallViewPort = null;
-        createSims(principalPilot instanceof RobotPilot, 1, 0);
-    }
-
-    public void resetRobots() {
-        stopSimulation();
-
-        principalPilot.reset();
-        principalPilot.setPosition(20, 20);
-        if (mapGraphLoaded != null) {
-            setOnStartTile(principalPilot);
-        }
-        principalPilot.reset();
-        principalViewPort.resetPath();
-
-        if (mapGraphLoaded != null) {
-            for (AbstractPilot pilot : simulatorPilots) {
-                pilot.reset();
-                setOnStartTile(pilot);
-                pilot.reset();
-            }
-            for (DummyPilot pilot : dummyPilots) {
-                pilot.reset();
-                setOnStartTile(pilot);
-                pilot.reset();
-            }
-            for (DummyViewPort viewPort : otherViewPorts) {
-                if (viewPort instanceof UnitViewPort) {
-                    ((UnitViewPort) viewPort).resetPath();
-                }
-            }
-        }
-
-        if (mapGraphLoaded != null) {
-            ; // TODO: reset wip
-        }
-
-        changeSpeed(2);
-    }
-
-    public void setMapFile(File mapFile, int amount, int amountOfDummies) {
-        stopSimulation();
-        mapName = mapFile.getName();
-        mapGraphLoaded = MapReader.createMapFromFile(mapFile);
-        createSims(principalPilot instanceof RobotPilot, amount,
-                amountOfDummies);
-    }
-
-    public void setOnStartTile(PilotInterface pilot) {
-        for (Tile tile : mapGraphLoaded.getStartTiles()) {
-            if (tile.getContent().getValue() == pilot.getPlayerNumber()) {
-                pilot.setPosition(tile.getPosition().x * 40 + 20,
-                        tile.getPosition().y * 40 + 20);
-                pilot.setAngle(((StartBase) tile.getContent()).getOrientation()
-                        .getAngle());
-            }
-        }
-    }
-
-    private void showSims() {
-        removeAll();
-        invalidate();
-
-        if (mapGraphLoaded == null) {
-            if (otherViewPorts.size() == 1) { // Eigen sim en teamsim zonder map
-                                              // (nodig voor demo 6)
-                simulatorLayout.setHorizontalGroup(simulatorLayout
-                        .createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(principalViewPort)
-                        .addComponent(otherViewPorts.get(0)));
-                simulatorLayout.setVerticalGroup(simulatorLayout
-                        .createSequentialGroup()
-                        .addComponent(principalViewPort)
-                        .addComponent(otherViewPorts.get(0)));
-                view = "1 robot and 1 dummy robot, no map";
-            } else { // Enkel eigen sim zonder map (default start)
-                simulatorLayout.setHorizontalGroup(simulatorLayout
-                        .createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(principalViewPort));
-                simulatorLayout.setVerticalGroup(simulatorLayout
-                        .createSequentialGroup()
-                        .addComponent(principalViewPort));
-                view = "1 robot, no map";
-            }
-        } else {
-            Set<PilotInterface> allPilots = new HashSet<PilotInterface>(
-                    simulatorPilots);
-            allPilots.addAll(dummyPilots);
-            allPilots.add(principalPilot);
-            overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded,
-                    teamColors);
-
-            if (otherViewPorts.size() == 1) { // Eigen sim en teamsim met map
-                                              // (nodig voor demo 5)
-                simulatorLayout.setHorizontalGroup(simulatorLayout
-                        .createSequentialGroup()
-                        .addComponent(overallViewPort)
-                        .addGroup(
-                                simulatorLayout
-                                        .createParallelGroup(
-                                                GroupLayout.Alignment.CENTER)
-                                        .addComponent(principalViewPort)
-                                        .addComponent(otherViewPorts.get(0))));
-                simulatorLayout.setVerticalGroup(simulatorLayout
-                        .createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(overallViewPort)
-                        .addGroup(
-                                simulatorLayout.createSequentialGroup()
-                                        .addComponent(principalViewPort)
-                                        .addComponent(otherViewPorts.get(0))));
-                view = "1 robot and 1 dummy robot, with map";
-            } else if (otherViewPorts.size() == 3) { // Eigen sim en 3 andere
-                                                     // sims met map
-                simulatorLayout
-                        .setHorizontalGroup(simulatorLayout
-                                .createSequentialGroup()
-                                .addComponent(overallViewPort)
-                                .addGroup(
-                                        simulatorLayout
-                                                .createParallelGroup(
-                                                        GroupLayout.Alignment.CENTER)
-                                                .addGroup(
-                                                        simulatorLayout
-                                                                .createSequentialGroup()
-                                                                .addComponent(
-                                                                        principalViewPort)
-                                                                .addComponent(
-                                                                        otherViewPorts
-                                                                                .get(0)))
-                                                .addGroup(
-                                                        simulatorLayout
-                                                                .createSequentialGroup()
-                                                                .addComponent(
-                                                                        otherViewPorts
-                                                                                .get(1))
-                                                                .addComponent(
-                                                                        otherViewPorts
-                                                                                .get(2)))));
-                simulatorLayout
-                        .setVerticalGroup(simulatorLayout
-                                .createParallelGroup(
-                                        GroupLayout.Alignment.CENTER)
-                                .addComponent(overallViewPort)
-                                .addGroup(
-                                        simulatorLayout
-                                                .createSequentialGroup()
-                                                .addGroup(
-                                                        simulatorLayout
-                                                                .createParallelGroup(
-                                                                        GroupLayout.Alignment.CENTER)
-                                                                .addComponent(
-                                                                        principalViewPort)
-                                                                .addComponent(
-                                                                        otherViewPorts
-                                                                                .get(0)))
-                                                .addGroup(
-                                                        simulatorLayout
-                                                                .createParallelGroup(
-                                                                        GroupLayout.Alignment.CENTER)
-                                                                .addComponent(
-                                                                        otherViewPorts
-                                                                                .get(1))
-                                                                .addComponent(
-                                                                        otherViewPorts
-                                                                                .get(2)))));
-                view = "1 robot and 3 simulated robots, with map";
-            } else { // Enkel eigen sim met map
-                simulatorLayout.setHorizontalGroup(simulatorLayout
-                        .createSequentialGroup().addComponent(overallViewPort)
-                        .addComponent(principalViewPort));
-                simulatorLayout.setVerticalGroup(simulatorLayout
-                        .createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(overallViewPort)
-                        .addComponent(principalViewPort));
-                view = "1 robot, with map";
-            }
-        }
-
-        validate();
     }
 
     public void startSimulation() {
@@ -409,9 +358,6 @@ public class SimulatorPanel extends JPanel {
     // Enkel bruikbaar door simulators (mapgraphLoaded en robotposities nodig)
     public static boolean robotOn(final Point2D.Double point) {
         for (PilotInterface pilot : simulatorPilots)
-            if (point.equals(pilot.getPosition()))
-                return true;
-        for (PilotInterface pilot : dummyPilots)
             if (point.equals(pilot.getPosition()))
                 return true;
         return false;

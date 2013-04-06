@@ -149,15 +149,16 @@ public class ShortestPath {
             }
             // TODO goToNextTile checkte of er geAligned moest worden.
             // communicator.goToNextTile(orientation);
+            try {
+            	if(pilot.getTeamPilot().isActive())
+            		pilot.getCenter().updatePosition((int)pilot.getPosition().x, (int)pilot.getPosition().y, (int)pilot.getAngle());
+            } catch(Exception e) {
+            	
+            }
         }
 
         for (final Object tile : tiles) {
             ((Tile) tile).resetCost();
-        }
-        try {
-            pilot.getCenter().updatePosition((int)pilot.getPosition().x, (int)pilot.getPosition().y, (int)pilot.getAngle());
-        } catch(Exception e) {
-        	
         }
         return currentAmount;
     }
