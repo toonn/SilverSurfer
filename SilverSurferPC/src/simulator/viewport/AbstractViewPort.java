@@ -44,6 +44,7 @@ public abstract class AbstractViewPort extends JPanel {
             "resources/robot/NXTrobotsmall.png");
     private int repaintFPS = 30;
     private Color[] teamColors;
+    private Color mainColor;
     private ActionListener repaintViewPort = new ActionListener() {
 
         @Override
@@ -53,12 +54,17 @@ public abstract class AbstractViewPort extends JPanel {
     };
 
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet,
-            Color[] teamColors) {
+            Color[] teamColors, Color mainColor) {
         this.teamColors = teamColors;
+        this.mainColor = mainColor;
         pilots = new HashSet<PilotInterface>(pilotSet);
         barcodeRectangles = new HashMap<Barcode, Rectangle2D[]>();
         treasureCircles = new HashMap<TreasureObject, Ellipse2D[]>();
         new Timer(1000 / repaintFPS, repaintViewPort).start();
+    }
+    
+    public void setMainColor(Color mainColor) {
+    	this.mainColor = mainColor;
     }
 
     private Rectangle2D[] createVisualBarCode(final Barcode barcode) {
@@ -172,6 +178,7 @@ public abstract class AbstractViewPort extends JPanel {
     private void paintFrame(final Graphics graph) {
         Graphics2D g2 = (Graphics2D) graph;
 
+        g2.setColor(mainColor);
         Stroke originalStroke = g2.getStroke();
         g2.setStroke(new BasicStroke(5, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER));

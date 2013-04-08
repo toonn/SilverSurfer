@@ -27,8 +27,8 @@ public class UnitViewPort extends DummyViewPort {
     private List<Point> pathCoordinates;
     private final Arc2D sonarArc = new Arc2D.Double();
 
-    public UnitViewPort(final Set<AbstractPilot> pilotSet, Color[] teamColors) {
-        super(pilotSet, teamColors);
+    public UnitViewPort(final Set<AbstractPilot> pilotSet, Color[] teamColors, Color mainColor) {
+        super(pilotSet, teamColors, mainColor);
         pilots = new HashSet<AbstractPilot>(pilotSet);
         resetPath();
     }

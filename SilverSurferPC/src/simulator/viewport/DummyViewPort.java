@@ -11,8 +11,8 @@ import simulator.pilot.PilotInterface;
 public class DummyViewPort extends AbstractViewPort {
 
     public DummyViewPort(Set<? extends PilotInterface> pilotSet,
-            Color[] teamColors) {
-        super(pilotSet, teamColors);
+            Color[] teamColors, Color mainColor) {
+        super(pilotSet, teamColors, mainColor);
     }
 
     @Override

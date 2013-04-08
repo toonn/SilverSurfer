@@ -3,8 +3,6 @@ package gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -30,7 +28,7 @@ public class SilverSurferGUI {
     private static JLabel infoLabel9, infoLabel10, infoLabel11, infoLabel12, infoLabel13, infoLabel14, infoLabel15, infoLabel16;
     private static JLabel infoLabel17, infoLabel18;
     private static JLabel legendLabel1, legendLabel2, legendLabel3, legendLabel4, legendLabel5, legendLabel6, legendLabel7;
-    private static JPanel legendPanel, inputPanel, infoPanel;
+    private static JPanel legendPanel, inputPanel, sidePanel;
     private static SimulatorPanel simulatorPanel;
     private static SensorGraph sensorPanel;
     private GUIMenuBar menuBar;
@@ -55,21 +53,28 @@ public class SilverSurferGUI {
     public static SimulatorPanel getSimulatorPanel() {
         return simulatorPanel;
     }
-
-    public void toggleInputPanel() {
-        if (inputPanel.isVisible())
-            inputPanel.setVisible(false);
-        else
-            inputPanel.setVisible(true);
+    
+    public void toggleAll() {
+    	if (sidePanel.isVisible()) {
+            legendPanel.setVisible(false);
+            sidePanel.setVisible(false);
+            sensorPanel.setVisible(false);
+    		simulatorPanel.toggleAll(false);
+    	} else {
+            legendPanel.setVisible(true);
+            sidePanel.setVisible(true);
+            sensorPanel.setVisible(true);
+    		simulatorPanel.toggleAll(true);
+    	}
     }
 
-    public void toggleInfoPanel() {
-        if (infoPanel.isVisible()) {
+    public void toggleSidePanel() {
+        if (sidePanel.isVisible()) {
             legendPanel.setVisible(false);
-            infoPanel.setVisible(false);
+            sidePanel.setVisible(false);
         } else {
             legendPanel.setVisible(true);
-            infoPanel.setVisible(true);
+            sidePanel.setVisible(true);
         }
     }
 
@@ -113,12 +118,10 @@ public class SilverSurferGUI {
 
     private void initializePanels() {
         menuBar = new GUIMenuBar(this, frame);
-        inputPanel();
         legendPanel();
-        infoPanel();
+        sidePanel();
         sensorPanel();
         simulatorPanel = new SimulatorPanel(teamColors);
-        addListeners();
     }
 
     private void inputPanel() {
@@ -233,7 +236,7 @@ public class SilverSurferGUI {
         legendPanel.setVisible(false);
     }
 
-    private void infoPanel() {
+    private void sidePanel() {
         infoLabel1 = new JLabel("", SwingConstants.CENTER);
         infoLabel2 = new JLabel("", SwingConstants.CENTER);
         infoLabel3 = new JLabel("", SwingConstants.CENTER);
@@ -253,15 +256,14 @@ public class SilverSurferGUI {
         infoLabel17 = new JLabel("", SwingConstants.CENTER);
         infoLabel18 = new JLabel("", SwingConstants.CENTER);
 
-        infoPanel = new JPanel();
-        infoPanel.setOpaque(false);
+        sidePanel = new JPanel();
+        sidePanel.setOpaque(false);
 
-        final GroupLayout outputLayout = new GroupLayout(infoPanel);
-        infoPanel.setLayout(outputLayout);
+        final GroupLayout outputLayout = new GroupLayout(sidePanel);
+        sidePanel.setLayout(outputLayout);
         outputLayout.setAutoCreateGaps(true);
         outputLayout.setAutoCreateContainerGaps(true);
-        outputLayout.setHorizontalGroup(outputLayout
-                .createParallelGroup(GroupLayout.Alignment.CENTER)
+        outputLayout.setHorizontalGroup(outputLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(infoLabel1).addComponent(infoLabel2)
                 .addComponent(infoLabel3).addComponent(infoLabel4)
                 .addComponent(infoLabel5).addComponent(infoLabel6)
@@ -282,7 +284,7 @@ public class SilverSurferGUI {
                 .addComponent(infoLabel15).addComponent(infoLabel16)
                 .addComponent(infoLabel17).addComponent(infoLabel18));
 
-        infoPanel.setVisible(false);
+        sidePanel.setVisible(false);
     }
 
     private void sensorPanel() {
@@ -295,6 +297,8 @@ public class SilverSurferGUI {
         frame = new JFrame("Silver Surfer Command Center");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(221, 230, 231));
+        //new Color(221, 230, 231) -- blueish
+        //new Color(238, 238, 238) -- same white as simulatorpanel
 
         frame.setJMenuBar(menuBar);
 
@@ -306,9 +310,8 @@ public class SilverSurferGUI {
                         frameLayout
                                 .createParallelGroup(
                                         GroupLayout.Alignment.CENTER)
-                                .addComponent(inputPanel)
                                 .addComponent(legendPanel)
-                                .addComponent(infoPanel))
+                                .addComponent(sidePanel))
                 .addGroup(
                         frameLayout
                                 .createParallelGroup(
@@ -319,89 +322,17 @@ public class SilverSurferGUI {
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addGroup(
                         frameLayout.createSequentialGroup()
-                                .addComponent(inputPanel)
                                 .addComponent(legendPanel)
-                                .addComponent(infoPanel))
+                                .addComponent(sidePanel))
                 .addGroup(
                         frameLayout.createSequentialGroup()
                                 .addComponent(simulatorPanel)
                                 .addComponent(sensorPanel, 170, 170, 170)));
-        frameLayout.linkSize(SwingConstants.HORIZONTAL, inputPanel);
-        frameLayout.linkSize(SwingConstants.VERTICAL, inputPanel);
-
+        
         frame.pack();
         frame.setSize(1000, 800);
         frame.setVisible(true);
 
         System.out.println("[CONNECTION] Entered simulator mode.");
-    }
-
-    private void addListeners() {
-    	turnLeftButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                simulatorPanel.turnLeftPrincipalPilot(Integer.parseInt(angle.getValue().toString()));
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-        });
-        turnRightButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                simulatorPanel.turnRightPrincipalPilot(Integer.parseInt(angle.getValue().toString()));
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-        });
-        moveButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(final MouseEvent arg0) {
-                simulatorPanel.travelPrincipalPilot(Integer.parseInt(length.getValue().toString()));
-            }
-
-            @Override
-            public void mouseEntered(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseExited(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mousePressed(final MouseEvent arg0) {
-            }
-
-            @Override
-            public void mouseReleased(final MouseEvent arg0) {
-            }
-        });
     }
 }
