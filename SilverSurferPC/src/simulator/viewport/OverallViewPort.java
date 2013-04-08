@@ -22,18 +22,6 @@ public class OverallViewPort extends AbstractViewPort {
         this.mapGraphLoaded = mapGraphLoaded;
     }
 
-    /**
-     * Flips all the seesaws with the given value to the other side.
-     */
-    private void flipSeesaw(int value, MapGraph map) {
-        for (Tile tile : map.getTiles()) {
-            if (tile.getContent() instanceof Seesaw
-                    && tile.getContent().getValue() == value) {
-                ((Seesaw) tile.getContent()).flipSeesaw();
-            }
-        }
-    }
-
     @Override
     protected Set<MapGraph> getAllMapGraphs() {
         Set<MapGraph> maps = new HashSet<MapGraph>();
@@ -48,17 +36,12 @@ public class OverallViewPort extends AbstractViewPort {
     }
 
     private void robotOnSeesaw() {
-        for (Tile tile : mapGraphLoaded.getTiles()) {
-            if (tile.getContent() instanceof Seesaw) {
-                for (PilotInterface pilot : pilots) {
-                    if (pilot.getMatrixPosition().equals(tile.getPosition())
-                            && ((Seesaw) tile.getContent()).isUp()) {
-                        flipSeesaw(tile.getContent().getValue(), mapGraphLoaded);
-                        flipSeesaw(tile.getContent().getValue(),
-                                pilot.getMapGraphConstructed());
-                    }
-                }
-            }
-        }
+        for (Tile tile : mapGraphLoaded.getTiles())
+            if (tile.getContent() instanceof Seesaw)
+                for (PilotInterface pilot : pilots)
+                    if (pilot.getMatrixPosition().equals(tile.getPosition()) && ((Seesaw) tile.getContent()).isClosed())
+                        for (Tile mapTile : mapGraphLoaded.getTiles())
+                            if (mapTile.getContent() instanceof Seesaw && mapTile.getContent().getValue() == tile.getContent().getValue())
+                                ((Seesaw) mapTile.getContent()).flipSeesaw();
     }
 }

@@ -1,6 +1,5 @@
 package mazeAlgorithm;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -60,7 +59,7 @@ public class MazeExplorer {
                 ((Tile)tile).setMarkingExploreMaze(false);
         } catch (Exception e) {
             if(!quit)
-            	System.out.println("Exception in MazeExplorer!");
+            	e.printStackTrace();
         }
     }
     
@@ -73,15 +72,15 @@ public class MazeExplorer {
             return;
         }
         Tile nextTile = getPriorityNextTile(currentTile);
-        if(nextTile == null) 
-        	nextTile = crossSeesaw(searchOpenSeesaw(currentTile));
-        else {
+        if(nextTile == null) { //Null if next tile is not reachable without taking a seesaw.
+        	Tile seesawTile = searchOpenSeesaw(currentTile);
+        	nextTile = crossSeesaw(seesawTile);
+        } else {
             updateVectors(nextTile);
         	if(!isUseful(nextTile)) {
                 nextTile.setMarkingExploreMaze(true);
                 nextTile = currentTile;
-        	}
-        	else {
+        	} else {
                 final ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, nextTile, allTiles);
                 currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
                 if (nextTile.getContent() instanceof Barcode)
@@ -118,16 +117,7 @@ public class MazeExplorer {
             if (neighbourTile != null && !neighbourTile.isMarkedExploreMaze() && !queue.contains(neighbourTile))
                 queue.add(neighbourTile);
 
-    	if(pilot.getTeamPilot().isActive()) {
-        	ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
-        	for (mapping.Tile tile : pilot.getMapGraphConstructed().getTiles()) 
-                vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
-        	try {
-                pilot.getCenter().getClient().sendTiles(vector);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-    	}
+
     }
     
     private Tile getPriorityNextTile(final Tile currentTile) {
@@ -182,13 +172,29 @@ public class MazeExplorer {
     }
     
     private Tile crossSeesaw(Tile currentTile) {
+    	int seesawValue = getSeesawValue(currentTile);
     	Tile endTile = getOtherEndOfSeesaw(currentTile);
         pilot.setReadBarcodes(false);
-        pilot.travel(140);
+        pilot.travel(60);
+        for (Tile tile : pilot.getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw && tile.getContent().getValue() == seesawValue)
+                ((Seesaw)tile.getContent()).flipSeesaw();
+        pilot.travel(80);
         pilot.setReadBarcodes(true);
         pilot.travel(20);
         //TODO: whiteline! want onnauwkeurig na wip!
         return endTile;
+    }
+
+    private int getSeesawValue(Tile tile) {
+    	if(tile.getEdgeAt(Orientation.EAST).getObstruction() == Obstruction.WALL && tile.getSouthNeighbour().getContent() instanceof Seesaw)
+    		return tile.getSouthNeighbour().getContent().getValue();
+    	else if(tile.getEdgeAt(Orientation.EAST).getObstruction() == Obstruction.WALL && tile.getNorthNeighbour().getContent() instanceof Seesaw)
+    		return tile.getNorthNeighbour().getContent().getValue();
+    	else if(tile.getEdgeAt(Orientation.NORTH).getObstruction() == Obstruction.WALL && tile.getEastNeighbour().getContent() instanceof Seesaw)
+    		return tile.getEastNeighbour().getContent().getValue();
+    	else
+    		return tile.getWestNeighbour().getContent().getValue();
     }
 
     private Tile getOtherEndOfSeesaw(Tile tile) {

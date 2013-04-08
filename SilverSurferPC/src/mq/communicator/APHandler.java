@@ -1,7 +1,11 @@
 package mq.communicator;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+
+import javax.swing.Timer;
 
 import mapping.Barcode;
 import mapping.MapReader;
@@ -11,12 +15,14 @@ import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerHandler;
 import peno.htttp.Tile;
 import simulator.pilot.AbstractPilot;
+import simulator.pilot.RobotPilot;
 import simulator.viewport.SimulatorPanel;
 
 public class APHandler implements PlayerHandler {
 
     private AbstractPilot pilot;
     private SimulatorPanel panel;
+    private Timer readyTimer;
 
     public APHandler(AbstractPilot pilot, SimulatorPanel panel) {
         this.pilot = pilot;
@@ -65,7 +71,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void playerFoundObject(String playerID, int playerNumber) {
-        System.out.println("[HTTTP] Player " + playerNumber + " (" + playerID + ") has found his object!");
+        System.out.println("[HTTTP] Player " + (playerNumber - 1) + " (" + playerID + ") has found his object!");
     }
 
     @Override
@@ -81,31 +87,57 @@ public class APHandler implements PlayerHandler {
                 + objectNumber + ".");
         panel.makeReadyToPlay(pilot);
         panel.resetAllPaths();
-        try {
-            pilot.getCenter().setReady(true);
-        } catch (Exception e) {
+        
+    	if(pilot instanceof RobotPilot) {
+            int checkIfReadyFPS = 50;
+            ActionListener checkIfReady = new ActionListener() {
 
-        }
+                @Override
+                public void actionPerformed(final ActionEvent arg0) {
+                	checkIfReady();
+                }
+            };
+            readyTimer = new Timer(1000 / checkIfReadyFPS, checkIfReady);
+            readyTimer.start();
+    	}
+    	else
+    		try {
+    			pilot.getCenter().setReady(true);
+    		} catch (Exception e) {
+    			
+    		}
+    }
+    
+    private void checkIfReady() {
+    	if(((RobotPilot)pilot).isReady()) {
+    		try {
+    			pilot.getCenter().setReady(true);
+    		} catch (Exception e) {
+    			
+    		}
+    		readyTimer.stop();
+    	}
     }
 
     @Override
     public void teamConnected(String partnerID) {
         System.out.println("[HTTTP] Partner (" + partnerID + ") has connected.");
-        pilot.setTeamMemberFound(partnerID);
-        pilot.getTeamPilot().activate();
+        pilot.activateTeamPilot(partnerID);
     }
 
     @Override
     public void teamPosition(double x, double y, double angle) {
-    	if(pilot.getTeamPilot().isActive()) {
-    		pilot.getTeamPilot().setPosition(x, y);
-    		pilot.getTeamPilot().setAngle(angle);
-    	}
+    	pilot.getTeamPilot().setPosition(x, y);
+    	pilot.getTeamPilot().setAngle(angle);
     }
 
     @Override
     public void teamTilesReceived(List<Tile> tiles) {
-        Point point1 = null, point2 = null, ourPoint1 = null, ourPoint2 = null;
+        pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(tiles));
+    }
+    
+    private void searchForSimilarTiles(List<Tile> tiles) {
+    	Point point1 = null, point2 = null, ourPoint1 = null, ourPoint2 = null;
         String[] info;
         for (peno.htttp.Tile tile : tiles) {
             info = tile.getToken().split("\\.");
@@ -159,11 +191,9 @@ public class APHandler implements PlayerHandler {
                     }
                 }
         }
-        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null) {
-            System.out.println("[HTTTP] Similar tiles found! " + point1 + " " + ourPoint1 + " -- " + point2 + " " + ourPoint2);
-            if(pilot.getTeamPilot().isActive())
-            	pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(tiles));
-        } else
+        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null)
+            System.out.println("[HTTTP] Similar tiles found! " + point1 + " " + point2 + ", " + ourPoint1 + " " + ourPoint2);
+        else
             System.out.println("[HTTTP] No similar tiles found yet!");
     }
 }

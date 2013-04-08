@@ -191,16 +191,16 @@ public class SilverSurferGUI {
     private void legendPanel() {
         legendLabel1 = new JLabel("", SwingConstants.CENTER);
         legendLabel1.setForeground(teamColors[0]);
-        legendLabel1.setText("Player 1");
+        legendLabel1.setText("Player 0");
         legendLabel2 = new JLabel("", SwingConstants.CENTER);
         legendLabel2.setForeground(teamColors[1]);
-        legendLabel2.setText("Player 2");
+        legendLabel2.setText("Player 1");
         legendLabel3 = new JLabel("", SwingConstants.CENTER);
         legendLabel3.setForeground(teamColors[2]);
-        legendLabel3.setText("Player 3");
+        legendLabel3.setText("Player 2");
         legendLabel4 = new JLabel("", SwingConstants.CENTER);
         legendLabel4.setForeground(teamColors[3]);
-        legendLabel4.setText("Player 4");
+        legendLabel4.setText("Player 3");
         legendLabel5 = new JLabel("", SwingConstants.CENTER);
         legendLabel5.setForeground(teamColors[4]);
         legendLabel5.setText("Team 1");

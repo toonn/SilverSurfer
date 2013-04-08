@@ -135,8 +135,8 @@ public class MQCenter {
         return new Callback<Void>() {
             @Override
             public void onFailure(Throwable t) {
-                System.err.println("[HTTTP] Fout bij deelname: " + t.getMessage());
-                System.err.println("[HTTTP] Opnieuw proberen...");
+                System.err.println("[HTTTP] Error connecting: " + t.getMessage());
+                System.err.println("[HTTTP] Retry ...");
                 try {
                     client.join(stdCallback());
                 } catch (IllegalStateException e) {
@@ -148,7 +148,7 @@ public class MQCenter {
 
             @Override
             public void onSuccess(Void result) {
-                System.out.println("[HTTTP] Succesvolle deelname door " + getPlayerID());
+                System.out.println("[HTTTP] Succesfully connected. Your player ID is " + getPlayerID() + ".");
             }
         };
     }

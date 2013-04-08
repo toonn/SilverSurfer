@@ -16,6 +16,7 @@ public class Seesaw extends TileContent {
      * vice versa.
      */
     public void flipSeesaw() {
+    	switchClosed();
         for (Edge edge : tile.getEdges())
             if (edge.getObstruction() == Obstruction.SEESAW_DOWN)
                 edge.setObstruction(Obstruction.SEESAW_UP);
@@ -33,13 +34,6 @@ public class Seesaw extends TileContent {
 
     public boolean isClosed() {
         return closed;
-    }
-
-    public boolean isUp() {
-        for (Edge edge : tile.getEdges())
-            if (edge.getObstruction() == Obstruction.SEESAW_UP)
-                return true;
-        return false;
     }
 
     public void setOtherSeesaw(Seesaw otherSeesaw) {

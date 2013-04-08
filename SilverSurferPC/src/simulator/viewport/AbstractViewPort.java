@@ -211,14 +211,12 @@ public abstract class AbstractViewPort extends JPanel {
         final Graphics2D g2 = (Graphics2D) graph;
 
         for (PilotInterface pilot : pilots) {
-            if (!(pilot instanceof DummyPilot)
-                    || ((DummyPilot) pilot).isActive()) {
+            if (!(pilot instanceof DummyPilot) || ((DummyPilot) pilot).isActive()) {
                 AffineTransform oldTransform = g2.getTransform();
-                if (!(pilot instanceof DummyPilot) && pilot.getTeamNumber() < 0) {
-                    g2.setColor(teamColors[((AbstractPilot)pilot).getPlayerNumber()]);
-                } else {
+                if (!(pilot instanceof DummyPilot) && pilot.getTeamNumber() < 0)
+                	g2.setColor(teamColors[((AbstractPilot)pilot).getPlayerNumber()]);
+                else
                     g2.setColor(teamColors[4 + pilot.getTeamNumber()]);
-                }
 
                 g2.fill(new Ellipse2D.Double(
                         (pilot.getPosition().getX() - (diam / 2)), (pilot
@@ -231,16 +229,10 @@ public abstract class AbstractViewPort extends JPanel {
     private void paintRobots(final Graphics graph) {
         Graphics2D g2 = (Graphics2D) graph;
         for (PilotInterface pilot : pilots) {
-            if (!(pilot instanceof DummyPilot)
-                    || ((DummyPilot) pilot).isActive()) {
+            if (!(pilot instanceof DummyPilot) || ((DummyPilot) pilot).isActive()) {
                 AffineTransform oldTransform = g2.getTransform();
-                g2.rotate(Math.toRadians(pilot.getAngle()), pilot.getPosition()
-                        .getX(), pilot.getPosition().getY());
-                g2.drawImage(robotSprite.getImage(),
-                        (int) ((pilot.getPosition().getX() - robotSprite
-                                .getIconWidth() / 2)), (int) ((pilot
-                                .getPosition().getY() - robotSprite
-                                .getIconHeight() / 2)), null);
+                g2.rotate(Math.toRadians(pilot.getAngle()), pilot.getPosition().getX(), pilot.getPosition().getY());
+                g2.drawImage(robotSprite.getImage(), (int) ((pilot.getPosition().getX() - robotSprite.getIconWidth() / 2)), (int) ((pilot.getPosition().getY() - robotSprite.getIconHeight() / 2)), null);
                 g2.setTransform(oldTransform);
             }
         }

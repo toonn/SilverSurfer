@@ -180,24 +180,51 @@ public class SimulatorPanel extends JPanel {
     }
     
     private void showFourPlayers(boolean showDummies) {
-    	simulatorLayout.setHorizontalGroup(simulatorLayout.createSequentialGroup()
-                .addComponent(overallViewPort)
-                .addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                		.addGroup(simulatorLayout.createSequentialGroup()
-                				.addComponent(principalUnitViewPort)
-                				.addComponent(simulatorViewPorts.get(0)))
-                		.addGroup(simulatorLayout.createSequentialGroup()
-                				.addComponent(simulatorViewPorts.get(1))
-                				.addComponent(simulatorViewPorts.get(2)))));
-    	simulatorLayout.setVerticalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(overallViewPort)
-                .addGroup(simulatorLayout.createSequentialGroup()
-                		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                				.addComponent(principalUnitViewPort)
-                				.addComponent(simulatorViewPorts.get(0)))
-                		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                				.addComponent(simulatorViewPorts.get(1))
-                				.addComponent(simulatorViewPorts.get(2)))));
+    	if(showDummies) {
+        	simulatorLayout.setHorizontalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                    		.addComponent(principalUnitViewPort)
+                    		.addComponent(principalDummyViewPort)
+                    		.addComponent(simulatorViewPorts.get(0))
+                    		.addComponent(simulatorDummyViewPorts.get(0)))
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                    		.addComponent(simulatorViewPorts.get(1))
+                    		.addComponent(simulatorDummyViewPorts.get(1))
+                    		.addComponent(simulatorViewPorts.get(2))
+                    		.addComponent(simulatorDummyViewPorts.get(2))));
+        	simulatorLayout.setVerticalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                    		.addComponent(principalUnitViewPort)
+                    		.addComponent(simulatorViewPorts.get(1)))
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                    		.addComponent(principalDummyViewPort)
+                    		.addComponent(simulatorDummyViewPorts.get(1)))
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                    		.addComponent(simulatorViewPorts.get(0))
+                    		.addComponent(simulatorViewPorts.get(2)))
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                    		.addComponent(simulatorDummyViewPorts.get(0))
+                    		.addComponent(simulatorDummyViewPorts.get(2))));
+    	} else {
+        	simulatorLayout.setHorizontalGroup(simulatorLayout.createSequentialGroup()
+                    .addComponent(overallViewPort)
+                    .addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    		.addGroup(simulatorLayout.createSequentialGroup()
+                    				.addComponent(principalUnitViewPort)
+                    				.addComponent(simulatorViewPorts.get(0)))
+                    		.addGroup(simulatorLayout.createSequentialGroup()
+                    				.addComponent(simulatorViewPorts.get(1))
+                    				.addComponent(simulatorViewPorts.get(2)))));
+        	simulatorLayout.setVerticalGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addComponent(overallViewPort)
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                    		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    				.addComponent(principalUnitViewPort)
+                    				.addComponent(simulatorViewPorts.get(0)))
+                    		.addGroup(simulatorLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    				.addComponent(simulatorViewPorts.get(1))
+                    				.addComponent(simulatorViewPorts.get(2)))));
+    	}
     }
 
     public void resetRobots() {

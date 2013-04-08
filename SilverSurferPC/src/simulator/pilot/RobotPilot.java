@@ -11,6 +11,7 @@ public class RobotPilot extends AbstractPilot {
     private Communicator communicator;
     private static InfoReceiverThread IRT;
     private boolean busy = false;
+    private boolean ready = false;
 
     public RobotPilot(int teamNumber) {
         super(teamNumber);
@@ -164,5 +165,13 @@ public class RobotPilot extends AbstractPilot {
         } catch (Exception e) {
 
         }
+    }
+    
+    public boolean isReady() {
+    	return ready;
+    }
+    
+    public void setReady() {
+    	ready = true;
     }
 }

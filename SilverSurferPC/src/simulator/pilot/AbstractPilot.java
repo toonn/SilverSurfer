@@ -1,10 +1,15 @@
 package simulator.pilot;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
+
+import javax.swing.Timer;
 
 import mapping.MapGraph;
 import mapping.Obstruction;
@@ -37,6 +42,14 @@ public abstract class AbstractPilot implements PilotInterface {
     private String teamMemberName = "/";
     private Tile startingPositionOfTeamMember;
     private DummyPilot teamPilot = new DummyPilot();
+    private int updateTilesAndPositionFPS = 3;
+    private ActionListener updateTilesAndPosition = new ActionListener() {
+
+        @Override
+        public void actionPerformed(final ActionEvent arg0) {
+        	updateTilesAndPosition();
+        }
+    };
 
     public AbstractPilot(int playerNumber) {
         if (playerNumber < 0 || playerNumber > 3) {
@@ -47,6 +60,26 @@ public abstract class AbstractPilot implements PilotInterface {
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
         angle = 270;
         reset();
+    }
+    
+    public void activateTeamPilot(String teamMemberName) {
+    	teamMemberFound = true;
+    	this.teamMemberName = teamMemberName;
+    	teamPilot.activate();
+    	teamPilot.setTeamNumber(teamNumber);
+        new Timer(1000 / updateTilesAndPositionFPS, updateTilesAndPosition).start();
+    }
+    
+    private void updateTilesAndPosition() {
+    	ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
+    	for (mapping.Tile tile : getMapGraphConstructed().getTiles()) 
+    		vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
+    	try {
+    		getCenter().getClient().sendTiles(vector);
+    		getCenter().updatePosition((int)getPosition().x, (int)getPosition().y, (int)getAngle());
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
     }
     
     public DummyPilot getTeamPilot() {
@@ -287,11 +320,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void setSpeed(int speed) {
         this.speed = speed;
-    }
-
-    public void setTeamMemberFound(String teamMemberName) {
-        teamMemberFound = true;
-        this.teamMemberName = teamMemberName;
     }
 
     /**
