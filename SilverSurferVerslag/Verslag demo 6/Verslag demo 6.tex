@@ -25,7 +25,6 @@
 
 \maketitlepage
 
-\tableofcontents
 \newpage
 
 \begin{abstract}
@@ -40,10 +39,11 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 
 \setcounter{tocdepth}{2}
 \tableofcontents
+
 %figuur robot
 \begin{figure}[!hb]
-\begin{textblock}{38}(4,15)
-    \includegraphics[width=0.45\textwidth]{robotFP}
+\begin{textblock}{38}(5.4,16)
+    \includegraphics[width=0.38\textwidth]{robotFP}
     \label{fig:robotFP}
 \end{textblock}
 \end{figure}
@@ -149,7 +149,7 @@ Figuur~\ref{fig:robotDetail} geeft details van de schep, de wielen en de sensore
 % == robot aligneren == %
 \subsection{De robot aligneren}
 \label{ssec:AlgoAllign}
-%TODO
+%TODO uitleg witte lijn en alignOnWalls
 
 % == barcoes lezen == %
 \subsection{Barcodes lezen}
@@ -417,7 +417,9 @@ Voor de tweede demonstratie wordt met \'e\'en fysieke en drie gesimuleerde robot
 % == resulaten == %
 \subsection{Resultaten}
 \label{Assec:result2}
-%TODO
+%TODO niet volledig
+Het verkennen van de doolhof gebeurde volledig zoals het hoorde. De robot was enkele dagen voor de demonstratie geherkalibreerd en reed heel nauwkeurig. Het nemen van de wip lukte niet doordat de robot bleef haken met zijn zijn lichtsensor.
+De robot slaagde er niet in zijn voorwerp te vinden. Ook het samenvoegen van twee mappen was niet mogelijk.
 
 % == conclusies == %
 \subsection{Conclusies}
@@ -433,14 +435,15 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie van he
 %TODO
 % overzicht aangepaste secties
 \begin{itemize}
-\item \textit{\ref{ssec:Abstract} Samenvatting:} aangepast.
-\item \textit{\ref{ssec:FysB} Fysieke bouw:} de schep vooraan.
-\item \textit{\ref{ssec:AlgoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
-\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} nieuwe sectie.
-%\item \textit{\ref{ssec:AlgoMappen} Twee mappen samenvoegen:} nieuwe sectie.
+\item \textit{\ref{ssec:FysB} Ontwerp:} nieuwe bouw.
+\item \textit{\ref{ssec:Kalib} Kalibratie:} nieuwe sectie.
+\item \textit{\ref{ssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
+\item \textit{\ref{ssec:AlgoBar} Kalibratie:} nieuw algoritme.
+\item \textit{\ref{ssec:AlgoWip} Omgaan met de wip:} nieuwe sectie.
+%\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} aangepast.
+\item \textit{\ref{ssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
+\item \textit{\ref{ssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
 \item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
-\item \textit{\ref{ssec:RabbMQ} Communicatie via RabbitMQ:} implementatie \textit{HTTTP}.
-\item \textit{\ref{ssec:Mapping} Mappen van een doolhof:} wip en voorwerpen toegevoegd.
 \end{itemize}
 
 
