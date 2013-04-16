@@ -154,7 +154,10 @@ Figuur~\ref{fig:robotDetail} geeft details van de schep, de wielen en de sensore
 % == barcoes lezen == %
 \subsection{Barcodes lezen}
 \label{ssec:AlgoBar}
-%TODO
+%TODO het lees-algoritme
+
+Wanneer de barcode een voorwerp aanduidt, weet de robot dat de volgende tegel een ´dead-end' is zonder deze te moeten bezoeken. Deze tegel wordt automatisch toegevoegd (met voorwerp) en ingesteld als `verkend'.
+Analoog voor een barcode die een wip aanduidt. Dan worden de volgende drie tegels, waarvan er twee een wip bevatten, automatisch toegevoegd aan de map.
 
 
 % == zoeken van het voorwerp == %
@@ -220,7 +223,23 @@ Een vergelijking van alle testresultaten toont dat het algoritme minder effici\"
 
 \subsection{Omgaan met de wip}
 \label{ssec:AlgoWip}
-%TODO
+%TODO beter schrijven
+Wanneer de robot een wip tegenkomt, zal hij deze in eerste instantie niet overrijden. De robot zal eerst alle tegels aan deze kant van de wip verkennen. De kans is immers vrij groot dat hij de andere kant van de wip tegenkomt zonder deze te moeten oversteken. Wanneer alle tegels tegels in de queue verkend zijn, behalve deze die bereikbaar zijn via een wip, dan zal de robot de wip wel oversteken.
+
+\subsection{Twee doolhoven samenvoegen}
+\label{ssec:AlgoMappen}
+%TODO beter schrijven
+Wanneer een robot zijn voorwerp gevonden heeft, weet hij bij welk team hij hoort. Hij stuurt vanaf dan periodisch zijn map door en kijk regelmatig of zijn teamgenoot een map heeft gestuurd. %TODO klopt dit?
+Wanneer de robot een map ontvangt gaat hij op zoek naar een paar unieke punten. Dit zijn tegels met een voorwerp en de aangrenzende barcode of tegels met een wip en de aangrenzende barcode. De robot kijkt dan of zijn eigen map dit unieke paar ook bevat. Indien dit niet het geval is, zoekt de robot naar andere unieke paren of wacht hij tot een nieuwe doolhof binnenkomt.
+Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worden samengevoegd. E\'en van beide punten van het paar wordt als referentiepunt gekozen. Beide mappen worden verschoven tot dit punt op co\"ordinaat $(0,0)$ ligt. De robot vergelijkt dan de co\"ordinaten van het andere punt uit het unieke paar. Wanneer deze in de twee mappen niet gelijk zijn, wordt de tweede map geroteerd tot de co\"ordinaten van het tweede punt ook samenvallen. Nu kan een transformatiematrix worden opgesteld:
+
+\begin{equation*}
+	transformatie = translatie~doolhof_{1} * translatie~doolhof_{2} * rotatie~doolhof_{2}
+\end{equation*}
+
+Deze transformatiematrix projecteert de teammap op de map van de robot. Echter, ze verandert enkel de co\"ordinaten van de tegels. De tegels zelf moeten ook geroteerd worden zodat ook de muren juist geprojecteerd worden. De wijziging in ori\"entatie kan worden afgeleid uit de rotatiematrix van de tweede doolhof.\\
+
+Wanneer de volledige projectie bepaald is, kan deze elke keer gebruikt worden wanneer een nieuwe doolhof ontvangen worden. Ze hoeft niet opnieuw berekend te worden.
 
 \subsection{Weg vinden naar teamgenoot}
 \label{ssec:AlgoAndereRobot}
@@ -228,10 +247,6 @@ Een vergelijking van alle testresultaten toont dat het algoritme minder effici\"
 De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
 
 Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme.
-
-\subsection{Twee doolhoven samenvoegen}
-\label{ssec:AlgoMappen}
-%TODO
 
 \subsection{Botsingen met andere robots vermijden}
 \label{ssec:AlgoCollision}
