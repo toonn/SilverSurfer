@@ -82,7 +82,7 @@ public class SensorGraph extends JPanel {
         final int LSScale = LSMax - LSMin;
         final int USMax = 150;
         final int USWall = 28;
-        final int ISMax = 165;
+        final int ISMax = 155;
         final int ISTreshold = 70;
 
         // Labels on the graph
