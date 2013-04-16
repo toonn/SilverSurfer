@@ -39,12 +39,12 @@ public class WhitelineThread extends Thread {
 			Motor.B.stop(true);
 			Thread.sleep(500);
 			int value = ultrasonicSensor.getDistance();
-			if(value != 20 && value < 26) {
+			if(value != 16 && value < 21) {
 				int backup = Motor.A.getSpeed();
 				Motor.A.setSpeed(50);
 				Motor.B.setSpeed(50);
-		        Motor.A.rotate((int)Math.round((value-20)*lengthCoef), true);
-		        Motor.B.rotate((int)Math.round((value-20)*lengthCoef));
+		        Motor.A.rotate((int)Math.round((value-16)*lengthCoef), true);
+		        Motor.B.rotate((int)Math.round((value-16)*lengthCoef));
 				Motor.A.setSpeed(backup);
 				Motor.B.setSpeed(backup);
 			}

@@ -8,6 +8,7 @@ import mapping.Barcode;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mapping.Seesaw;
 import mapping.StartBase;
 import mapping.Tile;
 import simulator.viewport.SimulatorPanel;
@@ -249,11 +250,15 @@ public class SimulationPilot extends AbstractPilot {
 
     @Override
     public int getInfraRedSensorValue() {
+        double mean = 0;
+        double standardDeviation = 0.5;
         if (mapGraphLoaded == null) {
-            return (int) SimulationSensorData.getMNoInfraRedIS();
+        	mean = (int) SimulationSensorData.getMNoInfraRedIS();
         } else {
-            return recursiveInfraRed(getMatrixPosition(), 3);
+        	mean = recursiveInfraRed(getMatrixPosition(), 3);
         }
+        return (int) Math.round(mean
+                + (new Random().nextGaussian() * standardDeviation));
     }
 
     private double[] getLightSensorCoordinates() {
@@ -363,8 +368,7 @@ public class SimulationPilot extends AbstractPilot {
                 || mapGraphLoaded.getTile(currentPoint)
                         .getEdgeAt(getOrientation()).getObstruction() == Obstruction.SEESAW_DOWN) {
             return (int) SimulationSensorData.getMNoInfraRedIS();
-        } else if (mapGraphLoaded.getTile(currentPoint)
-                .getEdgeAt(getOrientation()).getObstruction() == Obstruction.SEESAW_UP) {
+        } else if (!(mapGraphLoaded.getTile(currentPoint).getContent() instanceof Seesaw) && mapGraphLoaded.getTile(currentPoint).getEdgeAt(getOrientation()).getObstruction() == Obstruction.SEESAW_UP) {
             return (int) SimulationSensorData.getMSeesawIS();
         } else {
             return recursiveInfraRed(getOrientation().getNext(currentPoint),

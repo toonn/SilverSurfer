@@ -240,8 +240,13 @@ public class GUIMenuBar extends JMenuBar {
         		inputPanel.add(new JLabel("Angle:"));
         		inputPanel.add(inputField);
         		
-        		JOptionPane.showOptionDialog(frame, inputPanel, "Enter amount.", JOptionPane.DEFAULT_OPTION, JOptionPane.DEFAULT_OPTION, null, null, null);
-            	SilverSurferGUI.getSimulatorPanel().turnRightPrincipalPilot(Integer.parseInt(inputField.getText()));
+        		int answer = JOptionPane.showOptionDialog(frame, inputPanel, "Enter amount.", JOptionPane.DEFAULT_OPTION, JOptionPane.DEFAULT_OPTION, null, null, null);
+        		if(answer != -1)
+        			try {
+            			SilverSurferGUI.getSimulatorPanel().turnRightPrincipalPilot(Integer.parseInt(inputField.getText()));
+        			} catch(Exception ex) {
+        				
+        			}
             }
         });
 
@@ -257,12 +262,13 @@ public class GUIMenuBar extends JMenuBar {
         		inputPanel.add(new JLabel("Distance:"));
         		inputPanel.add(inputField);
         		
-        		JOptionPane.showOptionDialog(frame, inputPanel, "Enter amount.", JOptionPane.DEFAULT_OPTION, JOptionPane.DEFAULT_OPTION, null, null, null);
-        		try {
-                	SilverSurferGUI.getSimulatorPanel().travelPrincipalPilot(Integer.parseInt(inputField.getText()));
-        		} catch(Exception ex) {
-        			
-        		}
+        		int answer = JOptionPane.showOptionDialog(frame, inputPanel, "Enter amount.", JOptionPane.DEFAULT_OPTION, JOptionPane.DEFAULT_OPTION, null, null, null);
+        		if(answer != -1)
+        			try {
+        				SilverSurferGUI.getSimulatorPanel().travelPrincipalPilot(Integer.parseInt(inputField.getText()));
+        			} catch(Exception ex) {
+        				
+        			}
             }
         });
         
