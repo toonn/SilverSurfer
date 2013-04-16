@@ -8,6 +8,7 @@ import mapping.Barcode;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mapping.StartBase;
 import mapping.Tile;
 import simulator.viewport.SimulatorPanel;
 
@@ -284,6 +285,9 @@ public class SimulationPilot extends AbstractPilot {
                     coordinates[0] % sizeTile(), coordinates[1] % sizeTile());
             mean = SimulationSensorData.getMBarcodeTileLS(color);
             standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
+        } else if(onStartTile(coordinates[0], coordinates[1])) {
+            mean = SimulationSensorData.getMEmptyPanelLS();
+            standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
         }
         return (int) Math.round(mean
                 + (new Random().nextGaussian() * standardDeviation));
@@ -323,6 +327,13 @@ public class SimulationPilot extends AbstractPilot {
         return !pointOnEdge(x, y)
                 && (mapGraphLoaded == null || mapGraphLoaded.getTile(
                         getMatrixPosition()).getContent() == null);
+    }
+
+    // True if the robot is not on an edge, but on a tile with a startbase.
+    private boolean onStartTile(final double x, final double y) {
+        return !pointOnEdge(x, y)
+                && (mapGraphLoaded == null || mapGraphLoaded.getTile(
+                        getMatrixPosition()).getContent() instanceof StartBase);
     }
 
     // True if the robot is on an edge and this edge is not a wall
