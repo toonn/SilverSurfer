@@ -12,8 +12,8 @@ import lejos.nxt.comm.*;
 public class CommandUnit {
 
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
-	private static final double ANGLE_COEF_RIGHT = 1.74; //Amount of degrees needed for a 1 degree turn to the right.
-	private static final double ANGLE_COEF_LEFT = 1.71; //Amount of degrees needed for a 1 degree turn to the left.
+	private static final double ANGLE_COEF_RIGHT = 2.358; //Amount of degrees needed for a 1 degree turn to the right.
+	private static final double ANGLE_COEF_LEFT = 2.358; //Amount of degrees needed for a 1 degree turn to the left.
     private static int SPEED = 200;
     
     private double x = 20;
@@ -257,7 +257,7 @@ public class CommandUnit {
     }
 
     private int alignOnWhiteLine() {
-    	int treshold = 54;
+    	int treshold = 46;
     	WhitelineThread WT = new WhitelineThread("WT", ultrasonicSensor, LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT);
 		WT.start();		
 		while(lightSensor.getLightValue() < treshold);
@@ -280,19 +280,19 @@ public class CommandUnit {
     	turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	int firstUSRead = ultrasonicSensor.getDistance();
     	int secondUSRead;
-    	if (firstUSRead < 26) {
-    		moveForwardWithoutBarcode((int)Math.round((firstUSRead-20)*LENGTH_COEF));
+    	if (firstUSRead < 21) {
+    		moveForwardWithoutBarcode((int)Math.round((firstUSRead-16)*LENGTH_COEF));
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(secondUSRead != 21 && secondUSRead < 26)
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-21)*LENGTH_COEF));
+    		if(secondUSRead != 16 && secondUSRead < 21)
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-16)*LENGTH_COEF));
     		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	}
     	else {
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 26) {
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-21)*LENGTH_COEF));
+    		if (secondUSRead < 21) {
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-16)*LENGTH_COEF));
         		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     		}
     		else 

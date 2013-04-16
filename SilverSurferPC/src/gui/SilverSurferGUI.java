@@ -95,7 +95,7 @@ public class SilverSurferGUI {
         int lightSensorValue = pilot.getLightSensorValue();
         int infraSensorValue = pilot.getInfraRedSensorValue();
         
-        sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue);
+        sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue, infraSensorValue);
 
         infoLabel1.setText("----- VIEW -----");
         infoLabel2.setText(simulatorPanel.getMapName());

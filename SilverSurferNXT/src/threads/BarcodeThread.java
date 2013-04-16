@@ -28,7 +28,7 @@ public class BarcodeThread extends Thread {
 	public void run() {
 		if(command == 0) {
 			while(bool) {
-				if(lightSensor.getLightValue() < 40)
+				if(lightSensor.getLightValue() < 35)
 					found = true;
 			}
 		}
@@ -39,7 +39,7 @@ public class BarcodeThread extends Thread {
 			Motor.B.rotateTo((int)Math.round(17*lengthCoef), true);
 			for(int i = 1; i <= 6; i++) {
 				while(Motor.A.getTachoCount() < (int)Math.round((i*2)*lengthCoef));
-				if(lightSensor.getLightValue() < 40) 
+				if(lightSensor.getLightValue() < 35) 
 					result = result + "0";
 				else
 					result = result + "1";
