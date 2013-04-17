@@ -154,39 +154,106 @@ public class MapGraph {
         }
         return mapGraphString;
     }
+    
+
+    public void mergeMap(List<peno.htttp.Tile> map2, Point map1tile1, Point map1tile2,
+            Point map2tile1, Point map2tile2, Orientation ori) {
+    	
+        int translatedxmap1 = (int) (map1tile2.getX() - map1tile1.getX());
+        int translatedymap1 = (int) (map1tile2.getY() - map1tile1.getY());
+        int translatedxmap2 = (int) (map2tile2.getX() - map2tile1.getX());
+        int translatedymap2 = (int) (map2tile2.getY() - map2tile1.getY());
+        float sinA;
+        float cosA;
+        if(translatedxmap2 == 0){
+        	sinA = - translatedxmap1/translatedymap2;
+        	cosA = translatedymap1/translatedymap2;
+        }
+        else if(translatedymap2 == 0){
+        	cosA = translatedxmap1/translatedxmap2;
+        	sinA = translatedymap1/translatedxmap2;
+        }
+        else{
+        sinA = (float) ((translatedymap1 - translatedxmap1
+                / translatedxmap2 * translatedymap2) / ((Math.pow(
+                translatedymap2, 2)) / translatedxmap2 + translatedxmap2));
+        cosA = (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2);
+        }
+        for (peno.htttp.Tile tile : map2) {
+            int convertedX = (int) (cosA * tile.getX() - sinA
+                    * tile.getY() - cosA * map2tile1.getX()
+                    + sinA * map2tile1.getY() + map1tile1.getX());
+            int convertedY = (int) (cosA * tile.getY() + sinA
+                    * tile.getX() - sinA * map2tile1.getX()
+                    - cosA * map2tile1.getY() + map1tile1.getY());
+
+            String[] info = tile.getToken().split("\\.");
+            MapReader mapreader = new MapReader();           
+            Tile madeTileFromString = new Tile(new Point(convertedX, convertedY));            
+            mapreader.generateStructures(info, madeTileFromString);
+            
+            if(convertedX == 3 && convertedY == 2 || convertedX == 4 && convertedY == 2){
+            	System.out.println(" ");
+            }
+            
+            if (!this.tiles.containsKey(new Point(convertedX, convertedY))) { 
+                Tile copiedTile = new Tile(new Point(convertedX, convertedY));
+                for(Orientation orientation : Orientation.values()){
+                	copiedTile.getEdgeAt(orientation).setObstruction(madeTileFromString.getEdgeAt(orientation.orientationRotatedOver(ori)).getObstruction());
+                }
+                copiedTile.getPosition().x = convertedX;
+                copiedTile.getPosition().y = convertedY;
+                setExistingTile(copiedTile);
+            } else
+                for (Orientation orientation : Orientation.values())
+                    if (this.getTile(new Point(convertedX, convertedY))
+                            .getEdgeAt(orientation).getObstruction() == null)
+                        this.getTile(new Point(convertedX, convertedY))
+                                .getEdgeAt(orientation)
+                                .setObstruction(
+                                		madeTileFromString.getEdgeAt(orientation.orientationRotatedOver(ori))
+                                                .getObstruction());
+        }
+    }
+    
+    private void setExistingTile(Tile tile) {
+        Point point = tile.getPosition();
+        tiles.put(point, tile);
+
+        Set<Tile> neighbourTiles = new HashSet<Tile>();
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() - 1,
+                (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX() + 1,
+                (int) point.getY())));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
+                .getY() - 1)));
+        neighbourTiles.add(tiles.get(new Point((int) point.getX(), (int) point
+                .getY() + 1)));
+
+        for (final Tile neighbourTile : neighbourTiles) {
+            Orientation orientation = null;
+            if (neighbourTile != null)
+                if (tile.getPosition().getX() < neighbourTile.getPosition()
+                        .getX())
+                    orientation = Orientation.EAST;
+                else if (tile.getPosition().getX() > neighbourTile
+                        .getPosition().getX())
+                    orientation = Orientation.WEST;
+                else if (tile.getPosition().getY() < neighbourTile
+                        .getPosition().getY())
+                    orientation = Orientation.SOUTH;
+                else if (tile.getPosition().getY() > neighbourTile
+                        .getPosition().getY())
+                    orientation = Orientation.NORTH;
+            if (orientation != null) {
+                if (neighbourTile.getEdgeAt(orientation).getObstruction() != null)
+                    tile.replaceEdge(orientation, neighbourTile
+                            .getEdgeAt(orientation.getOppositeOrientation()));
+                else
+                    neighbourTile.replaceEdge(
+                            orientation.getOppositeOrientation(),
+                            neighbourTile.getEdgeAt(orientation));
+            }
+        }
+    }
 }
-
-
-/*
- * public void mergeMap(List<peno.htttp.Tile> map2, Point map1tile1, Point
- * map1tile2, Point map2tile1, Point map2tile2) { int translatedxmap1 =
- * (int) (map1tile2.getX() - map1tile1.getX()); int translatedymap1 = (int)
- * (map1tile2.getY() - map1tile1.getY()); int translatedxmap2 = (int)
- * (map2tile2.getX() - map2tile1.getX()); int translatedymap2 = (int)
- * (map2tile2.getY() - map2tile1.getY()); float sinA; float cosA;
- * if(translatedxmap2 == 0){ sinA = - translatedxmap1/translatedymap2; cosA
- * = translatedymap1/translatedymap2; } else if(translatedymap2 == 0){ cosA
- * = translatedxmap1/translatedxmap2; sinA =
- * translatedymap1/translatedxmap2; } else{ sinA = (float) ((translatedymap1
- * - translatedxmap1 / translatedxmap2 * translatedymap2) / ((Math.pow(
- * translatedymap2, 2)) / translatedxmap2 + translatedxmap2)); cosA =
- * (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2); }
- * for (peno.htttp.Tile tile : map2) { int convertedX = (int) (cosA *
- * tile.getX() - sinA tile.getY() - cosA * map2tile1.getX() + sinA *
- * map2tile1.getY() + map1tile1.getX()); int convertedY = (int) (cosA *
- * tile.getY() + sinA tile.getX() - sinA * map2tile1.getX() - cosA *
- * map2tile1.getY() + map1tile1.getY());
- * 
- * if (!this.tiles.containsKey(new Point(convertedX, convertedY))) {
- * mapping.Tile copiedTile = new mapping.Tile(new Point(convertedX,
- * convertedY));//tile.clone(); for(Orientation orientation :
- * Orientation.values()){
- * copiedTile.getEdgeAt(orientation.orientationRotatedOver(sinA,
- * cosA)).setObstruction(tile.getEdgeAt(orientation).getObstruction()); }
- * setExistingTile(copiedTile); } else for (Orientation orientation :
- * Orientation.values()) if (this.getTile(new Point(convertedX, convertedY))
- * .getEdgeAt(orientation).getObstruction() == null) this.getTile(new
- * Point(convertedX, convertedY)) .getEdgeAt(orientation) .setObstruction(
- * tile.getEdgeAt(orientation.orientationRotatedOver(sinA, cosA))
- * .getObstruction()); } }
- */

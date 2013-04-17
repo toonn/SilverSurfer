@@ -30,19 +30,9 @@ public enum Orientation {
         }
 
         @Override
-        public Orientation orientationRotatedOver(float sinA, float cosA) {
-            if (sinA == 0) {
-                if (cosA == 1)
-                    return NORTH;
-                else
-                    return SOUTH;
-            }
-            else if (sinA == 1)
-                return WEST;
-            else if (sinA == -1)
-                return EAST;
-            return null;
-        }
+		public Orientation orientationRotatedOver(Orientation ori) {
+			return ori;
+		}
 
     },
     EAST {
@@ -72,20 +62,21 @@ public enum Orientation {
         }
 
         @Override
-        public Orientation orientationRotatedOver(float sinA, float cosA) {
-            if (sinA == 0) {
-                if (cosA == 1) {
-                    return EAST;
-                } else {
-                    return WEST;
-                }
-            } else if (sinA == 1) {
-                return NORTH;
-            } else if (sinA == -1) {
-                return SOUTH;
-            }
-            return null;
-        }
+		public Orientation orientationRotatedOver(Orientation ori) {
+			if (ori == NORTH) {
+				return EAST;
+			}
+			if (ori == SOUTH) {
+				return WEST;
+			}
+			if (ori == WEST) {
+				return NORTH;
+			}
+			if (ori == EAST) {
+				return SOUTH;
+			}
+			return null;
+		}
     },
     SOUTH {
         @Override
@@ -114,20 +105,21 @@ public enum Orientation {
         }
 
         @Override
-        public Orientation orientationRotatedOver(float sinA, float cosA) {
-            if (sinA == 0) {
-                if (cosA == 1) {
-                    return SOUTH;
-                } else {
-                    return NORTH;
-                }
-            } else if (sinA == 1) {
-                return EAST;
-            } else if (sinA == -1) {
-                return WEST;
-            }
-            return null;
-        }
+		public Orientation orientationRotatedOver(Orientation ori) {
+			if (ori == NORTH) {
+				return SOUTH;
+			}
+			if (ori == SOUTH) {
+				return NORTH;
+			}
+			if (ori == WEST) {
+				return EAST;
+			}
+			if (ori == EAST) {
+				return WEST;
+			}
+			return null;
+		}
     },
     WEST {
         @Override
@@ -155,21 +147,22 @@ public enum Orientation {
             return EAST;
         }
 
-        @Override
-        public Orientation orientationRotatedOver(float sinA, float cosA) {
-            if (sinA == 0) {
-                if (cosA == 1) {
-                    return WEST;
-                } else {
-                    return EAST;
-                }
-            } else if (sinA == 1) {
-                return SOUTH;
-            } else if (sinA == -1) {
-                return NORTH;
-            }
-            return null;
-        }
+		@Override
+		public Orientation orientationRotatedOver(Orientation ori) {
+			if (ori == NORTH) {
+				return WEST;
+			}
+			if (ori == SOUTH) {
+				return EAST;
+			}
+			if (ori == WEST) {
+				return SOUTH;
+			}
+			if (ori == EAST) {
+				return NORTH;
+			}
+			return null;
+		}
     };
 
     public static Orientation calculateOrientation(final double angle) {
@@ -206,5 +199,5 @@ public enum Orientation {
 
     public abstract Orientation getOppositeOrientation();
 
-    public abstract Orientation orientationRotatedOver(float sinA, float cosA);
+    public abstract Orientation orientationRotatedOver(Orientation ori);
 }

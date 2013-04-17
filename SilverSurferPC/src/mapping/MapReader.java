@@ -78,7 +78,7 @@ public class MapReader {
         return map;
     }
 
-    private static void generateStructures(final String[] seperatedInfoIJ, Tile tile) {
+    public static void generateStructures(final String[] seperatedInfoIJ, Tile tile) {
         if (seperatedInfoIJ[0].equals("Cross"))
             createCrossFromTile(tile);
         else if (seperatedInfoIJ[0].equals("Straight"))

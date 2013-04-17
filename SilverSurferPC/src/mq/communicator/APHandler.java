@@ -9,6 +9,7 @@ import javax.swing.Timer;
 
 import mapping.Barcode;
 import mapping.MapReader;
+import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.TreasureObject;
 import peno.htttp.DisconnectReason;
@@ -134,11 +135,16 @@ public class APHandler implements PlayerHandler {
     @Override
     public void teamTilesReceived(List<Tile> tiles) {
         pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(tiles));
+        searchForSimilarTiles(tiles);
     }
     
     private void searchForSimilarTiles(List<Tile> tiles) {
     	Point point1 = null, point2 = null, ourPoint1 = null, ourPoint2 = null;
         String[] info;
+        String ori1 = null;
+        String ori2 = null;
+        Orientation ori = null;
+
         for (peno.htttp.Tile tile : tiles) {
             info = tile.getToken().split("\\.");
             if (info.length == 3 && !info[2].equals("V"))
@@ -164,36 +170,88 @@ public class APHandler implements PlayerHandler {
                                     && tileNZ.getY() == pointN.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
                                             .equals("V"))))
-                                point2 = pointN;
+                                {point2 = pointN;
+                            	ori2 = infoTileNZ[1];}
                             else if (tileNZ.getX() == pointZ.x
                                     && tileNZ.getY() == pointZ.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
                                             .equals("V"))))
-                                point2 = pointZ;
+                                {point2 = pointZ;
+                            	ori2 = infoTileNZ[1];}
                             else if (tileNZ.getX() == pointE.x
                                     && tileNZ.getY() == pointE.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
                                             .equals("V"))))
-                                point2 = pointE;
+                                {point2 = pointE;
+                            	ori2 = infoTileNZ[1];}
                             else if (tileNZ.getX() == pointW.x
                                     && tileNZ.getY() == pointW.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
                                             .equals("V"))))
-                                point2 = pointW;
+                                {point2 = pointW;
+                            	ori2 = infoTileNZ[1];}
                         }
 
                         for (mapping.Tile ourTileNZ : ourTile
                                 .getReachableNeighboursIgnoringSeesaw()) {
                             if (ourTileNZ.getContent() instanceof Seesaw
-                                    || ourTileNZ.getContent() instanceof TreasureObject)
+                                    || ourTileNZ.getContent() instanceof TreasureObject){
                                 ourPoint2 = ourTileNZ.getPosition();
+                            	ori1 = ourTileNZ.getToken().split("\\.")[1];}
                         }
+                        
                     }
                 }
         }
-        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null)
-            System.out.println("[HTTTP] Similar tiles found! " + point1 + " " + point2 + ", " + ourPoint1 + " " + ourPoint2);
+        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null){
+        	ori = findOrientationEquivalentWithOurNorth(ori1,ori2);
+            pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1 , point2, ori);
+            }
         else
             System.out.println("[HTTTP] No similar tiles found yet!");
     }
+    
+	private Orientation findOrientationEquivalentWithOurNorth(String ori1,
+			String ori2) {
+		if (ori1.equals(ori2)) {
+			return Orientation.NORTH;
+		}
+		if (ori1.equals("N")) {
+			if (ori2.equals("S")) {
+				return Orientation.SOUTH;
+			} else if (ori2 == "W") {
+				return Orientation.WEST;
+			} else if (ori2 == "E") {
+				return Orientation.EAST;
+			}
+		}
+		if (ori1.equals("E")) {
+			if (ori2.equals("S")) {
+				return Orientation.EAST;
+			} else if (ori2.equals("W")) {
+				return Orientation.SOUTH;
+			} else if (ori2.equals("N")) {
+				return Orientation.WEST;
+			}
+		}
+		if (ori1.equals("S")) {
+			if (ori2.equals("N")) {
+				return Orientation.SOUTH;
+			} else if (ori2.equals("W")) {
+				return Orientation.EAST;
+			} else if (ori2.equals("E")) {
+				return Orientation.WEST;
+			}
+		}
+		if (ori1.equals("W")) {
+			if (ori2.equals("S")) {
+				return Orientation.WEST;
+			} else if (ori2.equals("N")) {
+				return Orientation.EAST;
+			} else if (ori2.equals("E")) {
+				return Orientation.SOUTH;
+			}
+		}
+		return null;
+	}   
 }
