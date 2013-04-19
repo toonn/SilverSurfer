@@ -73,7 +73,7 @@ public class Tile {
     public ArrayList<Tile> getReachableNeighbours() {
         final ArrayList<Tile> neighbours = new ArrayList<Tile>();
         for (final Orientation orientation : Orientation.values())
-            if (getEdgeAt(orientation).getObstruction().isPassable())
+            if (getEdgeAt(orientation).getObstruction()!= null && getEdgeAt(orientation).getObstruction().isPassable())
                 neighbours.add(getEdgeAt(orientation).getNeighbour(this));
         return neighbours;
     }

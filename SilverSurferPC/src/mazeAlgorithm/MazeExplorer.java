@@ -150,6 +150,7 @@ public class MazeExplorer {
     private Tile searchOpenSeesaw(Tile currentTile) {
         Vector<Tile> seesawBarcodeTiles = pilot.getSeesawBarcodeTiles();
         Collections.shuffle(seesawBarcodeTiles);
+        if(!quit){
         for(Tile tile : seesawBarcodeTiles) {
         	if(isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
                 ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, tile, allTiles);
@@ -167,6 +168,7 @@ public class MazeExplorer {
                 	return searchOpenSeesaw(otherEnd);
                 }
         	}
+        }
         }
         return null;
     }
