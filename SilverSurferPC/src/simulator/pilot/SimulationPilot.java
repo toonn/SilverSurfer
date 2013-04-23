@@ -1,10 +1,18 @@
 package simulator.pilot;
 
+import java.awt.Container;
 import java.awt.Point;
+import java.awt.Shape;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D.Double;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import mapping.Barcode;
+import mapping.Edge;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
@@ -171,60 +179,81 @@ public class SimulationPilot extends AbstractPilot {
 
     private MapGraph mapGraphLoaded;
     private final double lightSensorDistanceFromAxis = 7.5;
-    private final double ultrasonicSensorDistanceFromAxis = 2.5;
+    private final double ultrasonicSensorDistanceFromAxis = 4;
 
     public SimulationPilot(int teamNumber, MapGraph mapGraphLoaded) {
         super(teamNumber);
         this.mapGraphLoaded = mapGraphLoaded;
     }
 
-    private double calculateDistanceToWall() {
+    private double calculateDistanceToObstacle() {
         if (mapGraphLoaded == null) {
             return 250;
         }
-        double distanceToFirstEdge;
-        int amountOfTilesVisible;
-        Orientation orientation = getOrientation();
-        Tile tile = mapGraphLoaded.getTile(getMatrixPosition());
-        // Berekent de afstand van de UltraSensor tot de eerste edge
-        if (orientation == Orientation.NORTH) {
-            distanceToFirstEdge = getUltrasonicSensorCoordinates()[0]
-                    % sizeTile();
-        } else if (orientation == Orientation.SOUTH) {
-            distanceToFirstEdge = sizeTile()
-                    - (getUltrasonicSensorCoordinates()[0] % sizeTile());
-        } else if (orientation == Orientation.WEST) {
-            distanceToFirstEdge = getUltrasonicSensorCoordinates()[1]
-                    % sizeTile();
-        } else {
-            distanceToFirstEdge = sizeTile()
-                    - (getUltrasonicSensorCoordinates()[1] % sizeTile());
-        }
 
-        // Berekent het aantal tegels die zichtbaar zijn na deze edge (tot een
-        // maximum van 3)
-        if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL) {
-            tile = tile.getEdgeAt(orientation).getNeighbour(tile);
-            if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL) {
-                tile = tile.getEdgeAt(orientation).getNeighbour(tile);
-                if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL) {
-                    tile = tile.getEdgeAt(orientation).getNeighbour(tile);
-                    if (tile.getEdgeAt(orientation).getObstruction() != Obstruction.WALL) {
-                        return 250;
+        Set<Rectangle2D> obstacles = new HashSet<Rectangle2D>();
+
+        for (Tile tile : mapGraphLoaded.getTiles()) {
+            for (Edge wall : tile.getEdges()) {
+                if (wall.getObstruction() != null
+                        && wall.getObstruction() == Obstruction.WALL) {
+                    Point2D.Double[] endPoints = wall.getEndPoints();
+                    endPoints[0].setLocation(endPoints[0].getX() * sizeTile(),
+                            endPoints[0].getY() * sizeTile());
+                    endPoints[1].setLocation(endPoints[1].getX() * sizeTile(),
+                            endPoints[1].getY() * sizeTile());
+                    double x, y, w, h;
+                    if (endPoints[0].getX() < endPoints[1].getX()
+                            || endPoints[0].getY() < endPoints[1].getY()) {
+                        w = endPoints[1].getX() - endPoints[0].getX();
+                        h = endPoints[1].getY() - endPoints[0].getY();
+                        if (w == 0)
+                            x = endPoints[0].getX() - 1;
+                        else
+                            x = endPoints[0].getX();
+                        if (h == 0)
+                            y = endPoints[0].getY() - 1;
+                        else
+                            y = endPoints[0].getY();
                     } else {
-                        amountOfTilesVisible = 3;
+                        w = endPoints[0].getX() - endPoints[1].getX();
+                        h = endPoints[0].getY() - endPoints[1].getY();
+                        if (w == 0)
+                            x = endPoints[1].getX() - 1;
+                        else
+                            x = endPoints[1].getX();
+                        if (h == 0)
+                            y = endPoints[1].getY() - 1;
+                        else
+                            y = endPoints[0].getY();
                     }
-                } else {
-                    amountOfTilesVisible = 2;
+                    obstacles.add(new Rectangle2D.Double(x, y, w, h));
                 }
-            } else {
-                amountOfTilesVisible = 1;
             }
-        } else {
-            amountOfTilesVisible = 0;
         }
 
-        return distanceToFirstEdge + amountOfTilesVisible * sizeTile();
+        // TODO htttp robotdimensions?
+        Point2D robotDimensions = new Point2D.Double(15, 20);
+        for (Point2D robotPosition : SimulatorPanel.getAllRobotPositions()) {
+            if (robotPosition != getPosition()) {
+                double x = robotPosition.getX() - robotDimensions.getX() / 2;
+                double y = robotPosition.getY() - robotDimensions.getY() / 2;
+                obstacles.add(new Rectangle2D.Double(x, y, robotDimensions
+                        .getX(), robotDimensions.getY()));
+            }
+        }
+
+        for (int distance = 1; distance < 250; distance++) {
+            Arc2D sonarArc = new Arc2D.Double();
+            sonarArc.setArc(getPosition().getX(), getPosition().getX(),
+                    2 * (distance + 4), 2 * (distance + 4),
+                    360 - getAngle() - 15, 30, Arc2D.PIE);
+            for (Rectangle2D obstacle : obstacles)
+                if (sonarArc.intersects(obstacle))
+                    return distance;
+        }
+
+        return 250;
     }
 
     @Override
@@ -253,9 +282,9 @@ public class SimulationPilot extends AbstractPilot {
         double mean = 0;
         double standardDeviation = 0.5;
         if (mapGraphLoaded == null) {
-        	mean = (int) SimulationSensorData.getMNoInfraRedIS();
+            mean = (int) SimulationSensorData.getMNoInfraRedIS();
         } else {
-        	mean = recursiveInfraRed(getMatrixPosition(), 3);
+            mean = recursiveInfraRed(getMatrixPosition(), 3);
         }
         return (int) Math.round(mean
                 + (new Random().nextGaussian() * standardDeviation));
@@ -290,7 +319,7 @@ public class SimulationPilot extends AbstractPilot {
                     coordinates[0] % sizeTile(), coordinates[1] % sizeTile());
             mean = SimulationSensorData.getMBarcodeTileLS(color);
             standardDeviation = SimulationSensorData.getSDBarcodeTileLS(color);
-        } else if(onStartTile(coordinates[0], coordinates[1])) {
+        } else if (onStartTile(coordinates[0], coordinates[1])) {
             mean = SimulationSensorData.getMEmptyPanelLS();
             standardDeviation = SimulationSensorData.getSDEmptyPanelLS();
         }
@@ -301,7 +330,7 @@ public class SimulationPilot extends AbstractPilot {
     @Override
     public int getUltraSensorValue() {
         try {
-            return (int) Math.round(calculateDistanceToWall()
+            return (int) Math.round(calculateDistanceToObstacle()
                     + (new Random().nextGaussian() * SimulationSensorData
                             .getSDUS()));
         } catch (Exception e) {
@@ -313,9 +342,9 @@ public class SimulationPilot extends AbstractPilot {
 
     private double[] getUltrasonicSensorCoordinates() {
         final double[] coordinates = new double[2];
-        coordinates[0] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
+        coordinates[0] = (getPosition().getX() + ultrasonicSensorDistanceFromAxis
                 * Math.cos(Math.toRadians(getAngle())));
-        coordinates[1] = (getPosition().getX() - ultrasonicSensorDistanceFromAxis
+        coordinates[1] = (getPosition().getX() + ultrasonicSensorDistanceFromAxis
                 * Math.sin(Math.toRadians(getAngle())));
         return coordinates;
     }
@@ -368,7 +397,9 @@ public class SimulationPilot extends AbstractPilot {
                 || mapGraphLoaded.getTile(currentPoint)
                         .getEdgeAt(getOrientation()).getObstruction() == Obstruction.SEESAW_DOWN) {
             return (int) SimulationSensorData.getMNoInfraRedIS();
-        } else if (!(mapGraphLoaded.getTile(currentPoint).getContent() instanceof Seesaw) && mapGraphLoaded.getTile(currentPoint).getEdgeAt(getOrientation()).getObstruction() == Obstruction.SEESAW_UP) {
+        } else if (!(mapGraphLoaded.getTile(currentPoint).getContent() instanceof Seesaw)
+                && mapGraphLoaded.getTile(currentPoint)
+                        .getEdgeAt(getOrientation()).getObstruction() == Obstruction.SEESAW_UP) {
             return (int) SimulationSensorData.getMSeesawIS();
         } else {
             return recursiveInfraRed(getOrientation().getNext(currentPoint),
