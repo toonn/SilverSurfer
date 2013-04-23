@@ -9,15 +9,21 @@ public class WhitelineThread extends Thread {
 	private double lengthCoef;
 	private double angleCoefRight;
 	private double angleCoefLeft;
+	private int wallDistance;
+	private int wallDistanceLimit;
+	private double lightSensorDistance;
 	private boolean firstQuit = false;
 	private boolean secondQuit = false;
 
-	public WhitelineThread(String str, UltrasonicSensor ultrasonicSensor, double lenghtCoef, double angleCoefRight, double angleCoefLeft) {
+	public WhitelineThread(String str, UltrasonicSensor ultrasonicSensor, double lenghtCoef, double angleCoefRight, double angleCoefLeft, int wallDistance, int wallDistanceLimit, double lightSensorDistance) {
 		super(str);
 		this.ultrasonicSensor = ultrasonicSensor;
 		this.lengthCoef = lenghtCoef;
 		this.angleCoefRight = angleCoefRight;
 		this.angleCoefLeft = angleCoefLeft;
+		this.wallDistance = wallDistance;
+		this.wallDistanceLimit = wallDistanceLimit;
+		this.lightSensorDistance = lightSensorDistance;
 	}
 
 	@Override
@@ -25,8 +31,8 @@ public class WhitelineThread extends Thread {
 		Motor.A.forward();
 		Motor.B.forward();
 		while(!firstQuit);
-		Motor.A.rotate((int)Math.round(6.5*lengthCoef), true);
-		Motor.B.rotate((int)Math.round(6.5*lengthCoef));
+		Motor.A.rotate((int)Math.round(lightSensorDistance*lengthCoef), true);
+		Motor.B.rotate((int)Math.round(lightSensorDistance*lengthCoef));
 		Motor.A.setAcceleration(1000);
 		Motor.B.setAcceleration(1000);
 		Motor.A.forward();
@@ -39,12 +45,12 @@ public class WhitelineThread extends Thread {
 			Motor.B.stop(true);
 			Thread.sleep(500);
 			int value = ultrasonicSensor.getDistance();
-			if(value != 16 && value < 21) {
+			if(value != wallDistance && value < wallDistanceLimit) {
 				int backup = Motor.A.getSpeed();
 				Motor.A.setSpeed(50);
 				Motor.B.setSpeed(50);
-		        Motor.A.rotate((int)Math.round((value-16)*lengthCoef), true);
-		        Motor.B.rotate((int)Math.round((value-16)*lengthCoef));
+		        Motor.A.rotate((int)Math.round((value-wallDistance)*lengthCoef), true);
+		        Motor.B.rotate((int)Math.round((value-wallDistance)*lengthCoef));
 				Motor.A.setSpeed(backup);
 				Motor.B.setSpeed(backup);
 			}
