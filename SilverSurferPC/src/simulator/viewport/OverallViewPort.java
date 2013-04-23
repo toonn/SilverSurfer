@@ -37,9 +37,9 @@ public class OverallViewPort extends AbstractViewPort {
 
     private void robotOnSeesaw() {
         for (Tile tile : mapGraphLoaded.getTiles())
-            if (tile.getContent() instanceof Seesaw)
+            if (tile.getContent() instanceof Seesaw && ((Seesaw) tile.getContent()).isClosed())
                 for (PilotInterface pilot : pilots)
-                    if (pilot.getMatrixPosition().equals(tile.getPosition()) && ((Seesaw) tile.getContent()).isClosed())
+                    if (pilot.getMatrixPosition().equals(tile.getPosition()))
                         for (Tile mapTile : mapGraphLoaded.getTiles())
                             if (mapTile.getContent() instanceof Seesaw && mapTile.getContent().getValue() == tile.getContent().getValue())
                                 ((Seesaw) mapTile.getContent()).flipSeesaw();
