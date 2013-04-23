@@ -1,9 +1,13 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -41,7 +45,7 @@ public class SilverSurferGUI {
         }
     };
     //Yellow, Orange, Green, Blue, Purple, Red, Gray
-    private static Color[] teamColors = new Color[] {new Color(249, 244, 99), new Color(242, 150, 60), new Color(145, 254, 126), new Color(114, 225, 246), new Color(134, 46, 250), new Color(255, 63, 72), new Color(139, 137, 137)};
+    private static Color[] teamColors = new Color[] {new Color(243, 220, 27), new Color(242, 150, 60), new Color(86, 145, 150), new Color(114, 182, 77), new Color(134, 46, 250), new Color(255, 63, 72), new Color(139, 137, 137)};
     
     public static void main(final String[] args) {
         final SilverSurferGUI SSG = new SilverSurferGUI();
@@ -98,15 +102,21 @@ public class SilverSurferGUI {
         sensorPanel.addSensorValues(ultraSensorValue, lightSensorValue, infraSensorValue);
 
         infoLabel1.setText("----- VIEW -----");
-        infoLabel2.setText(simulatorPanel.getMapName());
+        if(simulatorPanel.getMapName() != "/")
+        	infoLabel2.setText(simulatorPanel.getMapName());
+        else
+        	infoLabel2.setText("No Map loaded");
         infoLabel3.setText(simulatorPanel.getView());
         infoLabel4.setText("----- INFO -----");
         infoLabel5.setText("Bluetooth: " + (pilot instanceof RobotPilot));
         infoLabel6.setText("Speed level: " + simulatorPanel.getSpeed());
         infoLabel7.setText("Player number: " + pilot.getPlayerNumber());
-        infoLabel8.setText("Player name: " + pilot.getPlayerName());
-        infoLabel9.setText("Team member name: " + pilot.getTeamMemberName());
-        infoLabel10.setText("Team number: " + pilot.getTeamNumber());
+        infoLabel8.setText("Player: " + pilot.getPlayerName());
+        infoLabel9.setText("Team member: " + pilot.getTeamMemberName());
+        if(pilot.getTeamNumber() != -1)
+        	infoLabel10.setText("Team: " + pilot.getTeamNumber());
+        else
+        	infoLabel10.setText("Team: none");
         infoLabel11.setText("----- POSITION -----");
         infoLabel12.setText("Coordinates: (" + pilot.getPosition().getX() + ", " + pilot.getPosition().getY() + ")");
         infoLabel13.setText("Angle: " + pilot.getAngle());
@@ -192,6 +202,9 @@ public class SilverSurferGUI {
     }
 
     private void legendPanel() {
+   
+       
+
         legendLabel1 = new JLabel("", SwingConstants.CENTER);
         legendLabel1.setForeground(teamColors[0]);
         legendLabel1.setText("Player 0");
@@ -218,20 +231,16 @@ public class SilverSurferGUI {
         legendPanel.setOpaque(false);
 
         final GroupLayout legendLayout = new GroupLayout(legendPanel);
+       
+        JLabel picLabel = new JLabel(new ImageIcon("resources/colors+label.png"));
         legendPanel.setLayout(legendLayout);
         legendLayout.setAutoCreateGaps(true);
         legendLayout.setAutoCreateContainerGaps(true);
         legendLayout.setHorizontalGroup(legendLayout
                 .createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(legendLabel1).addComponent(legendLabel2)
-                .addComponent(legendLabel3).addComponent(legendLabel4)
-                .addComponent(legendLabel5).addComponent(legendLabel6)
-                .addComponent(legendLabel7));
+                .addComponent(picLabel));
         legendLayout.setVerticalGroup(legendLayout.createSequentialGroup()
-                .addComponent(legendLabel1).addComponent(legendLabel2)
-                .addComponent(legendLabel3).addComponent(legendLabel4)
-                .addComponent(legendLabel5).addComponent(legendLabel6)
-                .addComponent(legendLabel7));
+                .addComponent(picLabel));
 
         legendPanel.setVisible(false);
     }
