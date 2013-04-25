@@ -285,15 +285,16 @@ Wanneer de volledige projectie bepaald is, kan deze elke keer gebruikt worden wa
 
 \subsection{Teamgenoot bereiken}
 \label{ssec:AlgoAndereRobot}
-%TODO geen persoonlijke ventilatie van meningen
-De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
 
-Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme.
+De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Elke robot mag zelf implementeren hoe hij tot de andere robot wilt geraken.
+%Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
+Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme. Elke keer weer als de robot een vak opschuift, vraagt het terug de positie van de andere robot om opnieuw het kortste pad te berekenen. Door na elke tegel terug het nieuwste kortste pad te berekenen, zorgt de robot ervoor dat hij up to date blijft over de positie van de andere robot. Deze zal natuurlijk ook bewegenen in de richting van zen team genoot begeven.
 
 \subsection{Andere robots}
 \subsubsection{Robot-detectie sensor}
 \label{ssec:AlgoCollision}
-%TODO dit gaat over de hyride sensor gaan. 
+
+De hybride sensor wordt door ons team niet ge"implementeerd. De hybride sensor maakt gebruikt van de wereld simulator en de kennis van de positie die de andere robots doorsturen. De posities van de andere robots moeten dan correct zijn voordat de wereld simulator correct is. Wij hebben ervoor gekozen om de robot robuuster te maken en onafhankelijk van andere robots. Dit is de reden waarom de robot-detectie sensor (of hybride sensor) niet gebruikt wordt door de robot. Voor robot detectie gaan de robot elke muur wantrouwen. Het kan dus zijn dat de robot een muur detecteert maar dat dit eigenlijk een robot is. Als een robot het doolhof verkent, zal de hij elke keer weer naar muren zoeken. Een andere robot zal dus als een muur gedetecteerd worden. Als de robot op een ander tijdstip terug op het vakje komt en de robot is er niet meer, dan detecteert hij bij het zoeken van de muren geen muur meer en veranderd dit in zijn geheugen. 
 
 
 % == SOFTWARE == %
@@ -483,10 +484,11 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie van he
 \item \textit{\ref{ssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
 \item \textit{\ref{ssec:AlgoBar} Kalibratie:} nieuw algoritme.
 \item \textit{\ref{ssec:AlgoWip} Omgaan met de wip:} nieuwe sectie.
-%\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} aangepast.
+\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} aangepast.
 \item \textit{\ref{ssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
 \item \textit{\ref{ssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
 \item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
+
 \end{itemize}
 
 
