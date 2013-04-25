@@ -11,10 +11,16 @@ import lejos.nxt.comm.*;
 
 public class CommandUnit {
 
+	private static final int WALL_DISTANCE = 16;
+	private static final int WALL_DISTANCE_LIMIT = 21;
+	private static final double LIGHT_SENSOR_DISTANCE = 6.5;
+	private static final int WHITE_LINE_TRESHOLD = 52;
+	private static final int BLACK_LINE_TRESHOLD = 40;
 	private static final double LENGTH_COEF = 20.8; //Amount of degrees needed for 1 cm forward.
-	private static final double ANGLE_COEF_RIGHT = 2.358; //Amount of degrees needed for a 1 degree turn to the right.
-	private static final double ANGLE_COEF_LEFT = 2.358; //Amount of degrees needed for a 1 degree turn to the left.
-    private static int SPEED = 200;
+	private static final double ANGLE_COEF_RIGHT = 2.330; //Amount of degrees needed for a 1 degree turn to the right.
+	private static final double ANGLE_COEF_LEFT = 2.330; //Amount of degrees needed for a 1 degree turn to the left.
+    private static final int DEFAULTSPEED = 200;
+    private static int speed = 200;
     
     private double x = 20;
     private double y = 20;
@@ -37,8 +43,26 @@ public class CommandUnit {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
         lightSensor = new LightSensor(SensorPort.S4, false);
         infraredSensor = new IRSeekerV2(SensorPort.S2, IRSeekerV2.Mode.AC);
-        Motor.A.setSpeed(CommandUnit.SPEED);
-        Motor.B.setSpeed(CommandUnit.SPEED);
+        Motor.A.setSpeed(CommandUnit.speed);
+        Motor.B.setSpeed(CommandUnit.speed);
+        
+        /*Motor.A.setSpeed(CommandUnit.speed/2);
+        Motor.B.setSpeed(CommandUnit.speed/2);
+        Motor.C.setSpeed(CommandUnit.speed/8);
+        Motor.C.rotate(-120);
+        Motor.A.rotate((int)Math.floor(LENGTH_COEF*-30), true);
+        Motor.B.rotate((int)Math.floor(LENGTH_COEF*-30));
+        Motor.A.rotate((int)Math.floor(LENGTH_COEF*30), true);
+        Motor.B.rotate((int)Math.floor(LENGTH_COEF*30));
+        Motor.C.rotate(120);
+        
+        Motor.A.setSpeed(CommandUnit.speed/2);
+        Motor.B.setSpeed(CommandUnit.speed/2);
+        Motor.C.setSpeed(CommandUnit.speed/8);
+        Motor.C.rotate(-90);
+        Motor.C.rotate(-20, true);
+        Motor.A.rotate((int)Math.floor(LENGTH_COEF*20), true);
+        Motor.B.rotate((int)Math.floor(LENGTH_COEF*20));*/
         
         stopRobot();
         System.out.println("Waiting...");
@@ -154,18 +178,18 @@ public class CommandUnit {
         Motor.B.stop();
     }
 
-    private void setSpeed(int speed) {
-        if (speed == 1)
-            SPEED = 100;
-        else if (speed == 2)
-            SPEED = 200;
-        else if (speed == 3)
-            SPEED = 300;
+    private void setSpeed(int speedLevel) {
+        if (speedLevel == 1)
+            speed = DEFAULTSPEED/2;
+        else if (speedLevel == 2)
+        	speed = DEFAULTSPEED;
+        else if (speedLevel == 3)
+        	speed = 3*DEFAULTSPEED/2;
         else
-            SPEED = 400;
-		Motor.A.setSpeed(SPEED);
-		Motor.B.setSpeed(SPEED);
-        System.out.println("Speed: " + speed);
+        	speed = 2*DEFAULTSPEED;
+		Motor.A.setSpeed(speed);
+		Motor.B.setSpeed(speed);
+        System.out.println("Speed: " + speedLevel);
     }
     
     private void updatePosition(double length) {
@@ -194,9 +218,9 @@ public class CommandUnit {
     	Motor.A.setAcceleration(1000);
     	Motor.A.setAcceleration(1000);
     	int absAngle = Math.abs(angle);
-    	if (SPEED > 200) {
-    		Motor.A.setSpeed(200);
-    		Motor.B.setSpeed(200);
+    	if (speed > DEFAULTSPEED) {
+    		Motor.A.setSpeed(DEFAULTSPEED);
+    		Motor.B.setSpeed(DEFAULTSPEED);
     	}
     	if(angle >= 0) {
             Motor.A.rotate(-absAngle, true);
@@ -206,8 +230,8 @@ public class CommandUnit {
             Motor.A.rotate(absAngle, true);
             Motor.B.rotate(-absAngle);
     	}
-		Motor.A.setSpeed(SPEED);
-		Motor.B.setSpeed(SPEED);
+		Motor.A.setSpeed(speed);
+		Motor.B.setSpeed(speed);
     	Motor.A.setAcceleration(6000);
     	Motor.A.setAcceleration(6000);
     }
@@ -230,7 +254,7 @@ public class CommandUnit {
         	}
     		Motor.A.rotate(distance1, true);
     		Motor.B.rotate(distance1);
-    		BT = new BarcodeThread("BT", lightSensor, 0);
+    		BT = new BarcodeThread("BT", lightSensor, LENGTH_COEF, 0, BLACK_LINE_TRESHOLD);
     		BT.start();
     		Motor.A.rotate(distance2, true);
     		Motor.B.rotate(distance2, true);
@@ -239,7 +263,7 @@ public class CommandUnit {
     		boolean found = BT.getFound();
     		BT.changeBool();
     		if(found) {
-    			BT = new BarcodeThread("BT", lightSensor, LENGTH_COEF, 1);
+    			BT = new BarcodeThread("BT", lightSensor, LENGTH_COEF, 1, BLACK_LINE_TRESHOLD);
     			BT.start();
     			try {
     				Thread.sleep(500);
@@ -257,22 +281,21 @@ public class CommandUnit {
     }
 
     private int alignOnWhiteLine() {
-    	int treshold = 46;
-    	WhitelineThread WT = new WhitelineThread("WT", ultrasonicSensor, LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT);
-		WT.start();		
-		while(lightSensor.getLightValue() < treshold);
-		while(lightSensor.getLightValue() >= treshold);
+    	WhitelineThread WT = new WhitelineThread("WT", ultrasonicSensor, LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT, WALL_DISTANCE, WALL_DISTANCE_LIMIT, LIGHT_SENSOR_DISTANCE);
+		WT.start();
+		while(lightSensor.getLightValue() < WHITE_LINE_TRESHOLD);
+		while(lightSensor.getLightValue() >= WHITE_LINE_TRESHOLD);
 		try {
 			Thread.sleep(35);
-			while(lightSensor.getLightValue() >= treshold);
+			while(lightSensor.getLightValue() >= WHITE_LINE_TRESHOLD);
 			WT.setFirstQuit(true);
 			Thread.sleep(500);
 		} catch(Exception e) {
-			
+
 		}
-		while(lightSensor.getLightValue() < treshold);
+		while(lightSensor.getLightValue() < WHITE_LINE_TRESHOLD);
 		WT.setSecondQuit(true);
-		while(WT.isAlive());		
+		while(WT.isAlive());	
 		return moveForward((int)Math.round(20*LENGTH_COEF));
     }
     
@@ -280,19 +303,19 @@ public class CommandUnit {
     	turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	int firstUSRead = ultrasonicSensor.getDistance();
     	int secondUSRead;
-    	if (firstUSRead < 21) {
-    		moveForwardWithoutBarcode((int)Math.round((firstUSRead-16)*LENGTH_COEF));
+    	if (firstUSRead < WALL_DISTANCE_LIMIT) {
+    		moveForwardWithoutBarcode((int)Math.round((firstUSRead-WALL_DISTANCE)*LENGTH_COEF));
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if(secondUSRead != 16 && secondUSRead < 21)
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-16)*LENGTH_COEF));
+    		if(secondUSRead != WALL_DISTANCE && secondUSRead < WALL_DISTANCE_LIMIT)
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-WALL_DISTANCE)*LENGTH_COEF));
     		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     	}
     	else {
         	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
     		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < 21) {
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-16)*LENGTH_COEF));
+    		if (secondUSRead < WALL_DISTANCE_LIMIT) {
+        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-WALL_DISTANCE)*LENGTH_COEF));
         		turnAngle((int)(ANGLE_COEF_RIGHT*90));
     		}
     		else 
@@ -300,37 +323,3 @@ public class CommandUnit {
     	}
     }
 }
-
-
-/*
-int treshold = 54;
-WhitelineThread WT = new WhitelineThread("WT", LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT);
-WT.start();		
-while(lightSensor.getLightValue() < treshold);
-while(lightSensor.getLightValue() >= treshold);
-WT.setFirstQuit(true);
-while(lightSensor.getLightValue() < treshold);
-WT.setSecondQuit(true);
-while(WT.isAlive());
-
-try {
-	Thread.sleep(500);
-	turnAngle((int)Math.ceil(-ANGLE_COEF_LEFT*90));
-	Thread.sleep(250);
-	int value = ultrasonicSensor.getDistance();
-	if(value != 20 && value < 26) {
-		Motor.A.setSpeed(50);
-		Motor.B.setSpeed(50);
-		moveForwardWithoutBarcode((int)Math.round((value-20)*LENGTH_COEF));
-		Motor.A.setSpeed(SPEED);
-		Motor.B.setSpeed(SPEED);
-	}
-	Thread.sleep(250);
-	turnAngle((int)Math.floor(ANGLE_COEF_RIGHT*90));
-	Thread.sleep(500);
-} catch(Exception e) {
-	
-}
-
-moveForwardWithoutBarcode((int)Math.round(20*LENGTH_COEF));
-*/
