@@ -1,6 +1,7 @@
 package mazeAlgorithm;
 
 import java.util.Collections;
+import java.util.PriorityQueue;
 import java.util.Vector;
 
 import commands.Sleep;
@@ -153,30 +154,31 @@ public class MazeExplorer {
         Vector<Tile> seesawBarcodeTiles = pilot.getSeesawBarcodeTiles();
         Collections.shuffle(seesawBarcodeTiles);
         if(!quit){
-        for(Tile tile : seesawBarcodeTiles) {
-        	if(isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
-                ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, tile, allTiles);
-                currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
-                while (pilot.isExecutingBarcode())
-                    new Sleep().sleepFor(100);
-                Orientation orientation = pilot.getOrientation();
-                Tile seesaw = tile.getNeighbour(orientation);
-                if(!((Seesaw)seesaw.getContent()).isClosed())
-                    return tile;
-                else {
-                	Tile otherEnd = tile.getNeighbour(orientation.getOppositeOrientation());
-                	shortestPath = new ShortestPath(this, pilot, tile, otherEnd, allTiles);
-                	currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
-                	return searchOpenSeesaw(otherEnd);
-                }
-        	}
-        }
+	        for(Tile tile : seesawBarcodeTiles) {
+	        	if(isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
+	                ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, tile, allTiles);
+	                currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
+	                while (pilot.isExecutingBarcode())
+	                    new Sleep().sleepFor(100);
+	                Orientation orientation = pilot.getOrientation();
+	                Tile seesaw = tile.getNeighbour(orientation);
+	                if(!((Seesaw)seesaw.getContent()).isClosed())
+	                    return tile;
+	                else {
+	                	Tile otherEnd = tile.getNeighbour(orientation.getOppositeOrientation());
+	                	shortestPath = new ShortestPath(this, pilot, tile, otherEnd, allTiles);
+	                	currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
+	                	return searchOpenSeesaw(otherEnd);
+	                }
+	        	}
+	        }
         }
         if(quit){
         	reallyquit = true;
         }
         return null;
     }
+
     
     private Tile crossSeesaw(Tile currentTile) {
     	int seesawValue = getSeesawValue(currentTile);

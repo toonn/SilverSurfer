@@ -53,6 +53,16 @@ public class ShortestPath {
         }
     }
 
+    /**
+     * Returns the amount of tiles in the path.
+     */
+    public int getLength(){
+        tilesPath.clear();
+        fillTilesPath(startTile);
+        int amt = tilesPath.size();
+        tilesPath.clear();
+        return amt;
+    }
     private void fillTilesPath(final Tile currentTile) {
         tilesPath.add(currentTile);
         if ((currentTile.getContent() instanceof Seesaw && currentTile.getManhattanValue() == extraCostSeesaw) || currentTile.getManhattanValue() == 0) {
