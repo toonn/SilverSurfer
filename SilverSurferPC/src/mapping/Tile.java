@@ -34,6 +34,16 @@ public class Tile {
             return true;
         return false;
     }
+    
+    public boolean areReachableNeighboursIgnoringSeesaw(final Tile tile) {
+        if (tile == null)
+            return false;
+        if (Math.abs(position.getX() - tile.getPosition().getX()) == 1 && (position.getY() - tile.getPosition().getY()) == 0 && getReachableNeighboursIgnoringSeesaw().contains(tile))
+            return true;
+        if ((position.getX() - tile.getPosition().getX()) == 0 && Math.abs(position.getY() - tile.getPosition().getY()) == 1 && getReachableNeighboursIgnoringSeesaw().contains(tile))
+            return true;
+        return false;
+    }
 
     public int getAmtOfWalls() {
         int amt = 0;
