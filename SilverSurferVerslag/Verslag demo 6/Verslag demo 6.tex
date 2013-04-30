@@ -423,13 +423,14 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 \end{figure}
 
 % figuur GUI
-\begin{figure}[h]
+\begin{figure}[h] %TODO nieuwe figuur GUI . 
 \centering
 	\includegraphics[width=0.8\textwidth]{GUI2}
 \caption{de Graphical User Interface met infopanel, inputpanel en sensorgrafieken}
 \label{fig:GUI2}
 \end{figure}
 
+%TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
 Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De GUI toont links de \textit{OverallVieuwport}: de volledige map met alle robots, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
 
 Rechts worden de \textit{UnitViewports} en \textit{DummyViewports} weergegeven. Wanneer de robot een pad aflegt, tekenen de \textit{Viewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Dit is handig bij het testen van verkenalgoritmes.\\
@@ -455,7 +456,7 @@ Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt m
 
 
 % -- Simulator -- %
-\subsection{Simulator}
+\subsection{Simulator} 
 \label{ssec:Sim}
 De \textit{Simulator} bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot en simuleert de sensorwaarden die een echte robot zou genereren wanneer deze zich in een soortgelijke situatie bevindt.\\
 
