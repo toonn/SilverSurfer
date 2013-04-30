@@ -58,12 +58,7 @@ public class RobotPilot extends AbstractPilot {
         return false;
     }
 
-    @Override
-    protected boolean crashImminent() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
+   
     public void endConnection() {
         try {
             communicator.closeRobotConnection();

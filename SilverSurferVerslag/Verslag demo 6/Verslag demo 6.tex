@@ -8,6 +8,8 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes,shadows,arrows}
 \usepackage[absolute]{textpos}
   \setlength{\TPHorizModule}{1cm}
   \setlength{\TPVertModule}{1cm}
@@ -70,7 +72,7 @@ LEGO Mindstorms biedt een bouwpakket voor een robot aan. Een NXT-microcomputer l
 
 \subsubsection{Ontwerp}
 \label{ssec:FysB}
-Een infraroodsensor werd gemonteerd bovenop de robot. Doordat er een infraroodbal onder een wip ligt, kan de robot bepalen of de wip naar beneden staat of net naar boven gericht is. In het geval dat de wip naar beneden staat wordt het infrarood licht immers geblokkeerd. De scheidsrechtercommissie speelde met het idee deze infraroodsensor ook te gebruiken voor robotdetectie, maar dit is er uiteindelijk niet doorgekomen.\\
+Een infraroodsensor werd gemonteerd bovenop de robot. Doordat er een infraroodbal onder een wip ligt, kan de robot bepalen of de wip naar beneden staat of net naar boven gericht is. In het geval dat de wip naar beneden staat wordt het infrarood licht immers geblokkeerd.\\
 
 Het voorwerp kan op verschillende manieren worden opgeraapt. Volgende opstellingen werden gebouwd en getest:
 
@@ -78,18 +80,18 @@ Het voorwerp kan op verschillende manieren worden opgeraapt. Volgende opstelling
 \item \textbf{Figuur~\ref{fig:robotOud1}}. De robot heft het voorwerp expliciet op met behulp van een extra motor. Deze opstelling maakt de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
 \item \textbf{Figuur~\ref{fig:robotOud2}}. Vooraan is niet genoeg plaats voor een extra motor, deze kon dus niet meer gebruikt worden. Een halve wc-rol leek een ideale vorm voor de schep. Na het voorwerp een aantal keer op te rapen, bleek dit echter niet altijd te werken.
 \item \textbf{Figuur~\ref{fig:robotOud3}}. De robot neemt het voorwerp op met behulp van klittenband. De schep van lego zorgt ervoor dat het voorwerp niet over de grond sleept. Deze opstelling maakt de robot echter nog steeds te lang.
-\item \textbf{Figuur~\ref{fig:robotBouw}}. De robot neemt nog steeds met behulp van klittenband het voorwerp op. De schep bevind zich nu op het uiteinde van een steel. Deze steel wordt gebruikt om de wip naar beneden te kantelen. Het voorwerp wordt dan mee helemaal tot boven opgetild.  %TODO figuur toevoegen
+\item \textbf{Figuur~\ref{fig:robotBouw}}. De robot neemt nog steeds met behulp van klittenband het voorwerp op. De schep bevind zich nu op het uiteinde van een steel. Deze steel wordt gebruikt om de wip naar beneden te kantelen. Het voorwerp wordt dan helemaal mee tot boven opgetild.  
 \end{enumerate}
 
 
-Het vorig ontwerp van de robot is aangepast. Uit de vorige demo bleek dat de robot bij het oprijden en afrijden van de wip heel schokkerig beweeg, ook wanneer de robot draaide of sneller wou rijden. Voor deze demo hebben we de robot helemaal terug opnieuw in elkaar gestoken. De wielen zijn verder uit elkaar gezet zodat de robot breder wordt. De NXT is schuin erop gezet omdat het zo goed uit kwam om te monteren. Het bijkomend voordeel dat we hierbij hadden, was dat er dan aan de achterkant genoeg plaats was om een schep voor het voorwerp te monteren. \\
+Het vorig ontwerp van de robot is aangepast. Uit de vorige demo bleek dat de robot bij het oprijden en afrijden van de wip heel schokkerig bewoog, ook wanneer de robot draaide of sneller wou rijden. Voor deze demo hebben we de robot helemaal terug opnieuw in elkaar gestoken. De wielen zijn verder uit elkaar gezet zodat de robot breder wordt. De NXT is schuin erop gezet omdat het zo goed uit kwam om te monteren. Het bijkomend voordeel dat we hierbij hadden, was dat er dan aan de achterkant genoeg plaats was om een schep voor het voorwerp te monteren. \\
 
 % --- STUK MET DE LANGE SCHEP -- %
 De schep is zo gebouwd dat het heel lang geworden is. Met deze lange schep zijn we in staat om de wip naar beneden te halen. De robot rijdt eerst naar een wip en zet zich op de juiste positie ten opzichte van de barcode voor de wip. De robot draait zich dan om en laat de lange schep naar beneden. Doordat deze lange schep genoeg druk kan uitoefenen valt de wip naar beneden en kan de robot erover rijden. Deze schep nam wel alle plaats in beslag dus werd er op het einde van de schep een stuk klittenband voorzien voor het voorwerp. \\
 
-Om het voorwerp op te rapen wordt hetzelfde algoritme gebruikt als hiervoor. De robot gaat in het midden van het vakje staan van de barcode, draait zich dan om en rijd dan naar achter. Er is geen druksensor om na te kijken of het voorwerp wel degelijk is opgepakt. Hiervoor is er een schep gemaakt die groot is in de breedte zodat het moeilijk is om het voorwerp te missen. \\
+Om het voorwerp op te rapen wordt hetzelfde algoritme gebruikt als hiervoor. Alleen wordt dit nu gedaan met een langere schep. De robot gaat in het midden van het vakje staan van de barcode, draait zich dan om en rijd dan naar achter. Er is geen druksensor om na te kijken of het voorwerp wel degelijk is opgepakt. Hiervoor is er een schep gemaakt die groot is in de breedte zodat het moeilijk is om het voorwerp te missen. \\
 
-Deze lange schep geeft ons verschillende voordelen. Ten eerste als alle robots zouden opgesloten zijn in een deel van het doolhof omdat de wip naar boven staat dan kan de robot hier uitgeraken door de wip zelf naar beneden te doen. Ten tweede als er een wip is die toegang verschaft naar een onbekend gebied van het doolhof met het voorwerp van de robot in dan hoeft de robot niet te wachten tot een andere robot hierover rijdt zodat de wip goed staat. De robot kan zelf de wip naar beneden doen. Hierdoor is de robot zeer onafhankelijk van de wip en in staat om heel het doolhof te verkennen zonder last te hebben van de wippen. Als laatste hoeft er geen algoritme geschreven worden waarbij de robot wacht tot de wip goed staat. Dit zou mogelijks gebruikt worden wanneer de robot wacht totdat een wip naar beneden staat zodat het onverkende gebied achter de wip kan verkend worden. 
+Deze lange schep geeft ons verschillende voordelen. Ten eerste als alle robots zouden opgesloten zijn in een deel van het doolhof omdat de wip naar boven staat dan kan de robot hier uit geraken door de wip zelf naar beneden te doen. Ten tweede als er een wip is die toegang verschaft naar een onbekend gebied van het doolhof met het voorwerp van de robot in dan hoeft de robot niet te wachten tot een andere robot hierover rijdt zodat de wip goed staat. De robot kan zelf de wip naar beneden doen. Hierdoor is de robot zeer onafhankelijk van de wip en in staat om heel het doolhof te verkennen zonder last te hebben van de wippen. Als laatste hoeft er geen algoritme geschreven worden waarbij de robot wacht tot de wip goed staat. Dit zou mogelijks gebruikt worden wanneer de robot wacht totdat een wip naar beneden staat zodat het onverkende gebied achter de wip kan verkend worden. 
 Wat er wel aangepast moet worden, is dat de robot via het protocol twee keer een lock moet vragen op de wip. Zodat het lijkt alsof de robot er twee keer is over gegaan en zodat andere robots die misschien de stand van de wip bijhouden nog steeds de juiste stand hebben.
 
 % STUK ZONDER GIGA SCHEP: De schep heeft ook een motor gekregen. Initieel staat de schep naar boven en deze wordt naar beneden gedaan wanneer de robot het voorwerp moet oprapen.  Dit nieuwe ontwerp betekende wel dat er opnieuw getest moest worden en dat de sensoren terug opnieuw gekalibreerd moesten worden.
@@ -127,7 +129,7 @@ De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De lichtsen
 \begin{figure}
 \centering
 	\includegraphics[width=0.5\textwidth]{robotNieuw}
-\caption{Het huidige ontwerp.}
+\caption{Het huidige ontwerp met de lange schep.}
 \label{fig:robotBouw}
 \end{figure}
 
@@ -136,20 +138,20 @@ De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De lichtsen
 \centering
 	\begin{subfigure}[h]{0.325\textwidth}
 	\centering
-		\includegraphics[width=\textwidth]{robotSchep}
-		\caption{schep}
+		\includegraphics[width=\textwidth]{schepGroot}
+		\caption{De lange schep}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{robotWielen}
-		\caption{wielen}
+		\includegraphics[width=\textwidth]{lichtsensor}
+		\caption{Hefboomsysteem lichtsensor}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{robotSensoren}
-		\caption{infrarood- en ultrasone sensor}
+		\includegraphics[width=\textwidth]{lichtsensorDown}
+		\caption{lichtsensor}
 	\end{subfigure}
-\caption{Details van de robot.}
+\caption{De details van de robot}
 \label{fig:robotDetail}
 \end{figure}
 
@@ -166,8 +168,8 @@ Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien
 %move forward 20.8 --> perfect
 
 \subparagraph{E\'en graad keren om de as}
-De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg vervolgens een aantal keer achter elkaar het bevel $90\degree$ rond te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer de herhalen wordt de fout vergroot en is het makkelijker deze op te merken.
-De co\"effici\"ent die het beste resultaat levert is $2,330\degree$. Deze levert zowel voor positieve als negatieve hoeken hetzelfde resultaat.
+De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg vervolgens een aantal keer achter elkaar het bevel $90\degree$ om rond te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer te herhalen wordt de fout vergroot en is het makkelijker om deze op te merken.
+De co\"effici\"ent die het beste resultaat levert is $2,330\degree$. Dit levert voor zowel positieve als voor negatieve hoeken hetzelfde resultaat.
 
 %eerst 2.358 --> iets te veel
 %dan 2.330 --> kleeeeiin iets te weinig
@@ -177,7 +179,7 @@ De co\"effici\"ent die het beste resultaat levert is $2,330\degree$. Deze levert
 
 \subsubsection{Infraroodsensor}
 %TODO wat willen de waarden juist zeggen?
-De infraroodsensor bestaat uit vijf onafhankelijke sensoren. De robot maakt echter enkel gebruik van de middelste sensor. De infraroodsensor geeft gemiddeld een waarde van $2$, tenzij hij een infraroodbal detecteert. In dat geval geeft hij gemiddeld een waarde rond $120$.
+De infraroodsensor bestaat uit vijf onafhankelijke sensoren. De robot maakt enkel gebruik van de middelste sensor omdat de wip zich altijd voor de robot zal bevinden. De infraroodsensor geeft gemiddeld een waarde van $1$ , $2$ of $3$ tenzij hij een infraroodbal detecteert. In dat geval geeft hij gemiddeld een waarde rond de $120$.
 
 \subsubsection{Ultrasone sensor}
 %TODO hoe komen we aan waarden?
@@ -203,7 +205,7 @@ De lichtsensor geeft gemiddeld de waarde $55$ wanneer de robot op een witte lijn
 \label{ssecc:druksensor}
 De druksensoren worden op deze robot niet gebruikt.\\
 
-Bij het oprapen van het voorwerp rijdt de robot achteruit tot de schep tegen de muur komt. Met de druksensor kan het slagen van deze actie gecontroleerd worden. Het is echter niet haalbaar een druksensor op de lange schep te plaatsen.
+Bij het oprapen van het voorwerp rijdt de robot achteruit tot de schep tegen de muur komt. Met de druksensor kan het slagen van deze actie gecontroleerd worden. Het is echter niet haalbaar een druksensor op de lange schep te plaatsen. Daarom wordt er op de robot geen druksensor gemonteerd.
 
 % == ALGORITMES == %
 \section{Algoritmes}
@@ -214,7 +216,7 @@ Bij het oprapen van het voorwerp rijdt de robot achteruit tot de schep tegen de 
 % == robot aligneren == %
 \subsubsection{Positie en ori"entatie corrigeren}
 \label{ssec:AlgoAllign}
-Het is niet mogelijk om de robot perfect 100\% nauwkeurig te doen rijden. De motoren kunnen immers maar tot een bepaalde nauwkeurigheid ingesteld worden. Om de besturing toch betrouwbaar te maken is het nodig de robot af en toe te aligneren. Dit gebeurt bij elke tegel. %TODO klopt dit????
+Het is niet mogelijk om de robot perfect 100\% nauwkeurig te doen rijden. De motoren kunnen immers maar tot op een bepaalde nauwkeurigheid ingesteld worden. Om de besturing toch betrouwbaar te maken is het nodig de robot af en toe te aligneren. Dit gebeurt bij elke tegel. De robot kan dit snel genoeg doen dus zorgt dit niet voor al te veel vertraging.
 De methode bestaat uit twee basisalgoritmes: op basis van een witte lijn en op basis van een muur.
 
 
@@ -386,12 +388,53 @@ Voor volgende secties wordt verwezen naar het verslag van het eerste semester. D
 Een overzicht van het ontwerp wordt weergegeven in figuur~\ref{fig:klasSoft}.\\
 
 % figuren klassendiagramma
+%\begin{figure}
+%\centering
+%		\includegraphics[width=\textwidth]{KlasSoftware}
+%\caption[Klassendiagram computerproject]{Klassendiagram met de belangrijkste klassen van het computerproject (paarse pijlen wijzen op overerving of implementatie)}
+%\label{fig:klasSoft}
+%\end{figure}
+
+
+
 \begin{figure}
 \centering
-		\includegraphics[width=\textwidth]{KlasSoftware}
+\begin{tikzpicture}[thick,scale=0.7, every node/.style={scale=0.7}]
+\tikzstyle{line} = [draw, -stealth, thick]
+
+\tikzstyle{block} = [draw, rectangle, fill=yellow!20, text width=8em, text centered, minimum height=15mm, node distance=7em]
+\node [block] (Tile) {Tile};
+\node [block, left of=Tile, xshift=-5em] (Edge) {Edge};
+\node [block, above of=Tile, yshift=3em] (MapGraph) {MapGraph};
+\node [block, above of=MapGraph, yshift=3em]
+(PilotInterface) {PilotInterface};
+\node [block, above of=PilotInterface, yshift=3em]
+(not) {...};
+\node [block, right of=Tile, xshift=5em] (TileContent) {TileContent};
+\node[block , below of=Edge, yshift=-3em](Obstruction){Obstruction};
+\node [block, below of=TileContent, yshift=-3em] (Barcode) {Barcode};
+\node [block, right of=Barcode, xshift=3em]
+(TreasureObject) {TreasureObject};
+\node [block, left of=Barcode, xshift=-3em]
+(Seesaw) {Seesaw};
+
+%arrows
+\path [line, line width=1.6pt] (Edge) -- (Tile);
+\path [line, line width=1.6pt] (TileContent) -- (Tile);
+\path [line, line width=1.6pt] (Tile) -- (MapGraph);
+\path [line, line width=1.6pt] (MapGraph) -- (PilotInterface);
+\path [line, line width=1.6pt] (PilotInterface) -- (not);
+\path [line, line width=1.6pt] (Obstruction) -- (Edge);
+
+\path [line, color=blue, line width=1.6pt] (Seesaw) -- (TileContent);
+\path [line, color=blue, line width=1.6pt] (Barcode) -- (TileContent);
+\path [line, color=blue, line width=1.6pt] (TreasureObject) -- (TileContent);
+%\path [line] (decision1) -| node[yshift=0.5em, xshift=-10em] {no} (process2);
+\end{tikzpicture}
 \caption[Klassendiagram computerproject]{Klassendiagram met de belangrijkste klassen van het computerproject (paarse pijlen wijzen op overerving of implementatie)}
 \label{fig:klasSoft}
 \end{figure}
+
 
 De Main-methode bevindt zich in de GUI-klasse. Deze maakt een \textit{SimulatorPanel}-object aan. Dit is een overkoepelend panel waarin meerdere \textit{Viewports} zitten. Een \textit{OverallViewport} geeft het volledige doolhof en alle robots erin weer. Dit kan uiteraard enkel wanneer een gekend virtueel doolhof gebruikt wordt en wanneer van alle robots genoeg informatie beschikbaar is. Een \textit{UnitViewport} geeft de wereld van \'e\'en robot (eventueel gesimuleerd) weer: de sensorwaarden en de muren die hij reeds ontdekt heeft. Een wereld waarvan niets geweten is, kan niet worden weergegeven. Dit is het geval voor robots van andere teams: zij worden niet weergegeven in de GUI, met uitzondering van de teamgenoot. Deze laatste stuurt wel zijn map door, maar niet zijn sensorwaarden en wordt gerepresenteerd door een \textit{DummyViewport}. Het aantal \textit{Viewports} hangt af van het aantal gekende werelden.\\
 
@@ -415,7 +458,7 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 % figuur GUI
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.8\textwidth]{GUI1}
+	\includegraphics[width=0.8\textwidth]{gui}
 \caption{de Graphical User Interface met drie gesimuleerde robots}
 \label{fig:GUI1}
 \end{figure}
@@ -423,17 +466,19 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 % figuur GUI
 \begin{figure}[h] %TODO nieuwe figuur GUI . 
 \centering
-	\includegraphics[width=0.8\textwidth]{GUI2}
+	\includegraphics[width=0.8\textwidth]{guiALL}
 \caption{de Graphical User Interface met infopanel, inputpanel en sensorgrafieken}
 \label{fig:GUI2}
 \end{figure}
 
 %TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
-Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De GUI toont links de \textit{OverallVieuwport}: de volledige map met alle robots, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
+Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De eerste figuur toont de GUI met de verschillende robots met elk hun eigen doolhof, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken en met de rand van de kader waarin de robot zich bevind. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Dit is te zien in de eerste groene kader van figuur \ref{GUI1}. Hierbij heeft de robot zijn voorwerp gevonden maar hij weet nog niet wie zijn teamgenoot is. Wanneer zijn teamgenoot ook zijn voorwerp gevonden heeft veranderd ook zijn kleur in de teamkleur en mappen de beide robots hun doolhof. Dit doolhof is te zien rechts van de kader van de beide robotten. Dit is te zien in de tweede figuur. De robot met de blauwe kader en de robot met de groene kader hebben elk hun voorwerp gevonden en hebben dezelfde teamkleur. Beiden hebben ook al hun doolhof gemapt. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
+De \textit{OverallViewport} staat helemaal links vanboven. Hierin worden alle robots weergegeven, de wip, de voorwerpen en de barcodes. Het voorwerp heeft dezelfde kleur als de robot die het moet oppakken.\\
 
-Rechts worden de \textit{UnitViewports} en \textit{DummyViewports} weergegeven. Wanneer de robot een pad aflegt, tekenen de \textit{Viewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Dit is handig bij het testen van verkenalgoritmes.\\
+Deze doolhoven worden de \textit{UnitViewports} en \textit{DummyViewports} genoemd. Wanneer de robot een pad aflegt, tekenen de \textit{Viewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Als de robot bijvoorbeeld een wip bezoekt zal die de wip ineens tekenen in het doolhof. Een wip wordt voorgesteld als een gele strook van twee tegels lang. Een wip heeft een rode streep aan de kant waar de wip naar boven staat. Dit is handig bij het testen van verkenalgoritmes.\\
 
-Het aantal \textit{UnitViewports} of \textit{DummyViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubar. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur~\ref{fig:GUI2}.
+Het aantal \textit{UnitViewports} of \textit{DummyViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubar. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur~\ref{fig:GUI2}. \\
+Links worden de kleuren van de verschillende robots weergegeven en de teamkleuren. Extra info zoals de sensorwaarden en de positie staat eronder beschreven. Beneden de \textit{Vieuwports} staan de grafieken voor de sensorwaarden van de ultrasone sensor, de lichtsensor en de infraroodsensor. 
 
 % -- RabbitMQ -- %
 \subsection{Communicatie tussen de robots}
@@ -561,7 +606,7 @@ Volgende secties werden aangepast ten opzichte van de eerste demonstratie van he
 \item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
 \item \textit{\ref{ssecc:druksensor} druksensor:} nieuwe sectie.
 \item \textit{\ref{ssec:AlgoWip} Wip:} aangepast aan de nieuwe schep.
-
+\item \textit{\ref{ssec:GUI} GUI:} nieuwe tekst aangepast aan de nieuwe GUI en nieuwe figuren.
 \end{itemize}
 
 
