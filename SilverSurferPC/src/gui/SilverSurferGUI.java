@@ -264,6 +264,8 @@ public class SilverSurferGUI {
         infoLabel16 = new JLabel("", SwingConstants.CENTER);
         infoLabel17 = new JLabel("", SwingConstants.CENTER);
         infoLabel18 = new JLabel("", SwingConstants.CENTER);
+        JLabel mapPicLabel = new JLabel(new ImageIcon("resources/map.png"));
+        JLabel sensorLabel = new JLabel(new ImageIcon("resources/sensors.png"));
 
         sidePanel = new JPanel();
         sidePanel.setOpaque(false);
