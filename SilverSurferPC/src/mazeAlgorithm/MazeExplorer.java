@@ -178,19 +178,19 @@ public class MazeExplorer {
         }
         return null;
     }
-
     
     private Tile crossSeesaw(Tile currentTile) {
     	int seesawValue = getSeesawValue(currentTile);
     	Tile endTile = getOtherEndOfSeesaw(currentTile);
+    	boolean readBarcodesBackup = pilot.getReadBarcodes();
         pilot.setReadBarcodes(false);
         pilot.travel(60);
         for (Tile tile : pilot.getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw && tile.getContent().getValue() == seesawValue)
                 ((Seesaw)tile.getContent()).flipSeesaw();
-        pilot.travel(80);
-        pilot.setReadBarcodes(true);
-        pilot.travel(20);
+        pilot.travel(60);
+        pilot.setReadBarcodes(readBarcodesBackup);
+        pilot.alignOnWhiteLine();
         //TODO: whiteline! want onnauwkeurig na wip!
         return endTile;
     }
