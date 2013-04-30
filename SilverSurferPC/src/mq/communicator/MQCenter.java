@@ -19,7 +19,7 @@ public class MQCenter {
     private APHandler handler;
     private PlayerClient client;
 
-    private String gameID = "ZilverTreasureTrek";
+    private String gameID = "ABC";
     private String playerID;
 
     /**
