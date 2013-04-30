@@ -34,7 +34,7 @@
 \label{ssec:Abstract}
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
-De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot een strip klittenband vooraan waarmee hij het voorwerp kan oprapen.
+De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot een strip klittenband achteraan op een schep waarmee hij het voorwerp kan oprapen.
 De robot kan een doolhof verkennen en hiervan een map bijhouden. Via RabbitMQ kunnen de robots en simulatoren met elkaar communiceren. Zo kunnen ze een map naar elkaar doorsturen om naar elkaar toe te rijden.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
@@ -44,8 +44,8 @@ Een computerprogramma simuleert de werking van robots. Deze simulator kan vier r
 
 %figuur robot
 \begin{figure}[!hb]
-\begin{textblock}{38}(5.4,16)
-    \includegraphics[width=0.38\textwidth]{robotFP}
+\begin{textblock}{38}(4.5,7)
+    \includegraphics[width=0.50\textwidth]{robotVoor}
     \label{fig:robotFP}
 \end{textblock}
 \end{figure}
@@ -72,12 +72,12 @@ LEGO Mindstorms biedt een bouwpakket voor een robot aan. Een NXT-microcomputer l
 
 \subsubsection{Ontwerp}
 \label{ssec:FysB}
-Een infraroodsensor werd gemonteerd bovenop de robot. Doordat er een infraroodbal onder een wip ligt, kan de robot bepalen of de wip naar beneden staat of net naar boven gericht is. In het geval dat de wip naar beneden staat wordt het infrarood licht immers geblokkeerd.\\
+Een infraroodsensor werd gemonteerd bovenop de robot. Doordat er een infraroodbal onder een wip ligt, kan de robot bepalen of de wip naar beneden of naar boven staat. In het geval dat de wip naar beneden staat wordt het infrarood licht immers geblokkeerd.\\
 
 Het voorwerp kan op verschillende manieren worden opgeraapt. Volgende opstellingen werden gebouwd en getest:
 
 \begin{enumerate}
-\item \textbf{Figuur~\ref{fig:robotOud1}}. De robot heft het voorwerp expliciet op met behulp van een extra motor. Deze opstelling maakt de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
+\item \textbf{Figuur~\ref{fig:robotOud1}}. De robot heft het voorwerp op met behulp van een extra motor. Deze opstelling maakt de robot te lang waardoor hij moeilijk kon draaien zonder tegen een muur te botsen. Er werd besloten de schep vooraan te plaatsen.
 \item \textbf{Figuur~\ref{fig:robotOud2}}. Vooraan is niet genoeg plaats voor een extra motor, deze kon dus niet meer gebruikt worden. Een halve wc-rol leek een ideale vorm voor de schep. Na het voorwerp een aantal keer op te rapen, bleek dit echter niet altijd te werken.
 \item \textbf{Figuur~\ref{fig:robotOud3}}. De robot neemt het voorwerp op met behulp van klittenband. De schep van lego zorgt ervoor dat het voorwerp niet over de grond sleept. Deze opstelling maakt de robot echter nog steeds te lang.
 \item \textbf{Figuur~\ref{fig:robotBouw}}. De robot neemt nog steeds met behulp van klittenband het voorwerp op. De schep bevind zich nu op het uiteinde van een steel. Deze steel wordt gebruikt om de wip naar beneden te kantelen. Het voorwerp wordt dan helemaal mee tot boven opgetild.  
@@ -144,7 +144,7 @@ De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De lichtsen
 	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{lichtsensor}
-		\caption{Hefboomsysteem lichtsensor}
+		\caption{Scharnierende lichtsensor}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
@@ -160,7 +160,7 @@ De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De lichtsen
 %TODO eigenlijk veel te weinig testresultaten!! we zouden met de bekomen coefficienten gemiddelden en varianties moeten bepalen
 
 \subsubsection{Motoren}
-De robot wordt aangedreven door twee motoren. Beide motoren kunnen onafhankelijk worden aangestuurd. Wanneer de robot rechtdoor rijdt, draaien beide motoren in dezelfde richting. Bij het keren om de as draaien de motoren in tegenovergestelde richting. De kalibratie heeft als doel te bepalen hoeveel graden de motoren moeten draaien om de robot respectievelijk \'e\'en cm vooruit de laten rijden en \'e\'en~graad te laten keren.
+De robot wordt aangedreven door twee motoren. Beide motoren kunnen onafhankelijk worden aangestuurd. Wanneer de robot rechtdoor rijdt, draaien beide motoren in dezelfde richting. Bij het keren om de as draaien de motoren in tegenovergestelde richtingen. De kalibratie heeft als doel te bepalen hoeveel graden de motoren moeten draaien om de robot respectievelijk \'e\'en cm vooruit de laten rijden en \'e\'en~graad te laten keren.
 
 \subparagraph{E\'en cm vooruit rijden}
 Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien. Het bleek niet nodig deze co\"effici\"ent te wijzigen ten opzichte van het vorige ontwerp. Dit werd getest door de robot de laten starten op een witte lijn en hem dan $40~cm$ vooruit te rijden. De robot komt perfect op de volgende witte lijn uit.
@@ -168,7 +168,7 @@ Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien
 %move forward 20.8 --> perfect
 
 \subparagraph{E\'en graad keren om de as}
-De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg vervolgens een aantal keer achter elkaar het bevel $90\degree$ om rond te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer te herhalen wordt de fout vergroot en is het makkelijker om deze op te merken.
+De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg vervolgens een aantal keer achter elkaar $90\degree$ om rond te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer te herhalen wordt de fout vergroot en is het makkelijker om deze op te merken.
 De co\"effici\"ent die het beste resultaat levert is $2,330\degree$. Dit levert voor zowel positieve als voor negatieve hoeken hetzelfde resultaat.
 
 %eerst 2.358 --> iets te veel
@@ -361,6 +361,7 @@ Wanneer de volledige projectie bepaald is, kan deze elke keer gebruikt worden wa
 De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Elke robot mag zelf implementeren hoe hij tot de andere robot wilt geraken.
 %Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
 Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme. Elke keer wanneer het kortste pad berekend wordt, gaat de robot 2 tegels vooruit. Nadien vraagt het terug de positie van de andere robot om opnieuw het kortste pad te berekenen. Door na elke 2 tegels terug het nieuwste kortste pad te berekenen, zorgt de robot ervoor dat hij up to date blijft over de positie van de andere robot die ondertussen ook naderbij komt.
+%TODO Gerlinde updaten
 
 \subsection{Andere robots}
 \subsubsection{Robot-detectie sensor}
@@ -525,7 +526,7 @@ De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof v
 % == BESLUIT == %
 \section{Besluit}
 \label{sec:Besluit}
-De bouw van de robot wordt uitgebreid met een infraroodsensor. De schep vooraan wordt aangepast en van klittenband voorzien. Zowel de schep als de lichtsensor zijn gemonteerd op een hefboomsysteem dat omhoog klapt wanneer het de wip raakt. Zo geraakt de robot makkelijk de wip op.\\
+De bouw van de robot wordt uitgebreid met een infraroodsensor. De schep wordt aangepast en achteraan geplaatst. De schep wordt ook van klittenband voorzien. De schep is nu zodanig lang gemaakt dat de schep via een motor de wip naar beneden kan halen. Dit wordt alleen gebruikt wanneer de robot vast zit in het doolhof. De lichtsensor is gemonteerd op een hefboomsysteem dat omhoog klapt wanneer het de wip raakt. Zo geraakt de robot makkelijk de wip op.\\
 
 Er kunnen verschillende robots worden gesimuleerd of gemodelleerd. Al deze robots hebben een eigen idee van de wereld. Deze verschillende werelden worden weergegeven via \textit{Viewports}. Een \textit{OverallViewport} toont de werkelijke wereld en alle robots erin.\\
 
