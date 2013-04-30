@@ -1,12 +1,9 @@
 package simulator.pilot;
 
-import java.awt.Container;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Double;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -207,9 +204,10 @@ public class SimulationPilot extends AbstractPilot {
                             || endPoints[0].getY() < endPoints[1].getY()) {
                         w = endPoints[1].getX() - endPoints[0].getX();
                         h = endPoints[1].getY() - endPoints[0].getY();
-                        if (w == 0)
+                        if (w == 0) {
                             x = endPoints[0].getX() - 1;
-                        else
+                            w = 2;
+                        } else
                             x = endPoints[0].getX();
                         if (h == 0)
                             y = endPoints[0].getY() - 1;
@@ -227,17 +225,23 @@ public class SimulationPilot extends AbstractPilot {
                         else
                             y = endPoints[0].getY();
                     }
+                    if (w == 0)
+                        w = 2;
+                    if (h == 0)
+                        h = 2;
                     obstacles.add(new Rectangle2D.Double(x, y, w, h));
                 }
             }
         }
 
         // TODO htttp robotdimensions?
-        Point2D robotDimensions = new Point2D.Double(15, 20);
+        Point2D robotDimensions = new Point2D.Double(20, 20);
         for (Point2D robotPosition : SimulatorPanel.getAllRobotPositions()) {
-            if (robotPosition != getPosition()) {
-                double x = robotPosition.getX() - robotDimensions.getX() / 2;
-                double y = robotPosition.getY() - robotDimensions.getY() / 2;
+            if (!robotPosition.equals(getMatrixPosition())) {
+                double x = (sizeTile() * robotPosition.getX()) + sizeTile() / 2
+                        - (robotDimensions.getX() / 2);
+                double y = (sizeTile() * robotPosition.getY()) + sizeTile() / 2
+                        - (robotDimensions.getY() / 2);
                 obstacles.add(new Rectangle2D.Double(x, y, robotDimensions
                         .getX(), robotDimensions.getY()));
             }
@@ -245,11 +249,12 @@ public class SimulationPilot extends AbstractPilot {
 
         for (int distance = 1; distance < 250; distance++) {
             Arc2D sonarArc = new Arc2D.Double();
-            sonarArc.setArc(getPosition().getX(), getPosition().getX(),
-                    2 * (distance + 4), 2 * (distance + 4),
+            sonarArc.setArc(getPosition().getX() - distance, getPosition()
+                    .getY() - distance, 2 * (distance), 2 * (distance),
                     360 - getAngle() - 15, 30, Arc2D.PIE);
             for (Rectangle2D obstacle : obstacles)
-                if (sonarArc.intersects(obstacle))
+                if (sonarArc.intersects(obstacle.getX(), obstacle.getY(),
+                        obstacle.getWidth(), obstacle.getHeight()))
                     return distance;
         }
 
@@ -340,6 +345,7 @@ public class SimulationPilot extends AbstractPilot {
         }
     }
 
+    @SuppressWarnings("unused")
     private double[] getUltrasonicSensorCoordinates() {
         final double[] coordinates = new double[2];
         coordinates[0] = (getPosition().getX() + ultrasonicSensorDistanceFromAxis

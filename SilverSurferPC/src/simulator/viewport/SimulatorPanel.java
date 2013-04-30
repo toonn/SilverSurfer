@@ -891,9 +891,9 @@ public class SimulatorPanel extends JPanel {
         // TODO All robot positions via htttp?
         Set<Point2D> allRobotPositions = new HashSet<Point2D>();
         for (SimulationPilot pilot : simulatorPilots) {
-            allRobotPositions.add(pilot.getPosition());
+            allRobotPositions.add(pilot.getMatrixPosition());
         }
-        allRobotPositions.add(principalPilot.getPosition());
+        allRobotPositions.add(principalPilot.getMatrixPosition());
 
         return allRobotPositions;
     }
