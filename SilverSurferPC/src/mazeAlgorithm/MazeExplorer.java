@@ -22,6 +22,7 @@ public class MazeExplorer {
     private final int amountOfTilesUntilAlign = 0;
     private int currentAmount;
     private boolean quit = false;
+    private boolean reallyquit = false;
     private boolean lastTurnRight = false;
 
     public MazeExplorer(final Tile startTile, final AbstractPilot pilot, boolean align) {
@@ -69,6 +70,7 @@ public class MazeExplorer {
         if (!currentTile.isMarkedExploreMaze())
         	exploreTileAndUpdateQueue(currentTile);
         if (queue.isEmpty() || quit) {
+        	reallyquit = true;
             System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
             return;
         }
@@ -171,6 +173,9 @@ public class MazeExplorer {
 	        	}
 	        }
         }
+        if(quit){
+        	reallyquit = true;
+        }
         return null;
     }
 
@@ -232,7 +237,14 @@ public class MazeExplorer {
         }
         return false;
     }
+    
+	public boolean isReallyQuit(){
+		return reallyquit;
+	}
+    
 }
+
+
 
 /*
 

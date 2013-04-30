@@ -32,7 +32,7 @@
 \label{ssec:Abstract}
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
-De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot van een strip klittenband vooraan waarmee hij het voorwerp kan oprapen.
+De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot een strip klittenband vooraan waarmee hij het voorwerp kan oprapen.
 De robot kan een doolhof verkennen en hiervan een map bijhouden. Via RabbitMQ kunnen de robots en simulatoren met elkaar communiceren. Zo kunnen ze een map naar elkaar doorsturen om naar elkaar toe te rijden.\\
 
 Een computerprogramma simuleert de werking van robots. Deze simulator kan vier robots tegelijk simuleren of kan in hybride vorm gebruikt worden (waarbij bijvoorbeeld \'e\'en fysieke en drie virtuele robots gebruikt worden). De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
@@ -359,7 +359,7 @@ Wanneer de volledige projectie bepaald is, kan deze elke keer gebruikt worden wa
 
 De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Elke robot mag zelf implementeren hoe hij tot de andere robot wilt geraken.
 %Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
-Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme. Elke keer weer als de robot een vak opschuift, vraagt het terug de positie van de andere robot om opnieuw het kortste pad te berekenen. Door na elke tegel terug het nieuwste kortste pad te berekenen, zorgt de robot ervoor dat hij up to date blijft over de positie van de andere robot. Deze zal natuurlijk ook bewegenen in de richting van zen team genoot begeven.
+Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme. Elke keer wanneer het kortste pad berekend wordt, gaat de robot 2 tegels vooruit. Nadien vraagt het terug de positie van de andere robot om opnieuw het kortste pad te berekenen. Door na elke 2 tegels terug het nieuwste kortste pad te berekenen, zorgt de robot ervoor dat hij up to date blijft over de positie van de andere robot die ondertussen ook naderbij komt.
 
 \subsection{Andere robots}
 \subsubsection{Robot-detectie sensor}

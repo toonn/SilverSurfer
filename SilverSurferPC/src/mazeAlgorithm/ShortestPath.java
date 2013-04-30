@@ -24,7 +24,8 @@ public class ShortestPath {
     private Tile startTile;
     private Tile endTile;
     private AbstractPilot pilot;
-    private int extraCostSeesaw = 50000;
+    private int extraCostSeesaw = 4;
+    private boolean pathCalculated = false;
 
     public ShortestPath(MazeExplorer explorer, final AbstractPilot pilot, final Tile startTile, final Tile endTile, final Vector<Tile> tiles) {
         this.explorer = explorer;
@@ -47,7 +48,7 @@ public class ShortestPath {
      */
     private void deleteSuperfluousTiles() {
         for (int i = tilesPath.size() - 2; i > 0; i--) {
-            if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areReachableNeighbours(tilesPath.get(i + 1)))
+            if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areReachableNeighboursIgnoringSeesaw(tilesPath.get(i + 1)))
                 tilesPath.remove(i);
         }
     }
@@ -64,18 +65,17 @@ public class ShortestPath {
     }
     private void fillTilesPath(final Tile currentTile) {
         tilesPath.add(currentTile);
-        if (currentTile.getManhattanValue() == 0) {
+        if ((currentTile.getContent() instanceof Seesaw && currentTile.getManhattanValue() == extraCostSeesaw) || currentTile.getManhattanValue() == 0) {
             deleteSuperfluousTiles();
             return;
         }
+        
 
         // voeg neighbourTiles van de currentTile toe aan de queue
-        for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
+        for (final Tile neighbourTile : currentTile.getReachableNeighboursIgnoringSeesaw()) {
             if (tiles.contains(neighbourTile) && !neighbourTile.isMarkedShortestPath()) {
-                if (!(neighbourTile.getContent() instanceof Seesaw)) {
                     neighbourTile.setCost(currentTile.getCost() + 1);
                     queue.add(neighbourTile);
-                }
             }
         }
 
@@ -117,9 +117,8 @@ public class ShortestPath {
     public int goShortestPath(boolean align, int amount,
             int amountOfTilesUntilAlign) {
         int currentAmount = amount;
-        setHeuristics();
-        startTile.setCost(0);
-        fillTilesPath(startTile);
+        if(!pathCalculated){
+       	 calCulatePath();}
         if (tilesPath.size() == 1) {
             return currentAmount;
         }
@@ -166,6 +165,42 @@ public class ShortestPath {
         }
         return currentAmount;
     }
+    
+    public void goNumberTilesShortestPath(int TilesToGo) {
+        if(!pathCalculated){
+       	 calCulatePath();}
+        
+        if(tilesPath.size() == 2){
+        	System.out.println("geen shortestPath uitvoeren want normaal naast elkaar");
+        	return;
+        }
+        
+        if (tilesPath.size() < TilesToGo) {
+        	TilesToGo = tilesPath.size() - 1;
+        }
+        for (int i = 0; i < TilesToGo; i++) {
+            Orientation orientation = null;
+            for (Orientation ori : Orientation.values())
+                if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
+                    orientation = ori;
+            
+            if (pilot.getReadBarcodes())
+                pilot.setReadBarcodes(false);
+            
+            pilot.rotate((int) (orientation.getAngle() - pilot.getAngle()));
+            pilot.travel(40);
+        }
+        for (final Tile tile : tiles) {
+            tile.resetCost();
+        }
+    }
+    
+    public void calCulatePath(){
+    	 setHeuristics();
+         startTile.setCost(0);
+         fillTilesPath(startTile);
+         pathCalculated = true;
+    }
 
     /**
      * zet de heuristiek op elke tile afhankelijk van de endTile die
@@ -182,4 +217,11 @@ public class ShortestPath {
             tile.setManhattanValue(heuristic);
         }
     }
+    
+    public int getTilesAwayFromTargetPosition(){
+    	if(!pathCalculated){
+    	 calCulatePath();}
+         return tilesPath.size()-1;
+    }
+    
 }

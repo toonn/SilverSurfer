@@ -1,6 +1,7 @@
 package mapping;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -13,6 +14,11 @@ import java.util.Set;
 public class MapGraph {
 
     private final Map<Point, Tile> tiles = new HashMap<Point, Tile>();
+    private boolean mapsMerged = false;
+    private float cosAToConvert;
+    private float sinAToConvert;
+    private Point point1NeededToConvert;
+    private Point point2NeededToConvert;
     
     public Collection<Tile> getTiles() {
         return tiles.values();
@@ -163,28 +169,31 @@ public class MapGraph {
 		int translatedymap1 = (int) (map1tile2.getY() - map1tile1.getY());
 		int translatedxmap2 = (int) (map2tile2.getX() - map2tile1.getX());
 		int translatedymap2 = (int) (map2tile2.getY() - map2tile1.getY());
-		float sinA;
-		float cosA;
+		
 		if (translatedxmap2 == 0) {
-			sinA = -translatedxmap1 / translatedymap2;
-			cosA = translatedymap1 / translatedymap2;
+			sinAToConvert = -translatedxmap1 / translatedymap2;
+			cosAToConvert = translatedymap1 / translatedymap2;
 		} else if (translatedymap2 == 0) {
-			cosA = translatedxmap1 / translatedxmap2;
-			sinA = translatedymap1 / translatedxmap2;
+			cosAToConvert = translatedxmap1 / translatedxmap2;
+			sinAToConvert = translatedymap1 / translatedxmap2;
 		} else {
-			sinA = (float) ((translatedymap1 - translatedxmap1
+			sinAToConvert = (float) ((translatedymap1 - translatedxmap1
 					/ translatedxmap2 * translatedymap2) / ((Math.pow(
 					translatedymap2, 2)) / translatedxmap2 + translatedxmap2));
-			cosA = (float) ((translatedymap1 - translatedxmap2 * sinA) / translatedymap2);
+			cosAToConvert = (float) ((translatedymap1 - translatedxmap2 * sinAToConvert) / translatedymap2);
 		}
+		
+		point1NeededToConvert = map2tile1;
+		point2NeededToConvert = map1tile1;
+		
 		for (peno.htttp.Tile tile : map2) {
-			int convertedX = (int) (cosA * tile.getX() - sinA * tile.getY()
-					- cosA * map2tile1.getX() + sinA * map2tile1.getY() + map1tile1
+			int convertedX = (int) (cosAToConvert * tile.getX() - sinAToConvert * tile.getY()
+					- cosAToConvert * map2tile1.getX() + sinAToConvert * map2tile1.getY() + map1tile1
 					.getX());
-			int convertedY = (int) (cosA * tile.getY() + sinA * tile.getX()
-					- sinA * map2tile1.getX() - cosA * map2tile1.getY() + map1tile1
+			int convertedY = (int) (cosAToConvert * tile.getY() + sinAToConvert * tile.getX()
+					- sinAToConvert * map2tile1.getX() - cosAToConvert * map2tile1.getY() + map1tile1
 					.getY());
-
+			
 			String[] info = tile.getToken().split("\\.");
 			MapReader mapreader = new MapReader();
 			Tile madeTileFromString = new Tile(
@@ -215,6 +224,48 @@ public class MapGraph {
 																.orientationRotatedOver(ori))
 												.getObstruction());
 		}
+		mapsMerged = true;
+		
+		for(Tile t: getTiles()){
+			for(Orientation or: Orientation.values()){
+				if(t.getEdgeAt(or).getObstruction() == Obstruction.WHITE_LINE && (t.getEdgeAt(or).getTile1() == null || t.getEdgeAt(or).getTile2() == null)){
+					System.out.println("in mergeMap bij tile : " + t.getPosition().getX() + " " + t.getPosition().getY() + "in orientation : " + or);
+					Point p = new Point(t.getPosition());
+					if(or.equals(Orientation.EAST)){
+						p.x = (int) (p.getX() + 1); 
+					}
+					if(or.equals(Orientation.WEST)){
+						p.x = (int) (p.getX() - 1); 
+					}
+					if(or.equals(Orientation.NORTH)){
+						p.y = (int) (p.getY() + 1); 
+					}
+					if(or.equals(Orientation.SOUTH)){
+						p.y = (int) (p.getY() - 1); 
+					}
+					Tile buurTile = getTile(p);
+					System.out.println(buurTile.getNeighbour(or.getOppositeOrientation()));
+				}
+			}
+		}
+	}
+	
+	public boolean mapsAreMerged(){
+		return mapsMerged;
+	}
+	
+	public Point convertPoint(Point2D point){
+		if(mapsMerged){
+			int convertedX = (int) (cosAToConvert * point.getX() - sinAToConvert * point.getY()
+					- cosAToConvert * point1NeededToConvert.getX() + sinAToConvert * point1NeededToConvert.getY() + point2NeededToConvert
+					.getX());
+			int convertedY = (int) (cosAToConvert * point.getY() + sinAToConvert * point.getX()
+					- sinAToConvert * point1NeededToConvert.getX() - cosAToConvert * point1NeededToConvert.getY() + point2NeededToConvert
+					.getY());		
+			
+			return new Point(convertedX, convertedY);
+		}
+		return null;
 	}
     
 	private void setExistingTile(Tile tile) {
@@ -247,13 +298,13 @@ public class MapGraph {
 						.getPosition().getY())
 					orientation = Orientation.NORTH;
 			if (orientation != null) {
-				if (neighbourTile.getEdgeAt(orientation).getObstruction() != null)
+				if (neighbourTile.getEdgeAt(orientation.getOppositeOrientation()).getObstruction() != null)
 					tile.replaceEdge(orientation, neighbourTile
 							.getEdgeAt(orientation.getOppositeOrientation()));
 				else
 					neighbourTile.replaceEdge(
 							orientation.getOppositeOrientation(),
-							neighbourTile.getEdgeAt(orientation));
+							tile.getEdgeAt(orientation));
 			}
 		}
 	}
