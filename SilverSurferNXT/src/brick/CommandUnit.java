@@ -47,9 +47,23 @@ public class CommandUnit {
         Motor.B.setSpeed(CommandUnit.speed);
         Motor.C.setSpeed(CommandUnit.speed/8);
 
+        /*
         lightSensor.setFloodlight(true);
-        alignOnWhiteLine();
-        crossClosedSeesaw();
+        int result = moveForward((int)Math.floor(LENGTH_COEF*40));
+        if(result == 2 || result == 16)
+        	pickupObject();
+        else if(infraredSensor.getSensorValue(3) < 70 && (result == 13 || result == 44))
+        	crossOpenSeesaw();
+        else if(result == 13 || result == 44)
+        	crossClosedSeesaw();
+        else {
+        	readBarcodes = false;
+        	turnAngle((int)(ANGLE_COEF_RIGHT*180));
+            moveForwardWithoutBarcode((int)Math.floor(LENGTH_COEF*5));
+        	alignOnWhiteLine();
+        	readBarcodes = true;
+        }
+        */
         
         stopRobot();
         System.out.println("Waiting...");
@@ -319,32 +333,41 @@ public class CommandUnit {
     }
     
     private void crossClosedSeesaw() {
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+        moveForwardWithoutBarcode((int)Math.floor(LENGTH_COEF*-40));
+        alignOnWhiteLine();
         turnAngle((int)(ANGLE_COEF_LEFT*180));
     	Motor.A.setSpeed(CommandUnit.speed/2);
         Motor.B.setSpeed(CommandUnit.speed/2);
         Motor.C.rotate(-75);
         Motor.C.rotate(-35, true);
         moveForwardWithoutBarcode((int)Math.floor(LENGTH_COEF*20));
-        Motor.C.rotate(110);
-        turnAngle((int)(ANGLE_COEF_LEFT*180));
-    	Motor.A.setSpeed(CommandUnit.speed/2);
-        Motor.B.setSpeed(CommandUnit.speed/2);
+        Motor.C.rotate(110, true);
         moveForwardWithoutBarcode((int)Math.floor(LENGTH_COEF*20));
     	Motor.A.setSpeed(CommandUnit.speed);
         Motor.B.setSpeed(CommandUnit.speed);
+        turnAngle((int)(ANGLE_COEF_LEFT*180));
+        alignOnWhiteLine();
+        readBarcodes = readBarcodesBackup;
         crossOpenSeesaw();
     }
     
     private void pickupObject() {
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+        turnAngle((int)(ANGLE_COEF_LEFT*180));
         Motor.A.setSpeed(CommandUnit.speed/2);
         Motor.B.setSpeed(CommandUnit.speed/2);
         Motor.C.rotate(-120);
-        Motor.A.rotate((int)Math.floor(LENGTH_COEF*-30), true);
-        Motor.B.rotate((int)Math.floor(LENGTH_COEF*-30));
+        Motor.A.rotate((int)Math.floor(LENGTH_COEF*-20), true);
+        Motor.B.rotate((int)Math.floor(LENGTH_COEF*-20));
         Motor.A.rotate((int)Math.floor(LENGTH_COEF*30), true);
         Motor.B.rotate((int)Math.floor(LENGTH_COEF*30));
         Motor.C.rotate(120);
     	Motor.A.setSpeed(CommandUnit.speed);
         Motor.B.setSpeed(CommandUnit.speed);
+        alignOnWhiteLine();
+        readBarcodes = readBarcodesBackup;
     }
 }
