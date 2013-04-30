@@ -3,6 +3,7 @@ package mq.communicator;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 import javax.swing.Timer;
@@ -130,6 +131,10 @@ public class APHandler implements PlayerHandler {
     public void teamPosition(double x, double y, double angle) {
     	pilot.getTeamPilot().setPosition(x, y);
     	pilot.getTeamPilot().setAngle(angle);
+    	int xTilePosition = (int) x/40;
+    	int yTilePosition = (int) y/40;
+    	Point2D point = new Point2D.Double(xTilePosition, yTilePosition);
+    	pilot.setTeammatePosition(point);
     }
 
     @Override

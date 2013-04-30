@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.Timer;
@@ -16,6 +17,8 @@ import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Tile;
 import mazeAlgorithm.ExploreThread;
+import mazeAlgorithm.MazeExplorer;
+import mazeAlgorithm.ShortestPath;
 import mq.communicator.APHandler;
 import mq.communicator.MQCenter;
 import simulator.viewport.SimulatorPanel;
@@ -27,6 +30,10 @@ public abstract class AbstractPilot implements PilotInterface {
     private MapGraph mapGraphConstructed;
     private Point2D.Double position;
     private double angle;
+    private Point2D teammatePosition;
+    private boolean stillApproximating;
+    private int tilesToGoToTeammate = 1;
+    private int tilesAwayFromTeammate;
     private int speed;
     private boolean busyExecutingBarcode = false;
     protected boolean readBarcodes = true;
@@ -43,6 +50,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private Tile startingPositionOfTeamMember;
     private DummyPilot teamPilot = new DummyPilot();
     private int updateTilesAndPositionFPS = 3;
+    private boolean won = false;
     private ActionListener updateTilesAndPosition = new ActionListener() {
 
         @Override
@@ -365,6 +373,59 @@ public abstract class AbstractPilot implements PilotInterface {
             exploreThread.quit();
         }
     }
+    
+	public void startLookingYourTeammate() {
+		stillApproximating = true;
+
+		Tile EndTile = mapGraphConstructed.getTile(mapGraphConstructed
+				.convertPoint(getTeammatePosition()));
+		Vector<Tile> v = new Vector<Tile>();
+		v.addAll(mapGraphConstructed.getTiles());
+		ShortestPath shortestPath = new ShortestPath(null, this,
+				mapGraphConstructed.getTile(getMatrixPosition()), EndTile, v);
+
+		int tilesAway = shortestPath.getTilesAwayFromTargetPosition();
+
+		if ((tilesAway == 1 || tilesAway == 0)
+				&& mapGraphConstructed.convertPoint(getTeammatePosition())
+						.getX() == EndTile.getPosition().getX()
+				&& mapGraphConstructed.convertPoint(getTeammatePosition())
+						.getY() == EndTile.getPosition().getY()) {
+//			System.out.println("Teammate = " + getTeamMemberName() + " op positie " +mapGraphConstructed
+//				.convertPoint(getTeammatePosition()).x + " " + mapGraphConstructed
+//				.convertPoint(getTeammatePosition()).y);
+//			System.out.println("ik = " + getPlayerName() + " op positie " + getMatrixPosition().x + " " + getMatrixPosition().y);
+			won();
+			return;
+		} 
+		if (tilesAway != tilesAwayFromTeammate) {
+			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
+		} else {
+			Random random = new Random();
+			try {
+				System.out.println("wacht een paar seconden");
+				Thread.sleep(random.nextInt(10000) + 10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			EndTile = mapGraphConstructed.getTile(mapGraphConstructed
+					.convertPoint(getTeammatePosition()));
+			shortestPath = new ShortestPath(null, this,
+					mapGraphConstructed.getTile(getMatrixPosition()), EndTile,
+					v);
+
+			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
+		}
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		stillApproximating = false;
+	}
 
     public void travel(final double distance) {
         double currentX = getPosition().getX();
@@ -397,5 +458,32 @@ public abstract class AbstractPilot implements PilotInterface {
 
             }
         }
+    }
+    
+    public Point2D getTeammatePosition(){
+    	return teammatePosition;
+    }
+    
+	public void setTeammatePosition(Point2D teammatePosition) {
+
+//		System.out.println("ik ben : " + getPlayerName() + " en mijn teammate " + getTeamMemberName() + " stuurt door" +
+//				" dat hij op positie " + teammatePosition.getX() + " " + teammatePosition.getY() + " staat.");
+//		
+		if (this.teammatePosition == null
+				|| this.teammatePosition.getX() != teammatePosition.getX()
+				|| this.teammatePosition.getY() != teammatePosition.getY()) {
+			this.teammatePosition = teammatePosition;
+			if (exploreThread.getExplorer().isReallyQuit() && !won
+					&& !stillApproximating
+					&& mapGraphConstructed.mapsAreMerged()) {
+//				System.out.println(getPlayerName() + "startLookingYourTeammate");
+				startLookingYourTeammate();
+			}
+		}
+	}
+    
+    public void won(){
+    	System.out.println("you win");
+		won = true;
     }
 }
