@@ -143,7 +143,13 @@ public class ShortestPath {
                 pilot.alignOnWhiteLine();
                 currentAmount = amountOfTilesUntilAlign;
             } else {
-                pilot.travel(20);
+                pilot.travel(4);
+                pilot.travel(4);
+                pilot.travel(4);
+                pilot.travel(4);
+                pilot.travel(4);
+
+
                 if (tilesPath.size() - i > 2) {
                     if (pilot.getReadBarcodes()) {
                         pilot.setReadBarcodes(false);

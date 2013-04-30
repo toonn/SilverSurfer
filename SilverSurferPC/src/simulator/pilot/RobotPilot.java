@@ -59,7 +59,7 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    protected boolean crashImminent() {
+    protected boolean crashImminent(double dummy) {
         // TODO Auto-generated method stub
         return false;
     }

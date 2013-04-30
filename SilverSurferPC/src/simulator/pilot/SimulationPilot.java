@@ -227,22 +227,7 @@ public class SimulationPilot extends AbstractPilot {
         return distanceToFirstEdge + amountOfTilesVisible * sizeTile();
     }
 
-    @Override
-    protected boolean crashImminent() {
-        Point2D.Double point = new Point2D.Double();
-        if (getOrientation() == Orientation.NORTH) {
-            point.setLocation(getPosition().getX(), getPosition().getY() - 1);
-        } else if (getOrientation() == Orientation.SOUTH) {
-            point.setLocation(getPosition().getX(), getPosition().getY() + 1);
-        } else if (getOrientation() == Orientation.EAST) {
-            point.setLocation(getPosition().getX() + 1, getPosition().getY());
-        } else if (getOrientation() == Orientation.WEST) {
-            point.setLocation(getPosition().getX() - 1, getPosition().getY());
-        }
-
-        return SimulatorPanel.robotOn(point);
-    }
-
+   
     @Override
     public String getConsoleTag() {
         return "[SIMULATOR]";
