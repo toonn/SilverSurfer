@@ -158,16 +158,15 @@ De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De lichtsen
 %TODO eigenlijk veel te weinig testresultaten!! we zouden met de bekomen coefficienten gemiddelden en varianties moeten bepalen
 
 \subsubsection{Motoren}
-De robot wordt aangedreven door twee motoren. Beide motoren kunnen onafhankelijk worden aangestuurd. Wanneer de robot rechtdoor rijdt, draaien beide wielen in dezelfde richting. Bij het keren om de as draaien de wielen in tegenovergestelde richting. De kalibratie heeft als doel te bepalen hoeveel graden de motoren moeten draaien om de robot respectievelijk \'e\'en cm vooruit de laten rijden en \'e\'en~graad te laten keren.
+De robot wordt aangedreven door twee motoren. Beide motoren kunnen onafhankelijk worden aangestuurd. Wanneer de robot rechtdoor rijdt, draaien beide motoren in dezelfde richting. Bij het keren om de as draaien de motoren in tegenovergestelde richting. De kalibratie heeft als doel te bepalen hoeveel graden de motoren moeten draaien om de robot respectievelijk \'e\'en cm vooruit de laten rijden en \'e\'en~graad te laten keren.
 
-\begin{description}
-\item \textbf{\'e\'en cm vooruit rijden}\\
-Opdat de robot \'e\'en cm vooruit rijdt, draaien de motoren $20,8\degree$. Het bleek niet nodig deze co\"effici\"ent te wijzigen ten opzichte van het vorige ontwerp. Dit werd getest door de robot de laten starten op een witte lijn en hem dan $40~cm$ vooruit te rijden. De robot zou perfect op de volgende witte lijn moeten uitkomen.
+\subparagraph{E\'en cm vooruit rijden}
+Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien. Het bleek niet nodig deze co\"effici\"ent te wijzigen ten opzichte van het vorige ontwerp. Dit werd getest door de robot de laten starten op een witte lijn en hem dan $40~cm$ vooruit te rijden. De robot komt perfect op de volgende witte lijn uit.
 
 %move forward 20.8 --> perfect
 
-\item \textbf{\'e\'en graad keren om de as}\\
-De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg vervolgens een aantal keer achter elkaar het bevel $90\degree$ rond te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer de herhalen vergroot de fout en wordt het makkelijker deze op te merken.
+\subparagraph{E\'en graad keren om de as}
+De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg vervolgens een aantal keer achter elkaar het bevel $90\degree$ rond te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer de herhalen wordt de fout vergroot en is het makkelijker deze op te merken.
 De co\"effici\"ent die het beste resultaat levert is $2,330\degree$. Deze levert zowel voor positieve als negatieve hoeken hetzelfde resultaat.
 
 %eerst 2.358 --> iets te veel
@@ -175,32 +174,36 @@ De co\"effici\"ent die het beste resultaat levert is $2,330\degree$. Deze levert
 %dan 2.335 --> eerst perfect, toch iets te veel door nieuw achterwiel
 %nu 2.330 --> perfect
 
-\end{description}
 
 \subsubsection{Infraroodsensor}
-%TODO
+%TODO wat willen de waarden juist zeggen?
+De infraroodsensor bestaat uit vijf onafhankelijke sensoren. De robot maakt echter enkel gebruik van de middelste sensor. De infraroodsensor geeft gemiddeld een waarde van $2$, tenzij hij een infraroodbal detecteert. In dat geval geeft hij gemiddeld een waarde rond $120$.
 
 \subsubsection{Ultrasone sensor}
-%TODO aanpassen aan huidige situatie; dit is de tekst van een vorig verslag!!
-Een ultrasone sensor zendt ultrasone geluidsgolven uit. Indien een object in de buurt staat, weerkaatsen de golven hierop. De robot ontvangt dan zijn eigen golven. De tijd tussen het uitzenden en ontvangen laat toe de afstand tot het object te bepalen. In een doolhof, kan een robot muren tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden als object gedetecteerd. Om te vermijden dat de paaltjes als muur worden geinterpreteerd worden enkel meetwaarden kleiner dan 28 cm als muur beschouwd. Deze 28 cm wordt als volgt bepaald: De robot wordt in het midden van een tegel voor een muur geplaatst. De ultrasone sensor meet waarden tussen 12 cm en 24 cm. Vervolgens wordt de muur vervangen door paaltjes. Nu meet de sensor waarden tussen 32 cm en 50 cm. Deze metingen 7 (a) meetwaarden (mediaan van de meetwaarden wordt in de guur weergegeven) (b) laatste geldige meetwaarde Figuur 5: Boxplots kalibratie ultrasone sensor leidden tot een grens van 28 cm. De afwijking van de ultrasone sensor wordt gemeten door de robot op een bepaalde afstand van een muur te zetten. Verschillende afstanden worden zo gemeten. Boxplots in guur 5 geven de
-gemeten waarden ten opzichte van de werkelijke waarden weer. Hoewel de variantie op de gemeten waarde niet groot is, komt de gemiddelde gemeten waarde niet altijd overeen met de werkelijke afstand. Vooral voor afstanden kleiner dan 20 cm en groter dan 145 cm. Waarden buiten het interval [20,145] worden daarom niet als betrouwbaar verondersteld.
+%TODO hoe komen we aan waarden?
+De ultrasone sensor zendt ultrasone geluidsgolven uit. Indien een object in de buurt staat, weerkaatsen de golven hierop. De robot ontvangt dan zijn eigen golven opnieuw. De tijd tussen het uitzenden en ontvangen laat toe de afstand tot het object te bepalen.
 
-%US: 16 = muur, treshold = 21
+In een doolhof kan een robot zowel muren als robots tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge\"interpreteerd worden enkel meetwaarden kleiner dan $21$~cm als mogelijke muur beschouwd. Het is niet mogelijk vast te stellen of het werkelijk om een muur of om een andere robot gaat. Hiermee wordt rekening gehouden in het verkenalgoritme (sectie~\ref{ssec:AlgoZoek}). Wanneer de robot in het midden van een tegel staat geeft de sensor een waarde van $16$~cm. Deze waarde wordt gebruikt om de robot te aligneren op basis van de muren (sectie~\ref{ssec:AlgoAllign}).
+
+%US: 16 = muur - om te aligneren op muur,
+% treshold = 21 - hieronder is het een muur, geen paalte
 
 \subsubsection{Lichtsensor}
 De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe minder licht gereflecteerd wordt door de omgeving, hoe donkerder de omgeving. Op deze manier kunnen de meetwaarden ge\"interpreteerd worden als witte of zwarte lijnen.
 De lichtsensor wordt zowel bij goede lichtomstandigheden als bij slechte omstandigheden getest voor alle soorten ondergrond die in het doolhof voorkomen: een paneel, een witte lijn en een zwarte lijn.
-De lichtsensor geeft een waarde van $55$ wanneer de robot op een witte lijn staat en een waarde van $49$ op een tegel. De robot beschouwt alles boven de $52$ als wit. Dit garandeert een zeker veiligheid in de interpretatie van de sensorwaarden.
-
-%TODO zwart? 40; niet heel precies, maakt niet veel uit
+De lichtsensor geeft gemiddeld de waarde $55$ wanneer de robot op een witte lijn staat en een waarde van $49$ op een tegel. Een zwarte lijn geeft gemiddeld $33$. De robot beschouwt alles boven de $52$ als wit en alles onder $40$ als zwart. Dit garandeert een zekere veiligheid in de interpretatie van de sensorwaarden en maakt het onnodig de sensor steeds te herkalibreren.
 
 %witte lijn lichtsensor: 55
 %tegel: 49
-%--> treshold = 52 (erboven: wit, eronder: niet wit)
+%zwart: 33
+%--> treshold = 52 (erboven: wit, eronder: paneel)
+%				40 (eronder: zwart, erboven: paneel)
 
 \subsubsection{Druksensor}
 \label{ssecc:druksensor}
-De druksensoren worden op deze robot niet gebruikt. Eerst zou de druksensor gebruikt worden bij het oprapen van het voorwerp. De robot rijdt naar achter bij het oprapen van het voorwerp en de druksensor zou dan kunnen bevestigen of de robot tegen de achterste muur gereden heeft. Hierdoor krijgt de robot meer zekerheid of hij het voorwerp heeft opgeraapt. De druksensor is niet ge"implementeert omdat dit niet op de lange schep past. Als de robot naar achter rijdt komt deze alleen met de schep tegen de achterste muur. De druksensor paste hier niet meer op. Er is wel op een andere manier tegemoet gegaan naar de zekerheid van het oprapen van het voorwerp. Dit is verwezenlijkt door de schep een brede klittenband te geven.
+De druksensoren worden op deze robot niet gebruikt.\\
+
+Bij het oprapen van het voorwerp rijdt de robot achteruit tot de schep tegen de muur komt. Met de druksensor kan het slagen van deze actie gecontroleerd worden. Het is echter niet haalbaar een druksensor op de lange schep te plaatsen.
 
 % == ALGORITMES == %
 \section{Algoritmes}
@@ -215,9 +218,7 @@ Het is niet mogelijk om de robot perfect 100\% nauwkeurig te doen rijden. De mot
 De methode bestaat uit twee basisalgoritmes: op basis van een witte lijn en op basis van een muur.
 
 
-\begin{description}
-
-\item \textbf{Aligneren op basis van een witte lijn}\\
+\subparagraph{Aligneren op basis van een witte lijn}
 De robot rijdt vooruit tot de lichtsensor wit detecteert (figuur~\ref{fig:AlgoWit1} en~\ref{fig:AlgoWit2}). Hij rijdt verder tot de sensor weer bruin detecteert (figuur~\ref{fig:AlgoWit3}). Pas na een tweede positieve check van een bruine oppervlakte van de sensor stopt de robot. Zo wordt vermeden dat de robot stopt op de scheiding van twee panelen. De robot staat nu net over de witte lijn. De robot rijdt nog vooruit totdat de wielas net boven de witte lijn staat (figuur~\ref{fig:AlgoWit4}). Vervolgens draait de robot om zijn as tot de lichtsensor weer wit detecteert (figuur~\ref{fig:AlgoWit5}). De robot aligneert op basis van de muur (figuur~\ref{fig:AlgoWit6}) en draait~90\degree~in de andere richting (figuur~\ref{fig:AlgoWit7}). De robot staat nu loodrecht op en in het midden van de witte lijn.
 
 \begin{figure}
@@ -257,15 +258,12 @@ De robot rijdt vooruit tot de lichtsensor wit detecteert (figuur~\ref{fig:AlgoWi
 		\caption{•}
 		\label{fig:AlgoWit7}
 	\end{subfigure}\\
-	\caption{Positie en ori"entatie van de robot corrigeren}
+	\caption{Positie en ori"entatie van de robot corrigeren met behulp van een witte lijn en de muren}
 	\label{fig:AlgoWit}
 \end{figure}
 
-\item \textbf{Aligneren op basis van muren}\\
+\subparagraph{Aligneren op basis van muren}
 Dit algoritme wordt enkel uitgevoerd wanneer de robot op een witte lijn staat. Het algoritme detecteert met behulp van de ultrasone sensor of er een muur recht voor de robot staat. Indien de ultrasone sensor een te hoge waarde geeft, besluit de robot dat er geen muur is en corrigeert hij zichzelf niet. Indien er wel een muur staat, zal de robot zich op basis hiervan corrigeren. De robot rijdt eventueel naar voren of naar achteren tot de ultrasone sensor een waarde van $16$ geeft. De robot staat dan in het midden van de witte lijn. Het getal 16 is gekozen via kalibratie. Dit blijkt voor de robot de afstand te zijn waarbij de robot in het middel van de tegel staat. 
-
-\end{description}
-
 
 % == barcoes lezen == %
 \subsubsection{Barcodes lezen}
