@@ -52,6 +52,8 @@ public abstract class AbstractViewPort extends JPanel {
             repaint();
         }
     };
+    
+    public void paintExploreQueue(final Graphics graph){}
 
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet,
             Color[] teamColors, Color mainColor) {
@@ -168,6 +170,7 @@ public abstract class AbstractViewPort extends JPanel {
         paintFrame(graph);
         translate(graph);
         paintGrid(graph);
+        paintExploreQueue(graph);
         if (pilots.size() > 0) {
             paintMapGraph(graph);
             paintRobotColor(graph);

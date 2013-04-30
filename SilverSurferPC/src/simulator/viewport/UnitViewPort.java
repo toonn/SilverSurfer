@@ -27,7 +27,8 @@ public class UnitViewPort extends DummyViewPort {
     private List<Point> pathCoordinates;
     private final Arc2D sonarArc = new Arc2D.Double();
 
-    public UnitViewPort(final Set<AbstractPilot> pilotSet, Color[] teamColors, Color mainColor) {
+    public UnitViewPort(final Set<AbstractPilot> pilotSet, Color[] teamColors,
+            Color mainColor) {
         super(pilotSet, teamColors, mainColor);
         pilots = new HashSet<AbstractPilot>(pilotSet);
         resetPath();
@@ -68,12 +69,15 @@ public class UnitViewPort extends DummyViewPort {
         super.paintComponent(graph);
         paintPathComponent(graph);
         paintBeamComponent(graph);
-        paintExploreQueue(graph);
     }
 
-    private void paintExploreQueue(final Graphics graph) {
+    public void paintExploreQueue(final Graphics graph) {
         try {
+        	AlphaComposite originalAlpha = (AlphaComposite) ((Graphics2D) graph).getComposite();
+        	BasicStroke originalStroke = (BasicStroke) ((Graphics2D) graph).getStroke();
             ((Graphics2D) graph).setColor(Color.ORANGE);
+            ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(
+                    AlphaComposite.SRC_OVER, 0.4f));
             for (MapGraph mapGraph : getAllMapGraphs()) {
                 for (Tile tile : mapGraph.getTiles()) {
                     Rectangle2D checkHighlight = new Rectangle2D.Double(tile
@@ -83,6 +87,8 @@ public class UnitViewPort extends DummyViewPort {
                     ((Graphics2D) graph).fill(checkHighlight);
                 }
             }
+            ((Graphics2D) graph).setComposite(originalAlpha);
+            ((Graphics2D) graph).setStroke(originalStroke);
         } catch (java.util.ConcurrentModificationException e) {
             paintExploreQueue(graph);
         }
