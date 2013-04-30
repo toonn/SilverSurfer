@@ -142,14 +142,14 @@ De infrarood- en ultrasone sensor staan vast gemonteerd op de robot. De lichtsen
 	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{lichtsensor}
-		\caption{Hefboomsysteem van lichtsensor}
+		\caption{Hefboomsysteem lichtsensor}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.325\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{lichtsensorDown}
-		\caption{}
+		\caption{lichtsensor}
 	\end{subfigure}
-\caption{Lichtsensor naar beneden}
+\caption{De details van de robot}
 \label{fig:robotDetail}
 \end{figure}
 
@@ -429,11 +429,13 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 \end{figure}
 
 %TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
-Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De GUI toont links de \textit{OverallVieuwport}: de volledige map met alle robots, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
+Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De eerste figuur toont de GUI met de verschillende robots met elk hun eigen doolhof, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken en met de rand van de kader waarin de robot zich bevind. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Dit is te zien in de eerste groene kader van figuur \ref{GUI1}. Hierbij heeft de robot zijn voorwerp gevonden maar hij weet nog niet wie zijn teamgenoot is. Wanneer zijn teamgenoot ook zijn voorwerp gevonden heeft veranderd ook zijn kleur in de teamkleur en mappen de beide robots hun doolhof. Dit doolhof is te zien rechts van de kader van de beide robotten. Dit is te zien in de tweede figuur. De robot met de blauwe kader en de robot met de groene kader hebben elk hun voorwerp gevonden en hebben dezelfde teamkleur. Beiden hebben ook al hun doolhof gemapt. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
+De Overall map staat helemaal links vanboven. Hierin worden alle robots weergegeven, de wip, de voorwerpen en de barcodes. Het voorwerp heeft dezelfde kleur als de robot die het moet oppakken.\\
 
-Rechts worden de \textit{UnitViewports} en \textit{DummyViewports} weergegeven. Wanneer de robot een pad aflegt, tekenen de \textit{Viewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Dit is handig bij het testen van verkenalgoritmes.\\
+Deze doolhoven worden de \textit{UnitViewports} en \textit{DummyViewports} genoemd. Wanneer de robot een pad aflegt, tekenen de \textit{Viewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Als de robot bijvoorbeeld een wip bezoekt zal die de wip ineens tekenen in het doolhof. Een wip wordt voorgesteld als een gele strook van twee tegels lang. Een wip heeft een rode streep aan de kant waar de wip naar boven staat. Dit is handig bij het testen van verkenalgoritmes.\\
 
-Het aantal \textit{UnitViewports} of \textit{DummyViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubar. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur~\ref{fig:GUI2}.
+Het aantal \textit{UnitViewports} of \textit{DummyViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubar. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur~\ref{fig:GUI2}. \\
+Links worden de kleuren van de verschillende robots weergegeven en de teamkleuren. Extra info zoals de sensorwaarden en de positie staat eronder beschreven. Beneden de \textit{Vieuwports} staan de grafieken voor de sensorwaarden van de ultrasone sensor, de lichtsensor en de infraroodsensor. 
 
 % -- RabbitMQ -- %
 \subsection{Communicatie tussen de robots}
