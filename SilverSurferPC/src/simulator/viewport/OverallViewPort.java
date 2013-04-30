@@ -8,7 +8,6 @@ import java.util.Set;
 import mapping.MapGraph;
 import mapping.Seesaw;
 import mapping.Tile;
-import simulator.pilot.AbstractPilot;
 import simulator.pilot.PilotInterface;
 
 @SuppressWarnings("serial")
@@ -16,7 +15,7 @@ public class OverallViewPort extends AbstractViewPort {
 
     private MapGraph mapGraphLoaded;
 
-    public OverallViewPort(Set<AbstractPilot> pilotSet,
+    public OverallViewPort(Set<PilotInterface> pilotSet,
             MapGraph mapGraphLoaded, Color[] teamColors) {
         super(pilotSet, teamColors, Color.GRAY);
         this.mapGraphLoaded = mapGraphLoaded;
@@ -37,11 +36,14 @@ public class OverallViewPort extends AbstractViewPort {
 
     private void robotOnSeesaw() {
         for (Tile tile : mapGraphLoaded.getTiles())
-            if (tile.getContent() instanceof Seesaw && ((Seesaw) tile.getContent()).isClosed())
+            if (tile.getContent() instanceof Seesaw
+                    && ((Seesaw) tile.getContent()).isClosed())
                 for (PilotInterface pilot : pilots)
                     if (pilot.getMatrixPosition().equals(tile.getPosition()))
                         for (Tile mapTile : mapGraphLoaded.getTiles())
-                            if (mapTile.getContent() instanceof Seesaw && mapTile.getContent().getValue() == tile.getContent().getValue())
+                            if (mapTile.getContent() instanceof Seesaw
+                                    && mapTile.getContent().getValue() == tile
+                                            .getContent().getValue())
                                 ((Seesaw) mapTile.getContent()).flipSeesaw();
     }
 }
