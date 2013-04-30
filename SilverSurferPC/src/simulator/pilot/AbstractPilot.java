@@ -32,7 +32,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private double angle;
     private Point2D teammatePosition;
     private boolean stillApproximating;
-    private int tilesToGoToTeammate = 2;
+    private int tilesToGoToTeammate = 1;
     private int tilesAwayFromTeammate;
     private int speed;
     private boolean busyExecutingBarcode = false;
@@ -391,22 +391,20 @@ public abstract class AbstractPilot implements PilotInterface {
 						.getX() == EndTile.getPosition().getX()
 				&& mapGraphConstructed.convertPoint(getTeammatePosition())
 						.getY() == EndTile.getPosition().getY()) {
-			System.out.println(mapGraphConstructed
-				.convertPoint(getTeammatePosition()).x + " " + mapGraphConstructed
-				.convertPoint(getTeammatePosition()).y);
-			System.out.println(getMatrixPosition().x + " " + getMatrixPosition().y);
+//			System.out.println("Teammate = " + getTeamMemberName() + " op positie " +mapGraphConstructed
+//				.convertPoint(getTeammatePosition()).x + " " + mapGraphConstructed
+//				.convertPoint(getTeammatePosition()).y);
+//			System.out.println("ik = " + getPlayerName() + " op positie " + getMatrixPosition().x + " " + getMatrixPosition().y);
 			won();
 			return;
-		} else if (tilesAway <= 4) {
-			tilesToGoToTeammate = 1;
-		}
-
+		} 
 		if (tilesAway != tilesAwayFromTeammate) {
 			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
 		} else {
 			Random random = new Random();
 			try {
-				Thread.sleep(random.nextInt(10000) + 5000);
+				System.out.println("wacht een paar seconden");
+				Thread.sleep(random.nextInt(10000) + 10000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -468,6 +466,9 @@ public abstract class AbstractPilot implements PilotInterface {
     
 	public void setTeammatePosition(Point2D teammatePosition) {
 
+//		System.out.println("ik ben : " + getPlayerName() + " en mijn teammate " + getTeamMemberName() + " stuurt door" +
+//				" dat hij op positie " + teammatePosition.getX() + " " + teammatePosition.getY() + " staat.");
+//		
 		if (this.teammatePosition == null
 				|| this.teammatePosition.getX() != teammatePosition.getX()
 				|| this.teammatePosition.getY() != teammatePosition.getY()) {
@@ -475,6 +476,7 @@ public abstract class AbstractPilot implements PilotInterface {
 			if (exploreThread.getExplorer().isReallyQuit() && !won
 					&& !stillApproximating
 					&& mapGraphConstructed.mapsAreMerged()) {
+//				System.out.println(getPlayerName() + "startLookingYourTeammate");
 				startLookingYourTeammate();
 			}
 		}
