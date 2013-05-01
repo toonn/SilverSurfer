@@ -7,7 +7,6 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{listings}
-\usepackage{caption}
 \usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes,shadows,arrows}
@@ -84,9 +83,16 @@ Het voorwerp kan op verschillende manieren worden opgeraapt. Volgende opstelling
 \item \textbf{Figuur~\ref{fig:robotBouw}}. De robot neemt nog steeds met behulp van klittenband het voorwerp op. De schep bevind zich nu op het uiteinde van een steel. Deze steel wordt gebruikt om de wip naar beneden te kantelen. Het voorwerp wordt dan helemaal mee tot boven opgetild.  
 \end{enumerate}
 
-Na de robot een aantal keer over wip te laten rijden bleek dat de robot bij het op- en afrijden van de wip schokte tijdens het rijden. De bouw van de robot werd volledig herzien. De wielen werden verder uit elkaar geplaatst. De NXT werd schuin gemonteerd om een zo compact mogelijk ontwerp te krijgen. Zo kwam aan de achterkant genoeg plaats om een schep te monteren.\\
 
-Deze schep is voorzien van klittenband om het voorwerp makkelijk op te rapen. De schep is bovendien vrij lang en kan bewegen met behulp van een motor. Dit laat toe de wip `handmatig' te openen. Zo wordt vermeden dat de robot vast zit in een bepaald deel van de doolhof. De robot is dan minder afhankelijk van andere robots.
+Het vorig ontwerp van de robot is aangepast. Uit de vorige demo bleek dat de robot bij het oprijden en afrijden van de wip heel schokkerig bewoog, ook wanneer de robot draaide of sneller wou rijden. Voor deze demo hebben we de robot helemaal terug opnieuw in elkaar gestoken. De wielen zijn verder uit elkaar gezet zodat de robot breder wordt. De NXT is schuin erop gezet omdat het zo goed uit kwam om te monteren. Het bijkomend voordeel dat we hierbij hadden, was dat er dan aan de achterkant genoeg plaats was om een schep voor het voorwerp te monteren. \\
+
+% --- STUK MET DE LANGE SCHEP -- %
+De schep is zo gebouwd dat het heel lang geworden is. Met deze lange schep zijn we in staat om de wip naar beneden te halen. De robot rijdt eerst naar een wip en zet zich op de juiste positie ten opzichte van de barcode voor de wip. De robot draait zich dan om en laat de lange schep naar beneden. Doordat deze lange schep genoeg druk kan uitoefenen valt de wip naar beneden en kan de robot erover rijden. Deze schep nam wel alle plaats in beslag dus werd er op het einde van de schep een stuk klittenband voorzien voor het voorwerp. \\
+
+Om het voorwerp op te rapen wordt hetzelfde algoritme gebruikt als hiervoor. Alleen wordt dit nu gedaan met een langere schep. De robot gaat in het midden van het vakje staan van de barcode, draait zich dan om en rijd dan naar achter. Er is geen druksensor om na te kijken of het voorwerp wel degelijk is opgepakt. Hiervoor is er een schep gemaakt die groot is in de breedte zodat het moeilijk is om het voorwerp te missen. \\
+
+Deze lange schep geeft ons verschillende voordelen. Ten eerste als alle robots zouden opgesloten zijn in een deel van het doolhof omdat de wip naar boven staat dan kan de robot hier uit geraken door de wip zelf naar beneden te doen. Ten tweede als er een wip is die toegang verschaft naar een onbekend gebied van het doolhof met het voorwerp van de robot in dan hoeft de robot niet te wachten tot een andere robot hierover rijdt zodat de wip goed staat. De robot kan zelf de wip naar beneden doen. Hierdoor is de robot zeer onafhankelijk van de wip en in staat om heel het doolhof te verkennen zonder last te hebben van de wippen. Als laatste hoeft er geen algoritme geschreven worden waarbij de robot wacht tot de wip goed staat. Dit zou mogelijks gebruikt worden wanneer de robot wacht totdat een wip naar beneden staat zodat het onverkende gebied achter de wip kan verkend worden. 
+Wat er wel aangepast moet worden, is dat de robot via het protocol twee keer een lock moet vragen op de wip. Zodat het lijkt alsof de robot er twee keer is over gegaan en zodat andere robots die misschien de stand van de wip bijhouden nog steeds de juiste stand hebben.
 
 % STUK ZONDER GIGA SCHEP: De schep heeft ook een motor gekregen. Initieel staat de schep naar boven en deze wordt naar beneden gedaan wanneer de robot het voorwerp moet oprapen.  Dit nieuwe ontwerp betekende wel dat er opnieuw getest moest worden en dat de sensoren terug opnieuw gekalibreerd moesten worden.
 
@@ -215,43 +221,43 @@ De methode bestaat uit twee basisalgoritmes: op basis van een witte lijn en op b
 
 
 \subparagraph{Aligneren op basis van een witte lijn}
-De robot rijdt vooruit tot de lichtsensor wit detecteert (figuur~\ref{fig:AlgoWit1} en~\ref{fig:AlgoWit2}). Hij rijdt verder tot de sensor weer bruin detecteert (figuur~\ref{fig:AlgoWit3}). Pas na een tweede positieve check van een bruine oppervlakte van de sensor stopt de robot. Zo wordt vermeden dat de robot stopt op de scheiding van twee panelen. De robot staat nu net over de witte lijn. De robot rijdt nog vooruit totdat de wielas net boven de witte lijn staat (figuur~\ref{fig:AlgoWit4}). Vervolgens draait de robot om zijn as tot de lichtsensor weer wit detecteert (figuur~\ref{fig:AlgoWit5}). De robot aligneert op basis van de muur (figuur~\ref{fig:AlgoWit6}) en draait~90\degree~in de andere richting (figuur~\ref{fig:AlgoWit7}). De robot staat nu loodrecht op en in het midden van de witte lijn. Als laatste stap rijdt de robot nog $20$~cm vooruit zodat hij op het midden van de volgende tegel staat.
+De robot rijdt vooruit tot de lichtsensor wit detecteert (figuur~\ref{fig:AlgoWit1} en~\ref{fig:AlgoWit2}). Hij rijdt verder tot de sensor weer bruin detecteert (figuur~\ref{fig:AlgoWit3}). Pas na een tweede positieve check van een bruine oppervlakte van de sensor stopt de robot. Zo wordt vermeden dat de robot stopt op de scheiding van twee panelen. De robot staat nu net over de witte lijn. De robot rijdt nog vooruit totdat de wielas net boven de witte lijn staat (figuur~\ref{fig:AlgoWit4}). Vervolgens draait de robot om zijn as tot de lichtsensor weer wit detecteert (figuur~\ref{fig:AlgoWit5}). De robot aligneert op basis van de muur (figuur~\ref{fig:AlgoWit6}) en draait~90\degree~in de andere richting (figuur~\ref{fig:AlgoWit7}). De robot staat nu loodrecht op en in het midden van de witte lijn.
 
 \begin{figure}
 \centering
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn1}
-		\caption{}
+		\caption{•}
 		\label{fig:AlgoWit1}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn2}
-		\caption{}
+		\caption{•}
 		\label{fig:AlgoWit2}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn3}
-		\caption{}
+		\caption{•}
 		\label{fig:AlgoWit3}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn4}
-		\caption{}
+		\caption{•}
 		\label{fig:AlgoWit4}
 	\end{subfigure}\\ \vspace{0.2cm}
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn5}
-		\caption{}
+		\caption{•}
 		\label{fig:AlgoWit5}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn6}
-		\caption{}
+		\caption{•}
 		\label{fig:AlgoWit6}
 	\end{subfigure}
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn7}
-		\caption{}
+		\caption{•}
 		\label{fig:AlgoWit7}
 	\end{subfigure}\\
 	\caption{Positie en ori"entatie van de robot corrigeren met behulp van een witte lijn en de muren}
@@ -259,27 +265,21 @@ De robot rijdt vooruit tot de lichtsensor wit detecteert (figuur~\ref{fig:AlgoWi
 \end{figure}
 
 \subparagraph{Aligneren op basis van muren}
-Dit algoritme wordt enkel uitgevoerd wanneer de robot op een witte lijn staat. Het algoritme detecteert met behulp van de ultrasone sensor of er een muur recht voor de robot staat. Indien de ultrasone sensor een te hoge waarde geeft, besluit de robot dat er geen muur is en corrigeert hij zichzelf niet. Indien er wel een muur staat, zal de robot zich op basis hiervan corrigeren. De robot rijdt eventueel naar voren of naar achteren tot de ultrasone sensor een waarde van $16$ geeft. De robot staat dan in het midden van de witte lijn. Het getal 16 is gekozen via kalibratie. Dit blijkt voor de robot de afstand te zijn waarbij de robot in het middel van de tegel staat. 
+Dit algoritme wordt enkel uitgevoerd wanneer de robot op een witte lijn staat. Het algoritme detecteert met behulp van de ultrasone sensor of er een muur recht voor de robot staat. Indien de ultrasone sensor een te hoge waarde geeft, besluit de robot dat er geen muur is en corrigeert hij zichzelf niet. Indien er wel een muur staat, zal de robot zich op basis hiervan corrigeren. De robot rijdt eventueel naar voren of naar achteren tot de ultrasone sensor een waarde van $16$ geeft. De robot staat dan in het midden van de witte lijn. Het getal 16 is gekozen via kalibratie. Dit blijkt voor de robot de afstand te zijn waarbij de robot in het midden van de tegel staat. 
 
-% == barcodes lezen == %
+% == barcoes lezen == %
 \subsubsection{Barcodes lezen}
 \label{ssec:AlgoBar}
-Een barcode bestaat uit acht stroken van $2$~cm, waarvan de eerste en de laatste strook zwart zijn. De andere stroken kunnen zwart of wit zijn en vormen samen de waarde van de barcode. De robot kijkt tijdens het rijden of de lichtsensor een zwarte ondergrond detecteert. Indien dit het geval is rijdt de robot $17$~cm vooruit zodat hij achter de barcode eindigt. Ondertussen meet hij elke $2$~cm wat de waarde van de lichtsensor is.\\
+%TODO het lees-algoritme
 
-% methode om te meten hoeveel je hebt gereden: tacho
-
-Wanneer de gevonden barcode een voorwerp aanduidt, weet de robot dat de volgende tegel een ´dead-end' is zonder deze te moeten bezoeken. Deze tegel wordt automatisch toegevoegd aan de map en ingesteld als `verkend'. Indien dit het gezochte voorwerp is, raapt de robot dit op.
+Wanneer de gevonden barcode een voorwerp aanduidt, weet de robot dat de volgende tegel een dead-end is zonder deze te moeten bezoeken. Deze tegel wordt automatisch toegevoegd aan de map en ingesteld als `verkend'.
 Analoog voor een barcode die een wip aanduidt: de volgende drie tegels, waarvan er twee een wip bevatten, worden automatisch toegevoegd aan de map.
 
 % === WIP === %
 \subsubsection{Wip}
 \label{ssec:AlgoWip}
-De robot rijdt vaak onnauwkeurig bij het nemen van de wip. Hij zal een wip daarom zoveel mogelijk vermijden. De robot zal eerst alle tegels aan deze kant van de wip verkennen. De kans is immers vrij groot dat hij de andere kant van de wip tegenkomt zonder deze te moeten oversteken. Wanneer alle tegels in de queue verkend zijn, behalve diegene die bereikbaar zijn via een wip, zal de robot wel over de wip rijden. De robot rijdt dan naar die wip die het dichtst bij is en die toegang geeft tot onverkende tegels.\\
+Wanneer de robot een wip tegenkomt, zal hij deze in eerste instantie niet nemen. De robot zal eerst alle tegels aan deze kant van de wip verkennen. De kans is immers vrij groot dat hij de andere kant van de wip tegenkomt zonder deze te moeten oversteken. Wanneer alle tegels in de queue verkend zijn, behalve diegene die bereikbaar zijn via een wip, zal de robot wel over de wip rijden. De robot rijdt dan naar die wip die het dichtst bij is \'en die toegang geeft tot onverkende tegels. De robot zal geen probleem ondervinden om de wip over te geraken als deze naar beneden gericht is. Met de schep kan de robot de wip naar beneden halen. Hierdoor heeft de robot geen probleem meer als de wip die toegang geeft tot de onverkende tegels gesloten zou zijn. 
 
-Wanneer deze wip open is zal de robot hem oversteken. Wanneer de wip gesloten is kan de robot de wip openen met behulp van de schep. Deze functie kan ook worden afgezet. In dat geval zal de robot naar een andere wip rijden of blijven wachten voor de wip tot een andere robot de wip opent.
-
-\subparagraph{Het openen van de wip} 
-Dit algoritme wordt uitgevoerd wanneer de robot voorbij de barcode van een gesloten wip staat. De robot rijdt $40$~cm achterwaarts en aligneert zich op de witte lijn zonder de barcode opnieuw te lezen. Het is immers belangrijk dat de robot op de juiste plaats staat. De robot staat dan in het midden van de tegel en draait~$180\degree$ om zijn as. De schep daalt~$75\degree$ zodat hij op de wip ligt. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt de schep de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken. De robot dient de wip volgens het protocol twee keer een ´lock' aan te vragen. Zo weten andere robots in welke richting de wip uiteindelijk staat.
 
 % == zoeken van het voorwerp == %
 \subsection{Zoeken van het voorwerp} %
@@ -343,8 +343,6 @@ De optimalisatie werd getest door de simulator verschillende keren door vier ver
 %testresultaten: 25x beter (24,3%); 30x even goed (29,1%); 48x slechter (46,6%)
 Een vergelijking van alle testresultaten toont dat het algoritme met deze optimalisatie slechts in 24\% van de gevallen een verbetering is. In 47\% van de gevallen doet de robot er zelfs langer over. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen wanneer de tegels op dat pad nog niet verkend zijn. In dat geval kan het pad enkel op basis van de manhattanafstand geschat worden, zonder de muren in rekening te brengen. Dit zorgt ervoor dat de robot vaak moet terugkeren om een nieuw pad te zoeken. Deze implementatie van de optimalisatie is daarom niet de moeite om toe te voegen aan het algoritme. \\
 
-\subsubsection{Het oprapen van een voorwerp}
-Dit algoritme wordt uitgevoerd wanneer de robot op de barcode vlak voor het voorwerp staat. De robot draait $180\degree$ om zijn as, laat zijn schep naar beneden zakken en rijdt $20$~cm achteruit. Zo wordt de schep tegen de muur geduwd. Het voorwerp ligt tegen de muur en zal met behulp van klittenband bevestigd worden aan de schep. De robot rijdt $30$~cm vooruit zodat hij voorbij de barcode staat. Vervolgens aligneert hij zich op de volgende witte lijn.
 
 \subsection{Samenvoegen van doolhoven}
 \label{ssec:AlgoMappen}
@@ -355,27 +353,30 @@ Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worde
 
 De translaties van beide mappen naar $(0,0)$ en de rotatie van de tweede map leidt tot een algemene transformatiematrix. Deze verandert echter alleen de co\"ordinaten van de tegels, niet de ori\"entatie van de tegels zelf. Wanneer de matrix geroteerd wordt, moeten alle tegels afzonderlijk van ori\"entatie veranderd worden.\\
 
-Wanneer de volledige projectie bepaald is, kan deze elke keer gebruikt worden wanneer een nieuwe doolhof ontvangen worden. Ze hoeft niet opnieuw berekend te worden.
+Wanneer de volledige projectie bepaald is, kan deze elke keer gebruikt worden wanneer een nieuwe doolhof ontvangen wordt. Ze hoeft niet opnieuw berekend te worden.
 
 \subsection{Teamgenoot bereiken}
 \label{ssec:AlgoAndereRobot}
 
 De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over hun positie. Naar een teamgenoot stuurt een robot ook zijn volledige map. De teamgenoten rijden dan naar elkaar, zonder expliciet een tegel af te spreken. Wanneer de robots elk een ander pad kiezen, zou het echter kunnen dat ze elkaar kruisen. Elke robot mag zelf implementeren hoe hij tot de andere robot wilt geraken.
 %Deze oplossing lijkt ons daarom niet optimaal, maar we leggen ons neer bij de beslissing.\\
-Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme. Elke keer wanneer het kortste pad berekend wordt, gaat de robot 2 tegels vooruit. Nadien vraagt het terug de positie van de andere robot om opnieuw het kortste pad te berekenen. Door na elke 2 tegels terug het nieuwste kortste pad te berekenen, zorgt de robot ervoor dat hij up to date blijft over de positie van de andere robot die ondertussen ook naderbij komt.
+Om naar de juiste plek te gaan gebruikt de robot het kortste pad algoritme. Elke keer wanneer het kortste pad berekend wordt, gaat de robot 1 tegel vooruit. Nadien vraagt het terug de positie van de andere robot om opnieuw het kortste pad te berekenen. Door na elke tegel terug het nieuwste kortste pad te berekenen, zorgt de robot ervoor dat hij up to date blijft over de positie van de andere robot die ondertussen ook naderbij komt.
 %TODO Gerlinde updaten
 
 \subsection{Andere robots}
 \subsubsection{Robot-detectie sensor}
 \label{ssec:AlgoCollision}
 
-De hybride sensor wordt door ons team niet ge"implementeerd. De hybride sensor maakt gebruikt van de wereld simulator en de kennis van de positie die de andere robots doorsturen. De posities van de andere robots moeten dan correct zijn voordat de wereld simulator correct is. Wij hebben ervoor gekozen om de robot robuuster te maken en onafhankelijk van andere robots. Dit is de reden waarom de robot-detectie sensor (of hybride sensor) niet gebruikt wordt door de robot. Voor robot detectie gaan de robot elke muur wantrouwen. Het kan dus zijn dat de robot een muur detecteert maar dat dit eigenlijk een robot is. Als een robot het doolhof verkent, zal de hij elke keer weer naar muren zoeken. Een andere robot zal dus als een muur gedetecteerd worden. Als de robot op een ander tijdstip terug op het vakje komt en de robot is er niet meer, dan detecteert hij bij het zoeken van de muren geen muur meer en veranderd dit in zijn geheugen. 
+De hybride sensor wordt door ons team niet ge"implementeerd. De hybride sensor maakt gebruikt van de wereld simulator en de kennis van de positie die de andere robots doorsturen. De posities van de andere robots moeten dan correct zijn voordat de wereld simulator correct is. Wij hebben ervoor gekozen om de robot robuuster te maken en onafhankelijk van andere robots. Dit is de reden waarom de robot-detectie sensor (of hybride sensor) niet gebruikt wordt door de robot. Voor robot detectie gaat de robot elke muur wantrouwen. Het kan dus zijn dat de robot een muur detecteert maar dat dit eigenlijk een robot is. Als een robot het doolhof verkent, zal hij elke keer weer naar muren zoeken. Een andere robot zal dus als een muur gedetecteerd worden. Als de robot op een ander tijdstip terug op het vakje komt en de robot is er niet meer, dan detecteert hij bij het zoeken van de muren geen muur meer en veranderd dit in zijn geheugen. \\
+
+Wanneer een robot een opening ziet, is de robot wel zeker dat daar geen muur is.
+Als er gesimuleerde robots in het spel zijn, wordt er wel de informatie van de wereldsimulator gebruikt om de afstandssensor juist te simuleren (je moet de positie van andere robots weten om de afstand tot die robots te simuleren). Dit is dus ook maar benaderend want je hebt alleen 'matrixpositions' en geen absolute positions, je doet dus alsof ze op het midden van een tegel staan.\\
 
 
 % == SOFTWARE == %
 \section{Software}
 \label{sec:Softw}
-De software bestaat uit twee delen: een project dat op de NXT van de robot loopt en een project dat op de computer loopt (sectie~\ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie~\ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Robots kunnen met elkaar communiceren via RabbitMQ (sectie~\ref{ssec:RabbMQ}). Via de GUI kunnen ook virtuele robots aangestuurd worden: de simulatoren (sectie~\ref{ssec:Sim}). Tijdens het verkennen wordt een map opgeslagen van de wereld (sectie~\ref{ssec:Mapping}).\\
+De software bestaat uit twee delen: een project dat op de NXT van de robot loopt en een project dat op de computer loopt (sectie~\ref{ssec:Sdesign}). Alles wordt aangestuurd via de \textit{Graphical User Interface (GUI)} (sectie~\ref{ssec:GUI}). Deze laat toe de robot te besturen en de reacties van de robot weer te geven. Robots kunnen met elkaar communiceren via RabbitMQ (sectie~\ref{ssec:RabbMQ}). Via de GUI kunnen ook virtuele robots aangestuurd worden i.e. gesimuleerde robots (sectie~\ref{ssec:Sim}). Tijdens het verkennen wordt een map opgeslagen van de wereld (sectie~\ref{ssec:Mapping}).\\
 
 Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
 
@@ -439,13 +440,13 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 \end{figure}
 
 %TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
-Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De eerste figuur toont de GUI met de verschillende robots met elk hun eigen doolhof, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken en met de rand van de kader waarin de robot zich bevind. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Dit is te zien in de eerste groene kader van figuur \ref{GUI1}. Hierbij heeft de robot zijn voorwerp gevonden maar hij weet nog niet wie zijn teamgenoot is. Wanneer zijn teamgenoot ook zijn voorwerp gevonden heeft veranderd ook zijn kleur in de teamkleur en mappen de beide robots hun doolhof. Dit doolhof is te zien rechts van de kader van de beide robotten. Dit is te zien in de tweede figuur. De robot met de blauwe kader en de robot met de groene kader hebben elk hun voorwerp gevonden en hebben dezelfde teamkleur. Beiden hebben ook al hun doolhof gemapt. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
-De \textit{OverallViewport} staat helemaal links vanboven. Hierin worden alle robots weergegeven, de wip, de voorwerpen en de barcodes. Het voorwerp heeft dezelfde kleur als de robot die het moet oppakken.\\
+Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI bij verschillende instellingen. De eerste figuur toont de GUI met de verschillende robots met elk hun eigen doolhof, voorwerpen en barcodes erin. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken en met de rand van de kader waarin de robot zich bevindt. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur. Dit is te zien in de eerste groene kader van figuur \ref{GUI1}. Hierbij heeft de robot zijn voorwerp gevonden maar hij weet nog niet wie zijn teamgenoot is. Wanneer zijn teamgenoot ook zijn voorwerp gevonden heeft veranderd ook zijn kleur in de teamkleur en mappen de beide robots hun doolhof. Dit doolhof is te zien rechts van de kader van de beide robots. Dit is te zien in de tweede figuur. De robot met de blauwe kader en de robot met de groene kader hebben elk hun voorwerp gevonden en hebben dezelfde teamkleur. Beiden hebben ook al hun doolhof gemapt. Op het einde hebben de robots van hetzelfde duo dezelfde kleur.\\
+De \textit{OverallViewport} staat helemaal linksboven. Hierin worden alle robots weergegeven, de wip, de voorwerpen en de barcodes. Het voorwerp heeft dezelfde kleur als de robot die het moet oppakken.\\
 
-Deze doolhoven worden de \textit{UnitViewports} en \textit{DummyViewports} genoemd. Wanneer de robot een pad aflegt, tekenen de \textit{Viewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Als de robot bijvoorbeeld een wip bezoekt zal die de wip ineens tekenen in het doolhof. Een wip wordt voorgesteld als een gele strook van twee tegels lang. Een wip heeft een rode streep aan de kant waar de wip naar boven staat. Dit is handig bij het testen van verkenalgoritmes.\\
+Wanneer de robot een pad aflegt, tekenen de \textit{UnitViewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een prentje die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Als de robot bijvoorbeeld een wip bezoekt zal die de wip ineens tekenen in het doolhof. Een wip wordt voorgesteld als een gele strook van twee tegels lang. Een wip heeft een rode streep aan de kant waar de wip naar boven staat. Dit is handig bij het testen van verkenalgoritmes.\\
 
-Het aantal \textit{UnitViewports} of \textit{DummyViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubar. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur~\ref{fig:GUI2}. \\
-Links worden de kleuren van de verschillende robots weergegeven en de teamkleuren. Extra info zoals de sensorwaarden en de positie staat eronder beschreven. Beneden de \textit{Vieuwports} staan de grafieken voor de sensorwaarden van de ultrasone sensor, de lichtsensor en de infraroodsensor. 
+Het aantal \textit{UnitViewports} hangt af van de situatie. Dit kan makkelijk worden ingesteld via de menubalk. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden op een grafiek en in cijfers weergeven. Ook het paneel om de robot handmatig te besturen kan tevoorschijn gehaald wordt via de menubar. Dit is te zien in figuur~\ref{fig:GUI2}. \\
+Links worden de kleuren van de verschillende robots weergegeven en de teamkleuren. Extra info zoals de sensorwaarden en de positie staat eronder beschreven. Beneden de \textit{Vieuwports} staan de grafieken voor de sensorwaarden van de  lichtsensor, de ultrasone sensor en de infraroodsensor. 
 
 % -- RabbitMQ -- %
 \subsection{Communicatie tussen de robots}
@@ -475,7 +476,7 @@ De \textit{SimulatorPilot} bepaalt de positie van de `robot' ten opzichte van he
 % -- Mapping -- %
 \subsection{Mappen van een doolhof} % 3 ok
 \label{ssec:Mapping}
-Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een robot voorstellen. Figuur~\ref{fig:klasMap} geeft de structuur van het pakket weer. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze biedt functionaliteiten om van de huidige tegel naar een aanliggende tegel te reizen en om de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde textfile een \textit{MapGraph} opstellen.\\
+Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een robot voorstellen. Figuur~\ref{fig:klasMap} geeft de structuur van het pakket weer. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze biedt functionaliteiten om van de huidige tegel naar een aanliggende tegel te reizen en om de map dynamisch uit te breiden. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde text-bestand een \textit{MapGraph} opstellen.\\
 
 De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld door de \textit{AbstractPilot}. Deze bevat enkel informatie die de robot zelf verzamelde.
 
@@ -583,7 +584,7 @@ Voor de tweede demonstratie wordt er met \'e\'en fysieke en drie gesimuleerde ro
 \label{Assec:result2}
 Het verkennen van het doolhof gebeurde volledig zoals het hoorde. De robot was enkele dagen voor de demonstratie terug gekalibreerd en reed heel nauwkeurig. Het nemen van de wip lukte niet doordat de robot bleef haken met zijn lichtsensor aan de opstap van de wip.\\
 De robot slaagde er niet in zijn voorwerp te vinden. Ook het samenvoegen van twee mappen was niet mogelijk.\\
-De simulator van de robot was wel in orde. Het was mogelijk om 4 robots te simuleren. Het enige minpuntje zat hem in de visualisatie van het pad. Er zaten discontinu"iteiten in waardoor er shocken zaten in de visualisatie van het pad. \\
+De simulator van de robot was wel in orde. Het was mogelijk om 4 robots te simuleren. Het enige minpuntje zat hem in de visualisatie van het pad. Er zaten discontinu"iteiten in waardoor er schokken zaten in de visualisatie van het pad. \\
 
 % == conclusies == %
 \subsection{Conclusies}
