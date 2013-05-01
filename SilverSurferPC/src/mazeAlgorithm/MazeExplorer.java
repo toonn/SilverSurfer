@@ -22,7 +22,6 @@ public class MazeExplorer {
     private final int amountOfTilesUntilAlign = 0;
     private int currentAmount;
     private boolean quit = false;
-    private boolean reallyquit = false;
     private boolean lastTurnRight = false;
 
     public MazeExplorer(final Tile startTile, final AbstractPilot pilot, boolean align) {
@@ -70,7 +69,6 @@ public class MazeExplorer {
         if (!currentTile.isMarkedExploreMaze())
         	exploreTileAndUpdateQueue(currentTile);
         if (queue.isEmpty() || quit) {
-        	reallyquit = true;
             System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
             return;
         }
@@ -85,7 +83,13 @@ public class MazeExplorer {
                 nextTile = currentTile;
         	} else {
                 final ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, nextTile, allTiles);
-                currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
+                int totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
+            	
+            	while(totalTilesToGo != 0){
+            	if(!quit){
+            	shortestPath.goShortestPath1Tile(align);
+            	totalTilesToGo--;
+            	}}
                 if (nextTile.getContent() instanceof Barcode)
                     while (pilot.isExecutingBarcode())
                         new Sleep().sleepFor(100);
@@ -157,7 +161,14 @@ public class MazeExplorer {
 	        for(Tile tile : seesawBarcodeTiles) {
 	        	if(isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
 	                ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, tile, allTiles);
-	                currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
+                	int totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
+                	
+                	while(totalTilesToGo != 0){
+                	if(!quit){
+                	shortestPath.goShortestPath1Tile(align);
+                	totalTilesToGo--;
+                	}}
+                	
 	                while (pilot.isExecutingBarcode())
 	                    new Sleep().sleepFor(100);
 	                Orientation orientation = pilot.getOrientation();
@@ -167,14 +178,19 @@ public class MazeExplorer {
 	                else {
 	                	Tile otherEnd = tile.getNeighbour(orientation.getOppositeOrientation());
 	                	shortestPath = new ShortestPath(this, pilot, tile, otherEnd, allTiles);
-	                	currentAmount = shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
+	                	
+	                	totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
+	                	
+	                	while(totalTilesToGo != 0){
+	                    	if(!quit){
+	                    	shortestPath.goShortestPath1Tile(align);
+	                    	totalTilesToGo--;
+	                    	}}
+	                	
 	                	return searchOpenSeesaw(otherEnd);
 	                }
 	        	}
 	        }
-        }
-        if(quit){
-        	reallyquit = true;
         }
         return null;
     }
@@ -236,12 +252,7 @@ public class MazeExplorer {
                     return true;
         }
         return false;
-    }
-    
-	public boolean isReallyQuit(){
-		return reallyquit;
-	}
-    
+    }   
 }
 
 

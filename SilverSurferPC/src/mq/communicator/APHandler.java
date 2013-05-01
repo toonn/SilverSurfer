@@ -212,6 +212,7 @@ public class APHandler implements PlayerHandler {
         	ori = findOrientationEquivalentWithOurNorth(ori1,ori2);
             pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1 , point2, ori);
             pilot.stopExploring();
+            pilot.fillVectorMapgraphTiles();
            }
         else
             System.out.println("[HTTTP] No similar tiles found yet!");
