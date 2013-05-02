@@ -103,31 +103,33 @@ public class SimulatorPanel extends JPanel {
         removeAll();
         invalidate();
 
-        if (mapGraphLoaded == null) { //1 robot
-        	showOnePlayer(showDummies, false);
-        	view = "1 robot";
+        if (mapGraphLoaded == null) { // 1 robot
+            showOnePlayer(showDummies, false);
+            view = "1 robot";
         } else {
-            Set<AbstractPilot> allPilots = new HashSet<AbstractPilot>(simulatorPilots);
+            Set<PilotInterface> allPilots = new HashSet<PilotInterface>(
+                    simulatorPilots);
             allPilots.add(principalPilot);
-            overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded, teamColors);
+            overallViewPort = new OverallViewPort(allPilots, mapGraphLoaded,
+                    teamColors);
 
-            if(simulatorViewPorts.size() == 3) { //4 robots with map
+            if (simulatorViewPorts.size() == 3) { // 4 robots with map
                 showFourPlayers(showDummies, showMap);
                 view = "4 robots + map";
-            } else if(simulatorViewPorts.size() == 2) { //3 robots with map
+            } else if (simulatorViewPorts.size() == 2) { // 3 robots with map
                 showThreePlayers(showDummies, showMap);
                 view = "3 robots + map";
-            } else if(simulatorViewPorts.size() == 1) { //2 robots with map
+            } else if (simulatorViewPorts.size() == 1) { // 2 robots with map
                 showTwoPlayers(showDummies, showMap);
                 view = "2 robots + map";
-            } else { //1 robot with map
-            	showOnePlayer(showDummies, showMap);
-            	view = "1 robot + map";
+            } else { // 1 robot with map
+                showOnePlayer(showDummies, showMap);
+                view = "1 robot + map";
             }
         }
 
         validate();
-        
+
         showingDummies = showDummies;
         showingMap = showMap;
     }
@@ -563,4 +565,15 @@ public class SimulatorPanel extends JPanel {
                 return true;
         return false;
     }
+    
+    public static Set<Point2D> getAllRobotPositions() {
+        // TODO All robot positions via htttp?
+        Set<Point2D> allRobotPositions = new HashSet<Point2D>();
+        for (SimulationPilot pilot : simulatorPilots) {
+            allRobotPositions.add(pilot.getMatrixPosition());
+        }
+        allRobotPositions.add(principalPilot.getMatrixPosition());
+
+        return allRobotPositions;
+    }  
 }

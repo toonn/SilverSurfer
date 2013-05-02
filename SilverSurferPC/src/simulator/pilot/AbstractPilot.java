@@ -18,7 +18,6 @@ import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
 import mazeAlgorithm.ExploreThread;
-import mazeAlgorithm.MazeExplorer;
 import mazeAlgorithm.ShortestPath;
 import mq.communicator.APHandler;
 import mq.communicator.MQCenter;
@@ -45,6 +44,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private boolean gameOn = false;
     private MQCenter center;
     protected final double detectionDistanceUltrasonicSensorRobot = 26;
+	private final int CRASH_MARGIN = 5;
     private boolean teamMemberFound = false;
     private String playerName = "/";
     private String teamMemberName = "/";
@@ -128,8 +128,6 @@ public abstract class AbstractPilot implements PilotInterface {
         }
         return false;
     }
-
-    protected abstract boolean crashImminent();
 
     @Override
     public double getAngle() {
@@ -391,11 +389,11 @@ public abstract class AbstractPilot implements PilotInterface {
             exploreThread.quit();
         }
     }
-    
+
     public void fillVectorMapgraphTiles(){
 		allTileVector.addAll(mapGraphConstructed.getTiles());
     }
-    
+
 	public void startLookingYourTeammate() {
 		stillApproximating = true;
 		
@@ -407,7 +405,8 @@ public abstract class AbstractPilot implements PilotInterface {
 		int tilesAway = shortestPath.getTilesAwayFromTargetPosition();
 				
 		if ((tilesAway == 1 || tilesAway == 0)
-				&& mapGraphConstructed.convertPoint(getTeammatePosition()).equals(EndTile.getPosition())) {
+			&& mapGraphConstructed.convertPoint(getTeammatePosition()).equals(EndTile.getPosition())){
+
 //			System.out.println("Teammate = " + getTeamMemberName() + " op positie " +mapGraphConstructed
 //				.convertPoint(getTeammatePosition()).x + " " + mapGraphConstructed
 //				.convertPoint(getTeammatePosition()).y);
@@ -432,43 +431,76 @@ public abstract class AbstractPilot implements PilotInterface {
 		stillApproximating = false;
 	}
 
-    public void travel(final double distance) {
-        double currentX = getPosition().getX();
-        double currentY = getPosition().getY();
-        double x;
-        double y;
-        Orientation travelOrientation = Orientation
-                .calculateOrientation(getAngle());
-        if (distance < 0) {
-            travelOrientation = travelOrientation.getOppositeOrientation();
-        }
-        for (int i = 1; i <= Math.abs(distance); i++) {
-            if (travelOrientation == Orientation.NORTH) {
-                x = currentX;
-                y = currentY - i;
-            } else if (travelOrientation == Orientation.SOUTH) {
-                x = currentX;
-                y = currentY + i;
-            } else if (travelOrientation == Orientation.EAST) {
-                x = currentX + i;
-                y = currentY;
-            } else {
-                x = currentX - i;
-                y = currentY;
-            }
-            setPosition(x, y);
-            try {
-                Thread.sleep(getTravelSleepTime());
-            } catch (final InterruptedException e) {
+	public void travel(final double distance) {
+		int distTraveled = 0;
+		double currentX = getPosition().getX();
+		double currentY = getPosition().getY();
+		double x;
+		double y;
+		Orientation travelOrientation = Orientation
+				.calculateOrientation(getAngle());
+		if (distance < 0) {
+			travelOrientation = travelOrientation.getOppositeOrientation();
+		}
+		for (int i = 1; i <= Math.abs(distance); i++) {
+			if (travelOrientation == Orientation.NORTH) {
+				x = currentX;
+				y = currentY - i;
+			} else if (travelOrientation == Orientation.SOUTH) {
+				x = currentX;
+				y = currentY + i;
+			} else if (travelOrientation == Orientation.EAST) {
+				x = currentX + i;
+				y = currentY;
+			} else {
+				x = currentX - i;
+				y = currentY;
+			}
+			if (crashImminent(distance-distTraveled)) {
+				currentX = x;
+				currentY = y;
+				for (int j = 1; j <= Math.abs(distTraveled); j++) {
+					if (travelOrientation == Orientation.NORTH) {
+						x = currentX;
+						y = currentY + j;
+					} else if (travelOrientation == Orientation.SOUTH) {
+						x = currentX;
+						y = currentY - j;
+					} else if (travelOrientation == Orientation.EAST) {
+						x = currentX - j;
+						y = currentY;
+					} else {
+						x = currentX + j;
+						y = currentY;
+					}
+					setPosition(x, y);
+					try {
+						Thread.sleep(getTravelSleepTime());
+					} catch (final InterruptedException e) {
 
-            }
-        }
-    }
-    
-    public Point2D getTeammatePosition(){
-    	return teammatePosition;
-    }
-    
+					}
+				}
+				break;
+			}
+
+			setPosition(x, y);
+			distTraveled++;
+			try {
+				Thread.sleep(getTravelSleepTime());
+			} catch (final InterruptedException e) {
+
+			}
+		}
+	}
+
+	protected boolean crashImminent(double distance) {
+		return getUltraSensorValue() <= distance;
+	}
+
+	public Point2D getTeammatePosition() {
+		return teammatePosition;
+	}
+
 	public void setTeammatePosition(Point2D teammatePosition) {
 
 //		System.out.println("ik ben : " + getPlayerName() + " en mijn teammate " + getTeamMemberName() + " stuurt door" +
@@ -484,9 +516,9 @@ public abstract class AbstractPilot implements PilotInterface {
 			}
 		}
 	}
-    
-    public void won(){
-    	System.out.println("you win");
+
+	public void won() {
+		System.out.println("you win");
 		won = true;
-    }
+	}
 }
