@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
+import mapping.Seesaw;
 import mapping.Tile;
 import mazeAlgorithm.ExploreThread;
 import mazeAlgorithm.ShortestPath;
@@ -32,7 +33,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private Point2D teammatePosition;
     private boolean stillApproximating;
     private int tilesToGoToTeammate = 1;
-    private int tilesAwayFromTeammate;
+    private int tilesAwayFromTeammate = Integer.MAX_VALUE;
     private int speed;
     private boolean busyExecutingBarcode = false;
     protected boolean readBarcodes = true;
@@ -51,6 +52,9 @@ public abstract class AbstractPilot implements PilotInterface {
     private DummyPilot teamPilot = new DummyPilot();
     private int updateTilesAndPositionFPS = 3;
     private boolean won = false;
+    private int tilesBeforeAlign;
+    private int nbOfTilesBetweenAlign = 0;
+    private Vector<Tile> allTileVector = new Vector<Tile>();
     private ActionListener updateTilesAndPosition = new ActionListener() {
 
         @Override
@@ -92,6 +96,19 @@ public abstract class AbstractPilot implements PilotInterface {
     
     public DummyPilot getTeamPilot() {
     	return teamPilot;
+    }
+    
+    public int getTilesBeforeAlign(){
+    	return tilesBeforeAlign;
+    }
+    
+    public void decreaseTilesBeforeAlign(){
+    	if(tilesBeforeAlign == 0){
+    		tilesBeforeAlign = nbOfTilesBetweenAlign;
+    	}
+    	else{
+    	tilesBeforeAlign--;
+    	}
     }
 
     public void alignOnWalls() {
@@ -326,6 +343,7 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+        System.out.println("speed wordt geset : " + speed);
     }
 
     /**
@@ -371,25 +389,23 @@ public abstract class AbstractPilot implements PilotInterface {
             exploreThread.quit();
         }
     }
-    
+
+    public void fillVectorMapgraphTiles(){
+		allTileVector.addAll(mapGraphConstructed.getTiles());
+    }
 
 	public void startLookingYourTeammate() {
 		stillApproximating = true;
-
+		
 		Tile EndTile = mapGraphConstructed.getTile(mapGraphConstructed
 				.convertPoint(getTeammatePosition()));
-		Vector<Tile> v = new Vector<Tile>();
-		v.addAll(mapGraphConstructed.getTiles());
 		ShortestPath shortestPath = new ShortestPath(null, this,
-				mapGraphConstructed.getTile(getMatrixPosition()), EndTile, v);
-
+				mapGraphConstructed.getTile(getMatrixPosition()), EndTile, allTileVector);
+		
 		int tilesAway = shortestPath.getTilesAwayFromTargetPosition();
-
+				
 		if ((tilesAway == 1 || tilesAway == 0)
-				&& mapGraphConstructed.convertPoint(getTeammatePosition())
-						.getX() == EndTile.getPosition().getX()
-				&& mapGraphConstructed.convertPoint(getTeammatePosition())
-						.getY() == EndTile.getPosition().getY()) {
+			&& mapGraphConstructed.convertPoint(getTeammatePosition()).equals(EndTile.getPosition())){
 
 //			System.out.println("Teammate = " + getTeamMemberName() + " op positie " +mapGraphConstructed
 //				.convertPoint(getTeammatePosition()).x + " " + mapGraphConstructed
@@ -398,32 +414,20 @@ public abstract class AbstractPilot implements PilotInterface {
 			won();
 			return;
 		} 
-		if (tilesAway != tilesAwayFromTeammate) {
+				
+		if (tilesAwayFromTeammate >= tilesAway && !(shortestPath.getTilesPath().get(1) instanceof Seesaw && ((Seesaw) (shortestPath.getTilesPath().get(1))).isClosed())) {			
 			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
 		} else {
 			Random random = new Random();
 			try {
 				System.out.println("wacht een paar seconden");
-				Thread.sleep(random.nextInt(10000) + 10000);
+				Thread.sleep(random.nextInt(10)*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
-			EndTile = mapGraphConstructed.getTile(mapGraphConstructed
-					.convertPoint(getTeammatePosition()));
-			shortestPath = new ShortestPath(null, this,
-					mapGraphConstructed.getTile(getMatrixPosition()), EndTile,
-					v);
-
-			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
-		}
-
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
+			}
+		
+		tilesAwayFromTeammate = tilesAway;
 		stillApproximating = false;
 	}
 
@@ -501,15 +505,13 @@ public abstract class AbstractPilot implements PilotInterface {
 
 //		System.out.println("ik ben : " + getPlayerName() + " en mijn teammate " + getTeamMemberName() + " stuurt door" +
 //				" dat hij op positie " + teammatePosition.getX() + " " + teammatePosition.getY() + " staat.");
-//		
+		
 		if (this.teammatePosition == null
 				|| this.teammatePosition.getX() != teammatePosition.getX()
 				|| this.teammatePosition.getY() != teammatePosition.getY()) {
 			this.teammatePosition = teammatePosition;
-			if (exploreThread.getExplorer().isReallyQuit() && !won
-					&& !stillApproximating
+			if (!won && !stillApproximating
 					&& mapGraphConstructed.mapsAreMerged()) {
-//				System.out.println(getPlayerName() + "startLookingYourTeammate");
 				startLookingYourTeammate();
 			}
 		}
