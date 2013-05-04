@@ -177,7 +177,7 @@ De infraroodsensor bestaat uit vijf onafhankelijke sensoren. De robot maakt enke
 %TODO hoe komen we aan waarden?
 De ultrasone sensor zendt ultrasone geluidsgolven uit. Indien een object in de buurt staat, weerkaatsen de golven hierop. De robot ontvangt dan zijn eigen golven opnieuw. De tijd tussen het uitzenden en ontvangen laat toe de afstand tot het object te bepalen.
 
-In een doolhof kan een robot zowel muren als robots tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge\"interpreteerd worden enkel meetwaarden kleiner dan $21$~cm als mogelijke muur beschouwd. Het is niet mogelijk vast te stellen of het werkelijk om een muur of om een andere robot gaat. Hiermee wordt rekening gehouden in het verkenalgoritme (sectie~\ref{ssec:AlgoZoek}). Wanneer de robot in het midden van een tegel staat geeft de sensor een waarde van $16$~cm. Deze waarde wordt gebruikt om de robot te aligneren op basis van de muren (sectie~\ref{ssec:AlgoAllign}).
+In een doolhof kan een robot zowel muren als robots tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge\"interpreteerd worden enkel meetwaarden kleiner dan $21$~cm als mogelijke muur beschouwd. Het is niet mogelijk vast te stellen of het werkelijk om een muur of om een andere robot gaat. Hiermee wordt rekening gehouden in het verkenalgoritme (sectie~\ref{sssec:AlgoZoek}). Wanneer de robot in het midden van een tegel staat geeft de sensor een waarde van $16$~cm. Deze waarde wordt gebruikt om de robot te aligneren op basis van de muren (sectie~\ref{sssec:AlgoAllign}).
 
 %US: 16 = muur - om te aligneren op muur,
 % treshold = 21 - hieronder is het een muur, geen paalte
@@ -388,7 +388,7 @@ Het zou kunnen dat beide robots in een lus bewegen waardoor ze steeds op dezelfd
 % == SOFTWARE == %
 \section{Software}
 \label{sec:Softw}
-De software bestaat uit twee delen: een project dat op de \textcs{NXT} van de robot loopt en een project dat op de computer loopt (sectie~\ref{ssec:Sdesign}). De \textit{Graphical User Interface (GUI)} laat toe de robot te besturen en de reacties van de robot weer te geven (sectie~\ref{ssec:GUI}). Robots kunnen met elkaar communiceren via \textsc{RabbitMQ} (sectie~\ref{ssec:RabbMQ}). Het is ook mogelijk met gesimuleerde robots te werken (sectie~\ref{ssec:Sim}). Tijdens het verkennen wordt een map opgeslagen van de wereld (sectie~\ref{ssec:Mapping}).\\
+De software bestaat uit twee delen: een project dat op de \textsc{NXT} van de robot loopt en een project dat op de computer loopt (sectie~\ref{ssec:Sdesign}). De \textit{Graphical User Interface (GUI)} laat toe de robot te besturen en de reacties van de robot weer te geven (sectie~\ref{ssec:GUI}). Robots kunnen met elkaar communiceren via \textsc{RabbitMQ} (sectie~\ref{ssec:RabbMQ}). Het is ook mogelijk met gesimuleerde robots te werken (sectie~\ref{ssec:Sim}). Tijdens het verkennen wordt een map opgeslagen van de wereld (sectie~\ref{ssec:Mapping}).\\
 
 Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
 
@@ -570,16 +570,16 @@ Om te vermijden dat de \textit{ExploreMaze}-thread een verkeerd beeld krijgt van
 Ook de schep moet worden aangepast. Deze kan van klittenband voorzien worden.
 
 % == aanpassingen == %
-\subsection{Oplijsting aanpassingen verslag
+\subsection{Oplijsting aanpassingen verslag}
 \label{Assec:aanp1}
 Volgende secties werden aangepast ten opzichte van het eerste tussentijds verslag van het tweede semester:
 
 % overzicht aangepaste secties
 \begin{itemize}
 \item \textit{\ref{ssec:Abstract} Samenvatting:} aangepast.
-\item \textit{\ref{ssec:FysB} Fysieke bouw:} de schep vooraan.
-\item \textit{\ref{ssec:AlgoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
-\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} nieuwe sectie.
+\item \textit{\ref{ssec:Bouw} Fysieke bouw:} de schep vooraan.
+\item \textit{\ref{sssec:AlgoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
+\item \textit{\ref{sssec:AlgoCollision} Weg vinden naar teamgenoot:} nieuwe sectie.
 %\item \textit{\ref{ssec:AlgoMappen} Twee mappen samenvoegen:} nieuwe sectie.
 \item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
 \item \textit{\ref{ssec:RabbMQ} Communicatie via RabbitMQ:} implementatie \textit{HTTTP}.
@@ -613,14 +613,14 @@ Volgende secties werden aangepast ten opzichte van het tweede tussentijds versla
 %TODO
 % overzicht aangepaste secties
 \begin{itemize}
-\item \textit{\ref{ssec:FysB} Ontwerp:} nieuwe bouw.
+\item \textit{\ref{ssec:Bouw} Ontwerp:} nieuwe bouw.
 \item \textit{\ref{ssec:Kalib} Kalibratie:} nieuwe sectie.
-\item \textit{\ref{ssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
-\item \textit{\ref{ssec:AlgoBar} Barcode:} nieuw algoritme.
-\item \textit{\ref{ssec:AlgoWip} Wip:} nieuwe sectie.
-\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} aangepast.
-\item \textit{\ref{ssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
-\item \textit{\ref{ssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
+\item \textit{\ref{sssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
+\item \textit{\ref{sssec:AlgoBar} Barcode:} nieuw algoritme.
+\item \textit{\ref{sssec:AlgoWip} Wip:} nieuwe sectie.
+\item \textit{\ref{sssec:AlgoTeam} Weg vinden naar teamgenoot:} aangepast.
+\item \textit{\ref{sssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
+\item \textit{\ref{sssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
 \item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
 \end{itemize}
 
@@ -649,14 +649,15 @@ Volgende secties werden aangepast ten opzichte van het derde tussentijds verslag
 %TODO
 % overzicht aangepaste secties
 \begin{itemize}
-%\item \textit{\ref{ssec:FysB} Ontwerp:} nieuwe bouw.
+\item
+%\item \textit{\ref{ssec:Bouw} Ontwerp:} nieuwe bouw.
 %\item \textit{\ref{ssec:Kalib} Kalibratie:} nieuwe sectie.
 %\item \textit{\ref{ssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
-%\item \textit{\ref{ssec:AlgoBar} Barcode:} nieuw algoritme.
-%\item \textit{\ref{ssec:AlgoWip} Wip:} nieuwe sectie.
-%\item \textit{\ref{ssec:AlgoAndereRobot} Weg vinden naar teamgenoot:} aangepast.
-%\item \textit{\ref{ssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
-%\item \textit{\ref{ssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
+%\item \textit{\ref{sssec:AlgoBar} Barcode:} nieuw algoritme.
+%\item \textit{\ref{sssec:AlgoWip} Wip:} nieuwe sectie.
+%\item \textit{\ref{sssec:AlgoTeam} Weg vinden naar teamgenoot:} aangepast.
+%\item \textit{\ref{sssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
+%\item \textit{\ref{sssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
 %\item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
 \end{itemize}
 
