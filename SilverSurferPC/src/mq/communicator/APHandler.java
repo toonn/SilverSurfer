@@ -63,12 +63,12 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void playerDisconnected(String playerID, DisconnectReason reason) {
-
+        System.out.println("[HTTTP] " + playerID + " is disconnected with reason: " + reason + "!");
     }
 
     @Override
     public void playerReady(String playerID, boolean isReady) {
-
+        System.out.println("[HTTTP] " + playerID + " is ready: " + isReady + "!");
     }
 
     @Override
@@ -90,6 +90,12 @@ public class APHandler implements PlayerHandler {
         panel.makeReadyToPlay(pilot);
         panel.resetAllPaths();
         
+        try {
+        	Thread.sleep(5000); //Nodig, anders vreemde exception in HTTTP (te snel of zoiets...)
+        } catch(Exception e) {
+        	
+        }
+        
     	if(pilot instanceof RobotPilot) {
             int checkIfReadyFPS = 50;
             ActionListener checkIfReady = new ActionListener() {
@@ -106,7 +112,8 @@ public class APHandler implements PlayerHandler {
     		try {
     			pilot.getCenter().setReady(true);
     		} catch (Exception e) {
-    			
+    			System.err.println("Error with set ready!");
+    			e.printStackTrace();
     		}
     }
     
@@ -115,7 +122,8 @@ public class APHandler implements PlayerHandler {
     		try {
     			pilot.getCenter().setReady(true);
     		} catch (Exception e) {
-    			
+    			System.err.println("Error with set ready!");
+    			e.printStackTrace();
     		}
     		readyTimer.stop();
     	}
@@ -128,7 +136,7 @@ public class APHandler implements PlayerHandler {
     }
 
     @Override
-    public void teamPosition(double x, double y, double angle) {
+	public void teamPosition(long x, long y, double angle) {
     	pilot.getTeamPilot().setPosition(x, y);
     	pilot.getTeamPilot().setAngle(angle);
     	int xTilePosition = (int) x/40;
@@ -260,5 +268,5 @@ public class APHandler implements PlayerHandler {
 			}
 		}
 		return null;
-	}   
+	} 
 }

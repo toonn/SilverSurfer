@@ -4,24 +4,33 @@ import java.io.IOException;
 
 import peno.htttp.Callback;
 import peno.htttp.PlayerClient;
+import peno.htttp.PlayerDetails;
+import peno.htttp.PlayerType;
 import simulator.pilot.AbstractPilot;
+import simulator.pilot.RobotPilot;
 import simulator.viewport.SimulatorPanel;
 
 import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
 /**
  * A MessageCenter takes care of some MQ-related issues for an AbstractPilot.
  */
 public class MQCenter {
 
+	private static final String USERNAME = "guest";
+	private static final String PASSWORD = "guest";
+	private static final String VIRTUAL_HOST = "/";
+	private static final String HOST = "localhost";
+	private static final int PORT = 5672;
+    private static final String GAMEID = "ABC";
+	
     private Connection connection;
     private AbstractPilot pilot;
     private APHandler handler;
     private PlayerClient client;
-
-    private String gameID = "ABC";
-    private String playerID;
-
+    private PlayerDetails playerDetails;
+    
     /**
      * Creates a MQcenter for a certain AbstractPilot that takes care of
      * channel/connection creation and the actual sending/monitoring for that
@@ -41,19 +50,38 @@ public class MQCenter {
     public MQCenter(AbstractPilot pilot, String playerID, SimulatorPanel panel) throws IllegalArgumentException {
         if (pilot == null)
             throw new IllegalArgumentException("Null is not a valid pilot!");
-        this.playerID = playerID;
+        
+        PlayerType type = PlayerType.VIRTUAL;
+        if(pilot instanceof RobotPilot)
+            type = PlayerType.PHYSICAL;
+        
+        this.playerDetails = new PlayerDetails(playerID, type, 15, 20);
         this.pilot = pilot;
         handler = new APHandler(pilot, panel);
         try {
-        	connection = MQ.createConnection();
-        	client = new PlayerClient(connection, handler, gameID, playerID);
+        	connection = createConnection();
+        	client = new PlayerClient(connection, handler, GAMEID, playerDetails);
         } catch (IOException e) {
         	System.out.println("There was a problem setting up the connection or the htttp-client.");
         	e.printStackTrace();
         }
     }
 
-    public PlayerClient getClient() {
+    private static Connection createConnection() throws IOException {
+    	ConnectionFactory factory = new ConnectionFactory();
+        factory.setUsername(USERNAME);
+        factory.setPassword(PASSWORD);
+        factory.setVirtualHost(VIRTUAL_HOST);
+        factory.setRequestedHeartbeat(0);
+        factory.setHost(HOST);
+        factory.setPort(PORT);
+
+        Connection conn = factory.newConnection();
+
+        return conn;
+    }
+
+    public PlayerClient getPlayerClient() {
         return client;
     }
 
@@ -62,7 +90,7 @@ public class MQCenter {
     }
 
     public String getGameID() {
-        return gameID;
+        return GAMEID;
     }
 
     public APHandler getHandler() {
@@ -73,8 +101,8 @@ public class MQCenter {
         return pilot;
     }
 
-    public String getPlayerID() {
-        return playerID;
+    public PlayerDetails getPlayerDetails() {
+        return playerDetails;
     }
 
     /**
@@ -88,7 +116,25 @@ public class MQCenter {
      *             : Problems connecting.
      */
     public void join() throws IllegalStateException, IOException {
-        client.join(stdCallback());
+        client.join(new Callback<Void>() {
+        	 @Override
+             public void onFailure(Throwable t) {
+                 System.err.println("[HTTTP] Error connecting: " + t.getMessage());
+                 /*System.err.println("[HTTTP] Retry ...");
+                 try {
+                     join();
+                 } catch (IllegalStateException e) {
+                     e.printStackTrace();
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }*/
+             }
+
+             @Override
+             public void onSuccess(Void result) {
+                 System.out.println("[HTTTP] Succesfully connected. Your player ID is " + getPlayerDetails().getPlayerID() + ".");
+             }
+        });
     }
 
     /**
@@ -125,31 +171,5 @@ public class MQCenter {
      */
     public void updatePosition(int x, int y, int angle) throws IllegalStateException, IOException {
         client.updatePosition(x, y, angle);
-    }
-
-    /**
-     * @return The standard Callback used to join a game. For usage: see the
-     *         join() void.
-     */
-    private Callback<Void> stdCallback() {
-        return new Callback<Void>() {
-            @Override
-            public void onFailure(Throwable t) {
-                System.err.println("[HTTTP] Error connecting: " + t.getMessage());
-                System.err.println("[HTTTP] Retry ...");
-                try {
-                    client.join(stdCallback());
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onSuccess(Void result) {
-                System.out.println("[HTTTP] Succesfully connected. Your player ID is " + getPlayerID() + ".");
-            }
-        };
     }
 }
