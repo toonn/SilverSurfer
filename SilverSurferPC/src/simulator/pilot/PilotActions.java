@@ -90,25 +90,9 @@ public class PilotActions {
                                 || barcode == BarcodeCommand.TREASURE_TEAM1_INVERSE[i]) {
                             team = 1;
                         }
-                        pickUpItem(team);
+                        pilot.pickupObject(team);
                     }
                 }
-            }
-        }
-    }
-
-    private void pickUpItem(int team) {
-        pilot.setTeamNumber(team);
-        pilot.alignOnWhiteLine();
-        pilot.travel(6);
-        pilot.travel(-46);
-
-        if (pilot.isInGameModus()) {
-            try {
-                pilot.getCenter().getPlayerClient().foundObject();
-                pilot.getCenter().getPlayerClient().joinTeam(pilot.getTeamNumber());
-            } catch (Exception e) {
-                System.out.println("EXCEPTION! PILOTACTIONS!");
             }
         }
     }

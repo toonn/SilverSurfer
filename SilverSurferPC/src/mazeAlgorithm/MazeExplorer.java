@@ -20,21 +20,26 @@ public class MazeExplorer {
     private boolean quit = false;
     private boolean lastTurnRight = false;
     private boolean openSeesawIfClosed = false;
+    private boolean shuffled = false;
 
     public MazeExplorer(final Tile startTile, final AbstractPilot pilot) {
         this.startTile = startTile;
         this.pilot = pilot;
     }
 
-    private void algorithm(Tile currentTile) {
+    private Tile algorithm(Tile currentTile) {
         updateVectors(currentTile);
         if (!currentTile.isMarkedExploreMaze())
             exploreTileAndUpdateQueue(currentTile);
         if (queue.isEmpty() || quit) {
             System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
-            return;
+            return null;
         }
-        Tile nextTile = getPriorityNextTile(currentTile);
+        Tile nextTile;
+        if(!shuffled)
+        	nextTile = getPriorityNextTile(currentTile);
+        else
+        	nextTile = getPriorityNextTileWithShuffle(currentTile);
         if (nextTile == null) { // Null if next tile is not reachable without taking a seesaw.
             Tile seesawTile = searchOpenSeesaw(currentTile);
             if(seesawTile != null) {
@@ -49,7 +54,7 @@ public class MazeExplorer {
             	nextTile = currentTile;
         } else {
             updateVectors(nextTile);
-            if (!isUseful(nextTile)) {
+            if(!isUseful(nextTile)) {
                 nextTile.setMarkingExploreMaze(true);
                 nextTile = currentTile;
             } else {
@@ -58,15 +63,28 @@ public class MazeExplorer {
             	
             	while(totalTilesToGo != 0)
             		if(!quit) {
-            			shortestPath.goShortestPath1Tile();
-            			totalTilesToGo--;
+            			try {
+                			shortestPath.goShortestPath1Tile();
+                			totalTilesToGo--;
+            			} catch(CollisionAvoidedException e) {
+            				undoUpdateVectors(nextTile);
+            				nextTile = shortestPath.getCurrentTileDuringException();
+            				Collections.shuffle(queue);
+            				shuffled = true;
+            				return nextTile;
+            			}
             		}
-                if (nextTile.getContent() instanceof Barcode)
+                if (nextTile.getContent() instanceof Barcode) {
                     while (pilot.isExecutingBarcode())
                         new Sleep().sleepFor(100);
+                    if(pilot.getObjectBoolean()) {
+                    	nextTile = nextTile.getNeighbour(pilot.getOrientation());
+                    	pilot.objectHandled();
+                    }
+                }
             }
         }
-        algorithm(nextTile);
+        return algorithm(nextTile);
     }
 
     private void exploreTileAndUpdateQueue(Tile currentTile) {
@@ -117,6 +135,19 @@ public class MazeExplorer {
             return tile;
         }
     }
+
+    private Tile getPriorityNextTileWithShuffle(final Tile currentTile) {
+    	Tile loopdetect = queue.lastElement();
+    	Tile tile = queue.lastElement();
+    	while (!isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
+    		queue.remove(tile);
+    		queue.add(0, tile);
+    		tile = queue.lastElement();
+    		if (tile.equals(loopdetect))
+    			return null;
+    	}
+    	return tile;
+    }
   
     private boolean isGoodNextTile(final Tile currentTile, final Orientation orientation) {
     	return currentTile.getEdgeAt(orientation).isPassable() && currentTile.getEdgeAt(orientation).getNeighbour(currentTile) != null
@@ -134,8 +165,12 @@ public class MazeExplorer {
                 	
                 	while(totalTilesToGo != 0)
                 		if(!quit) {
-                			shortestPath.goShortestPath1Tile();
-                			totalTilesToGo--;
+                			try {
+                    			shortestPath.goShortestPath1Tile();
+                    			totalTilesToGo--;
+                			} catch(CollisionAvoidedException e) {
+                				return searchOpenSeesaw(shortestPath.getCurrentTileDuringException());
+                			}
                 		}
                 	
 	                while (pilot.isExecutingBarcode())
@@ -152,8 +187,12 @@ public class MazeExplorer {
 	                	
 	                	while(totalTilesToGo != 0)
 	                    	if(!quit) {
-	                    		shortestPath.goShortestPath1Tile();
-	                    		totalTilesToGo--;
+	                			try {
+	                    			shortestPath.goShortestPath1Tile();
+	                    			totalTilesToGo--;
+	                			} catch(CollisionAvoidedException e) {
+	                				searchOpenSeesawCollisionRollback();
+	                			}
 	                    	}
 	                	
 	                	return searchOpenSeesaw(otherEnd);
@@ -163,6 +202,15 @@ public class MazeExplorer {
         }
         return null;
     }
+	
+	private void searchOpenSeesawCollisionRollback() {
+		new Sleep().sleepFor(1000);
+		try {
+			pilot.alignOnWhiteLine();
+        } catch(CollisionAvoidedException e) {
+        	searchOpenSeesawCollisionRollback();
+        }
+	}
 
     private int getSeesawValue(Tile tile) {
         if (tile.getEdgeAt(Orientation.EAST).getObstruction() == Obstruction.WALL
@@ -240,7 +288,9 @@ public class MazeExplorer {
     
     public void startExploringMaze() {
         try {
-            algorithm(startTile);
+        	Tile returnTile = startTile;
+        	while(returnTile != null) //als returnTile geen null is, is er collision, dus hernemen met returnTile
+        		returnTile = algorithm(returnTile);
             for (final Object tile : allTiles)
                 ((Tile) tile).setMarkingExploreMaze(false);
         } catch (Exception e) {
@@ -259,6 +309,12 @@ public class MazeExplorer {
                     allTiles.add(tile);
                 else
                     queue.add(tile);
+    }
+    
+    private void undoUpdateVectors(Tile currentTile) {
+        if (allTiles.contains(currentTile))
+            allTiles.remove(currentTile);
+        queue.add(currentTile);
     }
     
     public void quit() {

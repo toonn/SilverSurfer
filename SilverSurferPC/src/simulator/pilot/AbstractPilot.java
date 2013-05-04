@@ -18,6 +18,9 @@ import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
+import mazeAlgorithm.CollisionAvoidedException;
+import mazeAlgorithm.CollisionRollbackException;
+import mazeAlgorithm.CollisionRollbackSecondCaseException;
 import mazeAlgorithm.ExploreThread;
 import mazeAlgorithm.ShortestPath;
 import mq.communicator.APHandler;
@@ -39,6 +42,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private boolean busyExecutingBarcode = false;
     protected boolean readBarcodes = true;
     protected boolean permaBarcodeStop = false;
+    protected boolean objectBoolean = false;
     protected PilotActions pilotActions = new PilotActions(this);
     private ExploreThread exploreThread;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
@@ -110,8 +114,8 @@ public abstract class AbstractPilot implements PilotInterface {
     		tilesBeforeAlign--;
     }
 
-    public void alignOnWhiteLine() {
-        travel(40);
+    public void alignOnWhiteLine() throws CollisionAvoidedException {
+        travel(40, false);
     }
 
     protected boolean checkForObstruction() {
@@ -401,7 +405,8 @@ public abstract class AbstractPilot implements PilotInterface {
 			return;
 		} 
 				
-		if (tilesAwayFromTeammate >= tilesAway && !(shortestPath.getTilesPath().get(1) instanceof Seesaw && ((Seesaw) (shortestPath.getTilesPath().get(1))).isClosed())) {			
+		if (tilesAwayFromTeammate >= tilesAway && !(shortestPath.getTilesPath().get(1) instanceof Seesaw && ((Seesaw) (shortestPath.getTilesPath().get(1))).isClosed())) {
+			//TODO: volgende methode geeft ofwel null terug (succes) ofwel een tile (collisiondetecion, robot staat op teruggegeven tile)
 			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
 		} else {
 			System.out.println("Wacht een paar seconden");
@@ -412,7 +417,7 @@ public abstract class AbstractPilot implements PilotInterface {
 		stillApproximating = false;
 	}
 
-	public void travel(final double distance) {
+	public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
 		int distTraveled = 0;
 		double currentX = getPosition().getX();
 		double currentY = getPosition().getY();
@@ -437,7 +442,13 @@ public abstract class AbstractPilot implements PilotInterface {
 				x = currentX - i;
 				y = currentY;
 			}
-			if (crashImminent(distance-distTraveled)) {
+			setPosition(x, y);
+			distTraveled++;
+			new Sleep().sleepFor(getTravelSleepTime());
+			
+			//TODO: mooie methode, maar houd geen rekening als robot achteruit rijdt (kijkt de verkeerde richting uit)
+			//op zich gewoon negeren, want das alleen als het object wordt gepakt en dan kan er geen crash zijn
+			if (!ignoreCollision && crashImminent(distance-distTraveled)) {
 				currentX = x;
 				currentY = y;
 				for (int j = 1; j <= Math.abs(distTraveled); j++) {
@@ -457,12 +468,8 @@ public abstract class AbstractPilot implements PilotInterface {
 					setPosition(x, y);
 					new Sleep().sleepFor(getTravelSleepTime());
 				}
-				break;
+				throw new CollisionAvoidedException("Near-collision detected!");
 			}
-
-			setPosition(x, y);
-			distTraveled++;
-			new Sleep().sleepFor(getTravelSleepTime());
 		}
 	}
 
@@ -491,48 +498,117 @@ public abstract class AbstractPilot implements PilotInterface {
 	}
 
 	public void won() {
-		System.out.println("You win!");
+		System.out.println("VICTORY! YOU WON THE GAME!"); //TODO: vuurwerk en een fanfare
 		won = true;
 	}
 	
 	public void crossOpenSeesaw(int seesawValue) {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
-    	travel(60);
-        for (Tile tile : getMapGraphConstructed().getTiles())
-            if (tile.getContent() instanceof Seesaw
-                    && tile.getContent().getValue() == seesawValue)
-                ((Seesaw) tile.getContent()).flipSeesaw();
-    	travel(60);
+    	try {
+        	travel(60, true);
+            for (Tile tile : getMapGraphConstructed().getTiles())
+                if (tile.getContent() instanceof Seesaw
+                        && tile.getContent().getValue() == seesawValue)
+                    ((Seesaw) tile.getContent()).flipSeesaw();
+        	travel(40, true);
+    	} catch(CollisionAvoidedException e) {
+        	//Do nothing, a collision cannot happen here
+    	}
+    	try {
+        	travel(20, false);
+    	} catch(CollisionAvoidedException e) {
+    		crossOpenSeesawFirstCollisionRollback();
+    	}
         readBarcodes = readBarcodesBackup;
-        alignOnWhiteLine();
+        try {
+        	alignOnWhiteLine();
+        } catch(CollisionAvoidedException e) {
+        	crossOpenSeesawSecondCollisionRollback();
+        }
+	}
+	
+	private void crossOpenSeesawFirstCollisionRollback() {
+		new Sleep().sleepFor(1000);
+		try {
+        	travel(20, false);
+        } catch(CollisionAvoidedException e) {
+        	pickupObjectFirstCollisionRollback();
+        }
+	}
+	
+	private void crossOpenSeesawSecondCollisionRollback() {
+		new Sleep().sleepFor(1000);
+		try {
+        	alignOnWhiteLine();
+        } catch(CollisionAvoidedException e) {
+        	pickupObjectSecondCollisionRollback();
+        }
 	}
 	
 	public void crossClosedSeesaw(int seesawValue) {
-    	boolean readBarcodesBackup = readBarcodes;
-    	readBarcodes = false;
-    	travel(-40);
-        alignOnWhiteLine();
-        rotate(180);
-        travel(20);
         for (Tile tile : getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw
                     && tile.getContent().getValue() == seesawValue)
                 ((Seesaw) tile.getContent()).flipSeesaw();
-        travel(20);
-        rotate(180);
-        alignOnWhiteLine();
-        readBarcodes = readBarcodesBackup;
         crossOpenSeesaw(seesawValue);
 	}
 	
-	public void pickupObject() {
+	public void pickupObject(int team) {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
         rotate(180);
-        travel(-30);
-        travel(30);
-        alignOnWhiteLine();
+        try {
+        	travel(-30, true);
+        } catch(CollisionAvoidedException e) {
+        	//Do nothing, a collision cannot happen here
+        }
+        objectBoolean = true;
+        setTeamNumber(team);
+        if(isInGameModus()) {
+            try {
+                getCenter().getPlayerClient().foundObject();
+                getCenter().getPlayerClient().joinTeam(getTeamNumber());
+            } catch (Exception e) {
+                System.out.println("EXCEPTION! PILOTACTIONS!");
+            }
+        }
+        try {
+        	travel(30, false);
+        } catch(CollisionAvoidedException e) {
+        	pickupObjectFirstCollisionRollback();
+        }
+        try {
+        	alignOnWhiteLine();
+        } catch(CollisionAvoidedException e) {
+        	pickupObjectSecondCollisionRollback();
+        }
         readBarcodes = readBarcodesBackup;
+	}
+	
+	private void pickupObjectFirstCollisionRollback() {
+		new Sleep().sleepFor(1000);
+		try {
+			travel(30, false);
+        } catch(CollisionAvoidedException e) {
+        	pickupObjectFirstCollisionRollback();
+        }
+	}
+	
+	private void pickupObjectSecondCollisionRollback() {
+		new Sleep().sleepFor(1000);
+		try {
+        	alignOnWhiteLine();
+        } catch(CollisionAvoidedException e) {
+        	pickupObjectSecondCollisionRollback();
+        }
+	}
+	
+	public boolean getObjectBoolean() { //De objectBoolean bestaat omdat na het object op te picken, de robot niet op de barcode tile staat maar op de tile ervoor --> update algoritme somehow
+		return objectBoolean;
+	}
+	
+	public void objectHandled() { //After object has been picked up and algorithm is aware of this, this is set to false so the algoritm stays correct
+		objectBoolean = false;
 	}
 }

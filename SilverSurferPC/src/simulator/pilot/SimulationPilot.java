@@ -16,6 +16,7 @@ import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.StartBase;
 import mapping.Tile;
+import mazeAlgorithm.CollisionAvoidedException;
 import simulator.viewport.SimulatorPanel;
 
 public class SimulationPilot extends AbstractPilot {
@@ -397,8 +398,8 @@ public class SimulationPilot extends AbstractPilot {
     }
 
     @Override
-    public void travel(final double distance) {
-        super.travel(distance);
+    public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
+        super.travel(distance, ignoreCollision);
         if (readBarcodes
                 && !permaBarcodeStop
                 && mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode) {

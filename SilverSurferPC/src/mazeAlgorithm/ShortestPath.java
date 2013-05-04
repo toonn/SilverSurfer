@@ -22,6 +22,7 @@ public class ShortestPath {
 	private final Vector<Tile> tilesPath = new Vector<Tile>();
 	private Vector<Tile> tiles;
 	private Tile startTile;
+	private Tile currentTileDuringException;
 	private Tile endTile;
 	private AbstractPilot pilot;
 	private int extraCostSeesaw = 4;
@@ -38,6 +39,10 @@ public class ShortestPath {
 			tile.setMarkingShortestPath(false);
 			tile.resetCost();
 		}
+	}
+	
+	protected Tile getCurrentTileDuringException() {
+		return currentTileDuringException;
 	}
 
 	public void quit(boolean quit) {
@@ -123,7 +128,7 @@ public class ShortestPath {
 	 * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
 	 * alle tiles terug op hun initiele waarde gezet.
 	 */
-	protected void goShortestPath1Tile() {
+	protected void goShortestPath1Tile() throws CollisionAvoidedException {
 		if(!pathCalculated)
 			calCulatePath();
 
@@ -144,20 +149,26 @@ public class ShortestPath {
 		
 		if (tilesPath.size() <= 2)
 			pilot.setReadBarcodes(readBarcodesBackup);
-		pilot.alignOnWhiteLine();
+		try {
+			pilot.alignOnWhiteLine();
+		} catch(CollisionAvoidedException e) {
+			currentTileDuringException = tilesPath.get(0);
+			pilot.setReadBarcodes(readBarcodesBackup);
+			throw new CollisionAvoidedException();
+		}
 		pilot.setReadBarcodes(readBarcodesBackup);
 
 		pilot.decreaseTilesBeforeAlign();
 		tilesPath.remove(0);
 	}
 	
-	public void goNumberTilesShortestPath(int TilesToGo) {		
+	public Tile goNumberTilesShortestPath(int TilesToGo) {		
 		if(!pathCalculated)
 			calCulatePath();
 	
 		if(tilesPath.size() == 2) {
-			System.out.println("geen shortestPath uitvoeren want normaal naast elkaar");
-			return;
+			//geen shortestPath uitvoeren want normaal naast elkaar
+			return null;
 		}
 		
 		if (tilesPath.size() <= TilesToGo)
@@ -177,13 +188,18 @@ public class ShortestPath {
 			if(i == TilesToGo-1) //Last tile to ride: set read barcodes to original value
 				pilot.setReadBarcodes(readBarcodesBackup);
 				
-			pilot.alignOnWhiteLine(); // = travel(40) for sim, but white line for robot (important!)
+			try {
+				pilot.alignOnWhiteLine(); // = travel(40) for sim, but white line for robot (important!)
+			} catch(CollisionAvoidedException e) {
+				return tilesPath.get(i);
+			}
 		}
 		
 		pilot.setReadBarcodes(readBarcodesBackup);
 				
 		for (final Tile tile : tiles)
 			tile.resetCost();
+		return null;
 	}
 
 	private void calCulatePath() {

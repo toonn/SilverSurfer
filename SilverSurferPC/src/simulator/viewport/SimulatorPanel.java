@@ -15,6 +15,7 @@ import mapping.MapGraph;
 import mapping.MapReader;
 import mapping.StartBase;
 import mapping.Tile;
+import mazeAlgorithm.CollisionAvoidedException;
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.DummyPilot;
 import simulator.pilot.PilotInterface;
@@ -547,7 +548,11 @@ public class SimulatorPanel extends JPanel {
     }
 
     public void travelPrincipalPilot(double distance) {
-        principalPilot.travel(distance);
+    	try {
+    		principalPilot.travel(distance, true);
+    	} catch(CollisionAvoidedException e) {
+    		//Nothing to see here
+    	}
     }
 
     public void turnLeftPrincipalPilot(double alpha) {

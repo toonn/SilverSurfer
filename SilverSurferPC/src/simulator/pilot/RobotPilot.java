@@ -179,19 +179,12 @@ public class RobotPilot extends AbstractPilot {
 	public void crossClosedSeesaw(int seesawValue) {
         busy = true;
         communicator.sendCommand(Command.CROSS_CLOSED_SEESAW);
-    	boolean readBarcodesBackup = readBarcodes;
-    	readBarcodes = false;
-        super.travel(-40);
-        super.travel(40);
-        super.rotate(180);
-        super.travel(20);
         for (Tile tile : getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw
                     && tile.getContent().getValue() == seesawValue)
                 ((Seesaw) tile.getContent()).flipSeesaw();
-        super.travel(20);
-        super.rotate(180);
-        super.travel(40);
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
         super.travel(120);
         readBarcodes = readBarcodesBackup;
         super.travel(40);
@@ -202,13 +195,23 @@ public class RobotPilot extends AbstractPilot {
 	}
 
     @Override
-	public void pickupObject() {
+	public void pickupObject(int team) {
         busy = true;
         communicator.sendCommand(Command.PICKUP_OBJECT);
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
         super.rotate(180);
         super.travel(-30);
+        objectBoolean = true;
+        setTeamNumber(team);
+        if(isInGameModus()) {
+            try {
+                getCenter().getPlayerClient().foundObject();
+                getCenter().getPlayerClient().joinTeam(getTeamNumber());
+            } catch (Exception e) {
+                System.out.println("EXCEPTION! PILOTACTIONS!");
+            }
+        }
         super.travel(30);
         super.travel(40);
         readBarcodes = readBarcodesBackup;
