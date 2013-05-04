@@ -38,10 +38,12 @@ public class MazeExplorer {
         if (nextTile == null) { // Null if next tile is not reachable without taking a seesaw.
             Tile seesawTile = searchOpenSeesaw(currentTile);
             if(seesawTile != null) {
+                int seesawValue = getSeesawValue(currentTile);
+                nextTile = getOtherEndOfSeesaw(currentTile);
                 if(!((Seesaw)(seesawTile.getNeighbour(pilot.getOrientation()).getContent())).isClosed()) //If seesaw is open
-                	nextTile = crossOpenSeesaw(seesawTile);
+                    pilot.crossOpenSeesaw(seesawValue);
                 else //If seesaw is closed
-                	nextTile = crossClosedSeesaw(seesawTile);
+                    pilot.crossClosedSeesaw(seesawValue);
             }
             else //Alleen als quit
             	nextTile = currentTile;
@@ -131,7 +133,7 @@ public class MazeExplorer {
                 	int totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
                 	
                 	while(totalTilesToGo != 0)
-                		if(!quit){
+                		if(!quit) {
                 			shortestPath.goShortestPath1Tile();
                 			totalTilesToGo--;
                 		}
@@ -149,7 +151,7 @@ public class MazeExplorer {
 	                	totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
 	                	
 	                	while(totalTilesToGo != 0)
-	                    	if(!quit){
+	                    	if(!quit) {
 	                    		shortestPath.goShortestPath1Tile();
 	                    		totalTilesToGo--;
 	                    	}
@@ -160,29 +162,6 @@ public class MazeExplorer {
 	        }
         }
         return null;
-    }
-
-    private Tile crossOpenSeesaw(Tile currentTile) {
-        int seesawValue = getSeesawValue(currentTile);
-        Tile endTile = getOtherEndOfSeesaw(currentTile);
-        boolean readBarcodesBackup = pilot.getReadBarcodes();
-        pilot.setReadBarcodes(false);
-        pilot.travel(60);
-        for (Tile tile : pilot.getMapGraphConstructed().getTiles())
-            if (tile.getContent() instanceof Seesaw
-                    && tile.getContent().getValue() == seesawValue)
-                ((Seesaw) tile.getContent()).flipSeesaw();
-        pilot.travel(60);
-        pilot.setReadBarcodes(readBarcodesBackup);
-        pilot.alignOnWhiteLine();
-        // TODO: whiteline! want onnauwkeurig na wip!
-        return endTile;
-    }
-    
-    private Tile crossClosedSeesaw(Tile currentTile) {
-        int seesawValue = getSeesawValue(currentTile);
-        Tile endTile = getOtherEndOfSeesaw(currentTile);
-        return endTile;
     }
 
     private int getSeesawValue(Tile tile) {

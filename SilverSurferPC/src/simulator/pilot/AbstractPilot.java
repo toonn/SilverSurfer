@@ -495,25 +495,35 @@ public abstract class AbstractPilot implements PilotInterface {
 		won = true;
 	}
 	
-	public void crossOpenSeesaw() {
+	public void crossOpenSeesaw(int seesawValue) {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
-    	travel(120);
+    	travel(60);
+        for (Tile tile : getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw
+                    && tile.getContent().getValue() == seesawValue)
+                ((Seesaw) tile.getContent()).flipSeesaw();
+    	travel(60);
         readBarcodes = readBarcodesBackup;
         alignOnWhiteLine();
 	}
 	
-	public void crossClosedSeesaw() {
+	public void crossClosedSeesaw(int seesawValue) {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
     	travel(-40);
         alignOnWhiteLine();
         rotate(180);
-        travel(40);
+        travel(20);
+        for (Tile tile : getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw
+                    && tile.getContent().getValue() == seesawValue)
+                ((Seesaw) tile.getContent()).flipSeesaw();
+        travel(20);
         rotate(180);
         alignOnWhiteLine();
         readBarcodes = readBarcodesBackup;
-        crossOpenSeesaw();
+        crossOpenSeesaw(seesawValue);
 	}
 	
 	public void pickupObject() {

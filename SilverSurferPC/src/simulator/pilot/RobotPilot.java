@@ -1,5 +1,7 @@
 package simulator.pilot;
 
+import mapping.Seesaw;
+import mapping.Tile;
 import commands.Command;
 import commands.Sleep;
 import communication.Communicator;
@@ -154,12 +156,17 @@ public class RobotPilot extends AbstractPilot {
     }
 	
     @Override
-	public void crossOpenSeesaw() {
+	public void crossOpenSeesaw(int seesawValue) {
         busy = true;
         communicator.sendCommand(Command.CROSS_OPEN_SEESAW);
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
-        super.travel(120);
+        super.travel(60);
+        for (Tile tile : getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw
+                    && tile.getContent().getValue() == seesawValue)
+                ((Seesaw) tile.getContent()).flipSeesaw();
+        super.travel(60);
         readBarcodes = readBarcodesBackup;
         super.travel(40);
         waitUntilDone();
@@ -169,7 +176,7 @@ public class RobotPilot extends AbstractPilot {
 	}
 
     @Override
-	public void crossClosedSeesaw() {
+	public void crossClosedSeesaw(int seesawValue) {
         busy = true;
         communicator.sendCommand(Command.CROSS_CLOSED_SEESAW);
     	boolean readBarcodesBackup = readBarcodes;
@@ -177,7 +184,12 @@ public class RobotPilot extends AbstractPilot {
         super.travel(-40);
         super.travel(40);
         super.rotate(180);
-        super.travel(40);
+        super.travel(20);
+        for (Tile tile : getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw
+                    && tile.getContent().getValue() == seesawValue)
+                ((Seesaw) tile.getContent()).flipSeesaw();
+        super.travel(20);
         super.rotate(180);
         super.travel(40);
         super.travel(120);
