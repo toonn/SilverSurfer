@@ -476,7 +476,7 @@ public class SimulatorPanel extends JPanel {
         setColors();
     }
 
-    public void setOnStartTile(AbstractPilot pilot) {
+    private void setOnStartTile(AbstractPilot pilot) {
     	if(mapGraphLoaded != null)
             for (Tile tile : mapGraphLoaded.getStartTiles()) {
                 if (tile.getContent().getValue() == pilot.getPlayerNumber()) {
@@ -488,12 +488,6 @@ public class SimulatorPanel extends JPanel {
             }
     }
     
-    public void resetAllPaths() {
-        principalViewPort.resetPath();
-        for (UnitViewPort viewPort : simulatorViewPorts)
-        	viewPort.resetPath();
-    }
-    
     private void setColors() {
     	principalViewPort.setMainColor(teamColors[principalPilot.getPlayerNumber()]);
     	principalDummyViewPort.setMainColor(teamColors[principalPilot.getPlayerNumber()]);
@@ -501,6 +495,12 @@ public class SimulatorPanel extends JPanel {
     		simulatorViewPorts.get(i).setMainColor(teamColors[simulatorPilots.get(i).getPlayerNumber()]);
     		simulatorDummyViewPorts.get(i).setMainColor(teamColors[simulatorPilots.get(i).getPlayerNumber()]);
     	}
+    }
+    
+    public void resetAllPaths() {
+        principalViewPort.resetPath();
+        for (UnitViewPort viewPort : simulatorViewPorts)
+        	viewPort.resetPath();
     }
 
     public void playGame() {

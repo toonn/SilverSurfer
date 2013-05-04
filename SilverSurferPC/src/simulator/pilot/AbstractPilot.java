@@ -12,6 +12,8 @@ import java.util.Vector;
 
 import javax.swing.Timer;
 
+import commands.Sleep;
+
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
@@ -43,7 +45,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
     private boolean gameOn = false;
     private MQCenter center;
-    protected final double detectionDistanceUltrasonicSensorRobot = 26;
+    protected final double DETECTION_DISTANCE_ULTRASONIC_SENSOR_ROBOT = 26;
 	private final int CRASH_MARGIN = 5;
     private boolean teamMemberFound = false;
     private String playerName = "/";
@@ -52,8 +54,8 @@ public abstract class AbstractPilot implements PilotInterface {
     private DummyPilot teamPilot = new DummyPilot();
     private int updateTilesAndPositionFPS = 3;
     private boolean won = false;
-    private int tilesBeforeAlign;
     private int nbOfTilesBetweenAlign = 0;
+    private int tilesBeforeAlign = nbOfTilesBetweenAlign;
     private Vector<Tile> allTileVector = new Vector<Tile>();
     private ActionListener updateTilesAndPosition = new ActionListener() {
 
@@ -98,24 +100,15 @@ public abstract class AbstractPilot implements PilotInterface {
     	return teamPilot;
     }
     
-    public int getTilesBeforeAlign(){
+    public int getTilesBeforeAlign() {
     	return tilesBeforeAlign;
     }
     
-    public void decreaseTilesBeforeAlign(){
-    	if(tilesBeforeAlign == 0){
+    public void decreaseTilesBeforeAlign() {
+    	if(tilesBeforeAlign == 0)
     		tilesBeforeAlign = nbOfTilesBetweenAlign;
-    	}
-    	else{
-    	tilesBeforeAlign--;
-    	}
-    }
-
-    public void alignOnWalls() {
-        rotate(90);
-        rotate(-90);
-        rotate(-90);
-        rotate(90);
+    	else
+    		tilesBeforeAlign--;
     }
 
     public void alignOnWhiteLine() {
@@ -123,9 +116,8 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     protected boolean checkForObstruction() {
-        if (getUltraSensorValue() < detectionDistanceUltrasonicSensorRobot) {
+        if (getUltraSensorValue() < DETECTION_DISTANCE_ULTRASONIC_SENSOR_ROBOT)
             return true;
-        }
         return false;
     }
 
@@ -140,7 +132,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public abstract String getConsoleTag();
 
-    @Override
     public APHandler getDefaultHandler() {
         return getCenter().getHandler();
     }
@@ -185,7 +176,7 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     private int getRotateSleepTime() {
-        return 5 - speed;
+    	return 5 - speed;
     }
 
     public Vector<Tile> getSeesawBarcodeTiles() {
@@ -219,6 +210,8 @@ public abstract class AbstractPilot implements PilotInterface {
 
     private int getTravelSleepTime() {
         switch (speed) {
+        case -2:
+        	return 100;
         case -1:
             return 50;
         case 1:
@@ -229,8 +222,10 @@ public abstract class AbstractPilot implements PilotInterface {
             return 5;
         case 4:
             return 3;
+        case 5:
+        	return 1;
         }
-        return 1;
+        return 0;
     }
 
     public abstract int getUltraSensorValue();
@@ -242,7 +237,6 @@ public abstract class AbstractPilot implements PilotInterface {
     /**
      * Check if this Pilot is in gameModus (MQ is activated).
      */
-    @Override
     public boolean isInGameModus() {
         return gameOn;
     }
@@ -284,11 +278,7 @@ public abstract class AbstractPilot implements PilotInterface {
             } else {
                 setAngle(angle - i);
             }
-            try {
-                Thread.sleep(getRotateSleepTime());
-            } catch (Exception e) {
-
-            }
+            new Sleep().sleepFor(getRotateSleepTime());
         }
     }
 
@@ -310,7 +300,6 @@ public abstract class AbstractPilot implements PilotInterface {
     /**
      * Set this Pilot in it's gameModus.
      */
-    @Override
     public void setGameModus(boolean onOff) {
         gameOn = onOff;
     }
@@ -343,7 +332,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public void setSpeed(int speed) {
         this.speed = speed;
-        System.out.println("speed wordt geset : " + speed);
     }
 
     /**
@@ -354,7 +342,6 @@ public abstract class AbstractPilot implements PilotInterface {
     	this.teamNumber = teamNumber;
     }
 
-    @Override
     public void setupForGame(SimulatorPanel panel) {
         if (isInGameModus()) {
             try {
@@ -390,7 +377,7 @@ public abstract class AbstractPilot implements PilotInterface {
         }
     }
 
-    public void fillVectorMapgraphTiles(){
+    public void fillVectorMapgraphTiles() {
 		allTileVector.addAll(mapGraphConstructed.getTiles());
     }
 
@@ -418,14 +405,9 @@ public abstract class AbstractPilot implements PilotInterface {
 		if (tilesAwayFromTeammate >= tilesAway && !(shortestPath.getTilesPath().get(1) instanceof Seesaw && ((Seesaw) (shortestPath.getTilesPath().get(1))).isClosed())) {			
 			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
 		} else {
-			Random random = new Random();
-			try {
-				System.out.println("wacht een paar seconden");
-				Thread.sleep(random.nextInt(10)*1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			}
+			System.out.println("Wacht een paar seconden");
+			new Sleep().sleepFor(new Random().nextInt(10)*1000);
+		}
 		
 		tilesAwayFromTeammate = tilesAway;
 		stillApproximating = false;
@@ -474,22 +456,14 @@ public abstract class AbstractPilot implements PilotInterface {
 						y = currentY;
 					}
 					setPosition(x, y);
-					try {
-						Thread.sleep(getTravelSleepTime());
-					} catch (final InterruptedException e) {
-
-					}
+					new Sleep().sleepFor(getTravelSleepTime());
 				}
 				break;
 			}
 
 			setPosition(x, y);
 			distTraveled++;
-			try {
-				Thread.sleep(getTravelSleepTime());
-			} catch (final InterruptedException e) {
-
-			}
+			new Sleep().sleepFor(getTravelSleepTime());
 		}
 	}
 
@@ -518,7 +492,7 @@ public abstract class AbstractPilot implements PilotInterface {
 	}
 
 	public void won() {
-		System.out.println("you win");
+		System.out.println("You win!");
 		won = true;
 	}
 }

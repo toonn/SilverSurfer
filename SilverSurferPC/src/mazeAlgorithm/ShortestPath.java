@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
-import java.util.List;
-
 import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;

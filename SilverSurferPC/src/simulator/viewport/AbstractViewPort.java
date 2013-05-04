@@ -53,7 +53,9 @@ public abstract class AbstractViewPort extends JPanel {
         }
     };
     
-    public void paintExploreQueue(final Graphics graph){}
+    public void paintExploreQueue(final Graphics graph) {
+    	
+    }
 
     public AbstractViewPort(Set<? extends PilotInterface> pilotSet,
             Color[] teamColors, Color mainColor) {

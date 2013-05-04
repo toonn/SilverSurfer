@@ -71,6 +71,7 @@ public class UnitViewPort extends DummyViewPort {
         paintBeamComponent(graph);
     }
 
+    @Override
     public void paintExploreQueue(final Graphics graph) {
         try {
         	AlphaComposite originalAlpha = (AlphaComposite) ((Graphics2D) graph).getComposite();

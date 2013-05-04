@@ -260,7 +260,6 @@ public class SimulationPilot extends AbstractPilot {
 
         return 250;
     }
-
    
     @Override
     public String getConsoleTag() {
@@ -330,7 +329,6 @@ public class SimulationPilot extends AbstractPilot {
         }
     }
 
-    @SuppressWarnings("unused")
     private double[] getUltrasonicSensorCoordinates() {
         final double[] coordinates = new double[2];
         coordinates[0] = (getPosition().getX() + ultrasonicSensorDistanceFromAxis

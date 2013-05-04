@@ -202,6 +202,16 @@ public class GUIMenuBar extends JMenuBar {
         
         speedMenu.addSeparator();
 
+        final JMenuItem extraSlowMotionItem = new JMenuItem("Extra Slow Motion");
+        speedMenu.add(extraSlowMotionItem);
+        extraSlowMotionItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(-2);
+            }
+        });
+
         final JMenuItem slowMotionItem = new JMenuItem("Slow Motion");
         speedMenu.add(slowMotionItem);
         slowMotionItem.addActionListener(new ActionListener() {
@@ -219,6 +229,16 @@ public class GUIMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(final ActionEvent arg0) {
                 SilverSurferGUI.getSimulatorPanel().changeSpeed(5);
+            }
+        });
+
+        final JMenuItem extraFastForwardItem = new JMenuItem("Extra Fast Forward");
+        speedMenu.add(extraFastForwardItem);
+        extraFastForwardItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                SilverSurferGUI.getSimulatorPanel().changeSpeed(6);
             }
         });
 

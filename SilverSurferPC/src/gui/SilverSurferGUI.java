@@ -27,7 +27,6 @@ public class SilverSurferGUI {
     private static JLabel infoLabel1, infoLabel2, infoLabel3, infoLabel4, infoLabel5, infoLabel6, infoLabel7, infoLabel8;
     private static JLabel infoLabel9, infoLabel10, infoLabel11, infoLabel12, infoLabel13, infoLabel14, infoLabel15, infoLabel16;
     private static JLabel infoLabel17, infoLabel18;
-    private static JLabel legendLabel1, legendLabel2, legendLabel3, legendLabel4, legendLabel5, legendLabel6, legendLabel7;
     private static JPanel legendPanel, inputPanel, sidePanel;
     private static SimulatorPanel simulatorPanel;
     private static SensorGraph sensorPanel;
@@ -101,10 +100,13 @@ public class SilverSurferGUI {
         if(simulatorPanel.getMapName() != "/")
         	infoLabel2.setText(simulatorPanel.getMapName());
         else
-        	infoLabel2.setText("No Map loaded");
+        	infoLabel2.setText("(No map loaded)");
         infoLabel3.setText(simulatorPanel.getView());
         infoLabel4.setText("----- INFO -----");
-        infoLabel5.setText("Bluetooth: " + (pilot instanceof RobotPilot));
+        if(pilot instanceof RobotPilot)
+        	infoLabel5.setText("Robot connected");
+        else
+        	infoLabel5.setText("(No robot connected)");
         infoLabel6.setText("Speed level: " + simulatorPanel.getSpeed());
         infoLabel7.setText("Player number: " + pilot.getPlayerNumber());
         infoLabel8.setText("Player: " + pilot.getPlayerName());
@@ -130,7 +132,7 @@ public class SilverSurferGUI {
         simulatorPanel = new SimulatorPanel(teamColors);
     }
 
-    private void inputPanel() {
+	private void inputPanel() {
         final JLabel angleLabel = new JLabel("Angle (degrees)", SwingConstants.CENTER);
         final SpinnerNumberModel angleModel = new SpinnerNumberModel(90, 0, 1080, 1);
         angle = new JSpinner(angleModel);
@@ -198,31 +200,6 @@ public class SilverSurferGUI {
     }
 
     private void legendPanel() {
-   
-       
-
-        legendLabel1 = new JLabel("", SwingConstants.CENTER);
-        legendLabel1.setForeground(teamColors[0]);
-        legendLabel1.setText("Player 0");
-        legendLabel2 = new JLabel("", SwingConstants.CENTER);
-        legendLabel2.setForeground(teamColors[1]);
-        legendLabel2.setText("Player 1");
-        legendLabel3 = new JLabel("", SwingConstants.CENTER);
-        legendLabel3.setForeground(teamColors[2]);
-        legendLabel3.setText("Player 2");
-        legendLabel4 = new JLabel("", SwingConstants.CENTER);
-        legendLabel4.setForeground(teamColors[3]);
-        legendLabel4.setText("Player 3");
-        legendLabel5 = new JLabel("", SwingConstants.CENTER);
-        legendLabel5.setForeground(teamColors[4]);
-        legendLabel5.setText("Team 1");
-        legendLabel6 = new JLabel("", SwingConstants.CENTER);
-        legendLabel6.setForeground(teamColors[5]);
-        legendLabel6.setText("Team 2");
-        legendLabel7 = new JLabel("", SwingConstants.CENTER);
-        legendLabel7.setForeground(teamColors[6]);
-        legendLabel7.setText("Invalid");
-
         legendPanel = new JPanel();
         legendPanel.setOpaque(false);
 
@@ -260,8 +237,6 @@ public class SilverSurferGUI {
         infoLabel16 = new JLabel("", SwingConstants.CENTER);
         infoLabel17 = new JLabel("", SwingConstants.CENTER);
         infoLabel18 = new JLabel("", SwingConstants.CENTER);
-        JLabel mapPicLabel = new JLabel(new ImageIcon("resources/map.png"));
-        JLabel sensorLabel = new JLabel(new ImageIcon("resources/sensors.png"));
 
         sidePanel = new JPanel();
         sidePanel.setOpaque(false);
