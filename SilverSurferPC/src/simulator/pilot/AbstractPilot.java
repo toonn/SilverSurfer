@@ -87,7 +87,7 @@ public abstract class AbstractPilot implements PilotInterface {
     	for (mapping.Tile tile : getMapGraphConstructed().getTiles()) 
     		vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
     	try {
-    		getCenter().getClient().sendTiles(vector);
+    		getCenter().getPlayerClient().sendTiles(vector);
     		getCenter().updatePosition((int)getPosition().x, (int)getPosition().y, (int)getAngle());
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -360,7 +360,7 @@ public abstract class AbstractPilot implements PilotInterface {
             try {
             	playerName = "SILVER" + getPlayerNumber() + "_" + System.currentTimeMillis();
                 center = new MQCenter(this, playerName, panel);
-                getCenter().join();
+                center.join();
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             } catch (IOException e) {

@@ -105,8 +105,8 @@ public class PilotActions {
 
         if (pilot.isInGameModus()) {
             try {
-                pilot.getCenter().getClient().foundObject();
-                pilot.getCenter().getClient().joinTeam(pilot.getTeamNumber());
+                pilot.getCenter().getPlayerClient().foundObject();
+                pilot.getCenter().getPlayerClient().joinTeam(pilot.getTeamNumber());
             } catch (Exception e) {
                 System.out.println("EXCEPTION! PILOTACTIONS!");
             }
