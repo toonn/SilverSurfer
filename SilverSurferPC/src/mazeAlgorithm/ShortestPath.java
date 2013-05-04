@@ -40,7 +40,7 @@ public class ShortestPath {
 		}
 	}
 
-	public void quit(boolean quit){
+	public void quit(boolean quit) {
 		this.quit = quit;
 	}
 	
@@ -66,20 +66,20 @@ public class ShortestPath {
 	/**
 	 * Returns the amount of tiles in the path.
 	 */
-	public int getLength(){
+	private int getLength() {
 		tilesPath.clear();
 		fillTilesPath(startTile);
 		int amt = tilesPath.size();
 		tilesPath.clear();
 		return amt;
 	}
+	
 	private void fillTilesPath(final Tile currentTile) {
 		tilesPath.add(currentTile);
 		if ((currentTile.getContent() instanceof Seesaw && currentTile.getManhattanValue() == extraCostSeesaw) || currentTile.getManhattanValue() == 0) {
 			deleteSuperfluousTiles();
 			return;
 		}
-
 
 		// voeg neighbourTiles van de currentTile toe aan de queue
 		for (final Tile neighbourTile : currentTile.getReachableNeighboursIgnoringSeesaw()) {
@@ -110,9 +110,8 @@ public class ShortestPath {
 		if (queue.size() > 0) {
 			// remove the last tile from the queue and add it to the path
 			final Tile nextTile = queue.get(queue.size() - 1);
-			while (queue.contains(nextTile)) {
+			while (queue.contains(nextTile))
 				queue.remove(nextTile);
-			}
 			fillTilesPath(nextTile);
 		}
 	}
@@ -124,64 +123,70 @@ public class ShortestPath {
 	 * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
 	 * alle tiles terug op hun initiele waarde gezet.
 	 */
-	public void goShortestPath1Tile() {
-		if(!pathCalculated){
-			calCulatePath();}
+	protected void goShortestPath1Tile() {
+		if(!pathCalculated)
+			calCulatePath();
 
 		if (tilesPath.size() == 1 || quit) {
 			for (final Object tile : tiles)
 				((Tile) tile).resetCost();
 			return;
 		}
+		
 		Orientation orientation = null;
 		for (Orientation ori : Orientation.values())
 			if (tilesPath.get(0).getEdgeAt(ori) == tilesPath.get(1).getEdgeAt(ori.getOppositeOrientation()))
 				orientation = ori;
-		if (pilot.getReadBarcodes())
-			pilot.setReadBarcodes(false);
+		
+		boolean readBarcodesBackup = pilot.getReadBarcodes();
+		pilot.setReadBarcodes(false);
 		pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
-
-		if (tilesPath.size() > 2) 
-			pilot.setReadBarcodes(false);
-		else
-			pilot.setReadBarcodes(true);
+		
+		if (tilesPath.size() <= 2)
+			pilot.setReadBarcodes(readBarcodesBackup);
 		pilot.alignOnWhiteLine();
+		pilot.setReadBarcodes(readBarcodesBackup);
 
 		pilot.decreaseTilesBeforeAlign();
 		tilesPath.remove(0);
 	}
 	
 	public void goNumberTilesShortestPath(int TilesToGo) {		
-		if(!pathCalculated){
-			calCulatePath();}
+		if(!pathCalculated)
+			calCulatePath();
 	
 		if(tilesPath.size() == 2) {
 			System.out.println("geen shortestPath uitvoeren want normaal naast elkaar");
 			return;
 		}
-
-		if (tilesPath.size() < TilesToGo) {
+		
+		if (tilesPath.size() <= TilesToGo)
 			TilesToGo = tilesPath.size() - 1;
-		}
+
+		boolean readBarcodesBackup = pilot.getReadBarcodes();
+		pilot.setReadBarcodes(false);
+		
 		for (int i = 0; i < TilesToGo; i++) {
 			Orientation orientation = null;
 			for (Orientation ori : Orientation.values())
 				if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
 					orientation = ori;
 
-			if (pilot.getReadBarcodes())
-				pilot.setReadBarcodes(false);
-
 			pilot.rotate((int) (orientation.getAngle() - pilot.getAngle()));
-			pilot.travel(40);
-		}
+			
+			if(i == TilesToGo-1) //Last tile to ride: set read barcodes to original value
+				pilot.setReadBarcodes(readBarcodesBackup);
 				
-		for (final Tile tile : tiles) {
+			pilot.alignOnWhiteLine(); // = travel(40) for sim, but white line for robot (important!)
+		}
+		
+		pilot.setReadBarcodes(readBarcodesBackup);
+				
+		for (final Tile tile : tiles)
 			tile.resetCost();
-		}		
 	}
 
-	public void calCulatePath(){
+	private void calCulatePath() {
 		setHeuristics();
 		startTile.setCost(0);
 		fillTilesPath(startTile);
@@ -204,7 +209,7 @@ public class ShortestPath {
 		}
 	}
 
-	public int getTilesAwayFromTargetPosition(){
+	public int getTilesAwayFromTargetPosition() {
 		if(!pathCalculated)
 			calCulatePath();
 		return tilesPath.size()-1;
