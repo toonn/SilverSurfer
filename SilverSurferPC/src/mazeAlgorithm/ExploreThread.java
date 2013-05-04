@@ -9,7 +9,7 @@ public class ExploreThread extends Thread {
     AbstractPilot pilot;
     MazeExplorer explorer;
     
-    public MazeExplorer getExplorer(){
+    public MazeExplorer getExplorer() {
     	return explorer;
     }
 
@@ -24,7 +24,7 @@ public class ExploreThread extends Thread {
 
     @Override
     public void run() {
-        explorer = new MazeExplorer(startTile, pilot, true);
+        explorer = new MazeExplorer(startTile, pilot);
         explorer.startExploringMaze();
     }
 }

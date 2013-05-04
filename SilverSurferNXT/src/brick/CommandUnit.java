@@ -114,11 +114,6 @@ public class CommandUnit {
 	    				CU.sendStringToUnit("[BC] " + resultAlign);
                     CU.stopRobot();
                     break;
-                case (Command.ALIGN_WALL):
-                    System.out.println("Walls.");
-                    CU.alignOnWalls();
-                    CU.stopRobot();
-                    break;
                 case (Command.CHECK_FOR_OBSTRUCTION):
                     CU.sendStringToUnit("[CFO] " + CU.ultrasonicSensor.getDistance());
                 	break;
@@ -130,6 +125,31 @@ public class CommandUnit {
                 	break;
                 case (Command.PERMA_STOP_READING_BARCODES):
                     CU.permaBarcodeStop = true;
+                	break;
+                case (Command.CROSS_OPEN_SEESAW):
+                    System.out.println("Crossing open seesaw.");
+                	CU.updatePosition(160);
+                	resultAlign = CU.crossOpenSeesaw();
+	    			if(resultAlign != -1)
+	    				CU.sendStringToUnit("[BC] " + resultAlign);
+                    CU.stopRobot();
+                	break;
+                case (Command.CROSS_CLOSED_SEESAW):
+                    System.out.println("Crossing closed seesaw.");
+            		CU.updatePosition(160);
+                	resultAlign = CU.crossClosedSeesaw();
+	    			if(resultAlign != -1)
+	    				CU.sendStringToUnit("[BC] " + resultAlign);
+                    CU.stopRobot();
+                	break;
+                case (Command.PICKUP_OBJECT):
+                    System.out.println("Picking up object.");
+                	CU.updateAngle(180);
+            		CU.updatePosition(40);
+                	resultAlign = CU.pickupObject();
+	    			if(resultAlign != -1)
+	    				CU.sendStringToUnit("[BC] " + resultAlign);
+                    CU.stopRobot();
                 	break;
                 default:
                     if (input % 100 == Command.AUTOMATIC_MOVE_FORWARD && input != Command.AUTOMATIC_MOVE_FORWARD) {
@@ -300,39 +320,15 @@ public class CommandUnit {
 		return moveForward((int)Math.round(20*LENGTH_COEF));
     }
     
-    private void alignOnWalls() {
-    	turnAngle((int)(ANGLE_COEF_RIGHT*90));
-    	int firstUSRead = ultrasonicSensor.getDistance();
-    	int secondUSRead;
-    	if (firstUSRead < WALL_DISTANCE_LIMIT) {
-    		moveForwardWithoutBarcode((int)Math.round((firstUSRead-WALL_DISTANCE)*LENGTH_COEF));
-        	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
-    		secondUSRead = ultrasonicSensor.getDistance();
-    		if(secondUSRead != WALL_DISTANCE && secondUSRead < WALL_DISTANCE_LIMIT)
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-WALL_DISTANCE)*LENGTH_COEF));
-    		turnAngle((int)(ANGLE_COEF_RIGHT*90));
-    	}
-    	else {
-        	turnAngle(-(int)(ANGLE_COEF_LEFT*180));
-    		secondUSRead = ultrasonicSensor.getDistance();
-    		if (secondUSRead < WALL_DISTANCE_LIMIT) {
-        		moveForwardWithoutBarcode((int)Math.round((secondUSRead-WALL_DISTANCE)*LENGTH_COEF));
-        		turnAngle((int)(ANGLE_COEF_RIGHT*90));
-    		}
-    		else 
-        		turnAngle((int)(ANGLE_COEF_RIGHT*90));
-    	}
-    }
-    
-    private void crossOpenSeesaw() {   
+    private int crossOpenSeesaw() {   
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
     	moveForward((int)Math.floor(LENGTH_COEF*130));
         readBarcodes = readBarcodesBackup;
-        alignOnWhiteLine();
+        return alignOnWhiteLine();
     }
     
-    private void crossClosedSeesaw() {
+    private int crossClosedSeesaw() {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
         moveForwardWithoutBarcode((int)Math.floor(LENGTH_COEF*-40));
@@ -350,10 +346,10 @@ public class CommandUnit {
         turnAngle((int)(ANGLE_COEF_LEFT*180));
         alignOnWhiteLine();
         readBarcodes = readBarcodesBackup;
-        crossOpenSeesaw();
+        return crossOpenSeesaw();
     }
     
-    private void pickupObject() {
+    private int pickupObject() {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
         turnAngle((int)(ANGLE_COEF_LEFT*180));
@@ -367,7 +363,7 @@ public class CommandUnit {
         Motor.C.rotate(120);
     	Motor.A.setSpeed(CommandUnit.speed);
         Motor.B.setSpeed(CommandUnit.speed);
-        alignOnWhiteLine();
         readBarcodes = readBarcodesBackup;
+        return alignOnWhiteLine();
     }
 }

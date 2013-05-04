@@ -44,7 +44,7 @@ public class ShortestPath {
 		this.quit = quit;
 	}
 	
-	public Vector getTilesPath(){
+	public Vector getTilesPath() {
 		return tilesPath;
 	}
 
@@ -117,131 +117,6 @@ public class ShortestPath {
 		}
 	}
 
-//    /**
-//     * De methode die moet opgeroepen worden en alle methodes in de juiste
-//     * volgorde uitvoert. eerst worden de heuristieken gezet dan fillTilesPath,
-//     * en aan de hand hiervan wordt naar de robot/simulator het commando
-//     * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
-//     * alle tiles terug op hun initiele waarde gezet.
-//     */
-//    public int goShortestPath(boolean align, int amount,
-//            int amountOfTilesUntilAlign) {
-//        int currentAmount = amount;
-//        if(!pathCalculated){
-//       	 calCulatePath();}
-//        if (tilesPath.size() == 1) {
-//            return currentAmount;
-//        }
-//        for (int i = 0; i < tilesPath.size() - 1; i++) {
-//            Orientation orientation = null;
-//            for (Orientation ori : Orientation.values())
-//                if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
-//                    orientation = ori;
-//            if (pilot.getReadBarcodes())
-//                pilot.setReadBarcodes(false);
-//            pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
-//            if (align && currentAmount == 0) {
-//                if (tilesPath.size() - i > 2) {
-//                    if (pilot.getReadBarcodes()) {
-//                        pilot.setReadBarcodes(false);
-//                    }
-//                } else {
-//                    if (!pilot.getReadBarcodes()) {
-//                        pilot.setReadBarcodes(true);
-//                    }
-//                }
-//                pilot.alignOnWhiteLine();
-//                currentAmount = amountOfTilesUntilAlign;
-//            } else {
-//                pilot.travel(4);
-//                pilot.travel(4);
-//                pilot.travel(4);
-//                pilot.travel(4);
-//                pilot.travel(4);
-//
-//
-//                if (tilesPath.size() - i > 2) {
-//                    if (pilot.getReadBarcodes()) {
-//                        pilot.setReadBarcodes(false);
-//                    }
-//                } else {
-//                    if (!pilot.getReadBarcodes()) {
-//                        pilot.setReadBarcodes(true);
-//                    }
-//                }
-//                pilot.travel(20);
-//                currentAmount--;
-//            }
-//            // TODO goToNextTile checkte of er geAligned moest worden.
-//            // communicator.goToNextTile(orientation);
-//        }
-//>>>>>>> branch 'demo6' of https://github.com/toonn/SilverSurfer.git
-//
-//		if (queue.size() > 0) {
-//			// remove the last tile from the queue and add it to the path
-//			final Tile nextTile = queue.get(queue.size() - 1);
-//			while (queue.contains(nextTile)) {
-//				queue.remove(nextTile);
-//			}
-//			fillTilesPath(nextTile);
-//		}
-//	}
-
-//	/**
-//	 * De methode die moet opgeroepen worden en alle methodes in de juiste
-//	 * volgorde uitvoert. eerst worden de heuristieken gezet dan fillTilesPath,
-//	 * en aan de hand hiervan wordt naar de robot/simulator het commando
-//	 * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
-//	 * alle tiles terug op hun initiele waarde gezet.
-//	 */
-//	public void goShortestPath(boolean align) {
-//		if(!pathCalculated){
-//			calCulatePath();}
-//
-//		if (tilesPath.size() == 1 || quit) {
-//			for (final Object tile : tiles) {
-//				((Tile) tile).resetCost();
-//			}
-//			return;
-//		}
-//		Orientation orientation = null;
-//		for (Orientation ori : Orientation.values()){
-//			if (tilesPath.get(0).getEdgeAt(ori) == tilesPath.get(1).getEdgeAt(ori.getOppositeOrientation())){
-//				orientation = ori;}}
-//		if (pilot.getReadBarcodes()){
-//			pilot.setReadBarcodes(false);}
-//		pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
-//
-//		if (align && pilot.getTilesBeforeAlign() == 0) {
-//			if (tilesPath.size() > 2) {
-//				if (pilot.getReadBarcodes()) {
-//					pilot.setReadBarcodes(false);
-//				}
-//			} else {
-//				if (!pilot.getReadBarcodes()) {
-//					pilot.setReadBarcodes(true);
-//				}
-//			}
-//			pilot.alignOnWhiteLine();
-//		} else {
-//			pilot.travel(20);
-//			if (tilesPath.size() > 2) {
-//				if (pilot.getReadBarcodes()) {
-//					pilot.setReadBarcodes(false);
-//				}
-//			} else {
-//				if (!pilot.getReadBarcodes()) {
-//					pilot.setReadBarcodes(true);
-//				}
-//			}
-//			pilot.travel(20);
-//		}
-//
-//		pilot.decreaseTilesBeforeAlign();
-//		tilesPath.remove(0);
-//		goShortestPath(align);
-//	}
-
 	/**
 	 * De methode die moet opgeroepen worden en alle methodes in de juiste
 	 * volgorde uitvoert. eerst worden de heuristieken gezet dan fillTilesPath,
@@ -249,48 +124,28 @@ public class ShortestPath {
 	 * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
 	 * alle tiles terug op hun initiele waarde gezet.
 	 */
-	public void goShortestPath1Tile(boolean align) {
+	public void goShortestPath1Tile() {
 		if(!pathCalculated){
 			calCulatePath();}
 
 		if (tilesPath.size() == 1 || quit) {
-			for (final Object tile : tiles) {
+			for (final Object tile : tiles)
 				((Tile) tile).resetCost();
-			}
 			return;
 		}
 		Orientation orientation = null;
-		for (Orientation ori : Orientation.values()){
-			if (tilesPath.get(0).getEdgeAt(ori) == tilesPath.get(1).getEdgeAt(ori.getOppositeOrientation())){
-				orientation = ori;}}
-		if (pilot.getReadBarcodes()){
-			pilot.setReadBarcodes(false);}
+		for (Orientation ori : Orientation.values())
+			if (tilesPath.get(0).getEdgeAt(ori) == tilesPath.get(1).getEdgeAt(ori.getOppositeOrientation()))
+				orientation = ori;
+		if (pilot.getReadBarcodes())
+			pilot.setReadBarcodes(false);
 		pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
 
-		if (align && pilot.getTilesBeforeAlign() == 0) {
-			if (tilesPath.size() > 2) {
-				if (pilot.getReadBarcodes()) {
-					pilot.setReadBarcodes(false);
-				}
-			} else {
-				if (!pilot.getReadBarcodes()) {
-					pilot.setReadBarcodes(true);
-				}
-			}
-			pilot.alignOnWhiteLine();
-		} else {
-			pilot.travel(20);
-			if (tilesPath.size() > 2) {
-				if (pilot.getReadBarcodes()) {
-					pilot.setReadBarcodes(false);
-				}
-			} else {
-				if (!pilot.getReadBarcodes()) {
-					pilot.setReadBarcodes(true);
-				}
-			}
-			pilot.travel(20);
-		}
+		if (tilesPath.size() > 2) 
+			pilot.setReadBarcodes(false);
+		else
+			pilot.setReadBarcodes(true);
+		pilot.alignOnWhiteLine();
 
 		pilot.decreaseTilesBeforeAlign();
 		tilesPath.remove(0);
@@ -300,7 +155,7 @@ public class ShortestPath {
 		if(!pathCalculated){
 			calCulatePath();}
 	
-		if(tilesPath.size() == 2){
+		if(tilesPath.size() == 2) {
 			System.out.println("geen shortestPath uitvoeren want normaal naast elkaar");
 			return;
 		}
@@ -350,9 +205,134 @@ public class ShortestPath {
 	}
 
 	public int getTilesAwayFromTargetPosition(){
-		if(!pathCalculated){
-			calCulatePath();}
+		if(!pathCalculated)
+			calCulatePath();
 		return tilesPath.size()-1;
 	}
-
 }
+
+
+///**
+//* De methode die moet opgeroepen worden en alle methodes in de juiste
+//* volgorde uitvoert. eerst worden de heuristieken gezet dan fillTilesPath,
+//* en aan de hand hiervan wordt naar de robot/simulator het commando
+//* gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
+//* alle tiles terug op hun initiele waarde gezet.
+//*/
+//public int goShortestPath(boolean align, int amount,
+//      int amountOfTilesUntilAlign) {
+//  int currentAmount = amount;
+//  if(!pathCalculated){
+// 	 calCulatePath();}
+//  if (tilesPath.size() == 1) {
+//      return currentAmount;
+//  }
+//  for (int i = 0; i < tilesPath.size() - 1; i++) {
+//      Orientation orientation = null;
+//      for (Orientation ori : Orientation.values())
+//          if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
+//              orientation = ori;
+//      if (pilot.getReadBarcodes())
+//          pilot.setReadBarcodes(false);
+//      pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
+//      if (align && currentAmount == 0) {
+//          if (tilesPath.size() - i > 2) {
+//              if (pilot.getReadBarcodes()) {
+//                  pilot.setReadBarcodes(false);
+//              }
+//          } else {
+//              if (!pilot.getReadBarcodes()) {
+//                  pilot.setReadBarcodes(true);
+//              }
+//          }
+//          pilot.alignOnWhiteLine();
+//          currentAmount = amountOfTilesUntilAlign;
+//      } else {
+//          pilot.travel(4);
+//          pilot.travel(4);
+//          pilot.travel(4);
+//          pilot.travel(4);
+//          pilot.travel(4);
+//
+//
+//          if (tilesPath.size() - i > 2) {
+//              if (pilot.getReadBarcodes()) {
+//                  pilot.setReadBarcodes(false);
+//              }
+//          } else {
+//              if (!pilot.getReadBarcodes()) {
+//                  pilot.setReadBarcodes(true);
+//              }
+//          }
+//          pilot.travel(20);
+//          currentAmount--;
+//      }
+//      // TODO goToNextTile checkte of er geAligned moest worden.
+//      // communicator.goToNextTile(orientation);
+//  }
+//>>>>>>> branch 'demo6' of https://github.com/toonn/SilverSurfer.git
+//
+//	if (queue.size() > 0) {
+//		// remove the last tile from the queue and add it to the path
+//		final Tile nextTile = queue.get(queue.size() - 1);
+//		while (queue.contains(nextTile)) {
+//			queue.remove(nextTile);
+//		}
+//		fillTilesPath(nextTile);
+//	}
+//}
+
+///**
+//* De methode die moet opgeroepen worden en alle methodes in de juiste
+//* volgorde uitvoert. eerst worden de heuristieken gezet dan fillTilesPath,
+//* en aan de hand hiervan wordt naar de robot/simulator het commando
+//* gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
+//* alle tiles terug op hun initiele waarde gezet.
+//*/
+//public void goShortestPath(boolean align) {
+//	if(!pathCalculated){
+//		calCulatePath();}
+//
+//	if (tilesPath.size() == 1 || quit) {
+//		for (final Object tile : tiles) {
+//			((Tile) tile).resetCost();
+//		}
+//		return;
+//	}
+//	Orientation orientation = null;
+//	for (Orientation ori : Orientation.values()){
+//		if (tilesPath.get(0).getEdgeAt(ori) == tilesPath.get(1).getEdgeAt(ori.getOppositeOrientation())){
+//			orientation = ori;}}
+//	if (pilot.getReadBarcodes()){
+//		pilot.setReadBarcodes(false);}
+//	pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
+//
+//	if (align && pilot.getTilesBeforeAlign() == 0) {
+//		if (tilesPath.size() > 2) {
+//			if (pilot.getReadBarcodes()) {
+//				pilot.setReadBarcodes(false);
+//			}
+//		} else {
+//			if (!pilot.getReadBarcodes()) {
+//				pilot.setReadBarcodes(true);
+//			}
+//		}
+//		pilot.alignOnWhiteLine();
+//	} else {
+//		pilot.travel(20);
+//		if (tilesPath.size() > 2) {
+//			if (pilot.getReadBarcodes()) {
+//				pilot.setReadBarcodes(false);
+//			}
+//		} else {
+//			if (!pilot.getReadBarcodes()) {
+//				pilot.setReadBarcodes(true);
+//			}
+//		}
+//		pilot.travel(20);
+//	}
+//
+//	pilot.decreaseTilesBeforeAlign();
+//	tilesPath.remove(0);
+//	goShortestPath(align);
+//}

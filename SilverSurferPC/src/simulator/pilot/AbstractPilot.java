@@ -13,7 +13,6 @@ import java.util.Vector;
 import javax.swing.Timer;
 
 import commands.Sleep;
-
 import mapping.MapGraph;
 import mapping.Obstruction;
 import mapping.Orientation;
@@ -494,5 +493,36 @@ public abstract class AbstractPilot implements PilotInterface {
 	public void won() {
 		System.out.println("You win!");
 		won = true;
+	}
+	
+	public void crossOpenSeesaw() {
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+    	travel(120);
+        readBarcodes = readBarcodesBackup;
+        alignOnWhiteLine();
+	}
+	
+	public void crossClosedSeesaw() {
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+    	travel(-40);
+        alignOnWhiteLine();
+        rotate(180);
+        travel(40);
+        rotate(180);
+        alignOnWhiteLine();
+        readBarcodes = readBarcodesBackup;
+        crossOpenSeesaw();
+	}
+	
+	public void pickupObject() {
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+        rotate(180);
+        travel(-30);
+        travel(30);
+        alignOnWhiteLine();
+        readBarcodes = readBarcodesBackup;
 	}
 }

@@ -14,4 +14,7 @@ public class Command {
     public static final int START_READING_BARCODES = 10;
     public static final int STOP_READING_BARCODES = 11;
     public static final int PERMA_STOP_READING_BARCODES = 12;
+    public static final int CROSS_OPEN_SEESAW = 13;
+    public static final int CROSS_CLOSED_SEESAW = 14;
+    public static final int PICKUP_OBJECT = 15;
 }

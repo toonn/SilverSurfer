@@ -9,7 +9,6 @@ import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
 import simulator.pilot.AbstractPilot;
-
 import commands.Sleep;
 
 public class MazeExplorer {
@@ -18,18 +17,13 @@ public class MazeExplorer {
     private final Vector<Tile> queue = new Vector<Tile>();
     private Tile startTile;
     private AbstractPilot pilot;
-    private boolean align;
-    private final int amountOfTilesUntilAlign = 0;
-    private int currentAmount;
     private boolean quit = false;
     private boolean lastTurnRight = false;
+    private boolean openSeesawIfClosed = false;
 
-    public MazeExplorer(final Tile startTile, final AbstractPilot pilot,
-            boolean align) {
+    public MazeExplorer(final Tile startTile, final AbstractPilot pilot) {
         this.startTile = startTile;
         this.pilot = pilot;
-        this.align = align;
-        currentAmount = amountOfTilesUntilAlign;
     }
 
     private void algorithm(Tile currentTile) {
@@ -37,15 +31,20 @@ public class MazeExplorer {
         if (!currentTile.isMarkedExploreMaze())
             exploreTileAndUpdateQueue(currentTile);
         if (queue.isEmpty() || quit) {
-            System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber()
-                    + " has finished exploring.");
+            System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
             return;
         }
         Tile nextTile = getPriorityNextTile(currentTile);
-        if (nextTile == null) { // Null if next tile is not reachable without
-                                // taking a seesaw.
+        if (nextTile == null) { // Null if next tile is not reachable without taking a seesaw.
             Tile seesawTile = searchOpenSeesaw(currentTile);
-            nextTile = crossSeesaw(seesawTile);
+            if(seesawTile != null) {
+                if(!((Seesaw)(seesawTile.getNeighbour(pilot.getOrientation()).getContent())).isClosed()) //If seesaw is open
+                	nextTile = crossOpenSeesaw(seesawTile);
+                else //If seesaw is closed
+                	nextTile = crossClosedSeesaw(seesawTile);
+            }
+            else //Alleen als quit
+            	nextTile = currentTile;
         } else {
             updateVectors(nextTile);
             if (!isUseful(nextTile)) {
@@ -55,34 +54,17 @@ public class MazeExplorer {
             	final ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, nextTile, allTiles);
                 int totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
             	
-            	while(totalTilesToGo != 0){
-            	if(!quit){
-            	shortestPath.goShortestPath1Tile(align);
-            	totalTilesToGo--;
-            	}}
+            	while(totalTilesToGo != 0)
+            		if(!quit) {
+            			shortestPath.goShortestPath1Tile();
+            			totalTilesToGo--;
+            		}
                 if (nextTile.getContent() instanceof Barcode)
                     while (pilot.isExecutingBarcode())
                         new Sleep().sleepFor(100);
             }
         }
         algorithm(nextTile);
-    }
-
-    private Tile crossSeesaw(Tile currentTile) {
-        int seesawValue = getSeesawValue(currentTile);
-        Tile endTile = getOtherEndOfSeesaw(currentTile);
-        boolean readBarcodesBackup = pilot.getReadBarcodes();
-        pilot.setReadBarcodes(false);
-        pilot.travel(60);
-        for (Tile tile : pilot.getMapGraphConstructed().getTiles())
-            if (tile.getContent() instanceof Seesaw
-                    && tile.getContent().getValue() == seesawValue)
-                ((Seesaw) tile.getContent()).flipSeesaw();
-        pilot.travel(60);
-        pilot.setReadBarcodes(readBarcodesBackup);
-        pilot.alignOnWhiteLine();
-        // TODO: whiteline! want onnauwkeurig na wip!
-        return endTile;
     }
 
     private void exploreTileAndUpdateQueue(Tile currentTile) {
@@ -92,43 +74,19 @@ public class MazeExplorer {
                 orientation.getOppositeOrientation(),
                 orientation.getCounterClockwiseOrientation() };
         for (Orientation orientationValue : orientationArray)
-            if (currentTile.getNeighbour(orientationValue) == null
-                    || !currentTile.getNeighbour(orientationValue)
-                            .isMarkedExploreMaze()) {
-                pilot.rotate(getSmallestAngle(((orientationValue.ordinal() - pilot
-                        .getOrientation().ordinal()) * 90 + 360) % 360));
+            if (currentTile.getNeighbour(orientationValue) == null || !currentTile.getNeighbour(orientationValue).isMarkedExploreMaze()) {
+                pilot.rotate(getSmallestAngle(((orientationValue.ordinal() - pilot.getOrientation().ordinal()) * 90 + 360) % 360));
                 pilot.setObstructionOrTile();
             }
         currentTile.setMarkingExploreMaze(true);
         for (final Tile neighbourTile : currentTile.getReachableNeighbours())
-            if (neighbourTile != null && !neighbourTile.isMarkedExploreMaze()
-                    && !queue.contains(neighbourTile))
+            if (neighbourTile != null && !neighbourTile.isMarkedExploreMaze() && !queue.contains(neighbourTile))
                 queue.add(neighbourTile);
-
-    }
-
-    private Tile getOtherEndOfSeesaw(Tile tile) {
-        if (tile.getEdgeAt(Orientation.EAST).getObstruction() == Obstruction.WALL
-                && tile.getSouthNeighbour().getContent() instanceof Seesaw)
-            return tile.getSouthNeighbour().getSouthNeighbour()
-                    .getSouthNeighbour().getSouthNeighbour();
-        else if (tile.getEdgeAt(Orientation.EAST).getObstruction() == Obstruction.WALL
-                && tile.getNorthNeighbour().getContent() instanceof Seesaw)
-            return tile.getNorthNeighbour().getNorthNeighbour()
-                    .getNorthNeighbour().getNorthNeighbour();
-        else if (tile.getEdgeAt(Orientation.NORTH).getObstruction() == Obstruction.WALL
-                && tile.getEastNeighbour().getContent() instanceof Seesaw)
-            return tile.getEastNeighbour().getEastNeighbour()
-                    .getEastNeighbour().getEastNeighbour();
-        else
-            return tile.getWestNeighbour().getWestNeighbour()
-                    .getWestNeighbour().getWestNeighbour();
     }
 
     private Tile getPriorityNextTile(final Tile currentTile) {
         if (isGoodNextTile(currentTile, pilot.getOrientation()))
-            return currentTile.getEdgeAt(pilot.getOrientation()).getNeighbour(
-                    currentTile);
+            return currentTile.getEdgeAt(pilot.getOrientation()).getNeighbour(currentTile);
         else if (isGoodNextTile(currentTile, pilot.getOrientation()
                 .getCounterClockwiseOrientation()))
             return currentTile.getEdgeAt(
@@ -158,46 +116,43 @@ public class MazeExplorer {
         }
     }
   
-		private boolean isGoodNextTile(final Tile currentTile,
-        final Orientation orientation) {
-    		return currentTile.getEdgeAt(orientation).isPassable()
-            && currentTile.getEdgeAt(orientation).getNeighbour(currentTile) != null
-            && queue.contains(currentTile.getEdgeAt(orientation)
-                    .getNeighbour(currentTile));
-}
+    private boolean isGoodNextTile(final Tile currentTile, final Orientation orientation) {
+    	return currentTile.getEdgeAt(orientation).isPassable() && currentTile.getEdgeAt(orientation).getNeighbour(currentTile) != null
+    			&& queue.contains(currentTile.getEdgeAt(orientation).getNeighbour(currentTile));
+    }
     
     private Tile searchOpenSeesaw(Tile currentTile) {
         Vector<Tile> seesawBarcodeTiles = pilot.getSeesawBarcodeTiles();
         Collections.shuffle(seesawBarcodeTiles);
-        if(!quit){
+        if(!quit) {
 	        for(Tile tile : seesawBarcodeTiles) {
 	        	if(isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
 	                ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, tile, allTiles);
                 	int totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
                 	
-                	while(totalTilesToGo != 0){
-                	if(!quit){
-                	shortestPath.goShortestPath1Tile(align);
-                	totalTilesToGo--;
-                	}}
+                	while(totalTilesToGo != 0)
+                		if(!quit){
+                			shortestPath.goShortestPath1Tile();
+                			totalTilesToGo--;
+                		}
                 	
 	                while (pilot.isExecutingBarcode())
 	                    new Sleep().sleepFor(100);
+	                
 	                Orientation orientation = pilot.getOrientation();
 	                Tile seesaw = tile.getNeighbour(orientation);
-	                if(!((Seesaw)seesaw.getContent()).isClosed())
-	                    return tile;
+	                if(!((Seesaw)seesaw.getContent()).isClosed() || openSeesawIfClosed)
+	                	return tile;
 	                else {
 	                	Tile otherEnd = tile.getNeighbour(orientation.getOppositeOrientation());
 	                	shortestPath = new ShortestPath(this, pilot, tile, otherEnd, allTiles);
-	                	
 	                	totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
 	                	
-	                	while(totalTilesToGo != 0){
+	                	while(totalTilesToGo != 0)
 	                    	if(!quit){
-	                    	shortestPath.goShortestPath1Tile(align);
-	                    	totalTilesToGo--;
-	                    	}}
+	                    		shortestPath.goShortestPath1Tile();
+	                    		totalTilesToGo--;
+	                    	}
 	                	
 	                	return searchOpenSeesaw(otherEnd);
 	                }
@@ -205,6 +160,29 @@ public class MazeExplorer {
 	        }
         }
         return null;
+    }
+
+    private Tile crossOpenSeesaw(Tile currentTile) {
+        int seesawValue = getSeesawValue(currentTile);
+        Tile endTile = getOtherEndOfSeesaw(currentTile);
+        boolean readBarcodesBackup = pilot.getReadBarcodes();
+        pilot.setReadBarcodes(false);
+        pilot.travel(60);
+        for (Tile tile : pilot.getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw
+                    && tile.getContent().getValue() == seesawValue)
+                ((Seesaw) tile.getContent()).flipSeesaw();
+        pilot.travel(60);
+        pilot.setReadBarcodes(readBarcodesBackup);
+        pilot.alignOnWhiteLine();
+        // TODO: whiteline! want onnauwkeurig na wip!
+        return endTile;
+    }
+    
+    private Tile crossClosedSeesaw(Tile currentTile) {
+        int seesawValue = getSeesawValue(currentTile);
+        Tile endTile = getOtherEndOfSeesaw(currentTile);
+        return endTile;
     }
 
     private int getSeesawValue(Tile tile) {
@@ -220,8 +198,26 @@ public class MazeExplorer {
         else
             return tile.getWestNeighbour().getContent().getValue();
     }
+    
+    private Tile getOtherEndOfSeesaw(Tile tile) {
+        if (tile.getEdgeAt(Orientation.EAST).getObstruction() == Obstruction.WALL
+                && tile.getSouthNeighbour().getContent() instanceof Seesaw)
+            return tile.getSouthNeighbour().getSouthNeighbour()
+                    .getSouthNeighbour().getSouthNeighbour();
+        else if (tile.getEdgeAt(Orientation.EAST).getObstruction() == Obstruction.WALL
+                && tile.getNorthNeighbour().getContent() instanceof Seesaw)
+            return tile.getNorthNeighbour().getNorthNeighbour()
+                    .getNorthNeighbour().getNorthNeighbour();
+        else if (tile.getEdgeAt(Orientation.NORTH).getObstruction() == Obstruction.WALL
+                && tile.getEastNeighbour().getContent() instanceof Seesaw)
+            return tile.getEastNeighbour().getEastNeighbour()
+                    .getEastNeighbour().getEastNeighbour();
+        else
+            return tile.getWestNeighbour().getWestNeighbour()
+                    .getWestNeighbour().getWestNeighbour();
+    }
 
-    public double getSmallestAngle(double angle) {
+    protected double getSmallestAngle(double angle) {
         if (angle < -180)
             angle = angle + 360;
         else if (angle > 180)
@@ -249,8 +245,7 @@ public class MazeExplorer {
         return true;
     }
 
-    private boolean isReachableWithoutWip(Tile currentTile, Tile endTile,
-            Vector<Tile> tilesPath) {
+    private boolean isReachableWithoutWip(Tile currentTile, Tile endTile, Vector<Tile> tilesPath) {
         tilesPath.add(currentTile);
         for (final Tile neighbourTile : currentTile.getReachableNeighbours()) {
             if (neighbourTile.equals(endTile))
@@ -290,7 +285,6 @@ public class MazeExplorer {
     public void quit() {
         quit = true;
     }
-   
 }
 
 

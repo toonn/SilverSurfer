@@ -195,10 +195,9 @@ public class MapGraph {
 					.getY());
 			
 			String[] info = tile.getToken().split("\\.");
-			MapReader mapreader = new MapReader();
 			Tile madeTileFromString = new Tile(
 					new Point(convertedX, convertedY));
-			mapreader.generateStructures(info, madeTileFromString);
+			MapReader.generateStructures(info, madeTileFromString);
 
 			if (!this.tiles.containsKey(new Point(convertedX, convertedY))) {
 				Tile copiedTile = new Tile(new Point(convertedX, convertedY));

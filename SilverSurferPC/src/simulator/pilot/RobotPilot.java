@@ -152,4 +152,57 @@ public class RobotPilot extends AbstractPilot {
     public void setReady() {
     	ready = true;
     }
+	
+    @Override
+	public void crossOpenSeesaw() {
+        busy = true;
+        communicator.sendCommand(Command.CROSS_OPEN_SEESAW);
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+        super.travel(120);
+        readBarcodes = readBarcodesBackup;
+        super.travel(40);
+        waitUntilDone();
+        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
+            pilotActions.barcodeFound();
+        setBusyExecutingBarcode(false);
+	}
+
+    @Override
+	public void crossClosedSeesaw() {
+        busy = true;
+        communicator.sendCommand(Command.CROSS_CLOSED_SEESAW);
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+        super.travel(-40);
+        super.travel(40);
+        super.rotate(180);
+        super.travel(40);
+        super.rotate(180);
+        super.travel(40);
+        super.travel(120);
+        readBarcodes = readBarcodesBackup;
+        super.travel(40);
+        waitUntilDone();
+        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
+            pilotActions.barcodeFound();
+        setBusyExecutingBarcode(false);
+	}
+
+    @Override
+	public void pickupObject() {
+        busy = true;
+        communicator.sendCommand(Command.PICKUP_OBJECT);
+    	boolean readBarcodesBackup = readBarcodes;
+    	readBarcodes = false;
+        super.rotate(180);
+        super.travel(-30);
+        super.travel(30);
+        super.travel(40);
+        readBarcodes = readBarcodesBackup;
+        waitUntilDone();
+        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
+            pilotActions.barcodeFound();
+        setBusyExecutingBarcode(false);
+	}
 }
