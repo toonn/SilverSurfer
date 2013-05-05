@@ -145,10 +145,7 @@ public class CommandUnit {
                 case (Command.PICKUP_OBJECT):
                     System.out.println("Picking up object.");
                 	CU.updateAngle(180);
-            		CU.updatePosition(40);
-                	resultAlign = CU.pickupObject();
-	    			if(resultAlign != -1)
-	    				CU.sendStringToUnit("[BC] " + resultAlign);
+            		CU.pickupObject();
                     CU.stopRobot();
                 	break;
                 default:
@@ -349,7 +346,7 @@ public class CommandUnit {
         return crossOpenSeesaw();
     }
     
-    private int pickupObject() {
+    private void pickupObject() {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
         turnAngle((int)(ANGLE_COEF_LEFT*180));
@@ -358,12 +355,11 @@ public class CommandUnit {
         Motor.C.rotate(-120);
         Motor.A.rotate((int)Math.floor(LENGTH_COEF*-20), true);
         Motor.B.rotate((int)Math.floor(LENGTH_COEF*-20));
-        Motor.A.rotate((int)Math.floor(LENGTH_COEF*30), true);
-        Motor.B.rotate((int)Math.floor(LENGTH_COEF*30));
+        Motor.A.rotate((int)Math.floor(LENGTH_COEF*25), true);
+        Motor.B.rotate((int)Math.floor(LENGTH_COEF*25));
         Motor.C.rotate(120);
     	Motor.A.setSpeed(CommandUnit.speed);
         Motor.B.setSpeed(CommandUnit.speed);
         readBarcodes = readBarcodesBackup;
-        return alignOnWhiteLine();
     }
 }

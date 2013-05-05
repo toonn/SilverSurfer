@@ -137,12 +137,12 @@ public class APHandler implements PlayerHandler {
 
     @Override
 	public void teamPosition(long x, long y, double angle) {
-    	pilot.getTeamPilot().setPosition(x, y);
+    	y = pilot.getMapSize().y - y; //Omdat y van onder naar boven wordt getelt
+    	if(angle == -90) //Voor ons is -90 == 270
+    		angle = 270;
+    	pilot.getTeamPilot().setPosition(40*x + 20, 40*y + 20);
     	pilot.getTeamPilot().setAngle(angle);
-    	int xTilePosition = (int) x/40;
-    	int yTilePosition = (int) y/40;
-    	Point2D point = new Point2D.Double(xTilePosition, yTilePosition);
-    	pilot.setTeammatePosition(point);
+    	pilot.setTeammatePosition(new Point2D.Double(x, y));
     }
 
     @Override
@@ -219,7 +219,7 @@ public class APHandler implements PlayerHandler {
         if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null){
         	ori = findOrientationEquivalentWithOurNorth(ori1,ori2);
             pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1 , point2, ori);
-            pilot.stopExploring();
+            //pilot.stopExploring(); //Not needed, algorithm zal stoppen wnr het object is gevonden en dus wnr het team bekend is, dus voor dit wordt uitgevoerd.
             pilot.fillVectorMapgraphTiles();
            }
         else

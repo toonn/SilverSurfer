@@ -1,16 +1,12 @@
 package simulator.pilot;
 
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Vector;
-
-import javax.swing.Timer;
 
 import commands.Sleep;
 import mapping.MapGraph;
@@ -19,8 +15,6 @@ import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
-import mazeAlgorithm.CollisionRollbackException;
-import mazeAlgorithm.CollisionRollbackSecondCaseException;
 import mazeAlgorithm.ExploreThread;
 import mazeAlgorithm.ShortestPath;
 import mq.communicator.APHandler;
@@ -28,7 +22,8 @@ import mq.communicator.MQCenter;
 import simulator.viewport.SimulatorPanel;
 
 public abstract class AbstractPilot implements PilotInterface {
-	
+
+    private Point mapSize; //Startend van 0
     private int playerNumber = -1;
     private int teamNumber = -1;
     private MapGraph mapGraphConstructed;
@@ -49,31 +44,24 @@ public abstract class AbstractPilot implements PilotInterface {
     private boolean gameOn = false;
     private MQCenter center;
     protected final double DETECTION_DISTANCE_ULTRASONIC_SENSOR_ROBOT = 26;
-	private final int CRASH_MARGIN = 5;
     private boolean teamMemberFound = false;
     private String playerName = "/";
     private String teamMemberName = "/";
     private Tile startingPositionOfTeamMember;
     private DummyPilot teamPilot = new DummyPilot();
-    private int updateTilesAndPositionFPS = 3;
     private boolean won = false;
     private int nbOfTilesBetweenAlign = 0;
     private int tilesBeforeAlign = nbOfTilesBetweenAlign;
     private Vector<Tile> allTileVector = new Vector<Tile>();
-    private ActionListener updateTilesAndPosition = new ActionListener() {
 
-        @Override
-        public void actionPerformed(final ActionEvent arg0) {
-        	updateTilesAndPosition();
-        }
-    };
-
-    public AbstractPilot(int playerNumber) {
+    public AbstractPilot(int playerNumber, Point mapSize) {
         if (playerNumber < 0 || playerNumber > 3) {
             this.playerNumber = -1;
         } else {
             this.playerNumber = playerNumber;
         }
+        if(mapSize != null)
+        	this.mapSize = mapSize;
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
         angle = 270;
         reset();
@@ -84,19 +72,28 @@ public abstract class AbstractPilot implements PilotInterface {
     	this.teamMemberName = teamMemberName;
     	teamPilot.activate();
     	teamPilot.setTeamNumber(teamNumber);
-        new Timer(1000 / updateTilesAndPositionFPS, updateTilesAndPosition).start();
     }
     
-    private void updateTilesAndPosition() {
-    	ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
-    	for (mapping.Tile tile : getMapGraphConstructed().getTiles()) 
-    		vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
-    	try {
-    		getCenter().getPlayerClient().sendTiles(vector);
-    		getCenter().updatePosition((int)getPosition().x, (int)getPosition().y, (int)getAngle());
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
+    public Point getMapSize() {
+    	return mapSize;
+    }
+    
+    public void updateTilesAndPosition() {
+    	if(gameOn)
+    		try {
+    			int angle = (int)getAngle();
+    			if(angle == 270)
+    				angle = -90;
+    			getCenter().updatePosition((int)(getPosition().x/40), mapSize.y - (int)(getPosition().y/40), angle);
+    			if(teamPilot.isActive()) {
+    				ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
+    				for (mapping.Tile tile : getMapGraphConstructed().getTiles()) 
+    					vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
+    				getCenter().getPlayerClient().sendTiles(vector);
+    			}
+    		} catch(IOException e) {
+			
+    		}
     }
     
     public DummyPilot getTeamPilot() {
@@ -386,16 +383,14 @@ public abstract class AbstractPilot implements PilotInterface {
 
 	public void startLookingYourTeammate() {
 		stillApproximating = true;
+		Tile endTile = mapGraphConstructed.getTile(mapGraphConstructed.convertPoint(getTeammatePosition()));
 		
-		Tile EndTile = mapGraphConstructed.getTile(mapGraphConstructed
-				.convertPoint(getTeammatePosition()));
-		ShortestPath shortestPath = new ShortestPath(null, this,
-				mapGraphConstructed.getTile(getMatrixPosition()), EndTile, allTileVector);
+		ShortestPath shortestPath = new ShortestPath(null, this, mapGraphConstructed.getTile(getMatrixPosition()), endTile, allTileVector);
 		
 		int tilesAway = shortestPath.getTilesAwayFromTargetPosition();
 				
 		if ((tilesAway == 1 || tilesAway == 0)
-			&& mapGraphConstructed.convertPoint(getTeammatePosition()).equals(EndTile.getPosition())){
+			&& mapGraphConstructed.convertPoint(getTeammatePosition()).equals(endTile.getPosition())){
 
 //			System.out.println("Teammate = " + getTeamMemberName() + " op positie " +mapGraphConstructed
 //				.convertPoint(getTeammatePosition()).x + " " + mapGraphConstructed
@@ -446,8 +441,8 @@ public abstract class AbstractPilot implements PilotInterface {
 			distTraveled++;
 			new Sleep().sleepFor(getTravelSleepTime());
 			
-			//TODO: mooie methode, maar houd geen rekening als robot achteruit rijdt (kijkt de verkeerde richting uit)
-			//op zich gewoon negeren, want das alleen als het object wordt gepakt en dan kan er geen crash zijn
+			//Houd geen rekening als robot achteruit rijdt (kijkt de verkeerde richting uit)
+			//op zich gewoon negeren want das alleen als het object wordt opgepakt en dan kan er geen crash zijn
 			if (!ignoreCollision && crashImminent(distance-distTraveled)) {
 				currentX = x;
 				currentY = y;
@@ -486,15 +481,12 @@ public abstract class AbstractPilot implements PilotInterface {
 //		System.out.println("ik ben : " + getPlayerName() + " en mijn teammate " + getTeamMemberName() + " stuurt door" +
 //				" dat hij op positie " + teammatePosition.getX() + " " + teammatePosition.getY() + " staat.");
 		
-		if (this.teammatePosition == null
-				|| this.teammatePosition.getX() != teammatePosition.getX()
-				|| this.teammatePosition.getY() != teammatePosition.getY()) {
+		//if (this.teammatePosition == null || this.teammatePosition.getX() != teammatePosition.getX() || this.teammatePosition.getY() != teammatePosition.getY()) {
 			this.teammatePosition = teammatePosition;
-			if (!won && !stillApproximating
-					&& mapGraphConstructed.mapsAreMerged()) {
+			if (!won && !stillApproximating && mapGraphConstructed.mapsAreMerged()) {
 				startLookingYourTeammate();
 			}
-		}
+		//}
 	}
 
 	public void won() {
@@ -511,38 +503,20 @@ public abstract class AbstractPilot implements PilotInterface {
                 if (tile.getContent() instanceof Seesaw
                         && tile.getContent().getValue() == seesawValue)
                     ((Seesaw) tile.getContent()).flipSeesaw();
-        	travel(40, true);
+        	travel(30, true);
     	} catch(CollisionAvoidedException e) {
         	//Do nothing, a collision cannot happen here
     	}
     	try {
-        	travel(20, false);
+        	travel(30, false);
     	} catch(CollisionAvoidedException e) {
-    		crossOpenSeesawFirstCollisionRollback();
+    		travelThirtyCollisionRollback();
     	}
         readBarcodes = readBarcodesBackup;
         try {
         	alignOnWhiteLine();
         } catch(CollisionAvoidedException e) {
-        	crossOpenSeesawSecondCollisionRollback();
-        }
-	}
-	
-	private void crossOpenSeesawFirstCollisionRollback() {
-		new Sleep().sleepFor(1000);
-		try {
-        	travel(20, false);
-        } catch(CollisionAvoidedException e) {
-        	pickupObjectFirstCollisionRollback();
-        }
-	}
-	
-	private void crossOpenSeesawSecondCollisionRollback() {
-		new Sleep().sleepFor(1000);
-		try {
-        	alignOnWhiteLine();
-        } catch(CollisionAvoidedException e) {
-        	pickupObjectSecondCollisionRollback();
+        	alignOnWhiteLineCollisionRollback();
         }
 	}
 	
@@ -576,35 +550,30 @@ public abstract class AbstractPilot implements PilotInterface {
         try {
         	travel(30, false);
         } catch(CollisionAvoidedException e) {
-        	pickupObjectFirstCollisionRollback();
-        }
-        try {
-        	alignOnWhiteLine();
-        } catch(CollisionAvoidedException e) {
-        	pickupObjectSecondCollisionRollback();
+        	travelThirtyCollisionRollback();
         }
         readBarcodes = readBarcodesBackup;
 	}
 	
-	private void pickupObjectFirstCollisionRollback() {
+	private void travelThirtyCollisionRollback() {
 		new Sleep().sleepFor(1000);
 		try {
-			travel(30, false);
+        	travel(30, false);
         } catch(CollisionAvoidedException e) {
-        	pickupObjectFirstCollisionRollback();
+        	travelThirtyCollisionRollback();
         }
 	}
 	
-	private void pickupObjectSecondCollisionRollback() {
+	private void alignOnWhiteLineCollisionRollback() {
 		new Sleep().sleepFor(1000);
 		try {
         	alignOnWhiteLine();
         } catch(CollisionAvoidedException e) {
-        	pickupObjectSecondCollisionRollback();
+        	alignOnWhiteLineCollisionRollback();
         }
 	}
 	
-	public boolean getObjectBoolean() { //De objectBoolean bestaat omdat na het object op te picken, de robot niet op de barcode tile staat maar op de tile ervoor --> update algoritme somehow
+	public boolean getObjectBoolean() { //Nodig voor algoritme te signaleren
 		return objectBoolean;
 	}
 	

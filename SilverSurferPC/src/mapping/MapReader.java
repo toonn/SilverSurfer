@@ -9,7 +9,7 @@ import java.util.List;
 import commands.BarcodeCommand;
 
 public class MapReader {
-
+	
     public static MapGraph createMapFromFile(final File txtFile) {
         return createMapFromInfoMatrix(createInfoMatrixFromFile(txtFile));
     }

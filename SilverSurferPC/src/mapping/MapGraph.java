@@ -225,10 +225,10 @@ public class MapGraph {
 		}
 		mapsMerged = true;
 		
-		for(Tile t: getTiles()){
+		for(Tile t: getTiles()) {
 			for(Orientation or: Orientation.values()){
 				if(t.getEdgeAt(or).getObstruction() == Obstruction.WHITE_LINE && (t.getEdgeAt(or).getTile1() == null || t.getEdgeAt(or).getTile2() == null)){
-					System.out.println("in mergeMap bij tile : " + t.getPosition().getX() + " " + t.getPosition().getY() + "in orientation : " + or);
+					//System.out.println("in mergeMap bij tile : " + t.getPosition().getX() + " " + t.getPosition().getY() + "in orientation : " + or);
 					Point p = new Point(t.getPosition());
 					if(or.equals(Orientation.EAST)){
 						p.x = (int) (p.getX() + 1); 
@@ -243,13 +243,13 @@ public class MapGraph {
 						p.y = (int) (p.getY() - 1); 
 					}
 					Tile buurTile = getTile(p);
-					System.out.println(buurTile.getNeighbour(or.getOppositeOrientation()));
+					//System.out.println(buurTile.getNeighbour(or.getOppositeOrientation()));
 				}
 			}
 		}
 	}
 	
-	public boolean mapsAreMerged(){
+	public boolean mapsAreMerged() {
 		return mapsMerged;
 	}
 	

@@ -120,14 +120,6 @@ public class MQCenter {
         	 @Override
              public void onFailure(Throwable t) {
                  System.err.println("[HTTTP] Error connecting: " + t.getMessage());
-                 /*System.err.println("[HTTTP] Retry ...");
-                 try {
-                     join();
-                 } catch (IllegalStateException e) {
-                     e.printStackTrace();
-                 } catch (IOException e) {
-                     e.printStackTrace();
-                 }*/
              }
 
              @Override

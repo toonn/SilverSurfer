@@ -5,6 +5,7 @@
 
 package mazeAlgorithm;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -146,11 +147,13 @@ public class ShortestPath {
 		boolean readBarcodesBackup = pilot.getReadBarcodes();
 		pilot.setReadBarcodes(false);
 		pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
+		pilot.updateTilesAndPosition();
 		
 		if (tilesPath.size() <= 2)
 			pilot.setReadBarcodes(readBarcodesBackup);
 		try {
 			pilot.alignOnWhiteLine();
+			pilot.updateTilesAndPosition();
 		} catch(CollisionAvoidedException e) {
 			currentTileDuringException = tilesPath.get(0);
 			pilot.setReadBarcodes(readBarcodesBackup);
@@ -184,12 +187,14 @@ public class ShortestPath {
 					orientation = ori;
 
 			pilot.rotate((int) (orientation.getAngle() - pilot.getAngle()));
+			pilot.updateTilesAndPosition();
 			
 			if(i == TilesToGo-1) //Last tile to ride: set read barcodes to original value
 				pilot.setReadBarcodes(readBarcodesBackup);
 				
 			try {
 				pilot.alignOnWhiteLine(); // = travel(40) for sim, but white line for robot (important!)
+				pilot.updateTilesAndPosition();
 			} catch(CollisionAvoidedException e) {
 				return tilesPath.get(i);
 			}

@@ -78,8 +78,9 @@ public class MazeExplorer {
                     while (pilot.isExecutingBarcode())
                         new Sleep().sleepFor(100);
                     if(pilot.getObjectBoolean()) {
-                    	nextTile = nextTile.getNeighbour(pilot.getOrientation());
                     	pilot.objectHandled();
+                        System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has found his object and will now wait on the other player on a safe location.");
+                    	return null;
                     }
                 }
             }
@@ -96,6 +97,7 @@ public class MazeExplorer {
         for (Orientation orientationValue : orientationArray)
             if (currentTile.getNeighbour(orientationValue) == null || !currentTile.getNeighbour(orientationValue).isMarkedExploreMaze()) {
                 pilot.rotate(getSmallestAngle(((orientationValue.ordinal() - pilot.getOrientation().ordinal()) * 90 + 360) % 360));
+        		pilot.updateTilesAndPosition();
                 pilot.setObstructionOrTile();
             }
         currentTile.setMarkingExploreMaze(true);
@@ -192,6 +194,7 @@ public class MazeExplorer {
 	                    			totalTilesToGo--;
 	                			} catch(CollisionAvoidedException e) {
 	                				searchOpenSeesawCollisionRollback();
+	                				pilot.updateTilesAndPosition();
 	                			}
 	                    	}
 	                	
@@ -291,8 +294,12 @@ public class MazeExplorer {
         	Tile returnTile = startTile;
         	while(returnTile != null) //als returnTile geen null is, is er collision, dus hernemen met returnTile
         		returnTile = algorithm(returnTile);
-            for (final Object tile : allTiles)
-                ((Tile) tile).setMarkingExploreMaze(false);
+        	while(true) {
+        		pilot.updateTilesAndPosition();
+        		new Sleep().sleepFor(1000);
+        	}
+            //for (final Object tile : allTiles)
+            //  ((Tile) tile).setMarkingExploreMaze(false);
         } catch (Exception e) {
             if (!quit)
                 e.printStackTrace();
@@ -404,143 +411,4 @@ private void algorithm2(Tile currentTile) {
                     queue.add(tile);
     }
 
-}
-
-/*
- * 
- * 
- * private void algorithm2(Tile currentTile) { // Explore tile and set current
- * tile on "Explored". if (!currentTile.isMarkedExploreMaze())
- * exploreTile(currentTile);
- * 
- * // Update queue. for (final Tile neighbourTile :
- * currentTile.getReachableNeighbours()) if (neighbourTile != null &&
- * !neighbourTile.isMarkedExploreMaze()) { while(queue.contains(neighbourTile))
- * queue.remove(neighbourTile); queue.add(neighbourTile); }
- * 
- * // Algorithm finished? if (queue.isEmpty() || quit) {
- * System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() +
- * " has finished exploring."); return; }
- * 
- * // Get next optimal tile. Tile nextTile = getPriorityNextTile(currentTile);
- * while (allTiles.contains(nextTile)) { currentTile = nextTile; if
- * (queue.isEmpty() || quit) { System.out.println("[EXPLORE] Robot " +
- * (pilot.getPlayerNumber()+1) + " has finished exploring."); return; } nextTile
- * = getPriorityNextTile(currentTile); }
- * 
- * // Is the next tile useful? while(!isUseful(nextTile)) {
- * nextTile.setMarkingExploreMaze(true); allTiles.add(nextTile);
- * removeTileFromQueue(nextTile);
- * 
- * if (queue.isEmpty() || quit) { System.out.println("[EXPLORE] Robot " +
- * pilot.getPlayerNumber() + " has finished exploring."); return; }
- * 
- * nextTile = getPriorityNextTile(currentTile); while
- * (allTiles.contains(nextTile)) { currentTile = nextTile; if (queue.isEmpty()
- * || quit) { System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() +
- * " has finished exploring."); return; } nextTile =
- * getPriorityNextTile(currentTile); } }
- * 
- * // Add the current tile to the finish-queue and remove it from the
- * todo-queue. allTiles.add(nextTile); removeTileFromQueue(nextTile);
- * 
- * // Go to the next tile. final ShortestPath shortestPath = new
- * ShortestPath(this, pilot, currentTile, nextTile, allTiles); currentAmount =
- * shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
- * 
- * // the next tile contains a barcode. // this means that the robot can alter
- * its mapping. therefore, the queue // has to be updated if
- * (nextTile.getContent() instanceof Barcode) { updateVectors();
- * 
- * while (pilot.isExecutingBarcode()) { try { Thread.sleep(100); } catch
- * (Exception e) {
- * 
- * } } } // Repeat with next tile. algorithm(nextTile); }
- * 
- * private Tile getPriorityNextTile(final Tile currentTile) { if
- * (isGoodNextTile(currentTile, pilot.getOrientation())) { return
- * currentTile.getEdgeAt(pilot.getOrientation()).getNeighbour( currentTile); }
- * else if (isGoodNextTile(currentTile, pilot.getOrientation()
- * .getCounterClockwiseOrientation())) { return currentTile.getEdgeAt(
- * pilot.getOrientation().getCounterClockwiseOrientation())
- * .getNeighbour(currentTile); } else if (isGoodNextTile(currentTile,
- * pilot.getOrientation()
- * .getCounterClockwiseOrientation().getOppositeOrientation())) { return
- * currentTile.getEdgeAt(
- * pilot.getOrientation().getCounterClockwiseOrientation()
- * .getOppositeOrientation()) .getNeighbour(currentTile); } else if
- * (isGoodNextTile(currentTile, pilot.getOrientation()
- * .getOppositeOrientation())) { return currentTile.getEdgeAt(
- * pilot.getOrientation().getOppositeOrientation()) .getNeighbour(currentTile);
- * } else { Tile loopdetect = queue.lastElement(); Tile tile =
- * queue.lastElement(); while (!isReachableWithoutWip(currentTile, tile, new
- * Vector<Tile>())) { queue.remove(tile); queue.add(0, tile); tile =
- * queue.lastElement(); if (tile.equals(loopdetect)) { return
- * searchAndCrossOpenSeesaw(currentTile); } } return queue.lastElement(); } }
- * 
- * 
- * 
- * private Tile searchAndCrossOpenSeesaw(Tile currentTile) { while (true) {
- * pilot.shuffleSeesawBarcodeTiles(); for (Tile tile :
- * pilot.getSeesawBarcodeTiles()) { if (isReachableWithoutWip(currentTile, tile,
- * new Vector<Tile>())) { ShortestPath shortestPath = new ShortestPath(this,
- * pilot, currentTile, tile, allTiles); currentAmount =
- * shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
- * currentTile = tile; updateVectors(); while (pilot.isExecutingBarcode()) { try
- * { Thread.sleep(100); } catch (Exception e) {
- * 
- * } } for (Tile neighbour : currentTile
- * .getReachableNeighboursIgnoringSeesaw()) { if (neighbour.getContent()
- * instanceof Seesaw && !((Seesaw) neighbour.getContent()) .isClosed()) { Tile
- * endTile = getOtherEndOfSeesaw(currentTile); pilot.setReadBarcodes(false);
- * pilot.travel(140); pilot.setReadBarcodes(true); if
- * (!allTiles.contains(endTile)) { allTiles.add(endTile); }
- * removeTileFromQueue(endTile); pilot.travel(20); // Zodat een eventuele
- * barcode op // volgende tile wel gelezen wordt // maar de laatste barcode van
- * de // wip niet. //TODO: whiteline! want onnauwkeurig na wip! if
- * (!endTile.isMarkedExploreMaze()) exploreTile(endTile); for (final Tile
- * neighbourTile : endTile.getReachableNeighbours()) if (neighbourTile != null
- * && !neighbourTile.isMarkedExploreMaze()) queue.add(neighbourTile); return
- * endTile; } } // Wip is gesloten, dus rij 1 tegel achteruit for (Tile
- * neighbour : currentTile .getReachableNeighboursIgnoringSeesaw()) { if
- * (!(neighbour.getContent() instanceof Seesaw)) { shortestPath = new
- * ShortestPath(this, pilot, currentTile, neighbour, allTiles); currentAmount =
- * shortestPath.goShortestPath(align, currentAmount, amountOfTilesUntilAlign);
- * currentTile = neighbour; updateVectors(); } } } } } }
- * 
- * 
- * private void exploreTile(final Tile currentTile) { // numbervariable met als
- * inhoud het getal van de orientatie (N = 1,...) int numberVariable =
- * pilot.getOrientation().ordinal();
- * 
- * // Array met alle buren van deze tile final ArrayList<Tile> array =
- * currentTile.getNeighbours();
- * 
- * for (int i = 0; i < 4; i++) { if (array.get(numberVariable) == null ||
- * !array.get(numberVariable).isMarkedExploreMaze()) { double angle =
- * (((numberVariable - pilot.getOrientation().ordinal()) * 90) + 360) % 360;
- * pilot.rotate(getSmallestAngle(angle)); pilot.setObstructionOrTile(); } //
- * Next orientation numberVariable = numberVariable + 1; if (numberVariable ==
- * 4) numberVariable = 0; }
- * 
- * // zet het mark-veld van de currentTile op true zodat deze niet meer //
- * opnieuw in de queue terecht kan komen
- * currentTile.setMarkingExploreMaze(true); }
- * 
- * private void updateVectors() { for (Tile tile :
- * pilot.getMapGraphConstructed().getTiles()) if (!allTiles.contains(tile) &&
- * !queue.contains(tile)) { if (tile.isMarkedExploreMaze()) allTiles.add(tile);
- * else queue.add(tile); } }
- * 
- * private void removeTileFromQueue(final Tile tile) { // Multiple times in
- * queue so multiple times remove. while (queue.contains(tile)) {
- * queue.remove(tile); } // TODO: Somehow some tiles do not get removed...
- * Investigate! AND FIX THAT LAST DAMN THING :( for (Tile queuetile : queue) {
- * if (queuetile.getPosition().x == tile.getPosition().x &&
- * queuetile.getPosition().y == tile.getPosition().y) queue.remove(queuetile);
- * if(queuetile.isMarkedExploreMaze()) queue.remove(queuetile); } for(Tile
- * allTilesTile : allTiles) for (Tile queuetile : queue) {
- * if(allTilesTile.getPosition().x == queuetile.getPosition().x &&
- * allTilesTile.getPosition().y == queuetile.getPosition().y) {
- * queue.remove(queuetile); break; } } }
- */
+}*/

@@ -1,6 +1,7 @@
 package simulator.viewport;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class SimulatorPanel extends JPanel {
     private String mapName = "/";
     private String view = "/";
     private MapGraph mapGraphLoaded;
+    private Point mapGraphLoadedSize;
     private boolean realRobot = false;
     private boolean showingDummies = true;
     private boolean showingMap = true;
@@ -57,7 +59,7 @@ public class SimulatorPanel extends JPanel {
 
     private void createSims(int amount) {
         if (!realRobot)
-            principalPilot = new SimulationPilot(0, mapGraphLoaded);
+            principalPilot = new SimulationPilot(0, mapGraphLoaded, mapGraphLoadedSize);
         Set<AbstractPilot> principalPilotSet = new HashSet<AbstractPilot>();
         principalPilotSet.add(principalPilot);
         principalViewPort = new UnitViewPort(principalPilotSet, teamColors, teamColors[principalPilot.getPlayerNumber()]);
@@ -70,7 +72,7 @@ public class SimulatorPanel extends JPanel {
         simulatorDummyViewPorts = new ArrayList<DummyViewPort>();
 
         for (int i = 1; i < amount; i++)
-            simulatorPilots.add(new SimulationPilot(i, mapGraphLoaded));
+            simulatorPilots.add(new SimulationPilot(i, mapGraphLoaded, mapGraphLoadedSize));
         for (SimulationPilot pilot : simulatorPilots) {
             Set<AbstractPilot> simulatorPilotSet = new HashSet<AbstractPilot>();
             simulatorPilotSet.add(pilot);
@@ -424,6 +426,7 @@ public class SimulatorPanel extends JPanel {
         stopSimulation();
         mapName = mapFile.getName();
         mapGraphLoaded = MapReader.createMapFromFile(mapFile);
+        mapGraphLoadedSize = mapGraphLoaded.getMapSize();
         createSims(amount);
     }
 
@@ -431,6 +434,7 @@ public class SimulatorPanel extends JPanel {
         stopSimulation();
         mapName = "/";
         mapGraphLoaded = null;
+        mapGraphLoadedSize = null;
         overallViewPort = null;
         createSims(1);
     }
@@ -439,8 +443,9 @@ public class SimulatorPanel extends JPanel {
         stopSimulation();
         mapName = "/";
         mapGraphLoaded = null;
+        mapGraphLoadedSize = null;
         overallViewPort = null;
-        principalPilot = new RobotPilot(0);
+        principalPilot = new RobotPilot(0, mapGraphLoadedSize);
         realRobot = true;
         createSims(1);
     }
@@ -448,11 +453,12 @@ public class SimulatorPanel extends JPanel {
     public void disconnect() {
         if (principalPilot instanceof RobotPilot)
             ((RobotPilot) principalPilot).endConnection();
-        principalPilot = new SimulationPilot(0, mapGraphLoaded);
+        principalPilot = new SimulationPilot(0, mapGraphLoaded, mapGraphLoadedSize);
         realRobot = false;
         stopSimulation();
         mapName = "/";
         mapGraphLoaded = null;
+        mapGraphLoadedSize = null;
         overallViewPort = null;
         createSims(1);
     }

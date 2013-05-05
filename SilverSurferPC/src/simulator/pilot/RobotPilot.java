@@ -1,5 +1,7 @@
 package simulator.pilot;
 
+import java.awt.Point;
+
 import mapping.Seesaw;
 import mapping.Tile;
 import commands.Command;
@@ -16,8 +18,8 @@ public class RobotPilot extends AbstractPilot {
     private boolean busy = false;
     private boolean ready = false;
 
-    public RobotPilot(int teamNumber) {
-        super(teamNumber);
+    public RobotPilot(int teamNumber, Point mapSize) {
+        super(teamNumber, mapSize);
         statusInfoBuffer = new StatusInfoBuffer(this);
         communicator = new Communicator();
         try {
@@ -213,11 +215,7 @@ public class RobotPilot extends AbstractPilot {
             }
         }
         super.travel(30);
-        super.travel(40);
         readBarcodes = readBarcodesBackup;
         waitUntilDone();
-        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
-            pilotActions.barcodeFound();
-        setBusyExecutingBarcode(false);
 	}
 }
