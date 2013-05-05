@@ -169,7 +169,7 @@ public class RobotPilot extends AbstractPilot {
                 ((Seesaw) tile.getContent()).flipSeesaw();
         super.travel(60);
 		try {
-			if(isInGameModus())
+			if(isInGameModus() && getCenter().getPlayerClient().hasLockOnSeesaw())
 				getCenter().getPlayerClient().unlockSeesaw();
 		} catch(Exception e) {
 			e.printStackTrace();

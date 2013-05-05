@@ -117,7 +117,7 @@ public class ShortestPath {
 	 * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
 	 * alle tiles terug op hun initiele waarde gezet.
 	 */
-	protected void goShortestPath1Tile(boolean specialBarcodeCase) throws CollisionAvoidedException {
+	protected void goShortestPath1Tile(boolean specialBarcodeCase) throws CollisionAvoidedException { //Specialbarcodecase: ga tile per tile en blijf barcodes lezen elke tile ipv alleen laatste tile
 		if(!pathCalculated)
 			calculatePath();
 

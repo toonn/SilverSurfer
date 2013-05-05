@@ -470,7 +470,7 @@ public abstract class AbstractPilot implements PilotInterface {
     	}
         readBarcodes = readBarcodesBackup;
 		try {
-			if(gameOn)
+			if(gameOn && getCenter().getPlayerClient().hasLockOnSeesaw())
 				getCenter().getPlayerClient().unlockSeesaw();
 		} catch(Exception e) {
 			e.printStackTrace();
