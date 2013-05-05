@@ -121,7 +121,7 @@ public class MazeExplorer {
                 				}
                 				Collections.shuffle(queue);
                 				shuffled = true;
-                				//new Sleep().sleepFor(1000);
+                				new Sleep().sleepFor(500);
                 				return nextTile;
                 			}
                 		}
@@ -489,7 +489,8 @@ public class MazeExplorer {
 		Collections.shuffle(allTiles);
 		Tile nextTile = currentTile;
 		for(Tile tile : allTiles) {
-			if(tile.isMarkedExploreMaze() && tile.getPosition().x != currentTile.getPosition().x && tile.getPosition().y != currentTile.getPosition().y && tile.getContent() == null) {
+			if(tile.isMarkedExploreMaze() && tile.getPosition().x != currentTile.getPosition().x && tile.getPosition().y != currentTile.getPosition().y && tile.getContent() == null && isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
+				//Explored tile, must be different, no barcode and reachable without crossing a wip
 				nextTile = tile;
 				break;
 			}
