@@ -140,6 +140,7 @@ public class MazeExplorer {
     }
 
     private Tile getPriorityNextTileWithShuffle(final Tile currentTile) {
+    	shuffled = false;
     	Tile loopdetect = queue.lastElement();
     	Tile tile = queue.lastElement();
     	while (!isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
@@ -311,8 +312,18 @@ public class MazeExplorer {
                 new Sleep().sleepFor(1000);
                 pilot.updateTilesAndPosition();
             }
-            if(!pilot.getMapGraphConstructed().mapsAreMerged()) //Verken verder wanneer er geen gelijke tiles zijn
-            	;
+            if(!pilot.getMapGraphConstructed().mapsAreMerged()) { //Verken verder wanneer er geen gelijke tiles zijn
+            	while(!pilot.getMapGraphConstructed().mapsAreMerged()) {
+            		exploreFurtherOneStep();
+                    pilot.updateTilesAndPosition();
+            	}
+                for(int i = 0; i < 3; i++) { //Stuur nog 3 keer door
+                    new Sleep().sleepFor(1000);
+                    pilot.updateTilesAndPosition();
+                }
+    			while(!pilot.hasWon())
+    				goToTeammateOneStep();
+            }
             else //Rij naar elkaar
     			while(!pilot.hasWon())
     				goToTeammateOneStep();
@@ -352,14 +363,65 @@ public class MazeExplorer {
 
 		ShortestPath shortestPath = new ShortestPath(this, pilot, pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()), endTile, pilot.getAllTileVector());
 		if (shortestPath.getTilesAwayFromTargetPosition() <= 1) {
-			System.out.println("VICTORY! YOU WON THE GAME!"); //TODO: vuurwerk en een fanfare
+			System.out.println("VICTORY! YOU COMPLETED THE GAME!"); //TODO: vuurwerk en een fanfare
 			pilot.setWon();
 			return;
 		}
 		try {
 			shortestPath.goShortestPath1Tile(true);
+			if(shortestPath.getTilesPath().size() > 2 && shortestPath.getTilesPath().get(0).getContent() instanceof Barcode && shortestPath.getTilesPath().get(1).getContent() instanceof Seesaw)
+				;
 		} catch(CollisionAvoidedException e) {
 			new Sleep().sleepFor(1000); //wacht 1 second
 		}
+	}
+	
+	private void exploreFurtherOneStep() {
+		Tile currentTile = pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition());
+        Tile nextTile;
+        if(!shuffled)
+        	nextTile = getPriorityNextTile(currentTile);
+        else
+        	nextTile = getPriorityNextTileWithShuffle(currentTile);
+        if (nextTile == null) { // Null if next tile is not reachable without taking a seesaw.
+        	Tile seesawTile = searchOpenSeesaw(currentTile);
+        	if(seesawTile != null) {
+        		currentTile = seesawTile;
+        		int seesawValue = getSeesawValue(currentTile);
+        		nextTile = getOtherEndOfSeesaw(currentTile);
+        		if(!((Seesaw)(currentTile.getNeighbour(pilot.getOrientation()).getContent())).isClosed()) //If seesaw is open
+        			pilot.crossOpenSeesaw(seesawValue);
+        		else //If seesaw is closed
+        			pilot.crossClosedSeesaw(seesawValue);
+                }
+        } else {
+            updateVectors(nextTile);
+            if(!isUseful(nextTile)) {
+                nextTile.setMarkingExploreMaze(true);
+                nextTile = currentTile;
+            } else {
+            	ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, nextTile, allTiles);
+            	int totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
+            	while(totalTilesToGo != 0)
+            		try {
+            			shortestPath.goShortestPath1Tile(false);
+            			totalTilesToGo--;
+            		} catch(CollisionAvoidedException e) {
+        				undoUpdateVectors(nextTile);
+            			Collections.shuffle(queue);
+            			shuffled = true;
+            			return;
+            		}
+            	if (nextTile.getContent() instanceof Barcode) {
+            		while (pilot.isExecutingBarcode())
+            			new Sleep().sleepFor(100);
+            		updateVectors(nextTile);
+            	} else {
+            		updateVectors(nextTile);
+            		if (!nextTile.isMarkedExploreMaze())
+            			exploreTileAndUpdateQueue(nextTile);
+            	}
+            }
+        }
 	}
 }

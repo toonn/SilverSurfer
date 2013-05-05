@@ -119,7 +119,7 @@ public class ShortestPath {
 	 */
 	protected void goShortestPath1Tile(boolean specialBarcodeCase) throws CollisionAvoidedException {
 		if(!pathCalculated)
-			calCulatePath();
+			calculatePath();
 
 		if (tilesPath.size() == 1 || quit) {
 			for (final Object tile : tiles)
@@ -139,7 +139,7 @@ public class ShortestPath {
 
 		if(specialBarcodeCase && !tilesPath.get(1).isMarkedExploreMaze())
 			pilot.setReadBarcodes(true);
-		else if (tilesPath.size() <= 2)
+		else if (tilesPath.size() <= 2 && !specialBarcodeCase)
 			pilot.setReadBarcodes(readBarcodesBackup);
 		try {
 			pilot.alignOnWhiteLine();
@@ -155,7 +155,7 @@ public class ShortestPath {
 		tilesPath.remove(0);
 	}
 
-	private void calCulatePath() {
+	private void calculatePath() {
 		setHeuristics();
 		startTile.setCost(0);
 		fillTilesPath(startTile);
@@ -178,7 +178,7 @@ public class ShortestPath {
 
 	public int getTilesAwayFromTargetPosition() {
 		if(!pathCalculated)
-			calCulatePath();
+			calculatePath();
 		return tilesPath.size()-1;
 	}
 }

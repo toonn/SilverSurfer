@@ -219,13 +219,11 @@ public class APHandler implements PlayerHandler {
                     }
                 }
         }
-        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null){
-        	ori = findOrientationEquivalentWithOurNorth(ori1,ori2);
+        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null) {
+        	ori = findOrientationEquivalentWithOurNorth(ori1, ori2);
             pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1 , point2, ori);
             pilot.fillVectorMapgraphTiles();
-           }
-        else
-            System.out.println("[HTTTP] No similar tiles found yet!");
+        }
     }
     
 	private Orientation findOrientationEquivalentWithOurNorth(String ori1,
