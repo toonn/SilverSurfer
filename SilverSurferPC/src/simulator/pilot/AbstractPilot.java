@@ -454,14 +454,32 @@ public abstract class AbstractPilot implements PilotInterface {
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
     	try {
-        	travel(60, true);
-            for (Tile tile : getMapGraphConstructed().getTiles())
-                if (tile.getContent() instanceof Seesaw
-                        && tile.getContent().getValue() == seesawValue)
-                    ((Seesaw) tile.getContent()).flipSeesaw();
         	travel(30, true);
     	} catch(CollisionAvoidedException e) {
         	//Do nothing, a collision cannot happen here
+    		//Ok, it can, but fuck it, stupid HTTTP
+    		//Keep trying to cross, it will be futile but you never know
+    		travelThirtyCollisionRollback();
+    	}
+    	try {
+        	travel(30, true);
+    	} catch(CollisionAvoidedException e) {
+        	//Do nothing, a collision cannot happen here
+    		//Ok, it can, but fuck it, stupid HTTTP
+    		//Keep trying to cross, it will be futile but you never know
+    		travelThirtyCollisionRollback();
+    	}
+    	for (Tile tile : getMapGraphConstructed().getTiles())
+    		if (tile.getContent() instanceof Seesaw
+    				&& tile.getContent().getValue() == seesawValue)
+    			((Seesaw) tile.getContent()).flipSeesaw();
+    	try {
+    		travel(30, true);
+    	} catch(CollisionAvoidedException e) {
+        	//Do nothing, a collision cannot happen here
+    		//Ok, it can, but fuck it, stupid HTTTP
+    		//Keep trying to cross, it will be futile but you never know
+    		travelThirtyCollisionRollback();
     	}
     	try {
         	travel(30, false);
