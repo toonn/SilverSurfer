@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Timer;
@@ -142,13 +143,15 @@ public class APHandler implements PlayerHandler {
     		angle = 270;
     	pilot.getTeamPilot().setPosition(40*x + 20, 40*y + 20);
     	pilot.getTeamPilot().setAngle(angle);
-    	pilot.setTeammatePosition(new Point2D.Double(x, y));
     }
 
     @Override
     public void teamTilesReceived(List<Tile> tiles) {
-        pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(tiles));
-        searchForSimilarTiles(tiles);
+    	ArrayList<Tile> newList = new ArrayList<Tile>();
+    	for(Tile tile : tiles)
+    		newList.add(new peno.htttp.Tile(tile.getX(), pilot.getMapSize().y - (long)tile.getY(), tile.getToken()));
+        pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(newList));
+        searchForSimilarTiles(newList);
     }
     
     private void searchForSimilarTiles(List<Tile> tiles) {
@@ -219,7 +222,6 @@ public class APHandler implements PlayerHandler {
         if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null){
         	ori = findOrientationEquivalentWithOurNorth(ori1,ori2);
             pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1 , point2, ori);
-            //pilot.stopExploring(); //Not needed, algorithm zal stoppen wnr het object is gevonden en dus wnr het team bekend is, dus voor dit wordt uitgevoerd.
             pilot.fillVectorMapgraphTiles();
            }
         else

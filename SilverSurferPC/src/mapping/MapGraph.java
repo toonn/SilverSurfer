@@ -261,7 +261,7 @@ public class MapGraph {
 			int convertedY = (int) (cosAToConvert * point.getY() + sinAToConvert * point.getX()
 					- sinAToConvert * point1NeededToConvert.getX() - cosAToConvert * point1NeededToConvert.getY() + point2NeededToConvert
 					.getY());		
-			
+
 			return new Point(convertedX, convertedY);
 		}
 		return null;

@@ -5,7 +5,6 @@
 
 package mazeAlgorithm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,7 +49,7 @@ public class ShortestPath {
 		this.quit = quit;
 	}
 	
-	public Vector getTilesPath() {
+	public Vector<Tile> getTilesPath() {
 		return tilesPath;
 	}
 
@@ -67,17 +66,6 @@ public class ShortestPath {
 			if ((tilesPath.get(i).getCost() != tilesPath.get(i + 1).getCost() - 1) || !tilesPath.get(i).areReachableNeighboursIgnoringSeesaw(tilesPath.get(i + 1)))
 				tilesPath.remove(i);
 		}
-	}
-
-	/**
-	 * Returns the amount of tiles in the path.
-	 */
-	private int getLength() {
-		tilesPath.clear();
-		fillTilesPath(startTile);
-		int amt = tilesPath.size();
-		tilesPath.clear();
-		return amt;
 	}
 	
 	private void fillTilesPath(final Tile currentTile) {
@@ -129,7 +117,7 @@ public class ShortestPath {
 	 * gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
 	 * alle tiles terug op hun initiele waarde gezet.
 	 */
-	protected void goShortestPath1Tile() throws CollisionAvoidedException {
+	protected void goShortestPath1Tile(boolean specialBarcodeCase) throws CollisionAvoidedException {
 		if(!pathCalculated)
 			calCulatePath();
 
@@ -148,8 +136,10 @@ public class ShortestPath {
 		pilot.setReadBarcodes(false);
 		pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
 		pilot.updateTilesAndPosition();
-		
-		if (tilesPath.size() <= 2)
+
+		if(specialBarcodeCase && !tilesPath.get(1).isMarkedExploreMaze())
+			pilot.setReadBarcodes(true);
+		else if (tilesPath.size() <= 2)
 			pilot.setReadBarcodes(readBarcodesBackup);
 		try {
 			pilot.alignOnWhiteLine();
@@ -163,48 +153,6 @@ public class ShortestPath {
 
 		pilot.decreaseTilesBeforeAlign();
 		tilesPath.remove(0);
-	}
-	
-	public Tile goNumberTilesShortestPath(int TilesToGo) {		
-		if(!pathCalculated)
-			calCulatePath();
-	
-		if(tilesPath.size() == 2) {
-			//geen shortestPath uitvoeren want normaal naast elkaar
-			return null;
-		}
-		
-		if (tilesPath.size() <= TilesToGo)
-			TilesToGo = tilesPath.size() - 1;
-
-		boolean readBarcodesBackup = pilot.getReadBarcodes();
-		pilot.setReadBarcodes(false);
-		
-		for (int i = 0; i < TilesToGo; i++) {
-			Orientation orientation = null;
-			for (Orientation ori : Orientation.values())
-				if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
-					orientation = ori;
-
-			pilot.rotate((int) (orientation.getAngle() - pilot.getAngle()));
-			pilot.updateTilesAndPosition();
-			
-			if(i == TilesToGo-1) //Last tile to ride: set read barcodes to original value
-				pilot.setReadBarcodes(readBarcodesBackup);
-				
-			try {
-				pilot.alignOnWhiteLine(); // = travel(40) for sim, but white line for robot (important!)
-				pilot.updateTilesAndPosition();
-			} catch(CollisionAvoidedException e) {
-				return tilesPath.get(i);
-			}
-		}
-		
-		pilot.setReadBarcodes(readBarcodesBackup);
-				
-		for (final Tile tile : tiles)
-			tile.resetCost();
-		return null;
 	}
 
 	private void calCulatePath() {
@@ -220,9 +168,7 @@ public class ShortestPath {
 	 */
 	private void setHeuristics() {
 		for (final Tile tile : tiles) {
-			int heuristic = (int) (Math.abs(endTile.getPosition().getX()
-					- tile.getPosition().getX()) + Math.abs(endTile
-							.getPosition().getY() - tile.getPosition().getY()));
+			int heuristic = (int) (Math.abs(endTile.getPosition().getX() - tile.getPosition().getX()) + Math.abs(endTile.getPosition().getY() - tile.getPosition().getY()));
 			if (tile.getContent() instanceof Seesaw) {
 				heuristic = heuristic + extraCostSeesaw;
 			}
@@ -236,129 +182,3 @@ public class ShortestPath {
 		return tilesPath.size()-1;
 	}
 }
-
-
-///**
-//* De methode die moet opgeroepen worden en alle methodes in de juiste
-//* volgorde uitvoert. eerst worden de heuristieken gezet dan fillTilesPath,
-//* en aan de hand hiervan wordt naar de robot/simulator het commando
-//* gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
-//* alle tiles terug op hun initiele waarde gezet.
-//*/
-//public int goShortestPath(boolean align, int amount,
-//      int amountOfTilesUntilAlign) {
-//  int currentAmount = amount;
-//  if(!pathCalculated){
-// 	 calCulatePath();}
-//  if (tilesPath.size() == 1) {
-//      return currentAmount;
-//  }
-//  for (int i = 0; i < tilesPath.size() - 1; i++) {
-//      Orientation orientation = null;
-//      for (Orientation ori : Orientation.values())
-//          if (tilesPath.get(i).getEdgeAt(ori) == tilesPath.get(i + 1).getEdgeAt(ori.getOppositeOrientation()))
-//              orientation = ori;
-//      if (pilot.getReadBarcodes())
-//          pilot.setReadBarcodes(false);
-//      pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
-//      if (align && currentAmount == 0) {
-//          if (tilesPath.size() - i > 2) {
-//              if (pilot.getReadBarcodes()) {
-//                  pilot.setReadBarcodes(false);
-//              }
-//          } else {
-//              if (!pilot.getReadBarcodes()) {
-//                  pilot.setReadBarcodes(true);
-//              }
-//          }
-//          pilot.alignOnWhiteLine();
-//          currentAmount = amountOfTilesUntilAlign;
-//      } else {
-//          pilot.travel(4);
-//          pilot.travel(4);
-//          pilot.travel(4);
-//          pilot.travel(4);
-//          pilot.travel(4);
-//
-//
-//          if (tilesPath.size() - i > 2) {
-//              if (pilot.getReadBarcodes()) {
-//                  pilot.setReadBarcodes(false);
-//              }
-//          } else {
-//              if (!pilot.getReadBarcodes()) {
-//                  pilot.setReadBarcodes(true);
-//              }
-//          }
-//          pilot.travel(20);
-//          currentAmount--;
-//      }
-//      // TODO goToNextTile checkte of er geAligned moest worden.
-//      // communicator.goToNextTile(orientation);
-//  }
-//>>>>>>> branch 'demo6' of https://github.com/toonn/SilverSurfer.git
-//
-//	if (queue.size() > 0) {
-//		// remove the last tile from the queue and add it to the path
-//		final Tile nextTile = queue.get(queue.size() - 1);
-//		while (queue.contains(nextTile)) {
-//			queue.remove(nextTile);
-//		}
-//		fillTilesPath(nextTile);
-//	}
-//}
-
-///**
-//* De methode die moet opgeroepen worden en alle methodes in de juiste
-//* volgorde uitvoert. eerst worden de heuristieken gezet dan fillTilesPath,
-//* en aan de hand hiervan wordt naar de robot/simulator het commando
-//* gestuurd om deze tiles te "bewandelen". Op het einde wordt de kost van
-//* alle tiles terug op hun initiele waarde gezet.
-//*/
-//public void goShortestPath(boolean align) {
-//	if(!pathCalculated){
-//		calCulatePath();}
-//
-//	if (tilesPath.size() == 1 || quit) {
-//		for (final Object tile : tiles) {
-//			((Tile) tile).resetCost();
-//		}
-//		return;
-//	}
-//	Orientation orientation = null;
-//	for (Orientation ori : Orientation.values()){
-//		if (tilesPath.get(0).getEdgeAt(ori) == tilesPath.get(1).getEdgeAt(ori.getOppositeOrientation())){
-//			orientation = ori;}}
-//	if (pilot.getReadBarcodes()){
-//		pilot.setReadBarcodes(false);}
-//	pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
-//
-//	if (align && pilot.getTilesBeforeAlign() == 0) {
-//		if (tilesPath.size() > 2) {
-//			if (pilot.getReadBarcodes()) {
-//				pilot.setReadBarcodes(false);
-//			}
-//		} else {
-//			if (!pilot.getReadBarcodes()) {
-//				pilot.setReadBarcodes(true);
-//			}
-//		}
-//		pilot.alignOnWhiteLine();
-//	} else {
-//		pilot.travel(20);
-//		if (tilesPath.size() > 2) {
-//			if (pilot.getReadBarcodes()) {
-//				pilot.setReadBarcodes(false);
-//			}
-//		} else {
-//			if (!pilot.getReadBarcodes()) {
-//				pilot.setReadBarcodes(true);
-//			}
-//		}
-//		pilot.travel(20);
-//	}
-//
-//	pilot.decreaseTilesBeforeAlign();
-//	tilesPath.remove(0);
-//	goShortestPath(align);
-//}

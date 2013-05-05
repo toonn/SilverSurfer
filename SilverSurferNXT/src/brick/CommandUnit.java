@@ -37,7 +37,6 @@ public class CommandUnit {
 	
     private boolean quit = false; //Stop the program when this is true.
     private boolean readBarcodes = true; //Only read barcodes when this is true.
-    private boolean permaBarcodeStop = false; //Do not read any barcode when this is true.
 
     public CommandUnit() {
         ultrasonicSensor = new UltrasonicSensor(SensorPort.S1);
@@ -123,9 +122,6 @@ public class CommandUnit {
                 case (Command.STOP_READING_BARCODES):
                     CU.readBarcodes = false;
                 	break;
-                case (Command.PERMA_STOP_READING_BARCODES):
-                    CU.permaBarcodeStop = true;
-                	break;
                 case (Command.CROSS_OPEN_SEESAW):
                     System.out.println("Crossing open seesaw.");
                 	CU.updatePosition(160);
@@ -144,6 +140,7 @@ public class CommandUnit {
                 	break;
                 case (Command.PICKUP_OBJECT):
                     System.out.println("Picking up object.");
+        			CU.updatePosition(40);
                 	CU.updateAngle(180);
             		CU.pickupObject();
                     CU.stopRobot();
@@ -260,7 +257,7 @@ public class CommandUnit {
     }
     
     private int moveForward(int distance) {
-    	if(readBarcodes && !permaBarcodeStop) {
+    	if(readBarcodes) {
         	int distance1, distance2;
         	if(distance > 5) {
         		distance1 = 5;
@@ -355,9 +352,11 @@ public class CommandUnit {
         Motor.C.rotate(-120);
         Motor.A.rotate((int)Math.floor(LENGTH_COEF*-20), true);
         Motor.B.rotate((int)Math.floor(LENGTH_COEF*-20));
+        Motor.C.rotate(120, true); //TODO: geeft geen problemen?
         Motor.A.rotate((int)Math.floor(LENGTH_COEF*25), true);
         Motor.B.rotate((int)Math.floor(LENGTH_COEF*25));
-        Motor.C.rotate(120);
+        Motor.A.rotate((int)Math.floor(LENGTH_COEF*-40), true);
+        Motor.B.rotate((int)Math.floor(LENGTH_COEF*-40));
     	Motor.A.setSpeed(CommandUnit.speed);
         Motor.B.setSpeed(CommandUnit.speed);
         readBarcodes = readBarcodesBackup;

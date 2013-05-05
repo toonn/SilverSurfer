@@ -400,9 +400,7 @@ public class SimulationPilot extends AbstractPilot {
     @Override
     public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
         super.travel(distance, ignoreCollision);
-        if (readBarcodes
-                && !permaBarcodeStop
-                && mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode) {
+        if (readBarcodes && mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode) {
             setBusyExecutingBarcode(true);
             pilotActions.barcodeFound();
             setBusyExecutingBarcode(false);

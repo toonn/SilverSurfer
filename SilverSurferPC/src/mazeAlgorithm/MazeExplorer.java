@@ -1,5 +1,6 @@
 package mazeAlgorithm;
 
+import java.awt.Point;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -43,9 +44,10 @@ public class MazeExplorer {
         if (nextTile == null) { // Null if next tile is not reachable without taking a seesaw.
             Tile seesawTile = searchOpenSeesaw(currentTile);
             if(seesawTile != null) {
+            	currentTile = seesawTile;
                 int seesawValue = getSeesawValue(currentTile);
                 nextTile = getOtherEndOfSeesaw(currentTile);
-                if(!((Seesaw)(seesawTile.getNeighbour(pilot.getOrientation()).getContent())).isClosed()) //If seesaw is open
+                if(!((Seesaw)(currentTile.getNeighbour(pilot.getOrientation()).getContent())).isClosed()) //If seesaw is open
                     pilot.crossOpenSeesaw(seesawValue);
                 else //If seesaw is closed
                     pilot.crossClosedSeesaw(seesawValue);
@@ -64,7 +66,7 @@ public class MazeExplorer {
             	while(totalTilesToGo != 0)
             		if(!quit) {
             			try {
-                			shortestPath.goShortestPath1Tile();
+                			shortestPath.goShortestPath1Tile(false);
                 			totalTilesToGo--;
             			} catch(CollisionAvoidedException e) {
             				undoUpdateVectors(nextTile);
@@ -77,10 +79,9 @@ public class MazeExplorer {
                 if (nextTile.getContent() instanceof Barcode) {
                     while (pilot.isExecutingBarcode())
                         new Sleep().sleepFor(100);
-                    if(pilot.getObjectBoolean()) {
-                    	pilot.objectHandled();
+                    if(pilot.getTeamNumber() != -1) {
                         System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has found his object and will now wait on the other player on a safe location.");
-                    	return null;
+                    	return null; //Algoritme stopt: object is gevonden
                     }
                 }
             }
@@ -168,7 +169,7 @@ public class MazeExplorer {
                 	while(totalTilesToGo != 0)
                 		if(!quit) {
                 			try {
-                    			shortestPath.goShortestPath1Tile();
+                    			shortestPath.goShortestPath1Tile(false);
                     			totalTilesToGo--;
                 			} catch(CollisionAvoidedException e) {
                 				return searchOpenSeesaw(shortestPath.getCurrentTileDuringException());
@@ -180,7 +181,7 @@ public class MazeExplorer {
 	                
 	                Orientation orientation = pilot.getOrientation();
 	                Tile seesaw = tile.getNeighbour(orientation);
-	                if(!((Seesaw)seesaw.getContent()).isClosed() || openSeesawIfClosed)
+	                if((!((Seesaw)seesaw.getContent()).isClosed() || openSeesawIfClosed))
 	                	return tile;
 	                else {
 	                	Tile otherEnd = tile.getNeighbour(orientation.getOppositeOrientation());
@@ -190,7 +191,7 @@ public class MazeExplorer {
 	                	while(totalTilesToGo != 0)
 	                    	if(!quit) {
 	                			try {
-	                    			shortestPath.goShortestPath1Tile();
+	                    			shortestPath.goShortestPath1Tile(false);
 	                    			totalTilesToGo--;
 	                			} catch(CollisionAvoidedException e) {
 	                				searchOpenSeesawCollisionRollback();
@@ -294,12 +295,29 @@ public class MazeExplorer {
         	Tile returnTile = startTile;
         	while(returnTile != null) //als returnTile geen null is, is er collision, dus hernemen met returnTile
         		returnTile = algorithm(returnTile);
-        	while(true) {
-        		pilot.updateTilesAndPosition();
-        		new Sleep().sleepFor(1000);
-        	}
-            //for (final Object tile : allTiles)
-            //  ((Tile) tile).setMarkingExploreMaze(false);
+            if(pilot.isInGameModus()) {
+                try {
+                	pilot.getCenter().getPlayerClient().foundObject();
+                	pilot.getCenter().getPlayerClient().joinTeam(pilot.getTeamNumber());
+                } catch (Exception e) {
+                    System.out.println("Exception! Cannot join team!");
+                }
+            }
+            while(!pilot.getTeamMemberFound()) { //Zolang teammember niet gevonden is, stuur coordinaten en map door
+                new Sleep().sleepFor(1000);
+                pilot.updateTilesAndPosition();
+            }
+            for(int i = 0; i < 3; i++) { //Stuur daarna nog 3 keer door zodat de andere robot zeker verbonden is en alles kan ontvangen
+                new Sleep().sleepFor(1000);
+                pilot.updateTilesAndPosition();
+            }
+            if(!pilot.getMapGraphConstructed().mapsAreMerged()) //Verken verder wanneer er geen gelijke tiles zijn
+            	;
+            else //Rij naar elkaar
+    			while(!pilot.hasWon())
+    				goToTeammateOneStep();
+            for (final Object tile : allTiles)
+            	((Tile) tile).setMarkingExploreMaze(false);
         } catch (Exception e) {
             if (!quit)
                 e.printStackTrace();
@@ -327,88 +345,21 @@ public class MazeExplorer {
     public void quit() {
         quit = true;
     }
+
+	private void goToTeammateOneStep() {
+		Point endTilePoint = new Point((int)(pilot.getTeamPilot().getPosition().x/40), (int)(pilot.getTeamPilot().getPosition().y/40));
+		Tile endTile = pilot.getMapGraphConstructed().getTile(endTilePoint);
+
+		ShortestPath shortestPath = new ShortestPath(this, pilot, pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()), endTile, pilot.getAllTileVector());
+		if (shortestPath.getTilesAwayFromTargetPosition() <= 1) {
+			System.out.println("VICTORY! YOU WON THE GAME!"); //TODO: vuurwerk en een fanfare
+			pilot.setWon();
+			return;
+		}
+		try {
+			shortestPath.goShortestPath1Tile(true);
+		} catch(CollisionAvoidedException e) {
+			new Sleep().sleepFor(1000); //wacht 1 second
+		}
+	}
 }
-
-
-
-/*
-
-
-private void algorithm2(Tile currentTile) {
-    // Explore tile and set current tile on "Explored".
-    if (!currentTile.isMarkedExploreMaze())
-    	exploreTile(currentTile);
-
-    // Update queue.
-    for (final Tile neighbourTile : currentTile.getReachableNeighbours())
-        if (neighbourTile != null && !neighbourTile.isMarkedExploreMaze()) {
-        	while(queue.contains(neighbourTile))
-        		queue.remove(neighbourTile);
-            queue.add(neighbourTile);
-        }
-
-    // Algorithm finished?
-    if (queue.isEmpty() || quit) {
-        System.out.println("[EXPLORE] Robot " + pilot.getPlayerNumber() + " has finished exploring.");
-        return;
-=======
-    public void quit() {
-        quit = true;
->>>>>>> branch 'demo6' of https://github.com/toonn/SilverSurfer.git
-    }
-
-    private Tile searchOpenSeesaw(Tile currentTile) {
-        Vector<Tile> seesawBarcodeTiles = pilot.getSeesawBarcodeTiles();
-        Collections.shuffle(seesawBarcodeTiles);
-        if (!quit)
-            for (Tile tile : seesawBarcodeTiles)
-                if (isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
-                    ShortestPath shortestPath = new ShortestPath(this, pilot,
-                            currentTile, tile, allTiles);
-                    currentAmount = shortestPath.goShortestPath(align,
-                            currentAmount, amountOfTilesUntilAlign);
-                    while (pilot.isExecutingBarcode())
-                        new Sleep().sleepFor(100);
-                    Orientation orientation = pilot.getOrientation();
-                    Tile seesaw = tile.getNeighbour(orientation);
-                    if (!((Seesaw) seesaw.getContent()).isClosed())
-                        return tile;
-                    else {
-                        Tile otherEnd = tile.getNeighbour(orientation
-                                .getOppositeOrientation());
-                        shortestPath = new ShortestPath(this, pilot, tile,
-                                otherEnd, allTiles);
-                        currentAmount = shortestPath.goShortestPath(align,
-                                currentAmount, amountOfTilesUntilAlign);
-                        return searchOpenSeesaw(otherEnd);
-                    }
-                }
-        if (quit)
-            reallyquit = true;
-        return null;
-    }
-
-    public void startExploringMaze() {
-        try {
-            algorithm(startTile);
-            for (final Object tile : allTiles)
-                ((Tile) tile).setMarkingExploreMaze(false);
-        } catch (Exception e) {
-            if (!quit)
-                e.printStackTrace();
-        }
-    }
-
-    private void updateVectors(Tile currentTile) {
-        if (!allTiles.contains(currentTile))
-            allTiles.add(currentTile);
-        queue.remove(currentTile);
-        for (Tile tile : pilot.getMapGraphConstructed().getTiles())
-            if (!allTiles.contains(tile) && !queue.contains(tile))
-                if (tile.isMarkedExploreMaze())
-                    allTiles.add(tile);
-                else
-                    queue.add(tile);
-    }
-
-}*/

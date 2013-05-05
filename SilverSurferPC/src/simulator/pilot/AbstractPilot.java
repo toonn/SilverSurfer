@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import java.util.Vector;
 
 import commands.Sleep;
@@ -16,7 +15,6 @@ import mapping.Seesaw;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
 import mazeAlgorithm.ExploreThread;
-import mazeAlgorithm.ShortestPath;
 import mq.communicator.APHandler;
 import mq.communicator.MQCenter;
 import simulator.viewport.SimulatorPanel;
@@ -29,15 +27,9 @@ public abstract class AbstractPilot implements PilotInterface {
     private MapGraph mapGraphConstructed;
     private Point2D.Double position;
     private double angle;
-    private Point2D teammatePosition;
-    private boolean stillApproximating;
-    private int tilesToGoToTeammate = 1;
-    private int tilesAwayFromTeammate = Integer.MAX_VALUE;
     private int speed;
     private boolean busyExecutingBarcode = false;
     protected boolean readBarcodes = true;
-    protected boolean permaBarcodeStop = false;
-    protected boolean objectBoolean = false;
     protected PilotActions pilotActions = new PilotActions(this);
     private ExploreThread exploreThread;
     private Vector<Tile> seesawBarcodeTiles = new Vector<Tile>();
@@ -87,8 +79,8 @@ public abstract class AbstractPilot implements PilotInterface {
     			getCenter().updatePosition((int)(getPosition().x/40), mapSize.y - (int)(getPosition().y/40), angle);
     			if(teamPilot.isActive()) {
     				ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
-    				for (mapping.Tile tile : getMapGraphConstructed().getTiles()) 
-    					vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), (long) tile.getPosition().getY(), tile.getToken()));
+    				for (mapping.Tile tile : getMapGraphConstructed().getTiles())
+    					vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), mapSize.y - (long)tile.getPosition().getY(), tile.getToken()));
     				getCenter().getPlayerClient().sendTiles(vector);
     			}
     		} catch(IOException e) {
@@ -153,10 +145,6 @@ public abstract class AbstractPilot implements PilotInterface {
 
     public Orientation getOrientation() {
         return Orientation.calculateOrientation(getAngle());
-    }
-
-    public boolean getPermaStopReadingBarcodes() {
-        return permaBarcodeStop;
     }
 
     /**
@@ -245,10 +233,6 @@ public abstract class AbstractPilot implements PilotInterface {
     public void makeReadyToPlay() {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
-    }
-
-    public void permaStopReadingBarcodes() {
-        permaBarcodeStop = true;
     }
 
     protected boolean pointOnEdge(final double x, final double y) {
@@ -378,39 +362,19 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void fillVectorMapgraphTiles() {
-		allTileVector.addAll(mapGraphConstructed.getTiles());
+    	for(Tile tile : mapGraphConstructed.getTiles()) {
+    		boolean contains = false;
+    		for(Tile tileInVector : allTileVector)
+    			if(tileInVector.getPosition().x == tile.getPosition().x && tileInVector.getPosition().y == tile.getPosition().y)
+    				contains = true;
+    		if(!contains)
+    			allTileVector.add(tile);
+    	}
     }
-
-	public void startLookingYourTeammate() {
-		stillApproximating = true;
-		Tile endTile = mapGraphConstructed.getTile(mapGraphConstructed.convertPoint(getTeammatePosition()));
-		
-		ShortestPath shortestPath = new ShortestPath(null, this, mapGraphConstructed.getTile(getMatrixPosition()), endTile, allTileVector);
-		
-		int tilesAway = shortestPath.getTilesAwayFromTargetPosition();
-				
-		if ((tilesAway == 1 || tilesAway == 0)
-			&& mapGraphConstructed.convertPoint(getTeammatePosition()).equals(endTile.getPosition())){
-
-//			System.out.println("Teammate = " + getTeamMemberName() + " op positie " +mapGraphConstructed
-//				.convertPoint(getTeammatePosition()).x + " " + mapGraphConstructed
-//				.convertPoint(getTeammatePosition()).y);
-//			System.out.println("ik = " + getPlayerName() + " op positie " + getMatrixPosition().x + " " + getMatrixPosition().y);
-			won();
-			return;
-		} 
-				
-		if (tilesAwayFromTeammate >= tilesAway && !(shortestPath.getTilesPath().get(1) instanceof Seesaw && ((Seesaw) (shortestPath.getTilesPath().get(1))).isClosed())) {
-			//TODO: volgende methode geeft ofwel null terug (succes) ofwel een tile (collisiondetecion, robot staat op teruggegeven tile)
-			shortestPath.goNumberTilesShortestPath(tilesToGoToTeammate);
-		} else {
-			System.out.println("Wacht een paar seconden");
-			new Sleep().sleepFor(new Random().nextInt(10)*1000);
-		}
-		
-		tilesAwayFromTeammate = tilesAway;
-		stillApproximating = false;
-	}
+    
+    public Vector<Tile> getAllTileVector() {
+    	return allTileVector;
+    }
 
 	public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
 		int distTraveled = 0;
@@ -471,30 +435,22 @@ public abstract class AbstractPilot implements PilotInterface {
 	protected boolean crashImminent(double distance) {
 		return getUltraSensorValue() <= distance;
 	}
-
-	public Point2D getTeammatePosition() {
-		return teammatePosition;
+	
+	public boolean hasWon() {
+		return won;
 	}
-
-	public void setTeammatePosition(Point2D teammatePosition) {
-
-//		System.out.println("ik ben : " + getPlayerName() + " en mijn teammate " + getTeamMemberName() + " stuurt door" +
-//				" dat hij op positie " + teammatePosition.getX() + " " + teammatePosition.getY() + " staat.");
-		
-		//if (this.teammatePosition == null || this.teammatePosition.getX() != teammatePosition.getX() || this.teammatePosition.getY() != teammatePosition.getY()) {
-			this.teammatePosition = teammatePosition;
-			if (!won && !stillApproximating && mapGraphConstructed.mapsAreMerged()) {
-				startLookingYourTeammate();
-			}
-		//}
-	}
-
-	public void won() {
-		System.out.println("VICTORY! YOU WON THE GAME!"); //TODO: vuurwerk en een fanfare
+	
+	public void setWon() {
 		won = true;
 	}
 	
 	public void crossOpenSeesaw(int seesawValue) {
+		try {
+			if(gameOn && !getCenter().getPlayerClient().hasLockOnSeesaw(seesawValue))
+				getCenter().getPlayerClient().lockSeesaw(seesawValue);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
     	boolean readBarcodesBackup = readBarcodes;
     	readBarcodes = false;
     	try {
@@ -513,6 +469,12 @@ public abstract class AbstractPilot implements PilotInterface {
     		travelThirtyCollisionRollback();
     	}
         readBarcodes = readBarcodesBackup;
+		try {
+			if(gameOn)
+				getCenter().getPlayerClient().unlockSeesaw();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
         try {
         	alignOnWhiteLine();
         } catch(CollisionAvoidedException e) {
@@ -521,6 +483,12 @@ public abstract class AbstractPilot implements PilotInterface {
 	}
 	
 	public void crossClosedSeesaw(int seesawValue) {
+		try {
+			if(gameOn)
+				getCenter().getPlayerClient().lockSeesaw(seesawValue);
+		} catch(Exception e) {
+			
+		}
         for (Tile tile : getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw
                     && tile.getContent().getValue() == seesawValue)
@@ -537,20 +505,16 @@ public abstract class AbstractPilot implements PilotInterface {
         } catch(CollisionAvoidedException e) {
         	//Do nothing, a collision cannot happen here
         }
-        objectBoolean = true;
         setTeamNumber(team);
-        if(isInGameModus()) {
-            try {
-                getCenter().getPlayerClient().foundObject();
-                getCenter().getPlayerClient().joinTeam(getTeamNumber());
-            } catch (Exception e) {
-                System.out.println("EXCEPTION! PILOTACTIONS!");
-            }
-        }
         try {
-        	travel(30, false);
+        	travel(30, false); //Eerst naar voor zodat de arm naar boven kan komen
         } catch(CollisionAvoidedException e) {
         	travelThirtyCollisionRollback();
+        }
+        try {
+        	travel(-40, true); //Daarna naar achter
+        } catch(CollisionAvoidedException e) {
+        	//Do nothing, a collision cannot happen here
         }
         readBarcodes = readBarcodesBackup;
 	}
@@ -571,13 +535,5 @@ public abstract class AbstractPilot implements PilotInterface {
         } catch(CollisionAvoidedException e) {
         	alignOnWhiteLineCollisionRollback();
         }
-	}
-	
-	public boolean getObjectBoolean() { //Nodig voor algoritme te signaleren
-		return objectBoolean;
-	}
-	
-	public void objectHandled() { //After object has been picked up and algorithm is aware of this, this is set to false so the algoritm stays correct
-		objectBoolean = false;
 	}
 }

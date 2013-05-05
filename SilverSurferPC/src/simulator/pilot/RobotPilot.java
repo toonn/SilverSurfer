@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import mapping.Seesaw;
 import mapping.Tile;
+import mazeAlgorithm.CollisionAvoidedException;
 import commands.Command;
 import commands.Sleep;
 import communication.Communicator;
@@ -35,7 +36,7 @@ public class RobotPilot extends AbstractPilot {
         communicator.sendCommand(Command.ALIGN_WHITE_LINE);
         super.travel(40);
         waitUntilDone();
-        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode()) {
+        if (readBarcodes && isExecutingBarcode()) {
             pilotActions.barcodeFound();
         }
         setBusyExecutingBarcode(false);
@@ -78,14 +79,6 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public int getUltraSensorValue() {
         return statusInfoBuffer.getLatestUltraSensorInfo();
-    }
-
-    @Override
-    public void permaStopReadingBarcodes() {
-        busy = true;
-        communicator.sendCommand(Command.PERMA_STOP_READING_BARCODES);
-        super.permaStopReadingBarcodes();
-        waitUntilDone();
     }
 
     @Override
@@ -139,7 +132,7 @@ public class RobotPilot extends AbstractPilot {
         communicator.sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
         super.travel(distance);
         waitUntilDone();
-        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
+        if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
     }
@@ -159,6 +152,12 @@ public class RobotPilot extends AbstractPilot {
 	
     @Override
 	public void crossOpenSeesaw(int seesawValue) {
+		try {
+			if(isInGameModus() && !getCenter().getPlayerClient().hasLockOnSeesaw(seesawValue))
+				getCenter().getPlayerClient().lockSeesaw(seesawValue);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
         busy = true;
         communicator.sendCommand(Command.CROSS_OPEN_SEESAW);
     	boolean readBarcodesBackup = readBarcodes;
@@ -169,16 +168,28 @@ public class RobotPilot extends AbstractPilot {
                     && tile.getContent().getValue() == seesawValue)
                 ((Seesaw) tile.getContent()).flipSeesaw();
         super.travel(60);
+		try {
+			if(isInGameModus())
+				getCenter().getPlayerClient().unlockSeesaw();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
         readBarcodes = readBarcodesBackup;
         super.travel(40);
         waitUntilDone();
-        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
+        if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
 	}
 
     @Override
 	public void crossClosedSeesaw(int seesawValue) {
+		try {
+			if(isInGameModus())
+				getCenter().getPlayerClient().lockSeesaw(seesawValue);
+		} catch(Exception e) {
+			
+		}
         busy = true;
         communicator.sendCommand(Command.CROSS_CLOSED_SEESAW);
         for (Tile tile : getMapGraphConstructed().getTiles())
@@ -191,7 +202,7 @@ public class RobotPilot extends AbstractPilot {
         readBarcodes = readBarcodesBackup;
         super.travel(40);
         waitUntilDone();
-        if (readBarcodes && !permaBarcodeStop && isExecutingBarcode())
+        if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
 	}
@@ -204,17 +215,9 @@ public class RobotPilot extends AbstractPilot {
     	readBarcodes = false;
         super.rotate(180);
         super.travel(-30);
-        objectBoolean = true;
         setTeamNumber(team);
-        if(isInGameModus()) {
-            try {
-                getCenter().getPlayerClient().foundObject();
-                getCenter().getPlayerClient().joinTeam(getTeamNumber());
-            } catch (Exception e) {
-                System.out.println("EXCEPTION! PILOTACTIONS!");
-            }
-        }
-        super.travel(30);
+        super.travel(30); //Eerst naar voor zodat de arm naar boven kan komen
+        super.travel(-40); //Daarna naar achter
         readBarcodes = readBarcodesBackup;
         waitUntilDone();
 	}

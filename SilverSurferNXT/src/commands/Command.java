@@ -14,7 +14,6 @@ public class Command {
 	public static final int CHECK_FOR_OBSTRUCTION = 9;
 	public static final int START_READING_BARCODES = 10; //Starts checking for barcodes and reading them when found
 	public static final int STOP_READING_BARCODES = 11; //Stops checking for barcodes and reading them when found
-	public static final int PERMA_STOP_READING_BARCODES = 12; //Hard stop for reading barcodes
     public static final int CROSS_OPEN_SEESAW = 13;
     public static final int CROSS_CLOSED_SEESAW = 14;
     public static final int PICKUP_OBJECT = 15;
