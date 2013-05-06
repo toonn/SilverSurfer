@@ -1,11 +1,20 @@
 package mq.communicator;
 
+import java.awt.Point;
+
+import mapping.MapGraph;
+import mapping.Tile;
 import peno.htttp.DisconnectReason;
 import peno.htttp.PlayerDetails;
 import peno.htttp.SpectatorHandler;
 import simulator.viewport.SimulatorPanel;
 
 public class SHandler implements SpectatorHandler {
+    private MapGraph mapGraphLoaded;
+
+    public SHandler(MapGraph mapGraphLoaded) {
+        this.mapGraphLoaded = mapGraphLoaded;
+    }
 
     @Override
     public void gameStarted() {
@@ -64,10 +73,20 @@ public class SHandler implements SpectatorHandler {
     @Override
     public void playerUpdate(PlayerDetails playerDetails, int playerNumber,
             long x, long y, double angle, boolean foundObject) {
-        y = -y; // Omdat y van onder
-                // naar boven wordt
-                // getelt
-        SimulatorPanel.updateRobotPositions(playerNumber - 1, (int) x, (int) y);
+        Point startMatrixPosition = getStartMatrixPosition(playerNumber);
+        SimulatorPanel.updateRobotPositions(playerNumber - 1,
+                (int) (x + startMatrixPosition.getX()),
+                (int) (-y + startMatrixPosition.getY()));
+    }
+
+    private Point getStartMatrixPosition(int playerNumber) {
+        Point startMatrixPosition = new Point();
+        for (Tile tile : mapGraphLoaded.getStartTiles())
+            if (tile.getContent().getValue() == playerNumber) {
+                startMatrixPosition.setLocation(tile.getPosition());
+                break;
+            }
+        return startMatrixPosition;
     }
 
     @Override
@@ -81,5 +100,4 @@ public class SHandler implements SpectatorHandler {
         // TODO Auto-generated method stub
 
     }
-
 }

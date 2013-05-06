@@ -140,7 +140,10 @@ public class APHandler implements PlayerHandler {
                                       // getelt
         if (angle == -90) // Voor ons is -90 == 270
             angle = 270;
-        pilot.getTeamPilot().setPosition(40 * x + 20, 40 * (-y) + 20);
+        Point startMatrixPosition = pilot.getStartMatrixPosition();
+        pilot.getTeamPilot().setPosition(
+                40 * (x + startMatrixPosition.getX()) + 20,
+                40 * (-y + startMatrixPosition.getY()) + 20);
         pilot.getTeamPilot().setAngle(angle);
     }
 
@@ -274,9 +277,8 @@ public class APHandler implements PlayerHandler {
         return null;
     }
 
-    @Override
-    public void teamDisconnected(String partnerID) {
-        // TODO Auto-generated method stub
-
-    }
+	@Override
+	public void teamDisconnected(String partnerID) {
+		
+	}
 }

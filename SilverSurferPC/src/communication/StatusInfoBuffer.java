@@ -14,9 +14,38 @@ public class StatusInfoBuffer {
     private boolean rightMotorMoving;
     private int rightMotorSpeed;
     private int barcode;
+    private boolean undidAction = false;
+    private double x;
+    private double y;
 
     public StatusInfoBuffer(RobotPilot pilot) {
         this.pilot = pilot;
+    }
+    
+    public double getX() {
+    	return x;
+    }
+    
+    public void setX(double x) {
+    	this.x = x;
+    }
+    
+    public double getY() {
+    	return y;
+    }
+    
+    public void setY(double y) {
+    	this.y = y;
+    }
+    
+    public boolean getUndidAction() {
+    	boolean returnValue = undidAction;
+    	undidAction = false;
+    	return returnValue;
+    }
+    
+    public void setUndidAction(boolean undidAction) {
+    	this.undidAction = undidAction;
     }
 
     public void robotDone() {

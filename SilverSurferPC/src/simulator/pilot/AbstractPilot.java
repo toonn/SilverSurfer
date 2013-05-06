@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import commands.Sleep;
 import mapping.MapGraph;
+import mapping.MapReader;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Seesaw;
@@ -45,8 +46,10 @@ public abstract class AbstractPilot implements PilotInterface {
     private int nbOfTilesBetweenAlign = 0;
     private int tilesBeforeAlign = nbOfTilesBetweenAlign;
     private Vector<Tile> allTileVector = new Vector<Tile>();
+    protected MapGraph mapGraphLoaded;
 
-    public AbstractPilot(int playerNumber, Point mapSize) {
+    public AbstractPilot(int playerNumber, MapGraph mapGraphLoaded,
+            Point mapSize) {
         if (playerNumber < 0 || playerNumber > 3) {
             this.playerNumber = -1;
         } else {
@@ -54,6 +57,7 @@ public abstract class AbstractPilot implements PilotInterface {
         }
         if (mapSize != null)
             this.mapSize = mapSize;
+        this.mapGraphLoaded = mapGraphLoaded;
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
         angle = 270;
         reset();
@@ -76,8 +80,13 @@ public abstract class AbstractPilot implements PilotInterface {
                 int angle = (int) getAngle();
                 if (angle == 270)
                     angle = -90;
-                getCenter().updatePosition((int) (getMatrixPosition().getX()),
-                        -(int) (getMatrixPosition().getY()), angle);
+                Point startMatrixPosition = getStartMatrixPosition();
+                getCenter()
+                        .updatePosition(
+                                (int) (getMatrixPosition().getX() - startMatrixPosition
+                                        .getX()),
+                                -(int) (getMatrixPosition().getY() - startMatrixPosition
+                                        .getY()), angle);
                 if (teamPilot.isActive()) {
                     ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
                     for (mapping.Tile tile : getMapGraphConstructed()
@@ -91,6 +100,16 @@ public abstract class AbstractPilot implements PilotInterface {
             } catch (IOException e) {
 
             }
+    }
+
+    public Point getStartMatrixPosition() {
+        Point startMatrixPosition = new Point();
+        for (Tile tile : mapGraphLoaded.getStartTiles())
+            if (tile.getContent().getValue() == getPlayerNumber()) {
+                startMatrixPosition.setLocation(tile.getPosition());
+                break;
+            }
+        return startMatrixPosition;
     }
 
     public DummyPilot getTeamPilot() {

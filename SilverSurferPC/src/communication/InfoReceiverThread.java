@@ -57,8 +57,10 @@ public class InfoReceiverThread extends Thread {
                     statusInfoBuffer.robotDone();
                 } else if (a.startsWith("[X]")) {
                     coordinates[0] = Double.valueOf(a.substring(4).trim());
+                    statusInfoBuffer.setX(coordinates[0]);
                 } else if (a.startsWith("[Y]")) {
                     coordinates[1] = Double.valueOf(a.substring(4).trim());
+                    statusInfoBuffer.setY(coordinates[1]);
                     statusInfoBuffer.setPosition(coordinates);
                 } else if (a.startsWith("[ANG]")) {
                     statusInfoBuffer.setAngle(Double.valueOf(a.substring(6)
@@ -69,7 +71,9 @@ public class InfoReceiverThread extends Thread {
                 } else if (a.startsWith("[CFO]")) {
                     statusInfoBuffer.setExtraUltrasonicSensorValue(Integer
                             .parseInt(a.substring(5).trim()));
-                }
+                } else if (a.startsWith("[UA]")) {
+                    statusInfoBuffer.setUndidAction(true);
+                } 
             } catch (final Exception e) {
                 System.out.println("Error in InfoReceiverThread.run()!");
                 e.printStackTrace();
