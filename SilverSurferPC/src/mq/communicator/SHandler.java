@@ -71,7 +71,7 @@ public class SHandler implements SpectatorHandler {
 	public void playerUpdate(PlayerDetails playerDetails, int playerNumber,
 			long x, long y, double angle, boolean foundObject) {
     	y = SimulatorPanel.getMapGraphLoadedSize().y - y; //Omdat y van onder naar boven wordt getelt
-		SimulatorPanel.updateRobotPositions(playerNumber, (int)x, (int)y);
+		SimulatorPanel.updateRobotPositions(playerNumber-1, (int)x, (int)y);
 	}
 
 	@Override
