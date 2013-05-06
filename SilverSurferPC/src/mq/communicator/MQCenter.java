@@ -2,6 +2,8 @@ package mq.communicator;
 
 import java.io.IOException;
 
+import mapping.MapGraph;
+
 import peno.htttp.Callback;
 import peno.htttp.PlayerClient;
 import peno.htttp.PlayerDetails;
@@ -19,13 +21,13 @@ import com.rabbitmq.client.ConnectionFactory;
  */
 public class MQCenter {
 
-	private static final String USERNAME = "guest";
-	private static final String PASSWORD = "guest";
-	private static final String VIRTUAL_HOST = "/";
-	private static final String HOST = "localhost";
-	private static final int PORT = 5672;
+    private static final String USERNAME = "guest";
+    private static final String PASSWORD = "guest";
+    private static final String VIRTUAL_HOST = "/";
+    private static final String HOST = "localhost";
+    private static final int PORT = 5672;
     private static final String GAMEID = "ABCDEFGHIJKLMNOPQ";
-	
+
     private Connection connection;
     private AbstractPilot pilot;
     private APHandler handler;
@@ -33,7 +35,7 @@ public class MQCenter {
     private PlayerClient client;
     private SpectatorClient sClient;
     private PlayerDetails playerDetails;
-    
+
     /**
      * Creates a MQcenter for a certain AbstractPilot that takes care of
      * channel/connection creation and the actual sending/monitoring for that
@@ -50,40 +52,44 @@ public class MQCenter {
      * @throws NullPointerException
      *             : if pilot == null.
      */
-    public MQCenter(AbstractPilot pilot, String playerID, SimulatorPanel panel) throws IllegalArgumentException {
+    public MQCenter(AbstractPilot pilot, String playerID, SimulatorPanel panel)
+            throws IllegalArgumentException {
         if (pilot == null)
             throw new IllegalArgumentException("Null is not a valid pilot!");
-        
+
         PlayerType type = PlayerType.VIRTUAL;
-        if(pilot instanceof RobotPilot)
+        if (pilot instanceof RobotPilot)
             type = PlayerType.PHYSICAL;
-        
+
         this.playerDetails = new PlayerDetails(playerID, type, 15, 20);
         this.pilot = pilot;
         handler = new APHandler(pilot, panel);
         try {
-        	connection = createConnection();
-        	client = new PlayerClient(connection, handler, GAMEID, playerDetails);
+            connection = createConnection();
+            client = new PlayerClient(connection, handler, GAMEID,
+                    playerDetails);
         } catch (IOException e) {
-        	System.out.println("There was a problem setting up the connection or the htttp-client.");
-        	e.printStackTrace();
+            System.out
+                    .println("There was a problem setting up the connection or the htttp-client.");
+            e.printStackTrace();
         }
     }
-    
-    public MQCenter() throws IllegalArgumentException {
-        sHandler = new SHandler();
+
+    public MQCenter(MapGraph mapGraphLoaded) throws IllegalArgumentException {
+        sHandler = new SHandler(mapGraphLoaded);
         try {
-        	connection = createConnection();
-        	sClient = new SpectatorClient(connection, sHandler, GAMEID);
-        	sClient.start();
+            connection = createConnection();
+            sClient = new SpectatorClient(connection, sHandler, GAMEID);
+            sClient.start();
         } catch (IOException e) {
-        	System.out.println("There was a problem setting up the connection or the htttp-client.");
-        	e.printStackTrace();
+            System.out
+                    .println("There was a problem setting up the connection or the htttp-client.");
+            e.printStackTrace();
         }
     }
 
     private static Connection createConnection() throws IOException {
-    	ConnectionFactory factory = new ConnectionFactory();
+        ConnectionFactory factory = new ConnectionFactory();
         factory.setUsername(USERNAME);
         factory.setPassword(PASSWORD);
         factory.setVirtualHost(VIRTUAL_HOST);
@@ -111,7 +117,7 @@ public class MQCenter {
     public APHandler getHandler() {
         return handler;
     }
-    
+
     public AbstractPilot getPilot() {
         return pilot;
     }
@@ -132,15 +138,18 @@ public class MQCenter {
      */
     public void join() throws IllegalStateException, IOException {
         client.join(new Callback<Void>() {
-        	 @Override
-             public void onFailure(Throwable t) {
-                 System.err.println("[HTTTP] Error connecting: " + t.getMessage());
-             }
+            @Override
+            public void onFailure(Throwable t) {
+                System.err.println("[HTTTP] Error connecting: "
+                        + t.getMessage());
+            }
 
-             @Override
-             public void onSuccess(Void result) {
-                 System.out.println("[HTTTP] Succesfully connected. Your player ID is " + getPlayerDetails().getPlayerID() + ".");
-             }
+            @Override
+            public void onSuccess(Void result) {
+                System.out
+                        .println("[HTTTP] Succesfully connected. Your player ID is "
+                                + getPlayerDetails().getPlayerID() + ".");
+            }
         });
     }
 
@@ -176,7 +185,8 @@ public class MQCenter {
      * @throws IllegalStateException
      *             : when no game is started etc.
      */
-    public void updatePosition(int x, int y, int angle) throws IllegalStateException, IOException {
+    public void updatePosition(int x, int y, int angle)
+            throws IllegalStateException, IOException {
         client.updatePosition(x, y, angle);
     }
 }

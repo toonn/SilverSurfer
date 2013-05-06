@@ -2,6 +2,7 @@ package simulator.pilot;
 
 import java.awt.Point;
 
+import mapping.MapGraph;
 import mapping.Seesaw;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
@@ -19,8 +20,8 @@ public class RobotPilot extends AbstractPilot {
     private boolean busy = false;
     private boolean ready = false;
 
-    public RobotPilot(int teamNumber, Point mapSize) {
-        super(teamNumber, mapSize);
+    public RobotPilot(int playerNumber, MapGraph mapGraphLoaded, Point mapSize) {
+        super(playerNumber, mapGraphLoaded, mapSize);
         statusInfoBuffer = new StatusInfoBuffer(this);
         communicator = new Communicator();
         try {
@@ -93,7 +94,8 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public void rotate(final double alpha) {
         busy = true;
-        communicator.sendCommand((int) (alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
+        communicator
+                .sendCommand((int) (alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
         super.rotate(alpha);
         waitUntilDone();
     }
@@ -129,7 +131,8 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public void travel(final double distance) {
         busy = true;
-        communicator.sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
+        communicator
+                .sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
         super.travel(distance);
         waitUntilDone();
         if (readBarcodes && isExecutingBarcode())
@@ -139,65 +142,68 @@ public class RobotPilot extends AbstractPilot {
 
     private void waitUntilDone() {
         while (busy)
-        	new Sleep().sleepFor(100);
+            new Sleep().sleepFor(100);
     }
-    
+
     public boolean isReady() {
-    	return ready;
+        return ready;
     }
-    
+
     public void setReady() {
-    	ready = true;
+        ready = true;
     }
-	
+
     @Override
-	public void crossOpenSeesaw(int seesawValue) {
-		try {
-			if(isInGameModus() && !getCenter().getPlayerClient().hasLockOnSeesaw(seesawValue))
-				getCenter().getPlayerClient().lockSeesaw(seesawValue);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+    public void crossOpenSeesaw(int seesawValue) {
+        try {
+            if (isInGameModus()
+                    && !getCenter().getPlayerClient().hasLockOnSeesaw(
+                            seesawValue))
+                getCenter().getPlayerClient().lockSeesaw(seesawValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         busy = true;
         communicator.sendCommand(Command.CROSS_OPEN_SEESAW);
-    	boolean readBarcodesBackup = readBarcodes;
-    	readBarcodes = false;
+        boolean readBarcodesBackup = readBarcodes;
+        readBarcodes = false;
         super.travel(60);
         for (Tile tile : getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw
                     && tile.getContent().getValue() == seesawValue)
                 ((Seesaw) tile.getContent()).flipSeesaw();
         super.travel(60);
-		try {
-			if(isInGameModus() && getCenter().getPlayerClient().hasLockOnSeesaw())
-				getCenter().getPlayerClient().unlockSeesaw();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            if (isInGameModus()
+                    && getCenter().getPlayerClient().hasLockOnSeesaw())
+                getCenter().getPlayerClient().unlockSeesaw();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         readBarcodes = readBarcodesBackup;
         super.travel(40);
         waitUntilDone();
         if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
-	}
+    }
 
     @Override
-	public void crossClosedSeesaw(int seesawValue) {
-		try {
-			if(isInGameModus())
-				getCenter().getPlayerClient().lockSeesaw(seesawValue);
-		} catch(Exception e) {
-			
-		}
+    public void crossClosedSeesaw(int seesawValue) {
+        try {
+            if (isInGameModus())
+                getCenter().getPlayerClient().lockSeesaw(seesawValue);
+        } catch (Exception e) {
+
+        }
         busy = true;
         communicator.sendCommand(Command.CROSS_CLOSED_SEESAW);
         for (Tile tile : getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw
                     && tile.getContent().getValue() == seesawValue)
                 ((Seesaw) tile.getContent()).flipSeesaw();
-    	boolean readBarcodesBackup = readBarcodes;
-    	readBarcodes = false;
+        boolean readBarcodesBackup = readBarcodes;
+        readBarcodes = false;
         super.travel(120);
         readBarcodes = readBarcodesBackup;
         super.travel(40);
@@ -205,20 +211,20 @@ public class RobotPilot extends AbstractPilot {
         if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
-	}
+    }
 
     @Override
-	public void pickupObject(int team) {
+    public void pickupObject(int team) {
         busy = true;
         communicator.sendCommand(Command.PICKUP_OBJECT);
-    	boolean readBarcodesBackup = readBarcodes;
-    	readBarcodes = false;
+        boolean readBarcodesBackup = readBarcodes;
+        readBarcodes = false;
         super.rotate(180);
         super.travel(-30);
         setTeamNumber(team);
-        super.travel(30); //Eerst naar voor zodat de arm naar boven kan komen
-        super.travel(-40); //Daarna naar achter
+        super.travel(30); // Eerst naar voor zodat de arm naar boven kan komen
+        super.travel(-40); // Daarna naar achter
         readBarcodes = readBarcodesBackup;
         waitUntilDone();
-	}
+    }
 }

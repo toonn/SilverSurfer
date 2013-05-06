@@ -175,12 +175,12 @@ public class SimulationPilot extends AbstractPilot {
         }
     }
 
-    private MapGraph mapGraphLoaded;
     private final double lightSensorDistanceFromAxis = 7.5;
     private final double ultrasonicSensorDistanceFromAxis = 4;
 
-    public SimulationPilot(int teamNumber, MapGraph mapGraphLoaded, Point mapSize) {
-        super(teamNumber, mapSize);
+    public SimulationPilot(int playerNumber, MapGraph mapGraphLoaded,
+            Point mapSize) {
+        super(playerNumber, mapGraphLoaded, mapSize);
         this.mapGraphLoaded = mapGraphLoaded;
     }
 
@@ -239,8 +239,8 @@ public class SimulationPilot extends AbstractPilot {
         Point2D robotDimensions = new Point2D.Double(20, 20);
         for (int[] robotPosition : SimulatorPanel.getAllRobotPositions()) {
             if (robotPosition[0] != getPlayerNumber()) {
-            	if(getPlayerNumber() == 0)
-            		System.out.println("robotPos: " + robotPosition[0]);
+                if (getPlayerNumber() == 0)
+                    System.out.println("robotPos: " + robotPosition[0]);
                 double x = (sizeTile() * robotPosition[1]) + sizeTile() / 2
                         - (robotDimensions.getX() / 2);
                 double y = (sizeTile() * robotPosition[2]) + sizeTile() / 2
@@ -263,7 +263,7 @@ public class SimulationPilot extends AbstractPilot {
 
         return 250;
     }
-   
+
     @Override
     public String getConsoleTag() {
         return "[SIMULATOR]";
@@ -400,9 +400,11 @@ public class SimulationPilot extends AbstractPilot {
     }
 
     @Override
-    public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
+    public void travel(final double distance, boolean ignoreCollision)
+            throws CollisionAvoidedException {
         super.travel(distance, ignoreCollision);
-        if (readBarcodes && mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode) {
+        if (readBarcodes
+                && mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode) {
             setBusyExecutingBarcode(true);
             pilotActions.barcodeFound();
             setBusyExecutingBarcode(false);
