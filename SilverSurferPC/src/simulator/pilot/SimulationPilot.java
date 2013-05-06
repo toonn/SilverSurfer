@@ -175,12 +175,12 @@ public class SimulationPilot extends AbstractPilot {
         }
     }
 
-    private MapGraph mapGraphLoaded;
     private final double lightSensorDistanceFromAxis = 7.5;
     private final double ultrasonicSensorDistanceFromAxis = 4;
 
-    public SimulationPilot(int teamNumber, MapGraph mapGraphLoaded, Point mapSize) {
-        super(teamNumber, mapSize);
+    public SimulationPilot(int playerNumber, MapGraph mapGraphLoaded,
+            Point mapSize) {
+        super(playerNumber, mapGraphLoaded, mapSize);
         this.mapGraphLoaded = mapGraphLoaded;
     }
 
@@ -261,7 +261,7 @@ public class SimulationPilot extends AbstractPilot {
 
         return 250;
     }
-   
+
     @Override
     public String getConsoleTag() {
         return "[SIMULATOR]";
@@ -398,9 +398,11 @@ public class SimulationPilot extends AbstractPilot {
     }
 
     @Override
-    public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
+    public void travel(final double distance, boolean ignoreCollision)
+            throws CollisionAvoidedException {
         super.travel(distance, ignoreCollision);
-        if (readBarcodes && mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode) {
+        if (readBarcodes
+                && mapGraphLoaded.getTile(getMatrixPosition()).getContent() instanceof Barcode) {
             setBusyExecutingBarcode(true);
             pilotActions.barcodeFound();
             setBusyExecutingBarcode(false);
