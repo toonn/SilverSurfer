@@ -15,6 +15,10 @@ public class SHandler implements SpectatorHandler {
     public SHandler(MapGraph mapGraphLoaded) {
         this.mapGraphLoaded = mapGraphLoaded;
     }
+    
+    public void setMap(MapGraph map) {
+    	mapGraphLoaded = map;
+    }
 
     @Override
     public void gameStarted() {
@@ -73,7 +77,7 @@ public class SHandler implements SpectatorHandler {
     @Override
     public void playerUpdate(PlayerDetails playerDetails, int playerNumber,
             long x, long y, double angle, boolean foundObject) {
-        Point startMatrixPosition = getStartMatrixPosition(playerNumber);
+        Point startMatrixPosition = getStartMatrixPosition(playerNumber - 1);
         SimulatorPanel.updateRobotPositions(playerNumber - 1,
                 (int) (x + startMatrixPosition.getX()),
                 (int) (-y + startMatrixPosition.getY()));
@@ -82,10 +86,8 @@ public class SHandler implements SpectatorHandler {
     private Point getStartMatrixPosition(int playerNumber) {
         Point startMatrixPosition = new Point();
         for (Tile tile : mapGraphLoaded.getStartTiles())
-            if (tile.getContent().getValue() == playerNumber) {
+            if (tile.getContent().getValue() == playerNumber)
                 startMatrixPosition.setLocation(tile.getPosition());
-                break;
-            }
         return startMatrixPosition;
     }
 

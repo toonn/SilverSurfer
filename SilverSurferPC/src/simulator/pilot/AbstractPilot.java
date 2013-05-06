@@ -13,6 +13,7 @@ import mapping.MapReader;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Seesaw;
+import mapping.StartBase;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
 import mazeAlgorithm.ExploreThread;
@@ -91,9 +92,8 @@ public abstract class AbstractPilot implements PilotInterface {
                     ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
                     for (mapping.Tile tile : getMapGraphConstructed()
                             .getTiles())
-                        vector.add(new peno.htttp.Tile((long) tile
-                                .getPosition().getX(), mapSize.y
-                                - (long) tile.getPosition().getY(), tile
+                        vector.add(new peno.htttp.Tile((long) (tile
+                                .getPosition().getX() - getStartMatrixPosition().getX()), -(long) (tile.getPosition().getY() - getStartMatrixPosition().getY()), tile
                                 .getToken()));
                     getCenter().getPlayerClient().sendTiles(vector);
                 }
@@ -106,6 +106,16 @@ public abstract class AbstractPilot implements PilotInterface {
         Point startMatrixPosition = new Point();
         for (Tile tile : mapGraphLoaded.getStartTiles())
             if (tile.getContent().getValue() == getPlayerNumber()) {
+                startMatrixPosition.setLocation(tile.getPosition());
+                break;
+            }
+        return startMatrixPosition;
+    }
+
+    public Point getTeammateStartMatrixPosition(int number) {
+        Point startMatrixPosition = new Point();
+        for (Tile tile : mapGraphLoaded.getStartTiles())
+            if (tile.getContent().getValue() == number) {
                 startMatrixPosition.setLocation(tile.getPosition());
                 break;
             }
@@ -257,6 +267,8 @@ public abstract class AbstractPilot implements PilotInterface {
     public void makeReadyToPlay() {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
+        Tile startTile = mapGraphConstructed.getTile(getMatrixPosition());
+        startTile.setContent(mapGraphLoaded.getTile(getMatrixPosition()).getContent());
     }
 
     protected boolean pointOnEdge(final double x, final double y) {

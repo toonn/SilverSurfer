@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 import mapping.MapGraph;
+import mapping.Tile;
 
 public class DummyPilot implements PilotInterface {
 

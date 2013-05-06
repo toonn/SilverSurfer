@@ -749,6 +749,7 @@ public class SimulatorPanel extends JPanel {
         stopSimulation();
         mapName = mapFile.getName();
         mapGraphLoaded = MapReader.createMapFromFile(mapFile);
+        center.getSHandler().setMap(mapGraphLoaded);
         mapGraphLoadedSize = mapGraphLoaded.getMapSize();
         createSims(amount);
     }

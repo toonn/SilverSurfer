@@ -445,9 +445,11 @@ public class MazeExplorer {
     }
 
 	private void goToTeammateOneStep() {
-		Point endTilePoint = new Point((int)(pilot.getTeamPilot().getPosition().x/40), (int)(pilot.getTeamPilot().getPosition().y/40));
+		Point endTilePoint = pilot.getTeamPilot().getMatrixPosition();
 		Tile endTile = pilot.getMapGraphConstructed().getTile(endTilePoint);
-
+		System.out.println("own: " +pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()).getPosition());
+		System.out.println("endtile: " +endTile.getPosition());
+		System.out.println("vectorsize: " +pilot.getAllTileVector().size());
 		ShortestPath shortestPath = new ShortestPath(this, pilot, pilot.getMapGraphConstructed().getTile(pilot.getMatrixPosition()), endTile, pilot.getAllTileVector());
 		if(collisionDetectionAmount >= collisionDetectionAmountLimit) {
 			collisionDetectionTileInQueue = null;

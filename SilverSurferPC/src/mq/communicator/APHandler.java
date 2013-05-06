@@ -5,8 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.Timer;
+
+import commands.Sleep;
 
 import mapping.Barcode;
 import mapping.MapReader;
@@ -37,6 +40,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void gameStarted() {
+    	new Sleep().sleepFor(new Random().nextInt(500));
         getPilot().startExploring();
         System.out.println("[HTTTP] Game started!");
     }
@@ -136,8 +140,6 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void teamPosition(long x, long y, double angle) {
-        y = pilot.getMapSize().y - y; // Omdat y van onder naar boven wordt
-                                      // getelt
         if (angle == -90) // Voor ons is -90 == 270
             angle = 270;
         Point startMatrixPosition = pilot.getStartMatrixPosition();
@@ -149,10 +151,17 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void teamTilesReceived(List<Tile> tiles) {
+    	Tile teammateStartTile = new Tile(0, 0, "baah");
+    	for(Tile tile : tiles) {
+    		if(tile.getX() == 0 && tile.getY() == 0)
+    			teammateStartTile = tile;
+    	}
+    	String[] info = teammateStartTile.getToken().split("\\.");
+    	int teammateNumber = Integer.valueOf(String.valueOf(info[2].charAt(1)));
         ArrayList<Tile> newList = new ArrayList<Tile>();
         for (Tile tile : tiles)
-            newList.add(new peno.htttp.Tile(tile.getX(), pilot.getMapSize().y
-                    - (long) tile.getY(), tile.getToken()));
+            newList.add(new peno.htttp.Tile((long)(tile.getX() + pilot.getTeammateStartMatrixPosition(teammateNumber).getX()), 
+                    (long) (-tile.getY()+pilot.getTeammateStartMatrixPosition(teammateNumber).getY()), tile.getToken()));
         pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(newList));
         searchForSimilarTiles(newList);
     }

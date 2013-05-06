@@ -118,6 +118,10 @@ public class MQCenter {
         return handler;
     }
 
+    public SHandler getSHandler() {
+        return sHandler;
+    }
+
     public AbstractPilot getPilot() {
         return pilot;
     }
