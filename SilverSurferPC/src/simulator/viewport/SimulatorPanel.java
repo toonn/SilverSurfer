@@ -17,6 +17,7 @@ import mapping.MapReader;
 import mapping.StartBase;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
+import mq.communicator.MQCenter;
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.DummyPilot;
 import simulator.pilot.PilotInterface;
@@ -39,10 +40,12 @@ public class SimulatorPanel extends JPanel {
     private String mapName = "/";
     private String view = "/";
     private MapGraph mapGraphLoaded;
-    private Point mapGraphLoadedSize;
+    private static Point mapGraphLoadedSize;
     private boolean realRobot = false;
     private boolean showingDummies = true;
     private boolean showingMap = true;
+    private MQCenter center;
+    private static Set<int[]> allRobotPositions = new HashSet<int[]>();
 
     public SimulatorPanel(Color[] teamColors) {
         initialization(teamColors);
@@ -55,6 +58,7 @@ public class SimulatorPanel extends JPanel {
         setLayout(simulatorLayout);
         simulatorLayout.setAutoCreateGaps(true);
         simulatorLayout.setAutoCreateContainerGaps(true);
+        center = new MQCenter();
     }
 
     private void createSims(int amount) {
@@ -534,6 +538,10 @@ public class SimulatorPanel extends JPanel {
     public String getView() {
     	return view;
     }
+    
+    public static Point getMapGraphLoadedSize() {
+    	return mapGraphLoadedSize;
+    }
 
     public int getSpeed() {
         return speed;
@@ -577,14 +585,27 @@ public class SimulatorPanel extends JPanel {
         return false;
     }
     
-    public static Set<Point2D> getAllRobotPositions() {
+    public static Set<int[]> getAllRobotPositions() {
         // TODO All robot positions via htttp?
-        Set<Point2D> allRobotPositions = new HashSet<Point2D>();
+        /*Set<Point2D> allRobotPositions = new HashSet<Point2D>();
         for (SimulationPilot pilot : simulatorPilots) {
             allRobotPositions.add(pilot.getMatrixPosition());
         }
-        allRobotPositions.add(principalPilot.getMatrixPosition());
+        allRobotPositions.add(principalPilot.getMatrixPosition());*/
 
         return allRobotPositions;
     }  
+    
+    public static void updateRobotPositions(int playerNumber, int x, int y) {
+        Set<int[]> newAllRobotPositions = new HashSet<int[]>();
+        int[] newPosition = new int[3];
+        newPosition[0] = playerNumber;
+        newPosition[1] = x;
+        newPosition[2] = y;
+        newAllRobotPositions.add(newPosition);
+    	for(int[] position : allRobotPositions)
+    		if(position[0] != playerNumber)
+    			newAllRobotPositions.add(position);
+    	allRobotPositions = newAllRobotPositions;
+    }
 }

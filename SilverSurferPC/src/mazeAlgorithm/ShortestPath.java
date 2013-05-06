@@ -120,7 +120,7 @@ public class ShortestPath {
 	protected void goShortestPath1Tile(boolean specialBarcodeCase) throws CollisionAvoidedException { //Specialbarcodecase: ga tile per tile en blijf barcodes lezen elke tile ipv alleen laatste tile
 		if(!pathCalculated)
 			calculatePath();
-
+        
 		if (tilesPath.size() == 1 || quit) {
 			for (final Object tile : tiles)
 				((Tile) tile).resetCost();

@@ -237,11 +237,11 @@ public class SimulationPilot extends AbstractPilot {
 
         // TODO htttp robotdimensions?
         Point2D robotDimensions = new Point2D.Double(20, 20);
-        for (Point2D robotPosition : SimulatorPanel.getAllRobotPositions()) {
-            if (!robotPosition.equals(getMatrixPosition())) {
-                double x = (sizeTile() * robotPosition.getX()) + sizeTile() / 2
+        for (int[] robotPosition : SimulatorPanel.getAllRobotPositions()) {
+            if (robotPosition[0] != getPlayerNumber()) {
+                double x = (sizeTile() * robotPosition[1]) + sizeTile() / 2
                         - (robotDimensions.getX() / 2);
-                double y = (sizeTile() * robotPosition.getY()) + sizeTile() / 2
+                double y = (sizeTile() * robotPosition[2]) + sizeTile() / 2
                         - (robotDimensions.getY() / 2);
                 obstacles.add(new Rectangle2D.Double(x, y, robotDimensions
                         .getX(), robotDimensions.getY()));

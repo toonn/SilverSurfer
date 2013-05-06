@@ -6,6 +6,7 @@ import peno.htttp.Callback;
 import peno.htttp.PlayerClient;
 import peno.htttp.PlayerDetails;
 import peno.htttp.PlayerType;
+import peno.htttp.SpectatorClient;
 import simulator.pilot.AbstractPilot;
 import simulator.pilot.RobotPilot;
 import simulator.viewport.SimulatorPanel;
@@ -23,12 +24,14 @@ public class MQCenter {
 	private static final String VIRTUAL_HOST = "/";
 	private static final String HOST = "localhost";
 	private static final int PORT = 5672;
-    private static final String GAMEID = "ABC";
+    private static final String GAMEID = "ABCDEFGHIJKLMNOPQ";
 	
     private Connection connection;
     private AbstractPilot pilot;
     private APHandler handler;
+    private SHandler sHandler;
     private PlayerClient client;
+    private SpectatorClient sClient;
     private PlayerDetails playerDetails;
     
     /**
@@ -61,6 +64,18 @@ public class MQCenter {
         try {
         	connection = createConnection();
         	client = new PlayerClient(connection, handler, GAMEID, playerDetails);
+        } catch (IOException e) {
+        	System.out.println("There was a problem setting up the connection or the htttp-client.");
+        	e.printStackTrace();
+        }
+    }
+    
+    public MQCenter() throws IllegalArgumentException {
+        sHandler = new SHandler();
+        try {
+        	connection = createConnection();
+        	sClient = new SpectatorClient(connection, sHandler, GAMEID);
+        	sClient.start();
         } catch (IOException e) {
         	System.out.println("There was a problem setting up the connection or the htttp-client.");
         	e.printStackTrace();
