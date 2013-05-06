@@ -47,11 +47,6 @@ public class APHandler implements PlayerHandler {
     }
 
     @Override
-    public void gamePaused() {
-        System.out.println("[HTTTP] Game paused!");
-    }
-
-    @Override
     public void playerJoined(String playerID) {
         System.out.println("[HTTTP] " + playerID + " has joined the game!");
     }
@@ -63,17 +58,20 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void playerDisconnected(String playerID, DisconnectReason reason) {
-        System.out.println("[HTTTP] " + playerID + " is disconnected with reason: " + reason + "!");
+        System.out.println("[HTTTP] " + playerID
+                + " is disconnected with reason: " + reason + "!");
     }
 
     @Override
     public void playerReady(String playerID, boolean isReady) {
-        System.out.println("[HTTTP] " + playerID + " is ready: " + isReady + "!");
+        System.out.println("[HTTTP] " + playerID + " is ready: " + isReady
+                + "!");
     }
 
     @Override
     public void playerFoundObject(String playerID, int playerNumber) {
-        System.out.println("[HTTTP] Player " + (playerNumber - 1) + " (" + playerID + ") has found his object!");
+        System.out.println("[HTTTP] Player " + (playerNumber - 1) + " ("
+                + playerID + ") has found his object!");
     }
 
     @Override
@@ -89,72 +87,75 @@ public class APHandler implements PlayerHandler {
                 + objectNumber + ".");
         panel.makeReadyToPlay(pilot);
         panel.resetAllPaths();
-        
+
         try {
-        	Thread.sleep(5000); //Nodig, anders vreemde exception in HTTTP (te snel of zoiets...)
-        } catch(Exception e) {
-        	
+            Thread.sleep(5000); // Nodig, anders vreemde exception in HTTTP (te
+                                // snel of zoiets...)
+        } catch (Exception e) {
+
         }
-        
-    	if(pilot instanceof RobotPilot) {
+
+        if (pilot instanceof RobotPilot) {
             int checkIfReadyFPS = 50;
             ActionListener checkIfReady = new ActionListener() {
 
                 @Override
                 public void actionPerformed(final ActionEvent arg0) {
-                	checkIfReady();
+                    checkIfReady();
                 }
             };
             readyTimer = new Timer(1000 / checkIfReadyFPS, checkIfReady);
             readyTimer.start();
-    	}
-    	else
-    		try {
-    			pilot.getCenter().setReady(true);
-    		} catch (Exception e) {
-    			System.err.println("Error with set ready!");
-    			e.printStackTrace();
-    		}
+        } else
+            try {
+                pilot.getCenter().setReady(true);
+            } catch (Exception e) {
+                System.err.println("Error with set ready!");
+                e.printStackTrace();
+            }
     }
-    
+
     private void checkIfReady() {
-    	if(((RobotPilot)pilot).isReady()) {
-    		try {
-    			pilot.getCenter().setReady(true);
-    		} catch (Exception e) {
-    			System.err.println("Error with set ready!");
-    			e.printStackTrace();
-    		}
-    		readyTimer.stop();
-    	}
+        if (((RobotPilot) pilot).isReady()) {
+            try {
+                pilot.getCenter().setReady(true);
+            } catch (Exception e) {
+                System.err.println("Error with set ready!");
+                e.printStackTrace();
+            }
+            readyTimer.stop();
+        }
     }
 
     @Override
     public void teamConnected(String partnerID) {
-        System.out.println("[HTTTP] Partner (" + partnerID + ") has connected.");
+        System.out
+                .println("[HTTTP] Partner (" + partnerID + ") has connected.");
         pilot.activateTeamPilot(partnerID);
     }
 
     @Override
-	public void teamPosition(long x, long y, double angle) {
-    	y = pilot.getMapSize().y - y; //Omdat y van onder naar boven wordt getelt
-    	if(angle == -90) //Voor ons is -90 == 270
-    		angle = 270;
-    	pilot.getTeamPilot().setPosition(40*x + 20, 40*y + 20);
-    	pilot.getTeamPilot().setAngle(angle);
+    public void teamPosition(long x, long y, double angle) {
+        y = pilot.getMapSize().y - y; // Omdat y van onder naar boven wordt
+                                      // getelt
+        if (angle == -90) // Voor ons is -90 == 270
+            angle = 270;
+        pilot.getTeamPilot().setPosition(40 * x + 20, 40 * (-y) + 20);
+        pilot.getTeamPilot().setAngle(angle);
     }
 
     @Override
     public void teamTilesReceived(List<Tile> tiles) {
-    	ArrayList<Tile> newList = new ArrayList<Tile>();
-    	for(Tile tile : tiles)
-    		newList.add(new peno.htttp.Tile(tile.getX(), pilot.getMapSize().y - (long)tile.getY(), tile.getToken()));
+        ArrayList<Tile> newList = new ArrayList<Tile>();
+        for (Tile tile : tiles)
+            newList.add(new peno.htttp.Tile(tile.getX(), pilot.getMapSize().y
+                    - (long) tile.getY(), tile.getToken()));
         pilot.getTeamPilot().setMap(MapReader.createMapFromTiles(newList));
         searchForSimilarTiles(newList);
     }
-    
+
     private void searchForSimilarTiles(List<Tile> tiles) {
-    	Point point1 = null, point2 = null, ourPoint1 = null, ourPoint2 = null;
+        Point point1 = null, point2 = null, ourPoint1 = null, ourPoint2 = null;
         String[] info;
         String ori1 = null;
         String ori2 = null;
@@ -184,88 +185,98 @@ public class APHandler implements PlayerHandler {
                             if (tileNZ.getX() == pointN.x
                                     && tileNZ.getY() == pointN.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
-                                            .equals("V"))))
-                                {point2 = pointN;
-                            	ori2 = infoTileNZ[1];}
-                            else if (tileNZ.getX() == pointZ.x
+                                            .equals("V")))) {
+                                point2 = pointN;
+                                ori2 = infoTileNZ[1];
+                            } else if (tileNZ.getX() == pointZ.x
                                     && tileNZ.getY() == pointZ.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
-                                            .equals("V"))))
-                                {point2 = pointZ;
-                            	ori2 = infoTileNZ[1];}
-                            else if (tileNZ.getX() == pointE.x
+                                            .equals("V")))) {
+                                point2 = pointZ;
+                                ori2 = infoTileNZ[1];
+                            } else if (tileNZ.getX() == pointE.x
                                     && tileNZ.getY() == pointE.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
-                                            .equals("V"))))
-                                {point2 = pointE;
-                            	ori2 = infoTileNZ[1];}
-                            else if (tileNZ.getX() == pointW.x
+                                            .equals("V")))) {
+                                point2 = pointE;
+                                ori2 = infoTileNZ[1];
+                            } else if (tileNZ.getX() == pointW.x
                                     && tileNZ.getY() == pointW.y
                                     && (infoTileNZ[0].equals("Seesaw") || (infoTileNZ.length == 3 && infoTileNZ[2]
-                                            .equals("V"))))
-                                {point2 = pointW;
-                            	ori2 = infoTileNZ[1];}
+                                            .equals("V")))) {
+                                point2 = pointW;
+                                ori2 = infoTileNZ[1];
+                            }
                         }
 
                         for (mapping.Tile ourTileNZ : ourTile
                                 .getReachableNeighboursIgnoringSeesaw()) {
                             if (ourTileNZ.getContent() instanceof Seesaw
-                                    || ourTileNZ.getContent() instanceof TreasureObject){
+                                    || ourTileNZ.getContent() instanceof TreasureObject) {
                                 ourPoint2 = ourTileNZ.getPosition();
-                            	ori1 = ourTileNZ.getToken().split("\\.")[1];}
+                                ori1 = ourTileNZ.getToken().split("\\.")[1];
+                            }
                         }
-                        
+
                     }
                 }
         }
-        if (point1 != null && point2 != null && ourPoint1 != null && ourPoint2 != null) {
-        	ori = findOrientationEquivalentWithOurNorth(ori1, ori2);
-            pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1, ourPoint2, point1 , point2, ori);
+        if (point1 != null && point2 != null && ourPoint1 != null
+                && ourPoint2 != null) {
+            ori = findOrientationEquivalentWithOurNorth(ori1, ori2);
+            pilot.getMapGraphConstructed().mergeMap(tiles, ourPoint1,
+                    ourPoint2, point1, point2, ori);
             pilot.fillVectorMapgraphTiles();
         }
     }
-    
-	private Orientation findOrientationEquivalentWithOurNorth(String ori1,
-			String ori2) {
-		if (ori1.equals(ori2)) {
-			return Orientation.NORTH;
-		}
-		if (ori1.equals("N")) {
-			if (ori2.equals("S")) {
-				return Orientation.SOUTH;
-			} else if (ori2 == "W") {
-				return Orientation.WEST;
-			} else if (ori2 == "E") {
-				return Orientation.EAST;
-			}
-		}
-		if (ori1.equals("E")) {
-			if (ori2.equals("S")) {
-				return Orientation.EAST;
-			} else if (ori2.equals("W")) {
-				return Orientation.SOUTH;
-			} else if (ori2.equals("N")) {
-				return Orientation.WEST;
-			}
-		}
-		if (ori1.equals("S")) {
-			if (ori2.equals("N")) {
-				return Orientation.SOUTH;
-			} else if (ori2.equals("W")) {
-				return Orientation.EAST;
-			} else if (ori2.equals("E")) {
-				return Orientation.WEST;
-			}
-		}
-		if (ori1.equals("W")) {
-			if (ori2.equals("S")) {
-				return Orientation.WEST;
-			} else if (ori2.equals("N")) {
-				return Orientation.EAST;
-			} else if (ori2.equals("E")) {
-				return Orientation.SOUTH;
-			}
-		}
-		return null;
-	} 
+
+    private Orientation findOrientationEquivalentWithOurNorth(String ori1,
+            String ori2) {
+        if (ori1.equals(ori2)) {
+            return Orientation.NORTH;
+        }
+        if (ori1.equals("N")) {
+            if (ori2.equals("S")) {
+                return Orientation.SOUTH;
+            } else if (ori2 == "W") {
+                return Orientation.WEST;
+            } else if (ori2 == "E") {
+                return Orientation.EAST;
+            }
+        }
+        if (ori1.equals("E")) {
+            if (ori2.equals("S")) {
+                return Orientation.EAST;
+            } else if (ori2.equals("W")) {
+                return Orientation.SOUTH;
+            } else if (ori2.equals("N")) {
+                return Orientation.WEST;
+            }
+        }
+        if (ori1.equals("S")) {
+            if (ori2.equals("N")) {
+                return Orientation.SOUTH;
+            } else if (ori2.equals("W")) {
+                return Orientation.EAST;
+            } else if (ori2.equals("E")) {
+                return Orientation.WEST;
+            }
+        }
+        if (ori1.equals("W")) {
+            if (ori2.equals("S")) {
+                return Orientation.WEST;
+            } else if (ori2.equals("N")) {
+                return Orientation.EAST;
+            } else if (ori2.equals("E")) {
+                return Orientation.SOUTH;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void teamDisconnected(String partnerID) {
+        // TODO Auto-generated method stub
+
+    }
 }

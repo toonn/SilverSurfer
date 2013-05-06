@@ -21,7 +21,7 @@ import simulator.viewport.SimulatorPanel;
 
 public abstract class AbstractPilot implements PilotInterface {
 
-    private Point mapSize; //Startend van 0
+    private Point mapSize; // Startend van 0
     private int playerNumber = -1;
     private int teamNumber = -1;
     private MapGraph mapGraphConstructed;
@@ -52,55 +52,60 @@ public abstract class AbstractPilot implements PilotInterface {
         } else {
             this.playerNumber = playerNumber;
         }
-        if(mapSize != null)
-        	this.mapSize = mapSize;
+        if (mapSize != null)
+            this.mapSize = mapSize;
         position = new Point2D.Double(sizeTile() / 2, sizeTile() / 2);
         angle = 270;
         reset();
     }
-    
+
     public void activateTeamPilot(String teamMemberName) {
-    	teamMemberFound = true;
-    	this.teamMemberName = teamMemberName;
-    	teamPilot.activate();
-    	teamPilot.setTeamNumber(teamNumber);
+        teamMemberFound = true;
+        this.teamMemberName = teamMemberName;
+        teamPilot.activate();
+        teamPilot.setTeamNumber(teamNumber);
     }
-    
+
     public Point getMapSize() {
-    	return mapSize;
+        return mapSize;
     }
-    
+
     public void updateTilesAndPosition() {
-    	if(gameOn)
-    		try {
-    			int angle = (int)getAngle();
-    			if(angle == 270)
-    				angle = -90;
-    			getCenter().updatePosition((int)(getPosition().x/40), mapSize.y - (int)(getPosition().y/40), angle);
-    			if(teamPilot.isActive()) {
-    				ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
-    				for (mapping.Tile tile : getMapGraphConstructed().getTiles())
-    					vector.add(new peno.htttp.Tile((long) tile.getPosition().getX(), mapSize.y - (long)tile.getPosition().getY(), tile.getToken()));
-    				getCenter().getPlayerClient().sendTiles(vector);
-    			}
-    		} catch(IOException e) {
-			
-    		}
+        if (gameOn)
+            try {
+                int angle = (int) getAngle();
+                if (angle == 270)
+                    angle = -90;
+                getCenter().updatePosition((int) (getMatrixPosition().getX()),
+                        -(int) (getMatrixPosition().getY()), angle);
+                if (teamPilot.isActive()) {
+                    ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
+                    for (mapping.Tile tile : getMapGraphConstructed()
+                            .getTiles())
+                        vector.add(new peno.htttp.Tile((long) tile
+                                .getPosition().getX(), mapSize.y
+                                - (long) tile.getPosition().getY(), tile
+                                .getToken()));
+                    getCenter().getPlayerClient().sendTiles(vector);
+                }
+            } catch (IOException e) {
+
+            }
     }
-    
+
     public DummyPilot getTeamPilot() {
-    	return teamPilot;
+        return teamPilot;
     }
-    
+
     public int getTilesBeforeAlign() {
-    	return tilesBeforeAlign;
+        return tilesBeforeAlign;
     }
-    
+
     public void decreaseTilesBeforeAlign() {
-    	if(tilesBeforeAlign == 0)
-    		tilesBeforeAlign = nbOfTilesBetweenAlign;
-    	else
-    		tilesBeforeAlign--;
+        if (tilesBeforeAlign == 0)
+            tilesBeforeAlign = nbOfTilesBetweenAlign;
+        else
+            tilesBeforeAlign--;
     }
 
     public void alignOnWhiteLine() throws CollisionAvoidedException {
@@ -164,7 +169,7 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     private int getRotateSleepTime() {
-    	return 5 - speed;
+        return 5 - speed;
     }
 
     public Vector<Tile> getSeesawBarcodeTiles() {
@@ -199,7 +204,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private int getTravelSleepTime() {
         switch (speed) {
         case -2:
-        	return 100;
+            return 100;
         case -1:
             return 50;
         case 1:
@@ -211,7 +216,7 @@ public abstract class AbstractPilot implements PilotInterface {
         case 4:
             return 3;
         case 5:
-        	return 1;
+            return 1;
         }
         return 0;
     }
@@ -289,11 +294,16 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void setObstructionOrTile() {
-        final Orientation currentOrientation = Orientation.calculateOrientation(getAngle());
+        final Orientation currentOrientation = Orientation
+                .calculateOrientation(getAngle());
         if (checkForObstruction())
-            getMapGraphConstructed().getTile(getMatrixPosition()).getEdgeAt(currentOrientation).setObstruction(Obstruction.WALL);
+            getMapGraphConstructed().getTile(getMatrixPosition())
+                    .getEdgeAt(currentOrientation)
+                    .setObstruction(Obstruction.WALL);
         else {
-            getMapGraphConstructed().getTile(getMatrixPosition()).getEdgeAt(currentOrientation).setObstruction(Obstruction.WHITE_LINE);
+            getMapGraphConstructed().getTile(getMatrixPosition())
+                    .getEdgeAt(currentOrientation)
+                    .setObstruction(Obstruction.WHITE_LINE);
             Point nextPoint = currentOrientation.getNext(getMatrixPosition());
             if (mapGraphConstructed.getTile(nextPoint) == null)
                 getMapGraphConstructed().addTile(nextPoint);
@@ -323,13 +333,14 @@ public abstract class AbstractPilot implements PilotInterface {
      */
     @Override
     public void setTeamNumber(int teamNumber) {
-    	this.teamNumber = teamNumber;
+        this.teamNumber = teamNumber;
     }
 
     public void setupForGame(SimulatorPanel panel) {
         if (isInGameModus()) {
             try {
-            	playerName = "SILVER" + getPlayerNumber() + "_" + System.currentTimeMillis();
+                playerName = "SILVER" + getPlayerNumber() + "_"
+                        + System.currentTimeMillis();
                 center = new MQCenter(this, playerName, panel);
                 center.join();
             } catch (IllegalStateException e) {
@@ -362,196 +373,203 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void fillVectorMapgraphTiles() {
-    	for(Tile tile : mapGraphConstructed.getTiles()) {
-    		boolean contains = false;
-    		for(Tile tileInVector : allTileVector)
-    			if(tileInVector.getPosition().x == tile.getPosition().x && tileInVector.getPosition().y == tile.getPosition().y)
-    				contains = true;
-    		if(!contains)
-    			allTileVector.add(tile);
-    	}
-    }
-    
-    public Vector<Tile> getAllTileVector() {
-    	return allTileVector;
-    }
-
-	public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
-		int distTraveled = 0;
-		double currentX = getPosition().getX();
-		double currentY = getPosition().getY();
-		double x;
-		double y;
-		Orientation travelOrientation = Orientation
-				.calculateOrientation(getAngle());
-		if (distance < 0) {
-			travelOrientation = travelOrientation.getOppositeOrientation();
-		}
-		for (int i = 1; i <= Math.abs(distance); i++) {
-			if (travelOrientation == Orientation.NORTH) {
-				x = currentX;
-				y = currentY - i;
-			} else if (travelOrientation == Orientation.SOUTH) {
-				x = currentX;
-				y = currentY + i;
-			} else if (travelOrientation == Orientation.EAST) {
-				x = currentX + i;
-				y = currentY;
-			} else {
-				x = currentX - i;
-				y = currentY;
-			}
-			setPosition(x, y);
-			distTraveled++;
-			new Sleep().sleepFor(getTravelSleepTime());
-			
-			//Houd geen rekening als robot achteruit rijdt (kijkt de verkeerde richting uit)
-			//op zich gewoon negeren want das alleen als het object wordt opgepakt en dan kan er geen crash zijn
-			if (!ignoreCollision && crashImminent(distance-distTraveled)) {
-				currentX = x;
-				currentY = y;
-				for (int j = 1; j <= Math.abs(distTraveled); j++) {
-					if (travelOrientation == Orientation.NORTH) {
-						x = currentX;
-						y = currentY + j;
-					} else if (travelOrientation == Orientation.SOUTH) {
-						x = currentX;
-						y = currentY - j;
-					} else if (travelOrientation == Orientation.EAST) {
-						x = currentX - j;
-						y = currentY;
-					} else {
-						x = currentX + j;
-						y = currentY;
-					}
-					setPosition(x, y);
-					new Sleep().sleepFor(getTravelSleepTime());
-				}
-				throw new CollisionAvoidedException("Near-collision detected!");
-			}
-		}
-	}
-
-	protected boolean crashImminent(double distance) {
-		return getUltraSensorValue() <= distance;
-	}
-	
-	public boolean hasWon() {
-		return won;
-	}
-	
-	public void setWon() {
-		won = true;
-	}
-	
-	public void crossOpenSeesaw(int seesawValue) {
-		try {
-			if(gameOn && !getCenter().getPlayerClient().hasLockOnSeesaw(seesawValue))
-				getCenter().getPlayerClient().lockSeesaw(seesawValue);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-    	boolean readBarcodesBackup = readBarcodes;
-    	readBarcodes = false;
-    	try {
-        	travel(30, true);
-    	} catch(CollisionAvoidedException e) {
-        	//Do nothing, a collision cannot happen here
-    		//Ok, it can, but fuck it, stupid HTTTP
-    		//Keep trying to cross, it will be futile but you never know
-    		travelThirtyCollisionRollback();
-    	}
-    	try {
-        	travel(30, true);
-    	} catch(CollisionAvoidedException e) {
-        	//Do nothing, a collision cannot happen here
-    		//Ok, it can, but fuck it, stupid HTTTP
-    		//Keep trying to cross, it will be futile but you never know
-    		travelThirtyCollisionRollback();
-    	}
-    	for (Tile tile : getMapGraphConstructed().getTiles())
-    		if (tile.getContent() instanceof Seesaw
-    				&& tile.getContent().getValue() == seesawValue)
-    			((Seesaw) tile.getContent()).flipSeesaw();
-    	try {
-    		travel(30, true);
-    	} catch(CollisionAvoidedException e) {
-        	//Do nothing, a collision cannot happen here
-    		//Ok, it can, but fuck it, stupid HTTTP
-    		//Keep trying to cross, it will be futile but you never know
-    		travelThirtyCollisionRollback();
-    	}
-    	try {
-        	travel(30, false);
-    	} catch(CollisionAvoidedException e) {
-    		travelThirtyCollisionRollback();
-    	}
-        readBarcodes = readBarcodesBackup;
-		try {
-			if(gameOn && getCenter().getPlayerClient().hasLockOnSeesaw())
-				getCenter().getPlayerClient().unlockSeesaw();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-        try {
-        	alignOnWhiteLine();
-        } catch(CollisionAvoidedException e) {
-        	alignOnWhiteLineCollisionRollback();
+        for (Tile tile : mapGraphConstructed.getTiles()) {
+            boolean contains = false;
+            for (Tile tileInVector : allTileVector)
+                if (tileInVector.getPosition().x == tile.getPosition().x
+                        && tileInVector.getPosition().y == tile.getPosition().y)
+                    contains = true;
+            if (!contains)
+                allTileVector.add(tile);
         }
-	}
-	
-	public void crossClosedSeesaw(int seesawValue) {
-		try {
-			if(gameOn)
-				getCenter().getPlayerClient().lockSeesaw(seesawValue);
-		} catch(Exception e) {
-			
-		}
+    }
+
+    public Vector<Tile> getAllTileVector() {
+        return allTileVector;
+    }
+
+    public void travel(final double distance, boolean ignoreCollision)
+            throws CollisionAvoidedException {
+        int distTraveled = 0;
+        double currentX = getPosition().getX();
+        double currentY = getPosition().getY();
+        double x;
+        double y;
+        Orientation travelOrientation = Orientation
+                .calculateOrientation(getAngle());
+        if (distance < 0) {
+            travelOrientation = travelOrientation.getOppositeOrientation();
+        }
+        for (int i = 1; i <= Math.abs(distance); i++) {
+            if (travelOrientation == Orientation.NORTH) {
+                x = currentX;
+                y = currentY - i;
+            } else if (travelOrientation == Orientation.SOUTH) {
+                x = currentX;
+                y = currentY + i;
+            } else if (travelOrientation == Orientation.EAST) {
+                x = currentX + i;
+                y = currentY;
+            } else {
+                x = currentX - i;
+                y = currentY;
+            }
+            setPosition(x, y);
+            distTraveled++;
+            new Sleep().sleepFor(getTravelSleepTime());
+
+            // Houd geen rekening als robot achteruit rijdt (kijkt de verkeerde
+            // richting uit)
+            // op zich gewoon negeren want das alleen als het object wordt
+            // opgepakt en dan kan er geen crash zijn
+            if (!ignoreCollision && crashImminent(distance - distTraveled)) {
+                currentX = x;
+                currentY = y;
+                for (int j = 1; j <= Math.abs(distTraveled); j++) {
+                    if (travelOrientation == Orientation.NORTH) {
+                        x = currentX;
+                        y = currentY + j;
+                    } else if (travelOrientation == Orientation.SOUTH) {
+                        x = currentX;
+                        y = currentY - j;
+                    } else if (travelOrientation == Orientation.EAST) {
+                        x = currentX - j;
+                        y = currentY;
+                    } else {
+                        x = currentX + j;
+                        y = currentY;
+                    }
+                    setPosition(x, y);
+                    new Sleep().sleepFor(getTravelSleepTime());
+                }
+                throw new CollisionAvoidedException("Near-collision detected!");
+            }
+        }
+    }
+
+    protected boolean crashImminent(double distance) {
+        return getUltraSensorValue() <= distance;
+    }
+
+    public boolean hasWon() {
+        return won;
+    }
+
+    public void setWon() {
+        won = true;
+    }
+
+    public void crossOpenSeesaw(int seesawValue) {
+        try {
+            if (gameOn
+                    && !getCenter().getPlayerClient().hasLockOnSeesaw(
+                            seesawValue))
+                getCenter().getPlayerClient().lockSeesaw(seesawValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean readBarcodesBackup = readBarcodes;
+        readBarcodes = false;
+        try {
+            travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        try {
+            travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        for (Tile tile : getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw
+                    && tile.getContent().getValue() == seesawValue)
+                ((Seesaw) tile.getContent()).flipSeesaw();
+        try {
+            travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        try {
+            travel(30, false);
+        } catch (CollisionAvoidedException e) {
+            travelThirtyCollisionRollback();
+        }
+        readBarcodes = readBarcodesBackup;
+        try {
+            if (gameOn && getCenter().getPlayerClient().hasLockOnSeesaw())
+                getCenter().getPlayerClient().unlockSeesaw();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            alignOnWhiteLine();
+        } catch (CollisionAvoidedException e) {
+            alignOnWhiteLineCollisionRollback();
+        }
+    }
+
+    public void crossClosedSeesaw(int seesawValue) {
+        try {
+            if (gameOn)
+                getCenter().getPlayerClient().lockSeesaw(seesawValue);
+        } catch (Exception e) {
+
+        }
         for (Tile tile : getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw
                     && tile.getContent().getValue() == seesawValue)
                 ((Seesaw) tile.getContent()).flipSeesaw();
         crossOpenSeesaw(seesawValue);
-	}
-	
-	public void pickupObject(int team) {
-    	boolean readBarcodesBackup = readBarcodes;
-    	readBarcodes = false;
+    }
+
+    public void pickupObject(int team) {
+        boolean readBarcodesBackup = readBarcodes;
+        readBarcodes = false;
         rotate(180);
         try {
-        	travel(-30, true);
-        } catch(CollisionAvoidedException e) {
-        	//Do nothing, a collision cannot happen here
+            travel(-30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
         }
         setTeamNumber(team);
         try {
-        	travel(30, false); //Eerst naar voor zodat de arm naar boven kan komen
-        } catch(CollisionAvoidedException e) {
-        	travelThirtyCollisionRollback();
+            travel(30, false); // Eerst naar voor zodat de arm naar boven kan
+                               // komen
+        } catch (CollisionAvoidedException e) {
+            travelThirtyCollisionRollback();
         }
         try {
-        	travel(-40, true); //Daarna naar achter
-        } catch(CollisionAvoidedException e) {
-        	//Do nothing, a collision cannot happen here
+            travel(-40, true); // Daarna naar achter
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
         }
         readBarcodes = readBarcodesBackup;
-	}
-	
-	private void travelThirtyCollisionRollback() {
-		new Sleep().sleepFor(1000);
-		try {
-        	travel(30, false);
-        } catch(CollisionAvoidedException e) {
-        	travelThirtyCollisionRollback();
+    }
+
+    private void travelThirtyCollisionRollback() {
+        new Sleep().sleepFor(1000);
+        try {
+            travel(30, false);
+        } catch (CollisionAvoidedException e) {
+            travelThirtyCollisionRollback();
         }
-	}
-	
-	private void alignOnWhiteLineCollisionRollback() {
-		new Sleep().sleepFor(1000);
-		try {
-        	alignOnWhiteLine();
-        } catch(CollisionAvoidedException e) {
-        	alignOnWhiteLineCollisionRollback();
+    }
+
+    private void alignOnWhiteLineCollisionRollback() {
+        new Sleep().sleepFor(1000);
+        try {
+            alignOnWhiteLine();
+        } catch (CollisionAvoidedException e) {
+            alignOnWhiteLineCollisionRollback();
         }
-	}
+    }
 }
