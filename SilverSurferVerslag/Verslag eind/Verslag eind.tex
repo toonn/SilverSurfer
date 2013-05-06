@@ -42,7 +42,7 @@
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot een lange schep waarmee hij zijn voorwerp kan oprapen en eventueel een wip kan openen.
-De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Enkel doorgangen en muren verkregen via barcodes beschouwt hij als definitief. Via \textsc{RabbitMQ} kunnen de robots elkaar mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
+De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Enkel doorgangen en muren verkregen via informatie uit barcodes beschouwt hij als definitief. Via \textsc{RabbitMQ} kunnen de robots elkaar mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
 
 Het computerprogramma simuleert de werking van de robot. Deze simulator kan in combinatie met de fysieke robot gebruikt worden en kan meerdere robots tegelijkertijd simuleren. De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -90,7 +90,7 @@ De fysieke bouw van de robot en de kalibratie van de sensoren wordt beschreven i
 \label{ssec:Bouw}
 \textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} kan dit in \textsc{Java}.\\
 
-Bovenaan de robot is een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan. De robot is niet voorzien van een druksensor.\\
+Bovenaan de robot is een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan.\\
 
 Een voorwerp is voorzien van klittenband en kan op verschillende manieren worden opgeraapt. Volgende opstellingen werden gebouwd en getest:
 \begin{enumerate}
@@ -154,7 +154,7 @@ Deze laatste opstelling gaf voorlopig nog geen problemen. Dit is de huidige opst
 		\includegraphics[width=\textwidth]{robotSensoren}
 		\caption{Ultrasone- en infraroodsensor}
 	\end{subfigure}
-\caption{Enkele details van het huidige ontwerp}
+\caption{Details van het huidige ontwerp}
 \label{fig:robotDetail}
 \end{figure}
 
@@ -211,7 +211,7 @@ De lichtsensor geeft gemiddeld de waarde~$49$ wanneer de robot op het paneel sta
 \section{Algoritmes}
 \label{sec:Algo}
 
-Op het spel te spelen dient de robot de doolhof zo nauwkeurig mogelijk te verkennen (sectie~\ref{ssec:AlgoVerken}). Hierbij moet hij rekening houden met onnauwkeurigheden in zijn besturing (sectie~\ref{sssec:AlgoAllign}) en met de verschillende onderdelen die een doolhof bevat: barcodes (sectie~\ref{sssec:AlgoBar}), wippen (sectie~\ref{sssec:AlgoWip}) en voorwerpen (sectie~\ref{sssec:AlgoZoek}). Bovendien moeten botsingen met andere robots vermeden worden (sectie~\ref{sssec:AlgoCollision}).
+Om het spel te spelen dient de robot de doolhof zo nauwkeurig mogelijk te verkennen (sectie~\ref{ssec:AlgoVerken}). Hierbij moet hij rekening houden met onnauwkeurigheden in zijn besturing (sectie~\ref{sssec:AlgoAllign}) en met de verschillende onderdelen die een doolhof bevat: barcodes (sectie~\ref{sssec:AlgoBar}), wippen (sectie~\ref{sssec:AlgoWip}) en voorwerpen (sectie~\ref{sssec:AlgoZoek}). Bovendien moeten botsingen met andere robots vermeden worden (sectie~\ref{sssec:AlgoCollision}).
 
 De robot dient ook samen te werken met zijn teamgenoot (sectie~\ref{ssec:AlgoSamen}). Hierbij moet hij gebruik kunnen maken van de informatie die deze stuurt (sectie~\ref{sssec:AlgoMappen}) en moet hij een manier vinden om de teamgenoot te bereiken (sectie~\ref{sssec:AlgoTeam}).
 
@@ -294,6 +294,7 @@ Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten i
 
 % = wip openen = %
 %TODO figuur!
+%TODO lock uitleggen
 \subparagraph{Een wip openen} 
 Dit algoritme wordt uitgevoerd wanneer de robot voor een gesloten wip staat. De robot rijdt achterwaarts en aligneert zich op de witte lijn voor de barcode. Na het aligneren staat de robot midden op de tegel met barcode. De robot draait~$180\degree$ om zijn as. De schep daalt~$75\degree$ zodat hij op de wip ligt. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt de schep de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken. De robot dient volgens het protocol twee keer een `lock' aan te vragen tijdens deze operatie, de wip kantelt immers tweemaal. Zo weten andere robots in welke richting de wip uiteindelijk staat.
 
@@ -310,7 +311,7 @@ De robot kan het voorwerp vinden door de doolhof te verkennen. In de loop van he
 \item tegels waarvan de vier zijden al gekend zijn en die niet van het type `straight' zijn, worden niet meer bezocht, deze kunnen immers geen barcode bevatte. Het levert geen extra informatie op om de tegel te bezoeken.
 \end{enumerate}
 
-Bij de start van het tweede semester werd een extra optimalisatie (optimalisatie 6) ontwikkeld. Deze geeft prioriteit aan `dead-ends'. Een voorwerp kan zich immers enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Onderstaande testen (sectie~\ref{par:AlgoZoekTest}) tonen echter aan dat deze optimalisatie in de meeste gevallen niet effici\"ent is. De optimalisatie werd daarom niet ge\"implementeerd.\\
+Bij de start van het tweede semester werd een extra optimalisatie (optimalisatie 6) ontwikkeld. Deze geeft prioriteit aan `dead-ends'. Een voorwerp kan zich immers enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Onderstaande testen tonen echter aan dat deze optimalisatie in de meeste gevallen niet effici\"ent is. De optimalisatie werd daarom niet ge\"implementeerd.\\
 
 Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof.
 
@@ -417,7 +418,7 @@ Voor volgende secties wordt verwezen naar het verslag van het eerste semester. D
 % -- Ontwerp -- %
 \subsection{Algemeen software-ontwerp}
 \label{ssec:Sdesign}
-Figuur~\ref{fig:klasSoft} toont een schematische voorstelling van de belangrijkste klassen in het project op de computer. We methodes worden weergegeven om de figuur niet overbelast.\\
+Figuur~\ref{fig:klasSoft} toont een schematische voorstelling van de belangrijkste klassen in het project op de computer. Om de figuur niet te overbelasten, worden methodes niet weergegeven bij de klassen.\\
 
 % klassendiagramma
 \begin{figure}[h]
@@ -498,8 +499,7 @@ De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde comman
 
 Het genereren van de sensorwaarden gebeurt op basis van een ingeladen map en van de \textit{Wereldsimulator}. De simulator bepaalt zijn positie ten opzichte van deze map: hoe ver hij zich van een muur bevindt en op welke ondergrond hij staat. Hij kan via de \textit{Wereldsimulator} bepalen of hij een robot recht voor zich ziet, zodat de ultrasone sensor hieraan kan worden aangepast. Op de berekende sensorwaarde wordt steeds een willekeurige ruis toegepast. Dit om de onnauwkeurigheid van de metingen van de fysieke sensoren in rekening te brengen.
 
-%TODO beter schrijven
-Op de bewegingen van de simulator wordt geen ruis toegevoegd. Wanneer de fysieke robot zich regelmatig aligneert, rijdt hij immers nauwkeurig genoeg. Een onnauwkeurigheid simuleren die in werkelijkheid gecorrigeerd wordt, voegt geen meerwaarde toe.
+Op de bewegingen van de simulator wordt geen ruis toegevoegd. Wanneer de fysieke robot zich regelmatig aligneert, rijdt hij immers nauwkeurig genoeg.
 
 % -- Mapping -- %
 %TODO beter titel?
@@ -583,7 +583,7 @@ Het schepsysteem van de robot functioneerde niet. Tijdens de demo faalde de robo
 % == conclusies == %
 \subsection{Conclusies}
 \label{Assec:conc1}
-Om te vermijden dat de \textit{ExploreMaze}-thread een verkeerd beeld krijgt van de situatie, moeten de algoritmes die de thread onderbreken zorgen dat de robot steeds op dezelfde plek eindigt als waarde thread denkt dat hij staat.
+Om te vermijden dat de \textit{ExploreMaze}-thread een verkeerd beeld krijgt van de situatie, moeten de algoritmes die de thread onderbreken zorgen dat de robot steeds op dezelfde plek eindigt als waar de thread denkt dat hij staat.
 Ook de schep moet worden aangepast. Deze kan van klittenband voorzien worden.
 
 % == aanpassingen == %
@@ -593,7 +593,7 @@ Volgende secties werden aangepast ten opzichte van het eerste tussentijds versla
 
 % overzicht aangepaste secties
 \begin{itemize}
-\item \textit{\ref{ssec:Abstract} Samenvatting:} aangepast.
+\item \textit{Samenvatting:} aangepast.
 \item \textit{\ref{ssec:Bouw} Fysieke bouw:} de schep vooraan.
 \item \textit{\ref{sssec:AlgoZoek} Zoeken van het voorwerp:} testen van de prioriteit.
 \item \textit{\ref{sssec:AlgoCollision} Weg vinden naar teamgenoot:} nieuwe sectie.
@@ -644,7 +644,7 @@ Volgende secties werden aangepast ten opzichte van het tweede tussentijds versla
 %% == DEMO 3 == %
 \section{Demo 3}
 \label{Asec:demo3}
-Door de bouw van de robot compacter te maken kan de schep achteraan geplaatst worden en voorzien worden van een motor. Dit maakt het ook mogelijk eventueel een wip de openen met de schep.
+Door de bouw van de robot compacter te maken kan de schep achteraan geplaatst worden en voorzien worden van een motor. Dit maakt het ook mogelijk eventueel een wip te openen met de schep.
 
 De robot vermijdt andere robots door deze te beschouwen als tijdelijke muren. De robot kan twee mappen samenvoegen en kan met behulp van deze samengevoegde map naar zijn teamgenoot rijden.
 
@@ -686,26 +686,26 @@ Volgende secties werden aangepast ten opzichte van het derde tussentijds verslag
 \section{Beschrijving van de werkverdeling}
 \label{Assec:werkverdeling}
 Tabel~\ref{tab:werkuren} geeft weer wie hoeveel tijd in het project gestoken heeft. Figuur~\ref{fig:werkverdeling} toont welk deel van de tijd in een bepaald onderwerp gestoken werd.
-Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris.
+Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie vertegenwoordigde het team in de scheidsrechtercommissie.
 
-%TODO nu tabel van vorig semester!!!
-\begin{table}[!hb]
+%TODO laatste week aanvullen!!
+\begin{table}[h]
 \begin{center}
     \begin{tabular}{ r | c  c  c  c  c  c}
      & Nele & Toon & Sam & Sophie & Gerlinde & Maxim \\ \hline
-    week 2 & 12u15 & 9u10 & 12u21 & 14u15 & 14u40 & 13u00\\
-   	week 3 & 7u30 & 11u30 & 11u35 & 3u00 & 11u00 & 8u45\\
-	week 4 & 16u30 & 8u00 & 19u32 & 14u30 & 13u13 & 15u30\\
-	week 5 & 9u15 & 4u15 & 7u45 & 9u45 & 8u30 & 15u45\\
-	week 6 & 11u00 & 5u00 & 13u47 & 11u00 & 15u00 & 12u45\\
-	week 7 & 19u45 & 17u30 & 37u35 & 20u45 & 35u00 & 21u30\\
-	week 8 & 10u00 & 13u19 & 9u58 & 6u30 & 5u00 & 5u00\\
-	week 9 & 14u50 & 11u13 & 22u00 & 16u30 & 25u30 & 14u30\\
-	week 10 & 15u30 & 5u00 & 22u30 & 11u05 & 18u30 & 14u00\\
-	week 11 & 15u30 & 14u12 & 5u30 & 12u00 & 13u00 & 17u00\\
-	week 12 & 12u35 & 11u25 & 5u27 & 5u00 & 5u27 & 6u27\\ \hline
-	totaal & 144u40 & 110u344 & 169u00 & 124u20 & 169u50 & 144u12 \\
-	gemiddeld & 13u09 & 10u03 & 15u21 & 11u18 & 15u26 & 13u06
+    week 1 & 9u00 & 9u00 & 8u55 & 7u15 & 7u30 & 9u30\\
+   	week 2 & 10u00 & 22u10 & 12u00 & 9u00 & 8u30 & 28u00\\
+	week 3 & 14u00 & 25u05 & 9u00 & 8u00 & 9u15 & 6u15\\
+	week 4 & 16u15 & 14u40 & 13u27 & 9u00 & 14u30 & 20u30\\
+	week 5 & 13u00 & 7u45 & 10u00 & 11u15 & 11u00 & 14u00\\
+	week 6 & 11u30 & 7u00 & 17u10 & 15u00 & 14u00 & 35u45\\
+	week 7 & 13u30 & 14u40 & 15u47 & 12u30 & 12u00 & 20u30\\
+	week 8 & 5u00 & 5u00 & 6u00 & 13u37 & 10u00 & 27u45\\
+	week 9 & 5u00 & 5u15 & 6u00 & 7u30 & 11u30 & 5u00\\
+	week 10 & 14u30 & 7u40 & 6u30 & 6u30 & 11u45 & 16u00\\
+	week 11 & 0 & 0 & 0 & 0 & 0 & 0\\ \hline
+	totaal & 0 & 0 & 0 & 0 & 0 & 0 \\
+	gemiddeld & 0 & 0 & 0 & 0 & 0 & 0
     \end{tabular}
     \caption{Overzicht werkuren}
     \label{tab:werkuren}
@@ -713,7 +713,7 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris.
 \end{table}
 
 %TODO nu figuren van vorig semester !!!
-\begin{figure}
+\begin{figure}[h]
         \centering
         \begin{subfigure}[hb]{0.15\textwidth}
                 \centering
@@ -765,7 +765,7 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris.
 \textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
 
 \bibitem{RabbitMQ}
-\textit{RabbitMQ}: Een communicatiesysteem dat het Advanced Message Queing Protocol (AMQP) implementeert. Door een kanaal op te zetten met een RabbitMQ-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' pushed dus berichten met een bepaald onderwerp naar de juiste `queues'.
+\textit{RabbitMQ}: Een communicatiesysteem dat het \textit{Advanced Message Queing Protocol (AMQP)} implementeert. Door een kanaal op te zetten met een \texttt{RabbitMQ}-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' plaatst berichten met een bepaald onderwerp naar de juiste `queues'.
 \mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
 
 \bibitem{mindstorms}
