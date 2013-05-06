@@ -16,4 +16,5 @@ public class Command {
     public static final int CROSS_OPEN_SEESAW = 13;
     public static final int CROSS_CLOSED_SEESAW = 14;
     public static final int PICKUP_OBJECT = 15;
+    public static final int UNDO_ACTION = 16;
 }

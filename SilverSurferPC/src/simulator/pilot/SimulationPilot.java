@@ -239,8 +239,6 @@ public class SimulationPilot extends AbstractPilot {
         Point2D robotDimensions = new Point2D.Double(20, 20);
         for (int[] robotPosition : SimulatorPanel.getAllRobotPositions()) {
             if (robotPosition[0] != getPlayerNumber()) {
-            	if(getPlayerNumber() == 0)
-            		System.out.println("robotPos: " + robotPosition[0]);
                 double x = (sizeTile() * robotPosition[1]) + sizeTile() / 2
                         - (robotDimensions.getX() / 2);
                 double y = (sizeTile() * robotPosition[2]) + sizeTile() / 2

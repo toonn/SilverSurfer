@@ -81,5 +81,4 @@ public class SHandler implements SpectatorHandler {
         // TODO Auto-generated method stub
 
     }
-
 }

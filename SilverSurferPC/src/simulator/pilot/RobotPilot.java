@@ -127,11 +127,21 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    public void travel(final double distance) {
+    public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
         busy = true;
+        boolean succes = true;
         communicator.sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
-        super.travel(distance);
+        try {
+            super.travel(distance, false);
+        } catch(CollisionAvoidedException e) {
+        	communicator.sendCommand(Command.UNDO_ACTION);
+        	succes = false;
+        }
         waitUntilDone();
+        if(!succes || statusInfoBuffer.getUndidAction()) {
+        	setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
+        	throw new CollisionAvoidedException();     
+        }   
         if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);

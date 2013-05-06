@@ -274,9 +274,8 @@ public class APHandler implements PlayerHandler {
         return null;
     }
 
-    @Override
-    public void teamDisconnected(String partnerID) {
-        // TODO Auto-generated method stub
-
-    }
+	@Override
+	public void teamDisconnected(String partnerID) {
+		
+	}
 }
