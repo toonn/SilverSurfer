@@ -13,11 +13,11 @@
 \usepackage{tocloft} %sets dots in the TOC after the sections
 	\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \usepackage[absolute]{textpos}
-  \setlength{\TPHorizModule}{1cm}
-  \setlength{\TPVertModule}{1cm}
-  
-  
-
+	\setlength{\TPHorizModule}{1cm}
+	\setlength{\TPVertModule}{1cm}
+\usepackage{enumitem} %witruimte voor lijstjes
+	\setitemize{noitemsep,topsep=0pt,parsep=3pt,partopsep=5pt}
+	\setenumerate{noitemsep,topsep=0pt,parsep=5pt,partopsep=10pt}
 
 \begin{document}
 
@@ -49,8 +49,8 @@ Het computerprogramma simuleert de werking van de robot. Deze simulator kan in c
 
 %figuur robot
 \begin{figure}[!hb]
-\begin{textblock}{38}(4.5,7)
-    \includegraphics[width=0.50\textwidth]{robotFP}
+\begin{textblock}{38}(5,11)
+    \includegraphics[width=0.40\textwidth]{robotFP}
     \label{fig:robotFP}
 \end{textblock}
 \end{figure}
@@ -90,14 +90,15 @@ De fysieke bouw van de robot en de kalibratie van de sensoren wordt beschreven i
 \label{ssec:Bouw}
 \textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} kan dit in \textsc{Java}.\\
 
-Bovenaan de robot is een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan.\\
+Bovenaan de robot is een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan. De sensoren worden weergegeven in figuur~\ref{fig:robotDetail}.\\
 
 Een voorwerp is voorzien van klittenband en kan op verschillende manieren worden opgeraapt. Volgende opstellingen werden gebouwd en getest:
+
 \begin{enumerate}
-\item \textbf{Figuur~\ref{fig:robotOud1};} De robot heft het voorwerp op met behulp van een schep en een extra motor achteraan. Deze opstelling maakt de robot echter te lang waardoor hij moeilijker kan draaien zonder tegen een muur te botsen;
-\item \textbf{Figuur~\ref{fig:robotOud2};} De schep wordt vooraan geplaatst, waar te weinig plaats is voor een extra motor. De schep aanpassen aan de vorm van het voorwerp blijkt echter niet voldoende om het voorwerp succesvol op te rapen;
-\item \textbf{Figuur~\ref{fig:robotOud3};} Klittenband zorgt ervoor dat het voorwerp beter in de schep blijft liggen. Deze opstelling maakt de robot echter nog steeds te lang;
-\item \textbf{Figuur~\ref{fig:robotBouw};} Door de \textsc{NXT} horizontaal te plaatsen en de extra motor tussen de wielen te monteren wordt de robot compacter. Een lange schep met klittenband achteraan laat toe het voorwerp op te rapen en eventueel een wip te openen.
+\item \textbf{Figuur~\ref{fig:robotOud1}} De robot heft het voorwerp op met behulp van een schep en een extra motor achteraan. Deze opstelling maakt de robot echter te lang waardoor hij moeilijker kan draaien zonder tegen een muur te botsen;
+\item \textbf{Figuur~\ref{fig:robotOud2}} De schep wordt vooraan geplaatst, waar te weinig plaats is voor een extra motor. De schep aanpassen aan de vorm van het voorwerp blijkt echter niet voldoende om het voorwerp succesvol op te rapen;
+\item \textbf{Figuur~\ref{fig:robotOud3}} Klittenband zorgt ervoor dat het voorwerp beter in de schep blijft liggen. Deze opstelling maakt de robot echter nog steeds te lang;
+\item \textbf{Figuur~\ref{fig:robotBouw}} Door de \textsc{NXT} horizontaal te plaatsen en de extra motor tussen de wielen te monteren, wordt de robot compacter. Een lange schep met klittenband achteraan laat toe het voorwerp op te rapen en eventueel een wip te openen.
 \end{enumerate}
 
 Deze laatste opstelling gaf voorlopig nog geen problemen. Dit is de huidige opstelling. Figuur~\ref{fig:robotDetail} toont details van de schep en de sensoren.
@@ -166,13 +167,13 @@ Deze laatste opstelling gaf voorlopig nog geen problemen. Dit is de huidige opst
 De robot wordt aangedreven door twee motoren. Beide motoren kunnen onafhankelijk worden aangestuurd. Wanneer de robot rechtdoor rijdt, draaien beide motoren in dezelfde richting. Bij het keren om de as draaien de motoren in tegenovergestelde richtingen. De kalibratie heeft als doel te bepalen hoeveel graden de motoren moeten draaien om de robot respectievelijk \'e\'en cm vooruit de laten rijden en \'e\'en~graad te laten keren.
 
 \subparagraph{E\'en cm vooruit rijden}
-Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien. Het bleek niet nodig deze co\"effici\"ent te wijzigen ten opzichte van het vorige ontwerp. Dit werd getest door de robot dwars op een witte lijn te laten starten en hem dan $40~cm$ vooruit te laten rijden. De robot komt op de volgende witte lijn uit.
+Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien. Het bleek niet nodig deze co\"effici\"ent te wijzigen ten opzichte van het vorige ontwerp. Dit werd getest door de robot dwars op een witte lijn te laten starten en hem dan $40~cm$ vooruit te laten rijden. De test werd enkele keren herhaald. De robot kwam op de volgende witte lijn uit.
 
 %move forward 20.8 --> perfect
 
 \subparagraph{E\'en graad keren om de as}
-De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg een aantal keer de opdracht $90\degree$ rond zijn as te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer te herhalen wordt de fout gemakkelijker op te merken.
-De co\"effici\"ent die het beste resultaat leverde is $2,330\degree$, zowel voor positieve als negatieve hoeken.
+De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg een aantal keer de opdracht $90\degree$~rond zijn as te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer te herhalen wordt de fout gemakkelijker op te merken.
+De co\"effici\"ent die het beste resultaat leverde is~$2,330\degree$, zowel voor positieve als negatieve hoeken.
 
 %eerst 2.358 --> iets te veel
 %dan 2.330 --> kleeeeiin iets te weinig
@@ -183,7 +184,7 @@ De co\"effici\"ent die het beste resultaat leverde is $2,330\degree$, zowel voor
 \subsubsection{Infraroodsensor}
 %TODO wat willen de waarden juist zeggen?
 %TODO uitleggen hoe infraroodsensor werkt!!
-De infraroodsensor wordt gebruikt om de stand van de wip te detecteren. Hij bestaat uit vijf onafhankelijke sensoren die elk in een andere ori\"entatie staan. De robot maakt enkel gebruik van de middelste sensor omdat de wip zich altijd voor de robot zal bevinden. De infraroodsensor geeft een waarde tussen $1$ en $3$ tenzij hij een infraroodbal detecteert. In dat geval geeft hij gemiddeld een waarde rond de $120$.
+De infraroodsensor neemt een bron van infraroodlicht, zoals een infraroodbal, waar. Hij wordt gebruikt om de stand van de wip te detecteren en bestaat uit vijf onafhankelijke sensoren die elk volgens een andere ori\"entatie gericht staan. De robot maakt enkel gebruik van de middelste sensor omdat de wip zich altijd recht voor de robot zal bevinden. De infraroodsensor geeft een waarde tussen $1$ en $3$ tenzij hij een infraroodbal detecteert. In dat geval geeft hij gemiddeld een waarde rond de~$120$.
 
 \subsubsection{Ultrasone sensor}
 %TODO hoe komen we aan waarden?
@@ -229,8 +230,7 @@ De methode bestaat uit twee basisalgoritmes: op basis van een witte lijn en op b
 \subparagraph{Aligneren op basis van een witte lijn}
 De robot rijdt vooruit tot de lichtsensor wit detecteert (figuur~\ref{fig:AlgoWit1} en~\ref{fig:AlgoWit2}). Hij rijdt verder tot de sensor weer paneel detecteert (figuur~\ref{fig:AlgoWit3}). Pas na een tweede positieve check van de sensor stopt de robot. Zo wordt vermeden dat de robot stopt op de scheiding van twee panelen. De robot staat nu net over de witte lijn. De robot rijdt verder vooruit tot de wielas net boven de witte lijn staat (figuur~\ref{fig:AlgoWit4}). Vervolgens draait de robot om zijn as tot de lichtsensor weer wit detecteert (figuur~\ref{fig:AlgoWit5}). De robot aligneert op basis van de muur (figuur~\ref{fig:AlgoWit6}) en draait~90\degree~in de andere richting (figuur~\ref{fig:AlgoWit7}). Hij rijdt tenslotte nog $20$~cm voorwaarts. De robot staat nu evenwijdig aan de muren en in het midden van de tegel.
 
-%TODO muren van figuren bruin maken ipv zwart!!
-\begin{figure}
+\begin{figure}[h]
 \centering
 	\begin{subfigure}[h]{0.24\textwidth}
 		\includegraphics[width=\textwidth]{WitteLijn1}
@@ -409,6 +409,7 @@ Het zou kunnen dat beide robots in een lus bewegen waardoor ze steeds op dezelfd
 De software bestaat uit twee delen: een project dat op de \textsc{NXT} van de robot loopt en een project dat op de computer loopt (sectie~\ref{ssec:Sdesign}). De \textit{Graphical User Interface (GUI)} laat toe de robot te besturen en de reacties van de robot weer te geven (sectie~\ref{ssec:GUI}). Robots kunnen met elkaar communiceren via \textsc{RabbitMQ} (sectie~\ref{ssec:RabbMQ}). Het is ook mogelijk met gesimuleerde robots te werken (sectie~\ref{ssec:Sim}). Tijdens het verkennen wordt een map opgeslagen van de wereld (sectie~\ref{ssec:Mapping}).\\
 
 Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
+
 \begin{itemize}
 \item Commando's doorgeven
 \item Bluetooth
@@ -433,6 +434,7 @@ De \textit{Main}-methode bevindt zich in de \textit{GUI}-klasse. Deze maakt een 
 Een \textit{DummyViewport} is aanvankelijk leeg. Wie de teamgenoot van de robot is, wordt immers pas bekend wanneer beide leden van het team hun voorwerp gevonden hebben. Op dat moment zal de \textit{DummyViewport} iets weergeven.\\
 
 Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \textit{OverallViewport}, die krijgt er meerdere). Een \textit{Pilot} is een implementatie van \textit{PilotInterface}. Er zijn verschillende soorten \textit{Pilots}. De keuze van \textit{Pilot} hangt af van het type robot:
+
 \begin{enumerate}
 	\item Een robot waarvan de wereld niet kan worden voorgesteld, krijgt geen \textit{Pilot};
 	\item Een teamgenoot (die we niet zelf simuleren) heeft een \textit{DummyPilot}. Deze bevat enkel `getters', want deze robot kan niet worden aangestuurd;
@@ -445,33 +447,59 @@ Zowel \textit{SimulatorPilot} als \textit{RobotPilot} erven over van \textit{Abs
 % -- GUI -- %
 \subsection{Grafische User Interface}
 \label{ssec:GUI}
+%TODO duidelijker uitleggen: per puntjes ofzo
+%TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
+De \textit{GUI} is zeer flexibel. Naast de doolhof die de robot reeds verkend heeft, is het mogelijk verschillende extra panelen te openen:
+
+\begin{itemize}
+	\item het informatiepaneel (links);
+	\item het paneel met sensorgrafieken (onderaan);
+	\item de \textit{OverallVieuwport} (linker doolhof);
+	\item de map die werd samengevoegd met die van de teamgenoot (rechter doolhof).
+\end{itemize}
+
+Figuur~\ref{fig:guiAll} toont de \textit{GUI} met deze extra panelen. In dit geval is de teamgenoot nog niet bekend waardoor de kader voor de samengevoegde map leeg is.\\
+
+% figuur GUI met extra schermen
+\begin{figure}[h]
+\centering
+	\includegraphics[width=0.8\textwidth]{guiALL}
+\caption{de \textit{Graphical User Interface} met extra panelen}
+\label{fig:guiAll}
+\end{figure}
+
+Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot een nieuws venster geopend worden. Het is echter ook mogelijk alle robots samen weer te geven, zoals wordt getoond in figuur~\ref{fig:gui4}. Dit is handig bij het testen: alle robots kunnen tegelijkertijd in het oog gehouden worden.
 
 % figuur GUI
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.8\textwidth]{gui}
-\caption{de Graphical User Interface met drie gesimuleerde robots}
-\label{fig:GUI1}
+	\includegraphics[width=0.8\textwidth]{gui4Robots}
+\caption{de \textit{Graphical User Interface} voor vier robots}
+\label{fig:gui4}
 \end{figure}
 
-% figuur GUI
-\begin{figure}[h] %TODO nieuwe figuur GUI . 
+Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kleur hangt af van zijn spelersnummer. Ook zijn voorwerp en de rand van de kader waarin de robot zich bevindt, krijgen deze kleur. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur: paars of rood. Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot. Figuur~\ref{fig:guiEvolutie} toont deze evolutie in weergave.\\
+
+%TODO figuur met samengevoegde map!!
+\begin{figure}
 \centering
-	\includegraphics[width=0.8\textwidth]{guiALL}
-\caption{de Graphical User Interface met infopanel, inputpanel en sensorgrafieken}
-\label{fig:GUI2}
+	\begin{subfigure}[h]{0.8\textwidth}
+		\includegraphics[width=\textwidth]{guiPlayerKleur}
+		\caption{Kleur op basis van het spelersnummer}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.8\textwidth}
+		\includegraphics[width=\textwidth]{guiTeamKleur}
+		\caption{Kleur op basis van het teamnummer}
+	\end{subfigure}
+	\begin{subfigure}[h]{0.8\textwidth}
+		\includegraphics[width=\textwidth]{guiTeamMap}
+		\caption{Samengevoegde map}
+	\end{subfigure}
+	\caption{Evolutie van de \textit{GUI} tijdens het spel}
+	\label{fig:guiEvolutie}
 \end{figure}
 
-%TODO duidelijker uitleggen: per puntjes ofzo
-%TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
-Figuren~\ref{fig:GUI1} en~\ref{fig:GUI2} tonen de GUI met verschillende instellingen. Elke robot heeft initieel een eigen kleur. Deze kleur komt overeen met het voorwerp dat de robot moet zoeken en met de rand van de kader waarin de robot zich bevindt. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur (niet de kader). Dit is te zien in de linker groene kader van figuur~\ref{fig:GUI1}: deze robot zit in het rode team.
-
-Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot, zoals te zien in figuur~\ref{fig:GUI2}: de robots met blauwe en groene kader behoren beide tot het rode team; ze hebben genoeg informatie om hun doolhoven samen te voegen.\\
-De \textit{OverallViewport} staat helemaal linksboven in figuur~\ref{fig:GUI1}. Deze geeft een overzicht van alles wat zich afspeeld binnen in het doolhof.\\
-
-Wanneer de robot een pad aflegt, tekenen de \textit{UnitViewports} dit als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Als de robot bijvoorbeeld een wip bezoekt zal die de wip ineens tekenen in het doolhof. Een wip wordt voorgesteld als een gele strook van twee tegels lang. Een wip heeft een rode streep aan de kant waar de wip naar boven staat. Dit is handig bij het testen van de verkenalgoritmes.\\
-
-Het aantal \textit{UnitViewports} hangt af van de situatie. Dit kan gemakkelijk worden ingesteld via de menubalk. Het is ook mogelijk extra panelen te laten verschijnen die sensorwaarden in cijfers en op een grafiek weergeven. Dit is te zien in figuur~\ref{fig:GUI2}.
+Het pad dat de robot aflegt, geeft de \textit{GUI} weer als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Een wip wordt voorgesteld door een gele strook van twee tegels lang. De kant die omhoog staat wordt aangeduid met een rode lijn.\\
 
 % -- RabbitMQ -- %
 \subsection{Communicatie tussen de robots}
