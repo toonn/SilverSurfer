@@ -480,7 +480,17 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     protected boolean crashImminent(double distance) {
-        return getUltraSensorValue() <= distance;
+    	if(getUltraSensorValue() <= distance)
+    		return true;
+    	if(distance < 19) {
+    		Tile nextTile = mapGraphLoaded.getTile(getMatrixPosition());
+    		//System.out.println("test:" +nextTile + " " + mapGraphLoaded.getTile(getMatrixPosition()).getPosition() + " " +getMatrixPosition() + " " + getOrientation() + " " + getAngle());
+        	for(int[] position : SimulatorPanel.getAllRobotPositions()) {
+        		if(position[0] != getPlayerNumber() && position[1] == nextTile.getPosition().getX() && position[2] == nextTile.getPosition().getY())
+        			return true;
+        	}
+    	}
+    	return false;
     }
 
     public boolean hasWon() {

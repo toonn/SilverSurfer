@@ -24,7 +24,7 @@ public class MQCenter {
     private static final String USERNAME = "guest";
     private static final String PASSWORD = "guest";
     private static final String VIRTUAL_HOST = "/";
-    private static final String HOST = "localhost";
+    private static final String HOST = "localhost";//"leuven.cs.kotnet.kuleuven.be";
     private static final int PORT = 5672;
     private static final String GAMEID = "ABCDEFGHIJKLMNOPQ";
 
