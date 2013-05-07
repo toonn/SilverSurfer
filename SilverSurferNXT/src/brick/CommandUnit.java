@@ -48,11 +48,11 @@ public class CommandUnit {
         Motor.C.setSpeed(CommandUnit.speed/8);
 
 
-        /*lightSensor.setFloodlight(true);
+        lightSensor.setFloodlight(true);
     	InterruptThread IT = new InterruptThread(this, ultrasonicSensor, 20, LENGTH_COEF);
     	IT.start();
         ExecuteWhiteLine EWT = new ExecuteWhiteLine(this);
-        EWT.start();*/
+        EWT.start();
     	/*Motor.A.rotate((int)(LENGTH_COEF*20), true);
     	Motor.B.rotate((int)(LENGTH_COEF*20), true);
     	while(!quit) {
@@ -322,7 +322,7 @@ public class CommandUnit {
     public int alignOnWhiteLine() {
     	int initialTachoCount = Motor.A.getTachoCount();
 		int distanceTravelled = (int)Math.round((Motor.A.getTachoCount() - initialTachoCount)/LENGTH_COEF);
-    	WhitelineThread WT = new WhitelineThread("WT", ultrasonicSensor, LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT, WALL_DISTANCE, WALL_DISTANCE_LIMIT, LIGHT_SENSOR_DISTANCE);
+    	WhitelineThread WT = new WhitelineThread(this, "WT", ultrasonicSensor, LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT, WALL_DISTANCE, WALL_DISTANCE_LIMIT, LIGHT_SENSOR_DISTANCE);
 		WT.start();
 		while(lightSensor.getLightValue() < WHITE_LINE_TRESHOLD && !interrupt);
 		if(interrupt) {
@@ -367,6 +367,11 @@ public class CommandUnit {
 		while(lightSensor.getLightValue() < WHITE_LINE_TRESHOLD);
 		WT.setSecondQuit(true);
 		while(!WT.doneWithAligning);
+		try {
+			Thread.sleep(100);
+		} catch(Exception e) {
+			
+		}
 		if(interrupt) {
 			stopRobot();
 			distanceTravelled = (int)Math.round((Motor.A.getTachoCount() - initialTachoCount)/LENGTH_COEF);

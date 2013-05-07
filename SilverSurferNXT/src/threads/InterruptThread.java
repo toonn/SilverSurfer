@@ -1,6 +1,5 @@
 package threads;
 
-import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
 import brick.CommandUnit;
 
