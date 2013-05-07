@@ -32,11 +32,21 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    public void alignOnWhiteLine() {
+    public void alignOnWhiteLine() throws CollisionAvoidedException {
         busy = true;
+        boolean succes = true;
         communicator.sendCommand(Command.ALIGN_WHITE_LINE);
-        super.travel(40);
+        try {
+        	super.travel(40, false);        
+        } catch(CollisionAvoidedException e) {
+        	communicator.sendCommand(Command.UNDO_ACTION);
+        	succes = false;
+        }
         waitUntilDone();
+        if(!succes || statusInfoBuffer.getUndidAction()) {
+        	setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
+        	throw new CollisionAvoidedException();     
+        }
         if (readBarcodes && isExecutingBarcode()) {
             pilotActions.barcodeFound();
         }
@@ -94,8 +104,7 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public void rotate(final double alpha) {
         busy = true;
-        communicator
-                .sendCommand((int) (alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
+        communicator.sendCommand((int) (alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
         super.rotate(alpha);
         waitUntilDone();
     }
@@ -132,9 +141,11 @@ public class RobotPilot extends AbstractPilot {
     public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
         busy = true;
         boolean succes = true;
+        if(ignoreCollision)
+        	communicator.sendCommand(Command.IGNORE_COLLISION);
         communicator.sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
         try {
-            super.travel(distance, false);
+            super.travel(distance, ignoreCollision);
         } catch(CollisionAvoidedException e) {
         	communicator.sendCommand(Command.UNDO_ACTION);
         	succes = false;
@@ -176,12 +187,46 @@ public class RobotPilot extends AbstractPilot {
         communicator.sendCommand(Command.CROSS_OPEN_SEESAW);
         boolean readBarcodesBackup = readBarcodes;
         readBarcodes = false;
-        super.travel(60);
+        try {
+            super.travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        try {
+            super.travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
         for (Tile tile : getMapGraphConstructed().getTiles())
             if (tile.getContent() instanceof Seesaw
                     && tile.getContent().getValue() == seesawValue)
                 ((Seesaw) tile.getContent()).flipSeesaw();
-        super.travel(60);
+        try {
+            super.travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        try {
+            super.travel(30, false);
+        } catch (CollisionAvoidedException e) {
+            travelThirtyCollisionRollback();
+        }
+        readBarcodes = readBarcodesBackup;
+        try {
+            super.travel(40, false);
+        } catch (CollisionAvoidedException e) {
+            alignOnWhiteLineCollisionRollback();
+        }
+        waitUntilDone();
         try {
             if (isInGameModus()
                     && getCenter().getPlayerClient().hasLockOnSeesaw())
@@ -189,12 +234,29 @@ public class RobotPilot extends AbstractPilot {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        readBarcodes = readBarcodesBackup;
-        super.travel(40);
-        waitUntilDone();
         if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
+    }
+
+    @Override
+    protected void travelThirtyCollisionRollback() {
+        new Sleep().sleepFor(1000);
+        try {
+            super.travel(30, false);
+        } catch (CollisionAvoidedException e) {
+            travelThirtyCollisionRollback();
+        }
+    }
+
+    @Override
+    protected void alignOnWhiteLineCollisionRollback() {
+        new Sleep().sleepFor(1000);
+        try {
+            super.travel(40, false);
+        } catch (CollisionAvoidedException e) {
+            alignOnWhiteLineCollisionRollback();
+        }
     }
 
     @Override
@@ -213,10 +275,55 @@ public class RobotPilot extends AbstractPilot {
                 ((Seesaw) tile.getContent()).flipSeesaw();
         boolean readBarcodesBackup = readBarcodes;
         readBarcodes = false;
-        super.travel(120);
+        try {
+            super.travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        try {
+            super.travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        for (Tile tile : getMapGraphConstructed().getTiles())
+            if (tile.getContent() instanceof Seesaw
+                    && tile.getContent().getValue() == seesawValue)
+                ((Seesaw) tile.getContent()).flipSeesaw();
+        try {
+            super.travel(30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+            // Ok, it can, but fuck it, stupid HTTTP
+            // Keep trying to cross, it will be futile but you never know
+            travelThirtyCollisionRollback();
+        }
+        updateTilesAndPosition();
+        try {
+            super.travel(30, false);
+        } catch (CollisionAvoidedException e) {
+            travelThirtyCollisionRollback();
+        }
         readBarcodes = readBarcodesBackup;
-        super.travel(40);
+        updateTilesAndPosition();
+        try {
+            super.travel(40, false);
+        } catch (CollisionAvoidedException e) {
+            alignOnWhiteLineCollisionRollback();
+        }
         waitUntilDone();
+        try {
+            if (isInGameModus()
+                    && getCenter().getPlayerClient().hasLockOnSeesaw())
+                getCenter().getPlayerClient().unlockSeesaw();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
@@ -229,10 +336,23 @@ public class RobotPilot extends AbstractPilot {
         boolean readBarcodesBackup = readBarcodes;
         readBarcodes = false;
         super.rotate(180);
-        super.travel(-30);
+        try {
+            travel(-30, true);
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+        }
         setTeamNumber(team);
-        super.travel(30); // Eerst naar voor zodat de arm naar boven kan komen
-        super.travel(-40); // Daarna naar achter
+        try {
+            travel(30, false); // Eerst naar voor zodat de arm naar boven kan
+                               // komen
+        } catch (CollisionAvoidedException e) {
+            travelThirtyCollisionRollback();
+        }
+        try {
+            travel(-40, true); // Daarna naar achter
+        } catch (CollisionAvoidedException e) {
+            // Do nothing, a collision cannot happen here
+        }
         readBarcodes = readBarcodesBackup;
         waitUntilDone();
     }

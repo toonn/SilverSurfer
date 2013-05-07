@@ -41,7 +41,7 @@ public class APHandler implements PlayerHandler {
 
     @Override
     public void gameStarted() {
-    	new Sleep().sleepFor(new Random().nextInt(500));
+    	new Sleep().sleepFor(new Random().nextInt(1000));
         getPilot().startExploring();
         System.out.println("[HTTTP] Game started!");
     }

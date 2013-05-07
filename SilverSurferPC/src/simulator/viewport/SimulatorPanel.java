@@ -922,12 +922,13 @@ public class SimulatorPanel extends JPanel {
         return allRobotPositions;
     }
 
-    public static void updateRobotPositions(int playerNumber, int x, int y) {
+    public static void updateRobotPositions(int playerNumber, int x, int y, double angle) {
         Set<int[]> newAllRobotPositions = new HashSet<int[]>();
-        int[] newPosition = new int[3];
+        int[] newPosition = new int[4];
         newPosition[0] = playerNumber;
         newPosition[1] = x;
         newPosition[2] = y;
+        newPosition[3] = (int)angle;
         newAllRobotPositions.add(newPosition);
         for (int[] position : allRobotPositions)
             if (position[0] != playerNumber)

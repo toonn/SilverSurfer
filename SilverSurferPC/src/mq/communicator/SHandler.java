@@ -77,10 +77,12 @@ public class SHandler implements SpectatorHandler {
     @Override
     public void playerUpdate(PlayerDetails playerDetails, int playerNumber,
             long x, long y, double angle, boolean foundObject) {
+    	if(angle == -90)
+    		angle = 270;
         Point startMatrixPosition = getStartMatrixPosition(playerNumber - 1);
         SimulatorPanel.updateRobotPositions(playerNumber - 1,
                 (int) (x + startMatrixPosition.getX()),
-                (int) (-y + startMatrixPosition.getY()));
+                (int) (-y + startMatrixPosition.getY()), angle);
     }
 
     private Point getStartMatrixPosition(int playerNumber) {

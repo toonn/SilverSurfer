@@ -9,11 +9,9 @@ import java.util.Vector;
 
 import commands.Sleep;
 import mapping.MapGraph;
-import mapping.MapReader;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Seesaw;
-import mapping.StartBase;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
 import mazeAlgorithm.ExploreThread;
@@ -491,6 +489,7 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void crossOpenSeesaw(int seesawValue) {
+    	System.out.println(getPlayerNumber() + " crossed the seesaw: " + seesawValue);
         try {
             if (gameOn
                     && !getCenter().getPlayerClient().hasLockOnSeesaw(
@@ -529,6 +528,7 @@ public abstract class AbstractPilot implements PilotInterface {
             // Keep trying to cross, it will be futile but you never know
             travelThirtyCollisionRollback();
         }
+        updateTilesAndPosition();
         try {
             travel(30, false);
         } catch (CollisionAvoidedException e) {
@@ -541,6 +541,7 @@ public abstract class AbstractPilot implements PilotInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        updateTilesAndPosition();
         try {
             alignOnWhiteLine();
         } catch (CollisionAvoidedException e) {
@@ -586,7 +587,7 @@ public abstract class AbstractPilot implements PilotInterface {
         readBarcodes = readBarcodesBackup;
     }
 
-    private void travelThirtyCollisionRollback() {
+    protected void travelThirtyCollisionRollback() {
         new Sleep().sleepFor(1000);
         try {
             travel(30, false);
@@ -595,7 +596,7 @@ public abstract class AbstractPilot implements PilotInterface {
         }
     }
 
-    private void alignOnWhiteLineCollisionRollback() {
+    protected void alignOnWhiteLineCollisionRollback() {
         new Sleep().sleepFor(1000);
         try {
             alignOnWhiteLine();

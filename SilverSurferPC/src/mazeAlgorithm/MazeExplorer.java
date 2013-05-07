@@ -22,7 +22,7 @@ public class MazeExplorer {
     private boolean lastTurnRight = false;
     private boolean openSeesawIfClosed = false;
     private boolean shuffled = false;
-    private boolean alreadyCrossedSeesaw = false;
+    private boolean alreadyCrossedSeesaw = true;
     private Tile onlyOnceTile;
     private Tile collisionDetectionTileInQueue;
     private int collisionDetectionAmount = 0;
@@ -230,7 +230,7 @@ public class MazeExplorer {
 	        for(Tile tile : seesawBarcodeTiles) {
 	        	if(isReachableWithoutWip(currentTile, tile, new Vector<Tile>())) {
 	        		ShortestPath shortestPath = new ShortestPath(this, pilot, currentTile, tile, allTiles);
-                	int totalTilesToGo = shortestPath.getTilesAwayFromTargetPosition();
+                	int totalTilesToGo = shortestPath.getTilesAwayFromTargetPositionWithoutSeesaw();
                 	while(totalTilesToGo != 0)
                 		if(!quit) {
                 			try {
@@ -466,8 +466,10 @@ public class MazeExplorer {
 				return;
 			} else if(shortestPath.getTilesPath().size() >= 2 && shortestPath.getTilesPath().get(0).getContent() instanceof Barcode && shortestPath.getTilesPath().get(1).getContent() instanceof Seesaw) {
 	            int seesawValue = getSeesawValue(shortestPath.getTilesPath().get(0));
-	            if(!((Seesaw)(shortestPath.getTilesPath().get(0).getNeighbour(pilot.getOrientation()).getContent())).isClosed()) //If seesaw is open
+	            if(!((Seesaw)(shortestPath.getTilesPath().get(0).getNeighbour(pilot.getOrientation()).getContent())).isClosed()) { //If seesaw is open
+	            	System.out.println("crossing that seesaw!");
 	                pilot.crossOpenSeesaw(seesawValue);
+	            }
 	            else if(openSeesawIfClosed)//If seesaw is closed
 	                pilot.crossClosedSeesaw(seesawValue);
 	            else {
@@ -478,6 +480,7 @@ public class MazeExplorer {
 	            	} catch(CollisionAvoidedException e) {
 	            		searchOpenSeesawCollisionRollback();
 	            	}
+	                new Sleep().sleepFor(100);
 	            	pilot.updateTilesAndPosition();
 	            }
 			} else {
