@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{caption}
 \usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes,shadows,arrows}
@@ -376,13 +377,19 @@ Een voorwerp ligt tegen de achterste muur van een `dead-end' tegel. De aanliggen
 
 \subsubsection{Andere robot}
 \label{sssec:AlgoCollision}
-Een hybride sensor maakt gebruikt van een \textit{Wereldsimulator}. Deze heeft kennis van de posities van andere robots, gebaseerd op de informatie die andere robots doorsturen. Wij hebben ervoor gekozen de robot zo weinig mogelijk afhankelijk van andere robots en hun communicatiemogelijkheden te maken. De hybride sensor wordt daarom enkel gebruikt wanneer gesimuleerde robots nodig zijn. De robot stuurt wel altijd zijn eigen positie door naar de \textit{Wereldsimulator} zodat andere teams deze kunnen gebruiken.\\
+Een hybride sensor maakt gebruikt van een \textit{Wereldsimulator}.
+Deze heeft kennis van de posities van andere robots,
+gebaseerd op de informatie die andere robots doorsturen.
+Wij hebben ervoor gekozen geen gebruik te maken van de hybride sensor,
+de ultrasone sensor is voldoende om botsingen te vermijden.
 
-%TODO ook muren die x keer gezien zijn zijn zeker?
-%TODO wat als een robot een robot tegenkomt op een plek waar hij reeds een doorgang heeft gezien?
-Om te vermijden dat de robot tegen een andere robot botst, beschouwt hij elk obstakel als een `muur onder voorbehoud'. Enkel wanneer er geen obstakel is, weet de robot zeker dat er een doorgang is. Een andere robot wordt dus als muur beschouwd en wordt vermeden - net zoals muren vermeden worden. Wanneer de robot hier later opnieuw voorbij komt en de andere robot er niet meer is, zal de robot een doorgang detecteren en wordt zijn map aangepast. Er zijn enkele gevallen waarbij de robot zeker is van muren: bij het lezen van een barcode. Deze ligt immers steeds op een `straight'. Wanneer deze een voorwerp aanduidt, is zeker dat de volgende tegel een `dead-end' is en wanneer deze een wip aanduidt kunnen de tegels van de wip automatisch worden aangevuld. \\
-
-Indien er gesimuleerde robots in het spel zijn, wordt de informatie van de \textit{Wereldsimulator} gebruikt om de afstandssensor juist te simuleren. Dit is steeds een benadering, want de \textit{Wereldsimulator} weet enkel op welke tegel een robot zich bevindt. Hij heeft geen kennis van de positie ten opzichte van die tegel. Verder worden gesimuleerde botsingen op dezelfde manier vermeden.\\
+Indien er gesimuleerde robots in het spel zijn,
+wordt de informatie van de \textit{Wereldsimulator} gebruikt om de
+afstandssensor van de echte robot juist te simuleren.
+Dit is steeds een benadering, want de \textit{Wereldsimulator} weet
+enkel op welke tegel een robot zich bevindt.
+Hij heeft geen kennis van de positie ten opzichte van die tegel.
+Verder worden gesimuleerde botsingen op dezelfde manier vermeden.\\
 
 % == Samenwerking == %
 \subsection{Samenwerking met de teamgenoot}
@@ -530,11 +537,33 @@ Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt m
 % -- Simulator -- %
 \subsection{Simulator} 
 \label{ssec:Sim}
-De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot en genereert sensorwaarden die overeenkomen met die van een fysieke robot in dezelfde situatie.
+De simulator bootst de werking van de robot virtueel na.
+Hij kan dezelfde commando's uitvoeren als de werkelijke robot en
+genereert sensorwaarden die overeenkomen met die van een fysieke
+robot in dezelfde situatie.
 
-Het genereren van de sensorwaarden gebeurt op basis van een ingeladen map en van de \textit{Wereldsimulator}. De simulator bepaalt zijn positie ten opzichte van deze map: hoe ver hij zich van een muur bevindt en op welke ondergrond hij staat. Hij kan via de \textit{Wereldsimulator} bepalen of hij een robot recht voor zich ziet, zodat de ultrasone sensor hieraan kan worden aangepast. Op de berekende sensorwaarde wordt steeds een willekeurige ruis toegepast. Dit om de onnauwkeurigheid van de metingen van de fysieke sensoren in rekening te brengen.
+Het genereren van de sensorwaarden gebeurt op basis van een ingeladen
+map en van de \textit{Wereldsimulator}.
+De simulator bepaalt zijn positie ten opzichte van deze map:
+hoe ver hij zich van een muur bevindt en op welke ondergrond hij staat.
+Om de ultrasone sensor te simuleren maken we gebruik van de geladen map,
+om de afstand tot muren te berekenen en van de \textit{Wereldsimulator},
+om de afstand tot andere robots te simuleren.
+Uit de informatie in de geladen map en de posities van de andere robots
+wordt een verzameling van obstakels opgesteld (in java Rectangle2D objecten).
+Voor de berekening van de afstand wordt een voorstelling van de `conus'
+van de ultrasone sensor opgesteld (in java Arc2D).
+De `conus' wordt in een lus telkens groter gemaakt, dan gebruiken we de
+`intersect'-methode van Arc2D op elk obstakel, de eerste keer dat er een
+`intersection' gedetecteerd wordt is de straal van de Arc2D gelijk aan
+de te simuleren afstand.
+Op de berekende sensorwaarde wordt steeds een willekeurige ruis toegepast.
+Dit om de onnauwkeurigheid van de metingen van de fysieke sensoren in
+rekening te brengen.
 
-Op de bewegingen van de simulator wordt geen ruis toegevoegd. Wanneer de fysieke robot zich regelmatig aligneert, rijdt hij immers nauwkeurig genoeg.
+Op de bewegingen van de simulator wordt geen ruis toegevoegd.
+Wanneer de fysieke robot zich regelmatig aligneert,
+rijdt hij immers nauwkeurig genoeg.
 
 % -- Mapping -- %
 \subsection{Mappen van een doolhof}
