@@ -293,11 +293,12 @@ De robot rijdt vaak onnauwkeurig bij het nemen van de wip. Hij zal een wip daaro
 Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten is, kan de robot de wip openen met behulp van zijn schep. Deze functie kan ook worden uitgeschakeld. In dat geval zal de robot naar een andere wip rijden of blijven tot een andere robot de wip opent.
 
 % = wip openen = %
-%TODO figuur!
+%TODO figuur! OK
+%TODO uitleg locken OK
 \subparagraph{Een wip openen} 
 Dit algoritme wordt uitgevoerd wanneer de robot voor een gesloten wip staat. De robot rijdt achterwaarts en aligneert zich op de witte lijn voor de barcode. Na het aligneren staat de robot midden op de tegel met barcode. De robot draait~$180\degree$ om zijn as. De schep daalt~$75\degree$ zodat hij op de wip ligt. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt de schep de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken. De robot dient volgens het protocol twee keer een `lock' aan te vragen tijdens deze operatie, de wip kantelt immers tweemaal. Zo weten andere robots in welke richting de wip uiteindelijk staat.\\
 Door een vakje te `locken' weten de andere robots dat de robot zich nu op dat vakje gaat bevinden. Dit is in het protocol ge"implementeerd. De `lock' op een vakje gebeurt wanneer de robot van een ander vakje naar dit vakje begeeft. Op een wip kan men dus ook een `lock' uitvoeren. De robot kan dus in principe zo bijhouden hoe de wip staat als het de beginpositie kent. Of de robot begint het bij te houden van wanneer hij zelf over de wip gegaan is. De robot heeft dit niet ge"implementeerd omdat het verkenalgoritme de wippen gaat ontwijken. Alleen maar als het echt niet anders gaat. \\
-Op figuur \ref{robowip} is te zien hoe de robot de wip kan openen met de lange schep.
+Op figuur \ref{rowi} is te zien hoe de robot de wip kan openen met de lange schep.
 
 \begin{figure}[h]
 \caption{Robot die de wip openent}
@@ -305,6 +306,14 @@ Op figuur \ref{robowip} is te zien hoe de robot de wip kan openen met de lange s
 \includegraphics[scale=0.1]{robotWip.jpg}
 \label{robowip}
 \end{figure}
+
+\begin{figure}[h]
+\caption{Robot die de wip naar beneden haalt}
+\centering
+\includegraphics[scale=0.1]{robotWip.jpg}
+\label{rowi}
+\end{figure}
+
 
 % = voorwerp = %
 \subsubsection{Voorwerp} %
@@ -538,7 +547,7 @@ Het genereren van de sensorwaarden gebeurt op basis van een ingeladen map en van
 Op de bewegingen van de simulator wordt geen ruis toegevoegd. Wanneer de fysieke robot zich regelmatig aligneert, rijdt hij immers nauwkeurig genoeg.
 
 % -- Mapping -- %
-%TODO beter titel?
+%TODO beter titel? Moeten ons houden aan de titels van de template van de commissie
 \subsection{Mappen van een doolhof}
 \label{ssec:Mapping}
 Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een robot voorstellen. Figuur~\ref{fig:klasMap} geeft de structuur van het pakket weer. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze biedt functionaliteiten om van de huidige tegel naar een aanliggende tegel te reizen en om de map dynamisch uit te breiden. Elke \textit{Tile} wordt via \textit{Edges} verbonden met zijn buurtegels. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde text-bestand een \textit{MapGraph} opstellen.\\
@@ -707,7 +716,7 @@ Volgende secties werden aangepast ten opzichte van het derde tussentijds verslag
 %\item \textit{\ref{ssec:Kalib} Kalibratie:} nieuwe sectie.
 %\item \textit{\ref{ssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
 %\item \textit{\ref{sssec:AlgoBar} Barcode:} nieuw algoritme.
-%\item \textit{\ref{sssec:AlgoWip} Wip:} nieuwe sectie.
+\item \textit{\ref{sssec:AlgoWip} Wip openen:} locken uitgelegd + tekening toegevoegd. 
 %\item \textit{\ref{sssec:AlgoTeam} Weg vinden naar teamgenoot:} aangepast.
 %\item \textit{\ref{sssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
 %\item \textit{\ref{sssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
@@ -792,8 +801,11 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 
 \section{Kritische analyse}
 \label{Assec:kritischeAnalyse}
-%TODO
+Voor het tweede deel van het semester werd de bouw van de robot volledig veranderd. We zagen tijdens de eerste demo en bij de testen dat de robot zeer onstabiel was. Het steviger en robuuster ontwerp heeft de robot nauwkeuriger gemaakt. 
 
+Net zoals bij het eerste semester zijn er veel testen gebeurt maar hebben we deze testresultaten niet altijd bijgehouden. Hierdoor stonden er niet veel testen in het verslag.
+
+Op het einde hebben we een keuze moeten maken tussen een goed werkende simulator of een goed werkende robot. We hebben toen gekozen voor een heel goed werkende simulator. Het leek ons belangrijker om te laten zien dat bijna alles perfect werkte met de simulator en met een bijna volledig goed werkende robot dan andersom. 
 
 \begin{thebibliography}{9}
 
