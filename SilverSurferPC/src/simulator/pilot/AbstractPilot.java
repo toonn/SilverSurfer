@@ -21,6 +21,7 @@ import simulator.viewport.SimulatorPanel;
 
 public abstract class AbstractPilot implements PilotInterface {
 
+	private boolean REALROBOT = false;
     private Point mapSize; // Startend van 0
     private int playerNumber = -1;
     private int teamNumber = -1;
@@ -480,7 +481,19 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     protected boolean crashImminent(double distance) {
-        return getUltraSensorValue() <= distance;
+    	if(!REALROBOT) {
+        	if(getUltraSensorValue() <= distance)
+        		return true;
+        	if(distance < 19) {
+        		Tile nextTile = mapGraphLoaded.getTile(getMatrixPosition());
+        		//System.out.println("test:" +nextTile + " " + mapGraphLoaded.getTile(getMatrixPosition()).getPosition() + " " +getMatrixPosition() + " " + getOrientation() + " " + getAngle());
+            	for(int[] position : SimulatorPanel.getAllRobotPositions()) {
+            		if(position[0] != getPlayerNumber() && position[1] == nextTile.getPosition().getX() && position[2] == nextTile.getPosition().getY())
+            			return true;
+            	}
+        	}
+    	}
+    	return false;
     }
 
     public boolean hasWon() {
@@ -492,8 +505,6 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void crossOpenSeesaw(int seesawValue) {
-        System.out.println(getPlayerNumber() + " crossed the seesaw: "
-                + seesawValue);
         try {
             if (gameOn
                     && !getCenter().getPlayerClient().hasLockOnSeesaw(

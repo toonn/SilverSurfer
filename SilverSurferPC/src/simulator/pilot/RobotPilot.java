@@ -52,8 +52,8 @@ public class RobotPilot extends AbstractPilot {
             succes = false;
         }
         waitUntilDone();
-        if (!succes || statusInfoBuffer.getUndidAction()) {
-            setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
+        if (!succes) {
+            //setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
             throw new CollisionAvoidedException();
         }
         if (readBarcodes && isExecutingBarcode()) {
@@ -194,8 +194,8 @@ public class RobotPilot extends AbstractPilot {
             succes = false;
         }
         waitUntilDone();
-        if (!succes || statusInfoBuffer.getUndidAction()) {
-            setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
+        if (!succes) {
+            //setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
             throw new CollisionAvoidedException();
         }
         if (readBarcodes && isExecutingBarcode())

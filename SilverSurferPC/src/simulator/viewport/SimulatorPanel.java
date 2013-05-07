@@ -765,13 +765,13 @@ public class SimulatorPanel extends JPanel {
 
     public void connect() {
         stopSimulation();
-        mapName = "/";
+        /*mapName = "/";
         mapGraphLoaded = null;
-        mapGraphLoadedSize = null;
+        mapGraphLoadedSize = null;*/
         overallViewPort = null;
         principalPilot = new RobotPilot(0, mapGraphLoaded, mapGraphLoadedSize);
         realRobot = true;
-        createSims(1);
+        createSims(4);
     }
 
     public void disconnect() {
