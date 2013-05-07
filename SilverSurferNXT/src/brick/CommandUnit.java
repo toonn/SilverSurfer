@@ -48,7 +48,7 @@ public class CommandUnit {
         Motor.C.setSpeed(CommandUnit.speed/8);
 
 
-        lightSensor.setFloodlight(true);
+/*        lightSensor.setFloodlight(true);
     	InterruptThread IT = new InterruptThread(this, ultrasonicSensor, 20, LENGTH_COEF);
     	IT.start();
         ExecuteWhiteLine EWT = new ExecuteWhiteLine(this);
@@ -74,8 +74,10 @@ public class CommandUnit {
             moveForwardWithoutBarcode((int)Math.floor(LENGTH_COEF*5));
         	alignOnWhiteLine();
         	readBarcodes = true;
-        }
-        */
+        }*/
+        lightSensor.setFloodlight(true);
+        crossClosedSeesaw();
+       // pickupObject();
         
         stopRobot();
         System.out.println("Waiting...");
@@ -84,7 +86,7 @@ public class CommandUnit {
 
         dis = pcConnection.openDataInputStream();
         dos = pcConnection.openDataOutputStream();
-
+        
         quit = false;
 
         lightSensor.setFloodlight(true);
@@ -121,15 +123,15 @@ public class CommandUnit {
                     break;
                 case (Command.ALIGN_WHITE_LINE):
                     System.out.println("White line.");
-                	InterruptThread IT = new InterruptThread(CU, CU.ultrasonicSensor, 20, LENGTH_COEF);
-                	IT.start();
+                	/*InterruptThread IT = new InterruptThread(CU, CU.ultrasonicSensor, 20, LENGTH_COEF);
+                	IT.start();*/
                     CU.updatePosition(40);
-                    /*int resultAlign = CU.alignOnWhiteLine();
+                    resultAlign = CU.alignOnWhiteLine();
 	    			if(resultAlign != -1)
 	    				CU.sendStringToUnit("[BC] " + resultAlign);
-                    CU.stopRobot();*/
-                    ExecuteWhiteLine EWT = new ExecuteWhiteLine(CU);
-                    EWT.start();
+                    CU.stopRobot();
+                    /*ExecuteWhiteLine EWT = new ExecuteWhiteLine(CU);
+                    EWT.start();*/
                     break;
                 case (Command.CHECK_FOR_OBSTRUCTION):
                     CU.sendStringToUnit("[CFO] " + CU.ultrasonicSensor.getDistance());
@@ -164,7 +166,8 @@ public class CommandUnit {
                     CU.stopRobot();
                 	break;
                 case (Command.UNDO_ACTION):
-                	;
+                	CU.stopRobot();
+                	break;
                 case (Command.IGNORE_COLLISION):
                 	;
                 default:
@@ -325,7 +328,7 @@ public class CommandUnit {
     	WhitelineThread WT = new WhitelineThread(this, "WT", ultrasonicSensor, LENGTH_COEF, ANGLE_COEF_RIGHT, ANGLE_COEF_LEFT, WALL_DISTANCE, WALL_DISTANCE_LIMIT, LIGHT_SENSOR_DISTANCE);
 		WT.start();
 		while(lightSensor.getLightValue() < WHITE_LINE_TRESHOLD && !interrupt);
-		if(interrupt) {
+		/*if(interrupt) {
 			stopRobot();
 			WT.continueAfterFirstQuit = false;
 			WT.setFirstQuit(true);
@@ -334,9 +337,9 @@ public class CommandUnit {
 			interrupt = false;
 			sendStringToUnit("[UA]");
 			return -1;
-		}
+		}*/
 		while(lightSensor.getLightValue() >= WHITE_LINE_TRESHOLD && !interrupt);
-		if(interrupt) {
+		/*if(interrupt) {
 			stopRobot();
 			WT.continueAfterFirstQuit = false;
 			WT.setFirstQuit(true);
@@ -345,11 +348,11 @@ public class CommandUnit {
 			interrupt = false;
 			sendStringToUnit("[UA]");
 			return -1;
-		}
+		}*/
 		try {
 			Thread.sleep(35);
 			while(lightSensor.getLightValue() >= WHITE_LINE_TRESHOLD && !interrupt);
-			if(interrupt) {
+			/*if(interrupt) {
 				stopRobot();
 				WT.continueAfterFirstQuit = false;
 				WT.setFirstQuit(true);
@@ -358,7 +361,7 @@ public class CommandUnit {
 				interrupt = false;
 				sendStringToUnit("[UA]");
 				return -1;
-			}
+			}*/
 			WT.setFirstQuit(true);
 			Thread.sleep(500);
 		} catch(Exception e) {
@@ -372,14 +375,14 @@ public class CommandUnit {
 		} catch(Exception e) {
 			
 		}
-		if(interrupt) {
+		/*if(interrupt) {
 			stopRobot();
 			distanceTravelled = (int)Math.round((Motor.A.getTachoCount() - initialTachoCount)/LENGTH_COEF);
 			moveForwardWithoutBarcode((int)Math.round(-distanceTravelled*LENGTH_COEF));
 			interrupt = false;
 			sendStringToUnit("[UA]");
 			return -1;
-		}
+		}*/
 		while(WT.isAlive());	
 		return moveForward((int)Math.round(20*LENGTH_COEF));
     }
@@ -419,12 +422,12 @@ public class CommandUnit {
         turnAngle((int)(ANGLE_COEF_LEFT*180));
         Motor.A.setSpeed(CommandUnit.speed/2);
         Motor.B.setSpeed(CommandUnit.speed/2);
-        Motor.C.rotate(-120);
+        Motor.C.rotate(-125);
         Motor.A.rotate((int)Math.floor(LENGTH_COEF*-20), true);
         Motor.B.rotate((int)Math.floor(LENGTH_COEF*-20));
-        Motor.C.rotate(120, true); //TODO: geeft geen problemen?
-        Motor.A.rotate((int)Math.floor(LENGTH_COEF*25), true);
-        Motor.B.rotate((int)Math.floor(LENGTH_COEF*25));
+        Motor.A.rotate((int)Math.floor(LENGTH_COEF*30), true);
+        Motor.B.rotate((int)Math.floor(LENGTH_COEF*30));
+        Motor.C.rotate(125);
         Motor.A.rotate((int)Math.floor(LENGTH_COEF*-40), true);
         Motor.B.rotate((int)Math.floor(LENGTH_COEF*-40));
     	Motor.A.setSpeed(CommandUnit.speed);

@@ -547,7 +547,6 @@ public class MazeExplorer {
                 if (!((Seesaw) (shortestPath.getTilesPath().get(0).getNeighbour(pilot.getOrientation()).getContent())).isClosed()
                         && !SimulatorPanel.center.getSHandler()
                                 .isLocked(seesawValue)) { // If seesaw is open
-                    System.out.println("crossing that seesaw!");
                     pilot.crossOpenSeesaw(seesawValue);
                 } else if (openSeesawIfClosed
                         && !SimulatorPanel.center.getSHandler()
