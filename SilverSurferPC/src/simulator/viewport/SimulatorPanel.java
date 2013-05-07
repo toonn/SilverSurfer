@@ -44,7 +44,7 @@ public class SimulatorPanel extends JPanel {
     private boolean realRobot = false;
     private boolean showingDummies = true;
     private boolean showingMap = true;
-    private MQCenter center;
+    public static MQCenter center;
     private static Set<int[]> allRobotPositions = new HashSet<int[]>();
 
     public SimulatorPanel(Color[] teamColors) {

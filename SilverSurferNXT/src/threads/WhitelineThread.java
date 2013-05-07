@@ -1,5 +1,6 @@
 package threads;
 
+import brick.CommandUnit;
 import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
 
@@ -16,9 +17,11 @@ public class WhitelineThread extends Thread {
 	public boolean continueAfterFirstQuit = true;
 	private boolean secondQuit = false;
 	public boolean doneWithAligning = false;
+	private CommandUnit CU;
 
-	public WhitelineThread(String str, UltrasonicSensor ultrasonicSensor, double lenghtCoef, double angleCoefRight, double angleCoefLeft, int wallDistance, int wallDistanceLimit, double lightSensorDistance) {
+	public WhitelineThread(CommandUnit CU, String str, UltrasonicSensor ultrasonicSensor, double lenghtCoef, double angleCoefRight, double angleCoefLeft, int wallDistance, int wallDistanceLimit, double lightSensorDistance) {
 		super(str);
+		this.CU = CU;
 		this.ultrasonicSensor = ultrasonicSensor;
 		this.lengthCoef = lenghtCoef;
 		this.angleCoefRight = angleCoefRight;
@@ -48,6 +51,7 @@ public class WhitelineThread extends Thread {
 				Motor.B.stop(true);
 				Thread.sleep(500);
 				int value = ultrasonicSensor.getDistance();
+				System.out.println(value);
 				if(value != wallDistance && value < wallDistanceLimit) {
 					int backup = Motor.A.getSpeed();
 					Motor.A.setSpeed(50);
@@ -61,9 +65,10 @@ public class WhitelineThread extends Thread {
 			} catch(Exception e) {
 				
 			}
-			doneWithAligning = true;
 			Motor.A.rotate(-(int)(angleCoefLeft*90), true);
 			Motor.B.rotate((int)(angleCoefRight*90));
+			CU.interrupt = false;
+			doneWithAligning = true;
 		}
 	}
 	
