@@ -37,15 +37,15 @@ public class RobotPilot extends AbstractPilot {
         boolean succes = true;
         communicator.sendCommand(Command.ALIGN_WHITE_LINE);
         try {
-        	super.travel(40, false);        
-        } catch(CollisionAvoidedException e) {
-        	communicator.sendCommand(Command.UNDO_ACTION);
-        	succes = false;
+            super.travel(40, false);
+        } catch (CollisionAvoidedException e) {
+            communicator.sendCommand(Command.UNDO_ACTION);
+            succes = false;
         }
         waitUntilDone();
-        if(!succes || statusInfoBuffer.getUndidAction()) {
-        	setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
-        	throw new CollisionAvoidedException();     
+        if (!succes || statusInfoBuffer.getUndidAction()) {
+            setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
+            throw new CollisionAvoidedException();
         }
         if (readBarcodes && isExecutingBarcode()) {
             pilotActions.barcodeFound();
@@ -104,7 +104,8 @@ public class RobotPilot extends AbstractPilot {
     @Override
     public void rotate(final double alpha) {
         busy = true;
-        communicator.sendCommand((int) (alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
+        communicator
+                .sendCommand((int) (alpha * 100 + Command.AUTOMATIC_TURN_ANGLE));
         super.rotate(alpha);
         waitUntilDone();
     }
@@ -138,23 +139,25 @@ public class RobotPilot extends AbstractPilot {
     }
 
     @Override
-    public void travel(final double distance, boolean ignoreCollision) throws CollisionAvoidedException {
+    public void travel(final double distance, boolean ignoreCollision)
+            throws CollisionAvoidedException {
         busy = true;
         boolean succes = true;
-        if(ignoreCollision)
-        	communicator.sendCommand(Command.IGNORE_COLLISION);
-        communicator.sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
+        if (ignoreCollision)
+            communicator.sendCommand(Command.IGNORE_COLLISION);
+        communicator
+                .sendCommand((int) (distance * 100 + Command.AUTOMATIC_MOVE_FORWARD));
         try {
             super.travel(distance, ignoreCollision);
-        } catch(CollisionAvoidedException e) {
-        	communicator.sendCommand(Command.UNDO_ACTION);
-        	succes = false;
+        } catch (CollisionAvoidedException e) {
+            communicator.sendCommand(Command.UNDO_ACTION);
+            succes = false;
         }
         waitUntilDone();
-        if(!succes || statusInfoBuffer.getUndidAction()) {
-        	setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
-        	throw new CollisionAvoidedException();     
-        }   
+        if (!succes || statusInfoBuffer.getUndidAction()) {
+            setPosition(statusInfoBuffer.getX(), statusInfoBuffer.getY());
+            throw new CollisionAvoidedException();
+        }
         if (readBarcodes && isExecutingBarcode())
             pilotActions.barcodeFound();
         setBusyExecutingBarcode(false);
@@ -355,5 +358,11 @@ public class RobotPilot extends AbstractPilot {
         }
         readBarcodes = readBarcodesBackup;
         waitUntilDone();
+    }
+
+    @Override
+    public void setPosition(final double x, final double y) {
+        position.setLocation(x + getStartMatrixPosition().getX(), y
+                + getStartMatrixPosition().getY());
     }
 }
