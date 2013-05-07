@@ -298,13 +298,20 @@ Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten i
 \subparagraph{Een wip openen} 
 Dit algoritme wordt uitgevoerd wanneer de robot voor een gesloten wip staat. De robot rijdt achterwaarts en aligneert zich op de witte lijn voor de barcode. Na het aligneren staat de robot midden op de tegel met barcode. De robot draait~$180\degree$ om zijn as. De schep daalt~$75\degree$ zodat hij op de wip ligt. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt de schep de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken. De robot dient volgens het protocol twee keer een `lock' aan te vragen tijdens deze operatie, de wip kantelt immers tweemaal. Zo weten andere robots in welke richting de wip uiteindelijk staat.\\
 Door een vakje te `locken' weten de andere robots dat de robot zich nu op dat vakje gaat bevinden. Dit is in het protocol ge"implementeerd. De `lock' op een vakje gebeurt wanneer de robot van een ander vakje naar dit vakje begeeft. Op een wip kan men dus ook een `lock' uitvoeren. De robot kan dus in principe zo bijhouden hoe de wip staat als het de beginpositie kent. Of de robot begint het bij te houden van wanneer hij zelf over de wip gegaan is. De robot heeft dit niet ge"implementeerd omdat het verkenalgoritme de wippen gaat ontwijken. Alleen maar als het echt niet anders gaat. \\
-Op figuur \ref{fig:robotWip} is te zien hoe de robot de wip kan openen met de lange schep.
+Op figuur \ref{rowi} is te zien hoe de robot de wip kan openen met de lange schep.
 
 \begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\textwidth]{robotWip}
-	\label{fig:robotWip}
-	\caption{Robot die de wip naar beneden haalt}
+\caption{Robot die de wip openent}
+\centering
+\includegraphics[scale=0.1]{robotWip.jpg}
+\label{robowip}
+\end{figure}
+
+\begin{figure}[h]
+\caption{Robot die de wip naar beneden haalt}
+\centering
+\includegraphics[scale=0.1]{robotWip.jpg}
+\label{rowi}
 \end{figure}
 
 
@@ -457,6 +464,8 @@ Zowel \textit{SimulatorPilot} als \textit{RobotPilot} erven over van \textit{Abs
 % -- GUI -- %
 \subsection{Grafische User Interface}
 \label{ssec:GUI}
+%TODO duidelijker uitleggen: per puntjes ofzo
+%TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
 De \textit{GUI} is zeer flexibel. Naast de doolhof die de robot reeds verkend heeft, is het mogelijk verschillende extra panelen te openen:
 
 \begin{itemize}
@@ -488,6 +497,7 @@ Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot e
 
 Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kleur hangt af van zijn spelersnummer. Ook zijn voorwerp en de rand van de kader waarin de robot zich bevindt, krijgen deze kleur. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur: paars of rood. Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot. Figuur~\ref{fig:guiEvolutie} toont deze evolutie in weergave.\\
 
+%TODO figuur met samengevoegde map!!
 \begin{figure}
 \centering
 	\begin{subfigure}[h]{0.8\textwidth}
@@ -537,57 +547,58 @@ Het genereren van de sensorwaarden gebeurt op basis van een ingeladen map en van
 Op de bewegingen van de simulator wordt geen ruis toegevoegd. Wanneer de fysieke robot zich regelmatig aligneert, rijdt hij immers nauwkeurig genoeg.
 
 % -- Mapping -- %
+%TODO beter titel? Moeten ons houden aan de titels van de template van de commissie
 \subsection{Mappen van een doolhof}
 \label{ssec:Mapping}
 Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een robot voorstellen. Figuur~\ref{fig:klasMap} geeft de structuur van het pakket weer. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze biedt functionaliteiten om van de huidige tegel naar een aanliggende tegel te reizen en om de map dynamisch uit te breiden. Elke \textit{Tile} wordt via \textit{Edges} verbonden met zijn buurtegels. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde text-bestand een \textit{MapGraph} opstellen.\\
 
 De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld door de \textit{AbstractPilot}. Deze bevat enkel informatie die de robot zelf verzamelde.
 
- klassendiagram mapping
-\begin{figure}[h]
-\centering
-	\includegraphics[width=0.8\textwidth]{klasMapping}
-\caption{Klassendiagram mapping}
-\label{fig:klasMap}
-\end{figure}
-
-%\begin{figure}
+% klassendiagram mapping
+%\begin{figure}[h]
 %\centering
-%\begin{tikzpicture}[thick,scale=0.7, every node/.style={scale=0.7}]
-%\tikzstyle{line} = [draw, -stealth, thick]
-%
-%\tikzstyle{block} = [draw, rectangle, text width=8em, text centered, minimum height=15mm, node distance=7em, rounded corners]
-%\node [block] (Tile) {Tile};
-%\node [block, left of=Tile, xshift=-5em] (Edge) {Edge};
-%\node [block, above of=Tile, yshift=3em] (MapGraph) {MapGraph};
-%\node [block, above of=MapGraph, yshift=3em]
-%(PilotInterface) {PilotInterface};
-%\node [block, above of=PilotInterface, yshift=3em]
-%(not) {...};
-%\node [block, right of=Tile, xshift=5em] (TileContent) {TileContent};
-%\node[block , below of=Edge, yshift=-3em](Obstruction){Obstruction};
-%\node [block, below of=TileContent, yshift=-3em] (Barcode) {Barcode};
-%\node [block, right of=Barcode, xshift=3em]
-%(TreasureObject) {TreasureObject};
-%\node [block, left of=Barcode, xshift=-3em]
-%(Seesaw) {Seesaw};
-%
-%%arrows
-%\path [line, line width=1.6pt] (Edge) -- (Tile);
-%\path [line, line width=1.6pt] (TileContent) -- (Tile);
-%\path [line, line width=1.6pt] (Tile) -- (MapGraph);
-%\path [line, line width=1.6pt] (MapGraph) -- (PilotInterface);
-%\path [line, line width=1.6pt] (PilotInterface) -- (not);
-%\path [line, line width=1.6pt] (Obstruction) -- (Edge);
-%
-%\path [line, color=blue, line width=1.6pt] (Seesaw) -- (TileContent);
-%\path [line, color=blue, line width=1.6pt] (Barcode) -- (TileContent);
-%\path [line, color=blue, line width=1.6pt] (TreasureObject) -- (TileContent);
-%%\path [line] (decision1) -| node[yshift=0.5em, xshift=-10em] {no} (process2);
-%\end{tikzpicture}
-%\caption{Klassendiagram mapping, de blauwe pijlen wijzen op overerving}
+%	\includegraphics[width=0.8\textwidth]{klasMapping}
+%\caption{Klassendiagram mapping}
 %\label{fig:klasMap}
 %\end{figure}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[thick,scale=0.7, every node/.style={scale=0.7}]
+\tikzstyle{line} = [draw, -stealth, thick]
+
+\tikzstyle{block} = [draw, rectangle, text width=8em, text centered, minimum height=15mm, node distance=7em, rounded corners]
+\node [block] (Tile) {Tile};
+\node [block, left of=Tile, xshift=-5em] (Edge) {Edge};
+\node [block, above of=Tile, yshift=3em] (MapGraph) {MapGraph};
+\node [block, above of=MapGraph, yshift=3em]
+(PilotInterface) {PilotInterface};
+\node [block, above of=PilotInterface, yshift=3em]
+(not) {...};
+\node [block, right of=Tile, xshift=5em] (TileContent) {TileContent};
+\node[block , below of=Edge, yshift=-3em](Obstruction){Obstruction};
+\node [block, below of=TileContent, yshift=-3em] (Barcode) {Barcode};
+\node [block, right of=Barcode, xshift=3em]
+(TreasureObject) {TreasureObject};
+\node [block, left of=Barcode, xshift=-3em]
+(Seesaw) {Seesaw};
+
+%arrows
+\path [line, line width=1.6pt] (Edge) -- (Tile);
+\path [line, line width=1.6pt] (TileContent) -- (Tile);
+\path [line, line width=1.6pt] (Tile) -- (MapGraph);
+\path [line, line width=1.6pt] (MapGraph) -- (PilotInterface);
+\path [line, line width=1.6pt] (PilotInterface) -- (not);
+\path [line, line width=1.6pt] (Obstruction) -- (Edge);
+
+\path [line, color=blue, line width=1.6pt] (Seesaw) -- (TileContent);
+\path [line, color=blue, line width=1.6pt] (Barcode) -- (TileContent);
+\path [line, color=blue, line width=1.6pt] (TreasureObject) -- (TileContent);
+%\path [line] (decision1) -| node[yshift=0.5em, xshift=-10em] {no} (process2);
+\end{tikzpicture}
+\caption{Klassendiagram mapping, de blauwe pijlen wijzen op overerving}
+\label{fig:klasMap}
+\end{figure}
 
 % == BESLUIT == %
 \section{Besluit}
@@ -661,6 +672,7 @@ Het rijden over een wip vraagt extra testen zodat eventueel het hefboomsysteem k
 \label{Assec:aanp2}
 Volgende secties werden aangepast ten opzichte van het tweede tussentijds verslag van het tweede semester:
 
+%TODO
 % overzicht aangepaste secties
 \begin{itemize}
 \item \textit{\ref{ssec:Bouw} Ontwerp:} nieuwe bouw.
@@ -789,9 +801,6 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 
 \section{Kritische analyse}
 \label{Assec:kritischeAnalyse}
-
-%TODO start semester: code herordend
-
 Voor het tweede deel van het semester werd de bouw van de robot volledig veranderd. We zagen tijdens de eerste demo en bij de testen dat de robot zeer onstabiel was. Het steviger en robuuster ontwerp heeft de robot nauwkeuriger gemaakt. 
 
 Ook aan het begin van het tweede semester hebben we alle code herschikt en soms herschreven. Hierdoor hebben we wel veel tijd verloren maar dit kwam later soms ten goede omdat we tijd wonnen. 
@@ -802,32 +811,39 @@ Op het einde hebben we een keuze moeten maken tussen een goed werkende simulator
 
 We hadden wel een heel goed team waardoor we nooit zinloze discussies gehouden hebben. We kwamen snel overeen als we een beslissing moesten nemen en iedereen heeft goede input kunnen geven. 
 
+Er is veel tijd verloren aan het verstaan en begrijpen van het protocol. De wiki van het protocol werd niet upgedate. Dit was zeer vervelend. Pas nadat er veel fouten waren doorgegeven aan het team van het protocol werd de wiki geupdaten en wisten we dat de fout aan iets anders lag dan dat we dachten. De documentatie van het protocol was ook helemaal niet duidelijk. Bij de ... stond er dat dit alleen maar voor assisten en visitors bedoeld was. Uiteindelijk bleek het dat dit ook moest ge"implementeerd worden. Dit bleek net hetzelfde met het `locken' van een wip. 
+%TODO 
+
+\section*{Tekst Scheidsrechter commissie}
+%stuk over de scheidsrechtercommissie in het eindverslag, door elk lid van de spelcommissie, met o.a.: evaluatie van de spelcommissie en eigen inbreng\\
+
+De vergaderingen van de scheidsrechter commissie waren er voor samen beslissingen te nemen over de invulling van het project. We zaten met 11 teams samen en afwisselend werd er iemand voorzitter en secretaris. Het probleem was alleen dat sommige voorzitters niet goed wisten hoe ze een vergadering moesten leiden waardoor discussi"eren soms moeilijk werd. \\
+
+De vergaderingen waren niet altijd even effici"ent. Sommige discussies waren heel frustrerend omdat er mensen waren die ongefundeerde reacties gaven of omdat er over iets gediscussieerd werd dat helemaal geen zin had. Het feit dat het HTTTP protocol helemaal geschreven was door een team was wel handig langst de ene kant omdat ons team daar dan niet veel werk in moest steken, langst de andere kant was het soms vaag wat er allemaal gebeurde met het HTTTP protocol. Het zou beter zijn geweest moesten er meerdere teams daar samen aan gewerkt hebben. Ook helemaal op het einde voerde dit team nog aanpassingen door aan het protocol.  \\
+
+ Het voordeel van de scheidsrechter commissie was dat er maar een persoon zich moest bezig houden met de grote beslissingen. Deze moest dan gewoon zijn team inlichten en vragen naar meningen en deze bundelen en op de vergadering brengen. \\
+ 
+Ik, Sophie Marien, was de verantwoordelijke van team Zilver om naar de scheidsrechter commissie te gaan en ons team te vertegenwoordigden. Qua eigen inbreng heb ik het idee gegeven om de wip te detecteren door er een infraroodbal onder te plaatsen. Ik heb ook geprobeerd om via infraroodlichtjes op de robots het detectie probleem om te lossen. Dit ging uiteindelijk niet omdat de infraroodlichtjes niet straf genoeg waren. Ze werden wel gedetecteerd door de robot maar de afstand was niet groot genoeg om een andere robot op tijd te detecteren. \\
+Voor de rest heb ik veel verslagen niet goed gekeurd wegens onnauwkeurigheden en soms omdat ik ook niet akkoord was met een beslissing. \\
+ 
+
 \begin{thebibliography}{9}
 
-\bibitem{Verslag1} 
-\textit{Verslag van het eerste semester}
-
 \bibitem{TeamTreasure} 
-\textit{Team Treasure Trek} \mbox{[www.nintendo-europe.com/]}
+\textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
 
 \bibitem{RabbitMQ}
-\textit{RabbitMQ} \mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
+\textit{RabbitMQ}: Een communicatiesysteem dat het \textit{Advanced Message Queing Protocol (AMQP)} implementeert. Door een kanaal op te zetten met een \texttt{RabbitMQ}-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' plaatst berichten met een bepaald onderwerp naar de juiste `queues'.
+\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
 
 \bibitem{mindstorms}
-\textit{Lego Mindstorms} \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
 
 \bibitem{leJOS}
-\textit{leJOS} \mbox{[http://lejos.sourceforge.net/]}
+\textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
 
 \end{thebibliography}
 
-\section{Tekst Scheidsrechtercommissie}
-%stuk over de scheidsrechtercommissie in het eindverslag, door elk lid van de spelcommissie, met o.a.: evaluatie van de spelcommissie en eigen inbreng\\
 
-De vergaderingen van de scheidsrechtercommissie waren er voor samen beslissingen te nemen over de invulling van het project. We zaten met 11 teams samen en afwisselend werd er iemand voorzitter en secretaris. Het probleem was alleen dat sommige voorzitters niet goed wisten hoe ze een vergadering moesten leiden waardoor discussi"eren soms moeilijk werd. \\
-
-De vergaderingen waren niet altijd even effici"ent. Sommige discussies waren heel frustrerend omdat er mensen waren die ongefundeerde reacties gaven of omdat er over iets gediscussieerd werd dat helemaal geen zin had. Het feit dat het HTTTP protocol helemaal geschreven was door een team was wel handig langst de ene kant omdat ons team daar dan niet veel werk in moest steken, langst de andere kant was het soms vaag wat er allemaal gebeurde met het HTTTP protocol. Het zou beter zijn geweest moesten er meerdere teams daar samen aan gewerkt hebben.  \\
-
- Het voordeel van de scheidsrechtercommissie was dat er maar een persoon zich moest bezig houden met de grote beslissingen. Deze moest dan gewoon zijn team inlichten en vragen naar meningen en deze bundelen en op de vergadering brengen. 
 
 \end{document}
