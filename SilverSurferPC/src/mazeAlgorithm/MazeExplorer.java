@@ -10,6 +10,7 @@ import mapping.Orientation;
 import mapping.Seesaw;
 import mapping.Tile;
 import simulator.pilot.AbstractPilot;
+import simulator.viewport.SimulatorPanel;
 import commands.Sleep;
 
 public class MazeExplorer {
@@ -72,16 +73,19 @@ public class MazeExplorer {
                     }
                     if (!((Seesaw) (currentTile.getNeighbour(pilot
                             .getOrientation()).getContent())).isClosed()
-                            && !pilot.getCenter().getSHandler()
+                            && !SimulatorPanel.center.getSHandler()
                                     .isLocked(seesawValue)) // If
                         // seesaw
                         // is
                         // open
                         pilot.crossOpenSeesaw(seesawValue);
-                    else if (!pilot.getCenter().getSHandler()
+                    else if (!SimulatorPanel.center.getSHandler()
                             .isLocked(seesawValue))
                         // If seesaw is closed
                         pilot.crossClosedSeesaw(seesawValue);
+                    else {
+                        nextTile = makeDetour(currentTile, null);
+                    }
                 } else { // Geen seesaws --> omweg maken
                     if (onlyOnceTile != null) {
                         currentTile = onlyOnceTile;
@@ -113,13 +117,12 @@ public class MazeExplorer {
                     }
                     if (!((Seesaw) (currentTile.getNeighbour(pilot
                             .getOrientation()).getContent())).isClosed()
-                            && !pilot.getCenter().getSHandler()
-                                    .isLocked(seesawValue)) // If
+                            ) // If
                                                             // seesaw
                                                             // is
                                                             // open
                         pilot.crossOpenSeesaw(seesawValue);
-                    else if (!pilot.getCenter().getSHandler()
+                    else if (!SimulatorPanel.center.getSHandler()
                             .isLocked(seesawValue))
                         // If seesaw is closed
                         pilot.crossClosedSeesaw(seesawValue);
@@ -311,7 +314,7 @@ public class MazeExplorer {
                         orientation = pilot.getOrientation()
                                 .getOppositeOrientation();
                     Tile seesaw = tile.getNeighbour(orientation);
-                    if (!((Seesaw) seesaw.getContent()).isClosed()
+                    if ((!((Seesaw) seesaw.getContent()).isClosed() && !SimulatorPanel.center.getSHandler().isLocked(getSeesawValue(tile)))
                             || openSeesawIfClosed)
                         return tile;
                     else {
@@ -541,15 +544,13 @@ public class MazeExplorer {
                     && shortestPath.getTilesPath().get(1).getContent() instanceof Seesaw) {
                 int seesawValue = getSeesawValue(shortestPath.getTilesPath()
                         .get(0));
-                if (!((Seesaw) (shortestPath.getTilesPath().get(0)
-                        .getNeighbour(pilot.getOrientation()).getContent()))
-                        .isClosed()
-                        && !pilot.getCenter().getSHandler()
+                if (!((Seesaw) (shortestPath.getTilesPath().get(0).getNeighbour(pilot.getOrientation()).getContent())).isClosed()
+                        && !SimulatorPanel.center.getSHandler()
                                 .isLocked(seesawValue)) { // If seesaw is open
                     System.out.println("crossing that seesaw!");
                     pilot.crossOpenSeesaw(seesawValue);
                 } else if (openSeesawIfClosed
-                        && !pilot.getCenter().getSHandler()
+                        && !SimulatorPanel.center.getSHandler()
                                 .isLocked(seesawValue))// If seesaw is closed
                     pilot.crossClosedSeesaw(seesawValue);
                 else {
@@ -608,10 +609,10 @@ public class MazeExplorer {
                 if (!((Seesaw) (currentTile
                         .getNeighbour(pilot.getOrientation()).getContent()))
                         .isClosed()
-                        && !pilot.getCenter().getSHandler()
+                        && !SimulatorPanel.center.getSHandler()
                                 .isLocked(seesawValue)) // If seesaw is open
                     pilot.crossOpenSeesaw(seesawValue);
-                else if (!pilot.getCenter().getSHandler().isLocked(seesawValue))
+                else if (!SimulatorPanel.center.getSHandler().isLocked(seesawValue))
                     // If seesaw is closed
                     pilot.crossClosedSeesaw(seesawValue);
             }
