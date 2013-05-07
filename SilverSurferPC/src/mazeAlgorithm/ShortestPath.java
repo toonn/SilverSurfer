@@ -136,6 +136,12 @@ public class ShortestPath {
 		pilot.setReadBarcodes(false);
 		pilot.rotate((int) explorer.getSmallestAngle((int) (orientation.getAngle() - pilot.getAngle())));
 		pilot.updateTilesAndPosition();
+		
+		if(tilesPath.get(1).getContent() instanceof Seesaw && ((Seesaw)(tilesPath.get(1).getContent())).isClosed()) {
+			currentTileDuringException = tilesPath.get(0);
+			pilot.setReadBarcodes(readBarcodesBackup);
+			throw new CollisionAvoidedException();
+		}
 
 		if(specialBarcodeCase && !tilesPath.get(1).isMarkedExploreMaze())
 			pilot.setReadBarcodes(true);
@@ -179,6 +185,15 @@ public class ShortestPath {
 	public int getTilesAwayFromTargetPosition() {
 		if(!pathCalculated)
 			calculatePath();
+		return tilesPath.size()-1;
+	}
+
+	public int getTilesAwayFromTargetPositionWithoutSeesaw() {
+		int seesawBackupValue = extraCostSeesaw;
+		extraCostSeesaw = Integer.MAX_VALUE;
+		if(!pathCalculated)
+			calculatePath();
+		extraCostSeesaw = seesawBackupValue;
 		return tilesPath.size()-1;
 	}
 }

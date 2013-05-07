@@ -9,11 +9,9 @@ import java.util.Vector;
 
 import commands.Sleep;
 import mapping.MapGraph;
-import mapping.MapReader;
 import mapping.Obstruction;
 import mapping.Orientation;
 import mapping.Seesaw;
-import mapping.StartBase;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
 import mazeAlgorithm.ExploreThread;
@@ -27,7 +25,7 @@ public abstract class AbstractPilot implements PilotInterface {
     private int playerNumber = -1;
     private int teamNumber = -1;
     private MapGraph mapGraphConstructed;
-    private Point2D.Double position;
+    protected Point2D.Double position;
     private double angle;
     private int speed;
     private boolean busyExecutingBarcode = false;
@@ -92,9 +90,11 @@ public abstract class AbstractPilot implements PilotInterface {
                     ArrayList<peno.htttp.Tile> vector = new ArrayList<peno.htttp.Tile>();
                     for (mapping.Tile tile : getMapGraphConstructed()
                             .getTiles())
-                        vector.add(new peno.htttp.Tile((long) (tile
-                                .getPosition().getX() - getStartMatrixPosition().getX()), -(long) (tile.getPosition().getY() - getStartMatrixPosition().getY()), tile
-                                .getToken()));
+                        vector.add(new peno.htttp.Tile(
+                                (long) (tile.getPosition().getX() - getStartMatrixPosition()
+                                        .getX()), -(long) (tile.getPosition()
+                                        .getY() - getStartMatrixPosition()
+                                        .getY()), tile.getToken()));
                     getCenter().getPlayerClient().sendTiles(vector);
                 }
             } catch (IOException e) {
@@ -268,7 +268,8 @@ public abstract class AbstractPilot implements PilotInterface {
         mapGraphConstructed = new MapGraph();
         mapGraphConstructed.addTile(getMatrixPosition());
         Tile startTile = mapGraphConstructed.getTile(getMatrixPosition());
-        startTile.setContent(mapGraphLoaded.getTile(getMatrixPosition()).getContent());
+        startTile.setContent(mapGraphLoaded.getTile(getMatrixPosition())
+                .getContent());
     }
 
     protected boolean pointOnEdge(final double x, final double y) {
@@ -491,6 +492,8 @@ public abstract class AbstractPilot implements PilotInterface {
     }
 
     public void crossOpenSeesaw(int seesawValue) {
+        System.out.println(getPlayerNumber() + " crossed the seesaw: "
+                + seesawValue);
         try {
             if (gameOn
                     && !getCenter().getPlayerClient().hasLockOnSeesaw(
@@ -529,6 +532,7 @@ public abstract class AbstractPilot implements PilotInterface {
             // Keep trying to cross, it will be futile but you never know
             travelThirtyCollisionRollback();
         }
+        updateTilesAndPosition();
         try {
             travel(30, false);
         } catch (CollisionAvoidedException e) {
@@ -541,6 +545,7 @@ public abstract class AbstractPilot implements PilotInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        updateTilesAndPosition();
         try {
             alignOnWhiteLine();
         } catch (CollisionAvoidedException e) {
@@ -586,7 +591,7 @@ public abstract class AbstractPilot implements PilotInterface {
         readBarcodes = readBarcodesBackup;
     }
 
-    private void travelThirtyCollisionRollback() {
+    protected void travelThirtyCollisionRollback() {
         new Sleep().sleepFor(1000);
         try {
             travel(30, false);
@@ -595,7 +600,7 @@ public abstract class AbstractPilot implements PilotInterface {
         }
     }
 
-    private void alignOnWhiteLineCollisionRollback() {
+    protected void alignOnWhiteLineCollisionRollback() {
         new Sleep().sleepFor(1000);
         try {
             alignOnWhiteLine();

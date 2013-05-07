@@ -40,10 +40,10 @@ public abstract class AbstractViewPort extends JPanel {
     protected Set<PilotInterface> pilots;
     private Map<Barcode, Rectangle2D[]> barcodeRectangles;
     private HashMap<TreasureObject, Ellipse2D[]> treasureCircles;
-    private ImageIcon robotSprite = new ImageIcon(
+    protected ImageIcon robotSprite = new ImageIcon(
             "resources/robot/NXTrobotsmall.png");
     private int repaintFPS = 30;
-    private Color[] teamColors;
+    protected Color[] teamColors;
     private Color mainColor;
     private ActionListener repaintViewPort = new ActionListener() {
 
@@ -218,7 +218,7 @@ public abstract class AbstractViewPort extends JPanel {
         paintWalls(graph);
     }
 
-    private void paintRobotColor(final Graphics graph) {
+    protected void paintRobotColor(final Graphics graph) {
         int diam = 25;
         final Graphics2D g2 = (Graphics2D) graph;
 
@@ -238,7 +238,7 @@ public abstract class AbstractViewPort extends JPanel {
         }
     }
 
-    private void paintRobots(final Graphics graph) {
+    protected void paintRobots(final Graphics graph) {
         Graphics2D g2 = (Graphics2D) graph;
         for (PilotInterface pilot : pilots) {
             if (!(pilot instanceof DummyPilot) || ((DummyPilot) pilot).isActive()) {
