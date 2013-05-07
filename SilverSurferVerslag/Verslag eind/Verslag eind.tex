@@ -40,10 +40,10 @@
 
 \begin{abstract}
 \label{ssec:Abstract}
-Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
+Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} \cite{TeamTreasure} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot een lange schep waarmee hij zijn voorwerp kan oprapen en eventueel een wip kan openen.
-De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Enkel doorgangen en muren verkregen via informatie uit barcodes beschouwt hij als definitief. Via \textsc{RabbitMQ} kunnen de robots elkaar mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
+De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Enkel doorgangen en muren verkregen via informatie uit barcodes beschouwt hij als definitief. Via \textsc{RabbitMQ} \cite{RabbitMQ} kunnen de robots elkaar mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
 
 Het computerprogramma simuleert de werking van de robot. Deze simulator kan in combinatie met de fysieke robot gebruikt worden en kan meerdere robots tegelijkertijd simuleren. De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -64,7 +64,7 @@ Het computerprogramma simuleert de werking van de robot. Deze simulator kan in c
 % == INLEIDING == %
 \section{Inleiding} % 4 ok
 \label{ssec:Inl}
-In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van \textsc{LEGO Mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
+In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van \textsc{LEGO Mindstorms} \cite{mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
 De robots moeten hierbij in een onbekend doolhof op zoek gaan naar het voorwerp dat hen toegewezen werd. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
 
 %TODO goed?
@@ -89,7 +89,7 @@ De fysieke bouw van de robot en de kalibratie van de sensoren wordt beschreven i
 
 \subsection{Bouw Robot}
 \label{ssec:Bouw}
-\textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} kan dit in \textsc{Java}.\\
+\textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} \cite{leJOS} kan dit in \textsc{Java}.\\
 
 Bovenaan de robot is een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan. De sensoren worden weergegeven in figuur~\ref{fig:robotDetail}.\\
 
@@ -377,7 +377,7 @@ Een voorwerp ligt tegen de achterste muur van een `dead-end' tegel. De aanliggen
 
 \subsubsection{Andere robot}
 \label{sssec:AlgoCollision}
-Een hybride sensor maakt gebruikt van een \textit{Wereldsimulator}.
+Een hybride sensor maakt gebruik van een \textit{Wereldsimulator}.
 Deze heeft kennis van de posities van andere robots,
 gebaseerd op de informatie die andere robots doorsturen.
 Wij hebben ervoor gekozen geen gebruik te maken van de hybride sensor,
@@ -407,7 +407,7 @@ Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worde
 %TODO prentjes
 De translaties van beide mappen naar $(0,0)$ en de rotatie van de tweede map leidt tot een algemene transformatiematrix. Deze verandert echter alleen de co\"ordinaten van de tegels, niet de ori\"entatie van de tegels zelf. Wanneer de matrix geroteerd wordt, moeten alle tegels afzonderlijk van ori\"entatie veranderd worden. Zo wordt gecorrigeerd op het feit dat `noord' voor beide robots kan verschillen.\\
 
-Wanneer de volledige projectie bepaald is, worden de mappen samengevoegd. Vanaf dat moment is er een pad berekenbaar dat naar de teamgenoot leidt. Dit pad wordt genomen en er wordt niet meer naar verder updates van de map gekeken. De positie van de andere robot wordt met de dezelfde projectie `vertaald' naar een positie in de samengevoegde map.
+Wanneer de volledige projectie bepaald is, worden de mappen samengevoegd. Vanaf dat moment is er een pad berekenbaar dat naar de teamgenoot leidt. Dit pad wordt genomen en er wordt niet meer naar verdere updates van de map gekeken. De positie van de andere robot wordt met dezelfde projectie `vertaald' naar een positie in de samengevoegde map.
 
 % = teamgenoot = %
 \subsubsection{Teamgenoot bereiken}
@@ -417,7 +417,7 @@ De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over h
 
 De robot bepaalt het kortste pad naar de positie van de andere robot volgens een algoritme op basis van $A^{*}$. Hij legt \'e\'en stap van dit pad af en herbekijkt de positie van de andere robot. Indien deze zich verplaatst heeft, wordt het pad opnieuw berekend.
 
-Het zou kunnen dat beide robots in een lus bewegen waardoor ze steeds op dezelfde afstand van elkaar blijven. Om dit te vermijden wordt bij elke stap de lengte van de pad bepaald. Indien deze lengte niet daalde ten opzichte van de vorige stap, blijft de robot een willekeurige periode tussen de nul en tien seconden wachten. Zo wordt vermeden dat de robots niet opnieuw in dezelfde lus komen.
+Het zou kunnen dat beide robots in een lus bewegen waardoor ze steeds op dezelfde afstand van elkaar blijven. Om dit te vermijden wordt bij elke stap de lengte van het pad bepaald. Indien deze lengte niet daalde ten opzichte van de vorige stap, blijft de robot een willekeurige periode tussen de nul en tien seconden wachten. Zo wordt vermeden dat de robots niet opnieuw in dezelfde lus komen.
 
 
 % == SOFTWARE == %
@@ -473,7 +473,7 @@ De \textit{GUI} is zeer flexibel. Naast de doolhof die de robot reeds verkend he
 	\item de map die werd samengevoegd met die van de teamgenoot (rechter doolhof).
 \end{itemize}
 
-Figuur~\ref{fig:guiAll} toont de \textit{GUI} met deze extra panelen. In dit geval is de teamgenoot nog niet bekend waardoor de kader voor de samengevoegde map leeg is.\\
+Figuur~\ref{fig:guiAll} toont de \textit{GUI} met deze extra panelen. In dit geval is de teamgenoot nog niet bekend waardoor het kader van de samengevoegde map leeg is.\\
 
 % figuur GUI met extra schermen
 \begin{figure}[h]
@@ -483,7 +483,7 @@ Figuur~\ref{fig:guiAll} toont de \textit{GUI} met deze extra panelen. In dit gev
 \label{fig:guiAll}
 \end{figure}
 
-Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot een nieuws venster geopend worden. Het is echter ook mogelijk alle robots samen weer te geven, zoals wordt getoond in figuur~\ref{fig:gui4}. Dit is handig bij het testen: alle robots kunnen tegelijkertijd in het oog gehouden worden.
+Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot een nieuw venster geopend worden. Het is echter ook mogelijk alle robots samen weer te geven, zoals wordt getoond in figuur~\ref{fig:gui4}. Dit is handig bij het testen: alle robots kunnen tegelijkertijd in het oog gehouden worden.
 
 % figuur GUI
 \begin{figure}[h]
@@ -493,7 +493,7 @@ Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot e
 \label{fig:gui4}
 \end{figure}
 
-Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kleur hangt af van zijn spelersnummer. Ook zijn voorwerp en de rand van de kader waarin de robot zich bevindt, krijgen deze kleur. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur: paars of rood. Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot. Figuur~\ref{fig:guiEvolutie} toont deze evolutie in weergave.\\
+Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kleur hangt af van zijn spelersnummer. Ook zijn voorwerp en de rand van het kader waarin de robot zich bevindt, krijgen deze kleur. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur: paars of rood. Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot. Figuur~\ref{fig:guiEvolutie} toont deze evolutie in weergave.\\
 
 \begin{figure}
 \centering
@@ -572,7 +572,7 @@ Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een r
 
 De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld door de \textit{AbstractPilot}. Deze bevat enkel informatie die de robot zelf verzamelde.
 
- klassendiagram mapping
+% klassendiagram mapping
 \begin{figure}[h]
 \centering
 	\includegraphics[width=0.8\textwidth]{klasMapping}
@@ -708,47 +708,61 @@ Volgende secties werden aangepast ten opzichte van het tweede tussentijds versla
 \label{Asec:demo3}
 Door de bouw van de robot compacter te maken kan de schep achteraan geplaatst worden en voorzien worden van een motor. Dit maakt het ook mogelijk eventueel een wip te openen met de schep.
 
-De robot vermijdt andere robots door deze te beschouwen als tijdelijke muren. De robot kan twee mappen samenvoegen en kan met behulp van deze samengevoegde map naar zijn teamgenoot rijden.
+De robot vermijdt andere robots met behulp van zijn ultrasone sensor. De robot kan twee mappen samenvoegen en kan met behulp van deze samengevoegde map naar zijn teamgenoot rijden.
 
 % == resulaten == %
 \subsection{Resultaten}
 \label{Assec:result3}
-%TODO
+De demonstratie van de simulator verliep volledig zoals het hoorde: de robots vonden alle vier hun voorwerp en de twee duo's konden deze voorwerpen bij elkaar brengen. De gesimuleerde robots reden hierbij niet tegen elkaar.\\
+
+De fysieke robot was niet in staat robots te vermijden. Het is immers niet zomaar mogelijk de robot te onderbreken in zijn bewegingen. De robot zou echter samen met drie simulatoren zonder deze functie moeten kunnen werken. Er liep echter iets mis tijdens het verkennen waardoor de fysieke robot vast liep.
+
+Het was wel mogelijk het algoritme om de wip de openen te demonstreren.\\
+
+Wanneer met meerdere teams samen gepeeld werd, kwamen vooral verbindingsproblemen aan het licht. Het bleek bovendien dat we een bepaald onderdeel van het protocol verkeerd ge\"implementeerd hadden: dit deel was niet lang voor de demo verandert. Het betrof het doorsturen van posities. Deze posities dienden relatief ten opzichte van de startpositie en ori\"entatie te zijn, maar dit hadden we verkeerd begrepen.
 
 % == conclusies == %
 \subsection{Conclusies}
 \label{Assec:conc3}
-%TODO
+We hadden te weinig tijd robotdetectie te implementeren op de robot zelf. Dit kon niet volledig analoog aan de simulator gebeuren omdat de robot met \textit{threads} werkt die niet zomaar onderbroken kunnen worden. De manier waarop dit wel ge\"implementeerd zou kunnen worden, was volledig uitgewerkt. Het is jammer dat dit niet meer is gelukt.
+
+Er was bovendien niet meer genoeg tijd de fysieke robot voldoende te testen op grote doolhoven. Ook het verbinden met andere teams werd onvoldoende getest.
+
+We zijn echter heel tevreden over de simulator en de \textit{GUI}. Deze simulator volledig zoals het hoort en de \textit{GUI} toont alles wat gebeurt in een overzichtelijk veld.
 
 % == aanpassingen == %
 \subsection{Oplijsting aanpassingen verslag}
 \label{Assec:aanp3}
 Volgende secties werden aangepast ten opzichte van het derde tussentijds verslag van het tweede semester:
 
-%TODO
 % overzicht aangepaste secties
 \begin{itemize}
-\item
-%\item \textit{\ref{ssec:Bouw} Ontwerp:} nieuwe bouw.
-%\item \textit{\ref{ssec:Kalib} Kalibratie:} nieuwe sectie.
-%\item \textit{\ref{ssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
-%\item \textit{\ref{sssec:AlgoBar} Barcode:} nieuw algoritme.
-\item \textit{\ref{sssec:AlgoWip} Wip openen:} locken uitgelegd + tekening toegevoegd. 
-%\item \textit{\ref{sssec:AlgoTeam} Weg vinden naar teamgenoot:} aangepast.
-%\item \textit{\ref{sssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
-%\item \textit{\ref{sssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
-%\item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
+	\item \textit{\ref{sssec:AlgoWip} Wip openen:} `locken' uitgelegd, figuur toegevoegd;
+	\item \textit{\ref{sssec:AlgoCollision} Andere robot:} correctere uitleg robotdetectie;
+	\item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren, tekst meer uitgebreid;
+	\item \textit{\ref{ssec:Sim} Simulator:} simulatie ultrasone sensor;
+	\item \textit{\ref{Asec:demo3} Demo 3:} nieuwe sectie;
+	\item \textit{\ref{Asec:beschrijvingProces} Beschrijving van het proces:} nieuwe sectie;
+	\item \textit{\ref{Asec:werkverdeling} Beschrijving van de werkverdeling:} nieuwe sectie;
+	\item \textit{\ref{Asec:scheids} bijdrage aan de scheidsrechterscommissie:} nieuwe sectie;
+	\item \textit{\ref{Asec:kritisch} Kritische analyse:} nieuwe sectie;
 \end{itemize}
 
+Deze secties bevatten een aangepaste inhoud ten opzichte van het vorige verslag. Andere secties werden ook aangepast, maar daar ging het enkel om de verwoording van de inhoud.
 
 \section{Beschrijving van het proces}
-\label{Assec:beschrijvingProces}
-%TODO
+\label{Asec:beschrijvingProces}
+
+We zijn het semester begonnen met samen de opdracht te lezen en verschillende oplossingen te bespreken. Dit leidde tot een bepaalde strategie \cite{Strategie} die we zouden volgen doorheen het semester. Nadat iedereen wist waar het algemene project heen zou gaan, werkte iedereen vooral aan `zijn/haar' deel van het project. Wanneer nodig werd hulp gevraagd aan andere teamleden.
+
+Er werd steeds in een tabel bijgehouden wie wanneer aan wat had gewerkt. Dit gaf eveneens een zicht op wat er al klaar was en wat nog moest gebeuren. Hoewel af en toe nog werk dubbel gedaan werd, vermijdde het overzicht in deze tabel dit meestal.
+De code werd gedeeld via \textit{GitHub}. Voor de \textit{LaTeX}-code gaf dit af en toe problemen, maar verder zorgde het er meestal voor dat iedereen steeds de juiste versie van de code had.
+
 
 \section{Beschrijving van de werkverdeling}
-\label{Assec:werkverdeling}
-Tabel~\ref{tab:werkuren} geeft weer wie hoeveel tijd in het project gestoken heeft. Figuur~\ref{fig:werkverdeling} toont welk deel van de tijd in een bepaald onderwerp gestoken werd.
-Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie vertegenwoordigde het team in de scheidsrechtercommissie.
+\label{Asec:werkverdeling}
+Tabel~\ref{tab:werkuren} geeft weer hoeveel tijd in het project gestoken werd. Figuur~\ref{fig:werkverdeling} toont wie aan welke aspecten van het project heeft gewerkt.
+Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie vertegenwoordigde het team in de scheidsrechterscommissie.
 
 %TODO laatste week aanvullen!!
 \begin{table}[h]
@@ -774,7 +788,6 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 \end{center}
 \end{table}
 
-%TODO nu figuren van vorig semester !!!
 \begin{figure}[h]
         \centering
         \begin{subfigure}[hb]{0.15\textwidth}
@@ -816,47 +829,68 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 \label{fig:werkverdeling}
 \end{figure}
 
+\section{Bijdrage aan de scheidsrechterscommissie}
+\label{Asec:scheids}
+De vergaderingen van de scheidsrechterscommissie hadden als doel met alle teams samen een invulling aan het project te geven. Elke vergadering werd een andere voorzitter en secretaris aangewezen. Dit gaf soms problemen omdat niet alle voorzitters ervaring hadden met het leiden van vergaderingen. Discussi\"eren werd dan moeilijk: niet iedereen kreeg de kans te spreken, sommigen gaven ongefundeerde argumenten en soms werd te lang gediscussieerd over een klein detail. Een praktische informatiesessie over vergaderen kan hier misschien uitkomst bieden.
+
+De scheidsrechterscommissie gaf ieder team te kans bij te dragen aan belangrijke beslissingen. Door elk team een afgevaardigde te laten sturen, hoefde niet iedereen zich hiermee bezig te houden. De afgevaardigde diende enkel de mening van zijn team te brengen op de vergadering en het team achteraf in te lichten van de gemaakte beslissingen.\\
+
+Ik, Sophie Marien, vertegenwoordigde team Zilver op de scheidsrechterscommissie. Mijn inbreng bestond uit het idee van de infraroodbal onder de wip om zijn stand te detecteren. Ik heb ook geprobeerd robotdetectie op te lossen via infraroodlichtjes op de robots. Dit werkte uiteindelijk niet omdat de intensiteit van de infraroodlichtjes niet voldeed. Ze werden enkel op korte afstand gedetecteerd waardoor hun nut verviel.
+Verder heb ik regelmatig een verslag afgekeurd omdat het onnauwkeurigheden bevatte of omdat ik niet akkoord was met een beslissing.
+
+De scheidsrechterscommissie heeft er voor gekozen, het \textit{HTTTP}-protocol door \'e\'en team te laten maken. Dit was handig voor de andere teams: zo konden zij hun tijd anders besteden. Het zorgde er echter ook voor dat voor hen veel onduidelijkheid ontstond rond het protocol, enkel het `protocol-team' begreep volledig hoe het gebruikt moest worden. Bovendien werden soms vlak voor een demo wijzigingen doorgevoerd. Wanneer het protocol door meerdere teams geschreven zou zijn, zouden deze problemen misschien verholpen zijn geweest.
+
 \section{Kritische analyse}
-\label{Assec:kritischeAnalyse}
+\label{Asec:kritisch}
 
-%TODO start semester: code herordend
+Na het eerste semester was de code \'e\'en grote puinhoop. De eerste weken van dit semester werden daarom besteed aan het herordenen en herschrijven van de code die we al hadden. Hier is veel tijd in gekropen, maar het maakte het geheel heel wat overzichtelijker. Later hebben we deze `verloren' tijd hier zeker aan terugverdiend.
 
-Voor het tweede deel van het semester werd de bouw van de robot volledig veranderd. We zagen tijdens de eerste demo en bij de testen dat de robot zeer onstabiel was. Het steviger en robuuster ontwerp heeft de robot nauwkeuriger gemaakt. 
+De simulator is intensief gebruikt om de algoritmes te testen. Ook met de echte robots werden heel wat tests uitgevoerd. Deze testresultaten zijn echter niet altijd bijgehouden, waardoor niet alle testen in het verslag vermeld konden worden.
 
-Ook aan het begin van het tweede semester hebben we alle code herschikt en soms herschreven. Hierdoor hebben we wel veel tijd verloren maar dit kwam later soms ten goede omdat we tijd wonnen. 
+We hebben er steeds voor gezorgd de \textit{GUI} zo overzichtelijk mogelijk te houden. Dit doen we door zoveel mogelijk informatie en schermen te verbergen. Wanneer deze nodig zijn, kunnen ze makkelijk tevoorschijn gehaald worden. Dit geeft een mooi resultaat.
 
-Net zoals bij het eerste semester zijn er veel testen gebeurt maar hebben we deze testresultaten niet altijd bijgehouden. Hierdoor stonden er niet veel testen in het verslag.
+Na de tweede demo bleek dat de robot niet zo stabiel reed. Vooral op de wip gaf dit problemen. De bouw is daarom volledig aangepast. Dit vroeg om een volledige herkalibratie, maar de robot reed erna wel heel wat nauwkeuriger.
 
-Op het einde hebben we een keuze moeten maken tussen een goed werkende simulator of een goed werkende robot. We hebben toen gekozen voor een heel goed werkende simulator. Het leek ons belangrijker om te laten zien dat bijna alles perfect werkte met de simulator en met een bijna volledig goed werkende robot dan andersom. 
+Tegen de laatste demo hebben we wegens tijdgebrek moeten kiezen tussen een goed werkende robot en een goed werkende simulator. Deze laatste kreeg de voorkeur omdat deze minder onzekerheden in rekening moet brengen en omdat deze gemakkelijker te testen is. Bovendien kan de simulator de werking van de algoritmes duidelijk weergeven.
 
-We hadden wel een heel goed team waardoor we nooit zinloze discussies gehouden hebben. We kwamen snel overeen als we een beslissing moesten nemen en iedereen heeft goede input kunnen geven. 
+Het implementeren van het \textit{HTTTP} protocol, vroeg meer tijd dan eigenlijk nodig zou moeten zijn. Het protocol was onvoldoende gedocumenteerd en werd regelmatig (soms vlak voor een demonstratie) gewijzigd. De exacte manier waarop het protocol gebruikt moest worden, was daarom vaak niet duidelijk. Ook beslissingen van de scheidsrechterscommissie lieten soms lang op zich wachten. Dit vertraagde het hele project.
 
+We hadden wel een heel goed team. Iedereen was gemotiveerd en vergaderingen mondden niet uit tot zinloze discussies: iedereen kreeg de kans zijn mening te zeggen. Bovendien kon ieder teamlid zich bezighouden met een aspect van het project waar hij/zij goed in was. Deze diversiteit aan talenten heeft ervoor gezorgd dat we tevreden dat we een resultaat hebben waar we tevreden over kunnen zijn.
+
+\begin{flushleft}
 \begin{thebibliography}{9}
 
 \bibitem{Verslag1} 
-\textit{Verslag van het eerste semester}
+Sam Gielis, Sophie Marien, Toon Nolten, Nele Rober, Gerlinde Van Roey, Maxim Van Mechelen (2012-2013) \textit{Eindverslag P\&O computerwetenschappen, team Zilver}
+
+\bibitem{Strategie} 
+Sam Gielis, Sophie Marien, Toon Nolten, Nele Rober, Gerlinde Van Roey, Maxim Van Mechelen (2012-2013) \textit{Oplossingsstrategie 2e semester, team Zilver}
 
 \bibitem{TeamTreasure} 
-\textit{Team Treasure Trek} \mbox{[www.nintendo-europe.com/]}
+\textit{Team Treasure Trek}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{www.nintendo-europe.com/}
+\end{scriptsize}
 
 \bibitem{RabbitMQ}
-\textit{RabbitMQ} \mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
+\textit{RabbitMQ}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{http://en.wikipedia.org/wiki/RabbitMQ}
+\end{scriptsize}
 
 \bibitem{mindstorms}
-\textit{Lego Mindstorms} \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+\textit{Lego Mindstorms}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{www.lego.com} en \mbox{http://en.wikipedia.org/wiki/Lego\textendash Mindstorms}
+\end{scriptsize}
 
 \bibitem{leJOS}
-\textit{leJOS} \mbox{[http://lejos.sourceforge.net/]}
+\textit{leJOS}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{http://lejos.sourceforge.net/}
+\end{scriptsize}
 
 \end{thebibliography}
-
-\section{Tekst Scheidsrechtercommissie}
-%stuk over de scheidsrechtercommissie in het eindverslag, door elk lid van de spelcommissie, met o.a.: evaluatie van de spelcommissie en eigen inbreng\\
-
-De vergaderingen van de scheidsrechtercommissie waren er voor samen beslissingen te nemen over de invulling van het project. We zaten met 11 teams samen en afwisselend werd er iemand voorzitter en secretaris. Het probleem was alleen dat sommige voorzitters niet goed wisten hoe ze een vergadering moesten leiden waardoor discussi"eren soms moeilijk werd. \\
-
-De vergaderingen waren niet altijd even effici"ent. Sommige discussies waren heel frustrerend omdat er mensen waren die ongefundeerde reacties gaven of omdat er over iets gediscussieerd werd dat helemaal geen zin had. Het feit dat het HTTTP protocol helemaal geschreven was door een team was wel handig langst de ene kant omdat ons team daar dan niet veel werk in moest steken, langst de andere kant was het soms vaag wat er allemaal gebeurde met het HTTTP protocol. Het zou beter zijn geweest moesten er meerdere teams daar samen aan gewerkt hebben.  \\
-
- Het voordeel van de scheidsrechtercommissie was dat er maar een persoon zich moest bezig houden met de grote beslissingen. Deze moest dan gewoon zijn team inlichten en vragen naar meningen en deze bundelen en op de vergadering brengen. 
+\end{flushleft}
 
 \end{document}
