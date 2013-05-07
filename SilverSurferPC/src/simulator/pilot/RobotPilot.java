@@ -1,8 +1,17 @@
 package simulator.pilot;
 
 import java.awt.Point;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
+import java.util.Set;
 
+import simulator.viewport.SimulatorPanel;
+
+import mapping.Edge;
 import mapping.MapGraph;
+import mapping.Obstruction;
 import mapping.Seesaw;
 import mapping.Tile;
 import mazeAlgorithm.CollisionAvoidedException;
@@ -89,6 +98,37 @@ public class RobotPilot extends AbstractPilot {
 
     @Override
     public int getUltraSensorValue() {
+        if (mapGraphLoaded == null) {
+            return statusInfoBuffer.getLatestUltraSensorInfo();
+        }
+
+        Set<Rectangle2D> obstacles = new HashSet<Rectangle2D>();
+
+        // TODO htttp robotdimensions?
+        Point2D robotDimensions = new Point2D.Double(20, 20);
+        for (int[] robotPosition : SimulatorPanel.getAllRobotPositions()) {
+            if (robotPosition[0] != getPlayerNumber()) {
+                double x = (sizeTile() * robotPosition[1]) + sizeTile() / 2
+                        - (robotDimensions.getX() / 2);
+                double y = (sizeTile() * robotPosition[2]) + sizeTile() / 2
+                        - (robotDimensions.getY() / 2);
+                obstacles.add(new Rectangle2D.Double(x, y, robotDimensions
+                        .getX(), robotDimensions.getY()));
+            }
+        }
+
+        for (int distance = 1; distance < 250; distance++) {
+            Arc2D sonarArc = new Arc2D.Double();
+            sonarArc.setArc(getPosition().getX() - distance, getPosition()
+                    .getY() - distance, 2 * (distance), 2 * (distance),
+                    360 - getAngle() - 15, 30, Arc2D.PIE);
+            for (Rectangle2D obstacle : obstacles)
+                if (sonarArc.intersects(obstacle.getX(), obstacle.getY(),
+                        obstacle.getWidth(), obstacle.getHeight()))
+                    return Math.min(distance,
+                            statusInfoBuffer.getLatestUltraSensorInfo());
+        }
+
         return statusInfoBuffer.getLatestUltraSensorInfo();
     }
 
