@@ -28,6 +28,7 @@ public class APHandler implements PlayerHandler {
     private AbstractPilot pilot;
     private SimulatorPanel panel;
     private Timer readyTimer;
+    private int teammateNumber = -1;
 
     public APHandler(AbstractPilot pilot, SimulatorPanel panel) {
         this.pilot = pilot;
@@ -142,22 +143,22 @@ public class APHandler implements PlayerHandler {
     public void teamPosition(long x, long y, double angle) {
         if (angle == -90) // Voor ons is -90 == 270
             angle = 270;
-        Point startMatrixPosition = pilot.getStartMatrixPosition();
-        pilot.getTeamPilot().setPosition(
-                40 * (x + startMatrixPosition.getX()) + 20,
-                40 * (-y + startMatrixPosition.getY()) + 20);
-        pilot.getTeamPilot().setAngle(angle);
+        if(teammateNumber != -1) {
+            pilot.getTeamPilot().setPosition(
+                    40 * (x + pilot.getTeammateStartMatrixPosition(teammateNumber).getX()) + 20,
+                    40 * (-y + pilot.getTeammateStartMatrixPosition(teammateNumber).getY()) + 20);
+            pilot.getTeamPilot().setAngle(angle);
+        }
     }
 
     @Override
     public void teamTilesReceived(List<Tile> tiles) {
-    	Tile teammateStartTile = new Tile(0, 0, "baah");
-    	for(Tile tile : tiles) {
+    	Tile teammateStartTile = new Tile(0, 0, "");
+    	for(Tile tile : tiles)
     		if(tile.getX() == 0 && tile.getY() == 0)
     			teammateStartTile = tile;
-    	}
     	String[] info = teammateStartTile.getToken().split("\\.");
-    	int teammateNumber = Integer.valueOf(String.valueOf(info[2].charAt(1)));
+    	teammateNumber = Integer.valueOf(String.valueOf(info[2].charAt(1)));
         ArrayList<Tile> newList = new ArrayList<Tile>();
         for (Tile tile : tiles)
             newList.add(new peno.htttp.Tile((long)(tile.getX() + pilot.getTeammateStartMatrixPosition(teammateNumber).getX()), 
@@ -175,12 +176,9 @@ public class APHandler implements PlayerHandler {
 
         for (peno.htttp.Tile tile : tiles) {
             info = tile.getToken().split("\\.");
-            if (info.length == 3 && !info[2].equals("V"))
-                for (mapping.Tile ourTile : pilot.getMapGraphConstructed()
-                        .getTiles()) {
-                    if (ourTile.getContent() instanceof Barcode
-                            && ourTile.getContent().getValue() == Integer
-                                    .valueOf(info[2])) {
+            if (info.length == 3 && !info[2].equals("V") && info[2].length() < 3) //If htttp tile is barcode
+                for (mapping.Tile ourTile : pilot.getMapGraphConstructed().getTiles()) {
+                    if (ourTile.getContent() instanceof Barcode && ourTile.getContent().getValue() == Integer.valueOf(info[2])) {
                         point1 = new Point((int) tile.getX(), (int) tile.getY());
                         ourPoint1 = ourTile.getPosition();
                         Point pointN = new Point((int) point1.getX(),
@@ -220,11 +218,10 @@ public class APHandler implements PlayerHandler {
                                 ori2 = infoTileNZ[1];
                             }
                         }
-
+                        
                         for (mapping.Tile ourTileNZ : ourTile
                                 .getReachableNeighboursIgnoringSeesaw()) {
-                            if (ourTileNZ.getContent() instanceof Seesaw
-                                    || ourTileNZ.getContent() instanceof TreasureObject) {
+                            if (ourTileNZ.getContent() instanceof Seesaw || ourTileNZ.getContent() instanceof TreasureObject) {
                                 ourPoint2 = ourTileNZ.getPosition();
                                 ori1 = ourTileNZ.getToken().split("\\.")[1];
                             }

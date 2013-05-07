@@ -224,7 +224,7 @@ public class MapGraph {
 												.getObstruction());
 		}
 		mapsMerged = true;
-		
+
 		for(Tile t: getTiles()) {
 			for(Orientation or: Orientation.values()){
 				if(t.getEdgeAt(or).getObstruction() == Obstruction.WHITE_LINE && (t.getEdgeAt(or).getTile1() == null || t.getEdgeAt(or).getTile2() == null)){
