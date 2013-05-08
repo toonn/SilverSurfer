@@ -40,7 +40,7 @@
 Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} \cite{TeamTreasure} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot een lange schep waarmee hij zijn voorwerp kan oprapen en eventueel een wip kan openen.
-De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Andere robots worden vermeden met behulp van de ultrasone sensor. Via \textsc{RabbitMQ} \cite{RabbitMQ} kunnen de robots elkaar mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
+De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Andere robots worden vermeden met behulp van de ultrasone sensor. Via \textsc{RabbitMQ} \cite{RabbitMQ} kunnen de robots elkaars mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
 
 Het computerprogramma simuleert de werking van de robot. Deze simulator kan in combinatie met de fysieke robot gebruikt worden en kan meerdere robots tegelijkertijd simuleren. De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -156,7 +156,7 @@ Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien
 %move forward 20.8 --> perfect
 
 \subparagraph{E\'en graad keren om de as}
-De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg een aantal keer de opdracht $90\degree$~rond zijn as te draaien, zowel met een positieve als een negatieve hoek. Door de opdracht een aantal keer te herhalen wordt de fout gemakkelijker op te merken.
+De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg een aantal keer de opdracht $90\degree$~rond zijn as te draaien, zowel met een positieve als een negatieve hoek. Door de opdracht een aantal keer te herhalen wordt het gemakkelijker de fout op te merken.
 De co\"effici\"ent~$2,330\degree$ gaf het beste resultaat voor positieve en negatieve hoeken.
 
 %eerst 2.358 --> iets te veel
@@ -182,7 +182,7 @@ Wanneer de robot in het midden van een tegel staat geeft de sensor een waarde va
 De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe minder licht gereflecteerd wordt door de omgeving, hoe donkerder deze is.
 
 De lichtsensor werd zowel bij goede lichtomstandigheden als bij slechte omstandigheden getest voor alle soorten ondergronden die een doolhof bevat: een paneel, een witte lijn en een zwarte lijn.
-De lichtsensor geeft gemiddeld de waarde~$49$ wanneer de robot op het paneel staat, $55$~wanneer hij op een witte lijn staat en $33$~op een zwarte lijn. De robot beschouwt alles boven de $52$ als wit en alles onder $40$ als zwart. Wat hiertussen ligt beschouwt hij als paneel. Door met bereiken te werken, wordt een veiligheidsmarge ingebouwd. De kans is klein dat de sensorwaarden verkeerd ge\"interpreteerd worden, ook bij slechte lichtomstandigheden.
+De lichtsensor geeft gemiddeld de waarde~$49$ wanneer de robot op het paneel staat, $55$~wanneer hij op een witte lijn staat en $33$~op een zwarte lijn. De robot beschouwt alles boven de $52$ als wit en alles onder $40$ als zwart. Wat hiertussen ligt beschouwt hij als paneel. Door met deze grenzen te werken, wordt een veiligheidsmarge ingebouwd. De kans is klein dat de sensorwaarden verkeerd ge\"interpreteerd worden, ook bij slechte lichtomstandigheden.
 
 %witte lijn lichtsensor: 55
 %tegel: 49
@@ -278,7 +278,7 @@ Een wip wordt voorafgegaan door barcodes die de wip identificeren. Onder een wip
 
 De robot rijdt vaak onnauwkeurig bij het nemen van de wip. Hij zal een wip daarom zoveel mogelijk vermijden. Slechts wanneer de onverkende tegels enkel bereikbaar zijn via een wip, rijdt de robot naar de dichtstbijzijnde wip die toegang geeft tot die tegels.
 
-Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten is, kan de robot de wip openen met behulp van zijn schep. Deze functie kan ook worden uitgeschakeld. In dat geval zal de robot naar een andere wip rijden of wachten tot een andere robot de wip opent.
+Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten is, kan de robot de wip openen met behulp van zijn schep. Deze functie kan ook worden uitgeschakeld. In dat geval zal de robot naar een andere wip rijden of blijven tot een andere robot de wip opent.
 
 % = wip openen = %
 \subparagraph{Een wip openen} 
@@ -305,7 +305,7 @@ De robot kan het voorwerp vinden door de doolhof te verkennen. In de loop van he
 \item neem de buur die met het minst aantal rotaties bereikt kan worden als volgende tegel.
 \item draai bij elke tegel slechts drie keer (eindig niet meer in startori"entatie);
 \item kijk muren die vanuit een naburige tegel reeds gedetecteerd werden niet nog eens na;
-\item tegels waarvan de vier zijden al gekend zijn en die niet van het type `straight' zijn, worden niet meer bezocht, deze kunnen immers geen barcode bevatte. Het levert geen extra informatie op om de tegel te bezoeken.
+\item tegels waarvan de vier zijden al gekend zijn en die niet van het type `straight' zijn, worden niet meer bezocht, deze kunnen immers geen barcode bevatten. Het levert geen extra informatie op om de tegel te bezoeken.
 \end{enumerate}
 
 Testresultaten van deze optimalisaties worden beschreven in het verslag van vorig semester~\cite{Verslag1}.\\
@@ -366,7 +366,7 @@ Een voorwerp ligt tegen de achterste muur van een `dead-end' tegel. De aanliggen
 Een hybride sensor maakt gebruik van een \textit{Wereldsimulator}.
 Deze heeft kennis van de posities van andere robots,
 gebaseerd op de informatie die de robots doorsturen.
-Wij hebben ervoor gekozen geen gebruik de hybride sensor niet te gebruiken; de ultrasone sensor is even geschikt en minder afhankelijk van de communicatiemogelijkheden van andere robots.
+Wij hebben ervoor gekozen geen gebruikt te maken van de hybride sensor; de ultrasone sensor is even geschikt en minder afhankelijk van de communicatiemogelijkheden van andere robots.
 
 De robot houdt tijdens het rijden bij hoeveel afstand hij nog moet afleggen. Wanneer de ultrasone sensor een waarde geeft die kleiner is dan deze afstand, ziet hij een andere robot voor zich. Op het moment dat hij de opdracht kreeg vooruit te rijden, was hier immers geen versperring te zien. De robot stopt en rijdt de afgelegde afstand achteruit af. Wanneer vooruit rijden blijft falen, zal de robot een willekeurige tegel kiezen en hierheen rijden. De robot zal van daaruit verder gaan met verkennen.
 
@@ -380,9 +380,8 @@ De robot houdt tijdens het rijden bij hoeveel afstand hij nog moet afleggen. Wan
 Wanneer een robot zijn voorwerp gevonden heeft, weet hij bij welk team hij hoort. Hij stuurt vanaf dan regelmatig zijn map door en kijkt of zijn teamgenoot hetzelfde doet.
 Wanneer de robot een map ontvangt, gaat hij op zoek naar unieke paren. Dit zijn tegels met een voorwerp en de aangrenzende barcode of tegels met een wip en de aangrenzende barcode. De robot kijkt vervolgens of zijn eigen map dit unieke paar ook bevat. Indien dit niet het geval is, zoekt de robot naar andere unieke paren of wacht hij tot een nieuwe doolhof binnenkomt.
 
-Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worden samengevoegd. E\'en van beide punten van het paar wordt als referentiepunt gekozen. Beide mappen worden verschoven tot dit punt op co\"ordinaat $(0,0)$ ligt. De robot vergelijkt dan de co\"ordinaten van het andere punt uit het unieke paar. Wanneer deze in de twee mappen niet gelijk zijn, wordt de tweede map geroteerd.
-
-De inverse translaties van beide mappen naar $(0,0)$ en de inverse rotatie van de tweede map leidt tot een algemene transformatiematrix. Deze verandert echter alleen de co\"ordinaten van de tegels. De tegels moeten ook afzonderlijk van ori\"entatie veranderd worden. Dit betekent bijvoorbeeld dat de `noord'-muren moeten gewisseld worden met de `zuid'-muren en de `oost'-muren met de `west'-muren. Hoe deze ori\"entatiewisseling gebeurt, hangt af van de rotatiematrix.\\
+Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worden samengevoegd. E\'en van beide overeenkomende punten van de paren wordt als referentiepunt gekozen. Beide mappen worden getransleerd tot hun respectievelijk referentiepunt in de oorsprong ligt. De robot vergelijkt dan de co\"ordinaten van het andere punt uit het unieke paar. Wanneer deze in de twee mappen niet gelijk zijn, wordt de tweede map geroteerd tot deze wel gelijk zijn. Ten slotte wordt de tweede map nog getransleerd zodat haar oorsprong overeenkomt met de oorspronkelijke (niet getransleerde) oorsprong van de eerste map. Deze laatste translatie is simpelweg de inverse van de translatie van de eerste map naar de oorsprong.\\
+De transformatiematrices van de translatie van de tweede map naar de oorsprong, de rotatie van de tweede map en de translatie van de tweede map naar de oorspronkelijke oorsprong van de eerste map worden vermenigvuldigd tot een algemene transformatiematrix waarmee alle co\"ordinaten berekend kunnen worden. Deze verandert echter alleen de co\"ordinaten van de tegels. De tegels moeten ook afzonderlijk de juiste ori\"entatie krijgen. Deze wordt verkregen uit de unieke paren. Stel dat Dead-end.N overeen komt met Dead-end.S, dan komt N dus overeen met S en bijgevolg E met W, S met N en W met E.\\
 
 Wanneer de volledige projectie bepaald is, worden de mappen samengevoegd. Vanaf dat moment is er een pad berekenbaar dat naar de teamgenoot leidt. Dit pad wordt genomen en er wordt niet meer naar verdere updates van de map gekeken. De positie van de andere robot wordt met dezelfde projectie `vertaald' naar een positie in de samengevoegde map.
 
@@ -474,6 +473,15 @@ Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot e
 
 Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kleur hangt af van zijn spelersnummer. Ook zijn voorwerp en de rand van het kader waarin de robot zich bevindt, krijgen deze kleur. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur: paars of rood. Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot. Figuur~\ref{fig:guiEvolutie} toont deze evolutie in weergave.\\
 
+
+%TODO moet bij de juiste tekst!!
+% klassendiagram HTTTP
+\begin{figure}[h]
+\centering
+	\includegraphics[width=0.5\textwidth]{KlasHTTTP}
+\caption{Schematisch overzicht \textit{HTTTP}-klasses}
+\label{fig:klasHTTTP}
+\end{figure} 
 %TODO figuur met samengevoegde map!!
 \begin{figure}
 \centering
@@ -499,21 +507,17 @@ Het pad dat de robot aflegt, geeft de \textit{GUI} weer als een rode lijn. De hu
 \subsection{Communicatie tussen de robots}
 \label{ssec:RabbMQ}
 
-%TODO moet bij de juiste tekst!!
-% klassendiagram HTTTP
-\begin{figure}[h]
-\centering
-	\includegraphics[width=0.5\textwidth]{KlasHTTTP}
-\caption{Schematisch overzicht \textit{HTTTP}-klasses}
-\label{fig:klasHTTTP}
-\end{figure}
 
-De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van \textsc{RabbitMQ} bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implemeteerd worden. Figuur~\ref{fig:klasHTTTP} toont een schema van de implementatie.\\
+
+De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van \textsc{RabbitMQ} bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implementeerd worden. Figuur~\ref{fig:klasHTTTP} toont een schema van de implementatie.\\
 
 Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHandler}, om respectievelijk in de \textit{AbstractPilot} en de \textit{DummyPilot} met informatie om te gaan. Een onderscheid is nodig omdat \textit{DummyPilots} `aangestuurd' worden via hun \textit{Handler}.\\
 
 Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt met bijhorende \textit{Handler}. Het \textit{MQCenter} abstraheert de \textit{Client}-klasse nog verder.
 
+
+
+\newpage
 % -- Simulator -- %
 \subsection{Simulator} 
 \label{ssec:Sim}
@@ -536,7 +540,7 @@ rijdt hij immers nauwkeurig genoeg.
 %TODO beter titel? Moeten ons houden aan de titels van de template van de commissie
 \subsection{Mappen van een doolhof}
 \label{ssec:Mapping}
-Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een robot voorstellen. Figuur~\ref{fig:klasMap} geeft de structuur van het pakket weer. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze biedt functionaliteiten om van de huidige tegel naar een aanliggende tegel te reizen en om de map dynamisch uit te breiden. Elke \textit{Tile} wordt via \textit{Edges} verbonden met zijn buurtegels. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaalde text-bestand een \textit{MapGraph} opstellen.\\
+Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een robot voorstellen. Figuur~\ref{fig:klasMap} geeft de structuur van het pakket weer. De klasse \textit{MapGraph} brengt al deze elementen samen. Ze biedt functionaliteiten om van de huidige tegel naar een aanliggende tegel te reizen en om de map dynamisch uit te breiden. Elke \textit{Tile} wordt via \textit{Edges} verbonden met zijn buurtegels. Zo wordt impliciet een hele graaf bijgehouden. De klasse \textit{MapReader} kan uit een bepaald text-bestand een \textit{MapGraph} opstellen.\\
 
 De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld door de \textit{AbstractPilot}. Deze bevat enkel informatie die de robot zelf verzamelde.
 
@@ -560,43 +564,43 @@ De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof v
 %\label{fig:klasMap}
 %\end{figure}
 
-\begin{figure}
-\centering
-\begin{tikzpicture}[thick,scale=0.7, every node/.style={scale=0.7}]
-\tikzstyle{line} = [draw, -stealth, thick]
-
-\tikzstyle{block} = [draw, rectangle, text width=8em, text centered, minimum height=15mm, node distance=7em, rounded corners]
-\node [block] (Tile) {Tile};
-\node [block, left of=Tile, xshift=-5em] (Edge) {Edge};
-\node [block, above of=Tile, yshift=3em] (MapGraph) {MapGraph};
-\node [block, above of=MapGraph, yshift=3em]
-(PilotInterface) {PilotInterface};
-\node [block, above of=PilotInterface, yshift=3em]
-(not) {...};
-\node [block, right of=Tile, xshift=5em] (TileContent) {TileContent};
-\node[block , below of=Edge, yshift=-3em](Obstruction){Obstruction};
-\node [block, below of=TileContent, yshift=-3em] (Barcode) {Barcode};
-\node [block, right of=Barcode, xshift=3em]
-(TreasureObject) {TreasureObject};
-\node [block, left of=Barcode, xshift=-3em]
-(Seesaw) {Seesaw};
-
-%arrows
-\path [line, line width=1.6pt] (Edge) -- (Tile);
-\path [line, line width=1.6pt] (TileContent) -- (Tile);
-\path [line, line width=1.6pt] (Tile) -- (MapGraph);
-\path [line, line width=1.6pt] (MapGraph) -- (PilotInterface);
-\path [line, line width=1.6pt] (PilotInterface) -- (not);
-\path [line, line width=1.6pt] (Obstruction) -- (Edge);
-
-\path [line, color=blue, line width=1.6pt] (Seesaw) -- (TileContent);
-\path [line, color=blue, line width=1.6pt] (Barcode) -- (TileContent);
-\path [line, color=blue, line width=1.6pt] (TreasureObject) -- (TileContent);
-%\path [line] (decision1) -| node[yshift=0.5em, xshift=-10em] {no} (process2);
-\end{tikzpicture}
-\caption{Klassendiagram mapping, de blauwe pijlen wijzen op overerving}
-\label{fig:klasMap}
-\end{figure}
+%\begin{figure}
+%\centering
+%\begin{tikzpicture}[thick,scale=0.7, every node/.style={scale=0.7}]
+%\tikzstyle{line} = [draw, -stealth, thick]
+%
+%\tikzstyle{block} = [draw, rectangle, text width=8em, text centered, minimum height=15mm, node distance=7em, rounded corners]
+%\node [block] (Tile) {Tile};
+%\node [block, left of=Tile, xshift=-5em] (Edge) {Edge};
+%\node [block, above of=Tile, yshift=3em] (MapGraph) {MapGraph};
+%\node [block, above of=MapGraph, yshift=3em]
+%(PilotInterface) {PilotInterface};
+%\node [block, above of=PilotInterface, yshift=3em]
+%(not) {...};
+%\node [block, right of=Tile, xshift=5em] (TileContent) {TileContent};
+%\node[block , below of=Edge, yshift=-3em](Obstruction){Obstruction};
+%\node [block, below of=TileContent, yshift=-3em] (Barcode) {Barcode};
+%\node [block, right of=Barcode, xshift=3em]
+%(TreasureObject) {TreasureObject};
+%\node [block, left of=Barcode, xshift=-3em]
+%(Seesaw) {Seesaw};
+%
+%%arrows
+%\path [line, line width=1.6pt] (Edge) -- (Tile);
+%\path [line, line width=1.6pt] (TileContent) -- (Tile);
+%\path [line, line width=1.6pt] (Tile) -- (MapGraph);
+%\path [line, line width=1.6pt] (MapGraph) -- (PilotInterface);
+%\path [line, line width=1.6pt] (PilotInterface) -- (not);
+%\path [line, line width=1.6pt] (Obstruction) -- (Edge);
+%
+%\path [line, color=blue, line width=1.6pt] (Seesaw) -- (TileContent);
+%\path [line, color=blue, line width=1.6pt] (Barcode) -- (TileContent);
+%\path [line, color=blue, line width=1.6pt] (TreasureObject) -- (TileContent);
+%%\path [line] (decision1) -| node[yshift=0.5em, xshift=-10em] {no} (process2);
+%\end{tikzpicture}
+%\caption{Klassendiagram mapping, de blauwe pijlen wijzen op overerving}
+%\label{fig:klasMap}
+%\end{figure}
 
 % == BESLUIT == %
 \section{Besluit}
@@ -696,9 +700,9 @@ De robot vermijdt andere robots met behulp van zijn ultrasone sensor. De robot k
 De demonstratie van de simulator verliep volledig zoals het hoorde: de robots vonden alle vier hun voorwerp en de twee duo's konden deze voorwerpen bij elkaar brengen. De gesimuleerde robots reden hierbij niet tegen elkaar.\\
 
 De fysieke robot was niet in staat robots te vermijden. Het is immers niet zomaar mogelijk de robot te onderbreken in zijn bewegingen. De robot zou echter samen met drie simulatoren zonder deze functie moeten kunnen werken. Er liep echter iets mis tijdens het verkennen waardoor de fysieke robot vast liep.
-Het was wel mogelijk het algoritme om de wip de openen te demonstreren.\\
+Het was wel mogelijk het algoritme om de wip te openen te demonstreren.\\
 
-Wanneer met meerdere teams samen gepeeld werd, kwamen enkele verbindingsproblemen aan het licht. Het bleek bovendien dat we een bepaald onderdeel van het protocol verkeerd \\ge\"implementeerd hadden: dit deel was niet lang voor de demo verandert. Het betrof het doorsturen van posities. Deze posities dienden relatief ten opzichte van de startpositie en ori\"entatie te zijn, maar dit hadden we verkeerd begrepen.
+Wanneer met meerdere teams samen gepeeld werd, kwamen enkele verbindingsproblemen aan het licht. Het bleek bovendien dat we een bepaald onderdeel van het protocol verkeerd \\ge\"implementeerd hadden: dit deel was niet lang voor de demo veranderd. Het betrof het doorsturen van posities. Deze posities dienden relatief ten opzichte van de startpositie en ori\"entatie te zijn, maar dit hadden we verkeerd begrepen.
 
 % == conclusies == %
 \subsection{Conclusies}
@@ -707,7 +711,7 @@ We hadden te weinig tijd robotdetectie te implementeren op de robot zelf. Dit ko
 
 Er was ook niet genoeg tijd de fysieke robot voldoende te testen op grote doolhoven. Ook het verbinden met andere teams werd onvoldoende getest.
 
-We zijn echter heel tevreden over de simulator en de \textit{GUI}. Deze simulator volledig zoals het hoort en de \textit{GUI} toont alles wat gebeurt in een overzichtelijk veld.
+We zijn echter heel tevreden over de simulator en de \textit{GUI}. Deze simulator werkt volledig zoals het hoort en de \textit{GUI} toont alles wat gebeurt in een overzichtelijk veld.
 
 % == aanpassingen == %
 \subsection{Oplijsting aanpassingen verslag}
@@ -758,9 +762,9 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 	week 8 & 5u00 & 5u00 & 6u00 & 13u37 & 10u00 & 27u45\\
 	week 9 & 5u00 & 5u15 & 6u00 & 7u30 & 11u30 & 5u00\\
 	week 10 & 14u30 & 7u40 & 6u30 & 6u30 & 11u45 & 16u00\\
-	week 11 & 0 & 0 & 0 & 0 & 0 & 0\\ \hline
-	totaal & 0 & 0 & 0 & 0 & 0 & 0 \\
-	gemiddeld & 0 & 0 & 0 & 0 & 0 & 0
+	week 11 & 10u30 & 13u20 & 7u10 & 12u10 & 7u50 & 22u00\\ \hline
+	totaal & 122u15 & 131u55 & 112u00 & 112u47 & 117u50 & 205u15 \\
+	gemiddeld & 11u06 & 11u59 & 10u12 & 10u15 & 10u43 & 18u40
     \end{tabular}
     \caption{Overzicht werkuren}
     \label{tab:werkuren}
@@ -812,12 +816,12 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 \label{Asec:scheids}
 De vergaderingen van de scheidsrechterscommissie hadden als doel met alle teams samen een invulling aan het project te geven. Elke vergadering werd een andere voorzitter en secretaris aangewezen. Dit gaf soms problemen omdat niet alle voorzitters ervaring hadden met het leiden van vergaderingen. Discussi\"eren werd dan moeilijk: niet iedereen kreeg de kans te spreken, sommigen gaven ongefundeerde argumenten en soms werd te lang gediscussieerd over een klein detail. Een praktische informatiesessie over vergaderen kan hier misschien uitkomst bieden.
 
-De scheidsrechterscommissie gaf ieder team te kans bij te dragen aan belangrijke beslissingen. Door elk team een afgevaardigde te laten sturen, hoefde niet iedereen zich hiermee bezig te houden. De afgevaardigde diende enkel de mening van zijn team te brengen op de vergadering en het team achteraf in te lichten van de gemaakte beslissingen.\\
+De scheidsrechterscommissie gaf ieder team de kans bij te dragen aan belangrijke beslissingen. Door elk team een afgevaardigde te laten sturen, hoefde niet iedereen zich hiermee bezig te houden. De afgevaardigde diende enkel de mening van zijn team te brengen op de vergadering en het team achteraf in te lichten van de gemaakte beslissingen.\\
 
 Ik, Sophie Marien, vertegenwoordigde team Zilver op de scheidsrechterscommissie. Mijn inbreng bestond uit het idee van de infraroodbal onder de wip om zijn stand te detecteren. Ik heb ook geprobeerd robotdetectie op te lossen via infraroodlichtjes op de robots. Dit werkte uiteindelijk niet omdat de intensiteit van de infraroodlichtjes niet voldeed. Ze werden enkel op korte afstand gedetecteerd waardoor hun nut verviel.
 Verder heb ik regelmatig een verslag afgekeurd omdat het onnauwkeurigheden bevatte of omdat ik niet akkoord was met een beslissing.
 
-De scheidsrechterscommissie heeft er voor gekozen, het \textit{HTTTP}-protocol door \'e\'en team te laten maken. Dit was handig voor de andere teams: zo konden zij hun tijd anders besteden. Het zorgde er echter ook voor dat voor hen veel onduidelijkheid ontstond rond het protocol, enkel het `protocol-team' begreep volledig hoe het gebruikt moest worden. Bovendien werden soms vlak voor een demo wijzigingen doorgevoerd. Wanneer het protocol door meerdere teams geschreven zou zijn, zouden deze problemen misschien verholpen zijn geweest.
+De scheidsrechterscommissie heeft ervoor gekozen, het \textit{HTTTP}-protocol door \'e\'en team te laten maken. Dit was handig voor de andere teams: zo konden zij hun tijd anders besteden. Het zorgde er echter ook voor dat voor de andere teams veel onduidelijkheid ontstond rond het protocol, enkel het `protocol-team' begreep volledig hoe het gebruikt moest worden. Bovendien werden soms vlak voor een demo wijzigingen doorgevoerd. Wanneer het protocol door meerdere teams geschreven zou zijn, zouden deze problemen misschien verholpen zijn geweest.
 
 \section{Kritische analyse}
 \label{Assec:kritischeAnalyse}
@@ -835,7 +839,7 @@ Na de tweede demo bleek dat de robot niet zo stabiel reed. Vooral op de wip gaf 
 
 Tegen de laatste demo hebben we wegens tijdgebrek moeten kiezen tussen een goed werkende robot en een goed werkende simulator. Deze laatste kreeg de voorkeur omdat deze minder onzekerheden in rekening moet brengen en omdat deze gemakkelijker te testen is. Bovendien kan de simulator de werking van de algoritmes duidelijk weergeven.
 
-Het implementeren van het \textit{HTTTP} protocol, vroeg meer tijd dan eigenlijk nodig zou moeten zijn. Het protocol was onvoldoende gedocumenteerd en werd regelmatig (soms vlak voor een demonstratie) gewijzigd. De exacte manier waarop het protocol gebruikt moest worden, was daarom vaak niet duidelijk. Ook beslissingen van de scheidsrechterscommissie lieten soms lang op zich wachten. Dit vertraagde het hele project.
+Het implementeren van het \textit{HTTTP} protocol vroeg meer tijd dan eigenlijk nodig zou moeten zijn. Het protocol was onvoldoende gedocumenteerd en werd regelmatig (soms vlak voor een demonstratie) gewijzigd. De exacte manier waarop het protocol gebruikt moest worden, was daarom vaak niet duidelijk. Ook beslissingen van de scheidsrechterscommissie lieten soms lang op zich wachten. Dit vertraagde het hele project.
 
 
 %Er is veel tijd verloren aan het verstaan en begrijpen van het protocol. De wiki van het protocol werd niet upgedate. Dit was zeer vervelend. Pas nadat er veel fouten waren doorgegeven aan het team van het protocol werd de wiki geupdaten en wisten we dat de fout aan iets anders lag dan dat we dachten. De documentatie van het protocol was ook helemaal niet duidelijk. Bij de ... stond er dat dit alleen maar voor assisten en visitors bedoeld was. Uiteindelijk bleek het dat dit ook moest ge"implementeerd worden. Dit bleek net hetzelfde met het `locken' van een wip. 
@@ -857,7 +861,7 @@ Voor de rest heb ik veel verslagen niet goed gekeurd wegens onnauwkeurigheden en
  
 
 
-
+\newpage
 \begin{flushleft}
 \begin{thebibliography}{9}
 
