@@ -72,11 +72,10 @@ De fysieke bouw van de robot en de kalibratie van de sensoren wordt beschreven i
 
 \section{Robot}
 \label{sec:Robot}
+\textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} \cite{leJOS} kan dit in \textsc{Java}. Sectie~\ref{ssec:Bouw} beschrijft de bouw van de robot, sectie~\ref{ssec:Kalib} de kalibratie van de motoren en de sensoren.
 
 \subsection{Bouw Robot}
 \label{ssec:Bouw}
-\textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} \cite{leJOS} kan dit in \textsc{Java}.\\
-
 Bovenaan de robot staat een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan. De sensoren worden weergegeven in figuur~\ref{fig:robotDetail}.\\
 
 Een voorwerp is voorzien van klittenband en kan op verschillende manieren worden opgeraapt. Volgende opstellingen werden gebouwd en getest:
@@ -282,7 +281,7 @@ Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten i
 
 % = wip openen = %
 \subparagraph{Een wip openen} 
-Dit algoritme wordt uitgevoerd wanneer de robot voor een gesloten wip staat. De robot rijdt achterwaarts en aligneert zich op de witte lijn voor de barcode. Na het aligneren staat de robot midden op de tegel met barcode. De robot draait~$180\degree$ om zijn as en laat zijn schep $75\degree$~dalen zodat hij op de wip ligt. Dit wordt getoond in figuur~\ref{fig:robotWip}. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt hij de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken.
+Dit algoritme wordt uitgevoerd wanneer de robot voor een gesloten wip staat. De robot rijdt achterwaarts en aligneert zich op de witte lijn voor de barcode. Na het aligneren staat de robot midden op de tegel met barcode. De robot draait~$180\degree$ om zijn as en laat zijn schep $75\degree$~dalen zodat deze op de wip ligt. Dit wordt getoond in figuur~\ref{fig:robotWip}. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt hij de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken.
 
 De robot dient volgens het protocol twee keer een `lock' aan te vragen tijdens deze operatie, de wip kantelt immers tweemaal. 
 Door een tegel te `locken' weten de andere robots dat de robot zich naar die tegel zal bewegen. Zij zullen deze tegel vermijden tot hij terug vrij komt. Door bij te houden wanneer een wip `gelocked' wordt, kan een robot bepalen wat de stand van de wip is zonder deze te zien. Dit algoritme wordt echter niet ge\"implementeerd, maar mogelijk maken andere teams gebruik van de optie.
@@ -368,7 +367,7 @@ Deze heeft kennis van de posities van andere robots,
 gebaseerd op de informatie die de robots doorsturen.
 Wij hebben ervoor gekozen geen gebruikt te maken van de hybride sensor; de ultrasone sensor is even geschikt en minder afhankelijk van de communicatiemogelijkheden van andere robots.
 
-De robot houdt tijdens het rijden bij hoeveel afstand hij nog moet afleggen. Wanneer de ultrasone sensor een waarde geeft die kleiner is dan deze afstand, ziet hij een andere robot voor zich. Op het moment dat hij de opdracht kreeg vooruit te rijden, was hier immers geen versperring te zien. De robot stopt en rijdt de afgelegde afstand achteruit af. Wanneer vooruit rijden blijft falen, zal de robot een willekeurige tegel kiezen en hierheen rijden. De robot zal van daaruit verder gaan met verkennen.
+De robot houdt tijdens het rijden bij hoeveel afstand hij nog moet afleggen. Wanneer de ultrasone sensor een waarde geeft die kleiner is dan deze afstand, ziet hij een andere robot voor zich. Eerdere metingen toonden immers dat de robot minstens die afstand zonder problemen zou moeten kunnen afleggen. De robot stopt en rijdt de al afgelegde afstand achterwaarts af. Hij rijdt vervolgens naar een willekeurige onverkende tegel van waaruit hij verder verkent. Enkel wanneer de robot op een wip staat, zal hij blijven staan. Indien alle tegels reeds verkend werden, rijdt de robot naar een willekeurige tegel.
 
 % == Samenwerking == %
 \subsection{Samenwerking met de teamgenoot}
@@ -380,8 +379,15 @@ De robot houdt tijdens het rijden bij hoeveel afstand hij nog moet afleggen. Wan
 Wanneer een robot zijn voorwerp gevonden heeft, weet hij bij welk team hij hoort. Hij stuurt vanaf dan regelmatig zijn map door en kijkt of zijn teamgenoot hetzelfde doet.
 Wanneer de robot een map ontvangt, gaat hij op zoek naar unieke paren. Dit zijn tegels met een voorwerp en de aangrenzende barcode of tegels met een wip en de aangrenzende barcode. De robot kijkt vervolgens of zijn eigen map dit unieke paar ook bevat. Indien dit niet het geval is, zoekt de robot naar andere unieke paren of wacht hij tot een nieuwe doolhof binnenkomt.
 
-Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worden samengevoegd. E\'en van beide overeenkomende punten van de paren wordt als referentiepunt gekozen. Beide mappen worden getransleerd tot hun respectievelijk referentiepunt in de oorsprong ligt. De robot vergelijkt dan de co\"ordinaten van het andere punt uit het unieke paar. Wanneer deze in de twee mappen niet gelijk zijn, wordt de tweede map geroteerd tot deze wel gelijk zijn. Ten slotte wordt de tweede map nog getransleerd zodat haar oorsprong overeenkomt met de oorspronkelijke (niet getransleerde) oorsprong van de eerste map. Deze laatste translatie is simpelweg de inverse van de translatie van de eerste map naar de oorsprong.\\
-De transformatiematrices van de translatie van de tweede map naar de oorsprong, de rotatie van de tweede map en de translatie van de tweede map naar de oorspronkelijke oorsprong van de eerste map worden vermenigvuldigd tot een algemene transformatiematrix waarmee alle co\"ordinaten berekend kunnen worden. Deze verandert echter alleen de co\"ordinaten van de tegels. De tegels moeten ook afzonderlijk de juiste ori\"entatie krijgen. Deze wordt verkregen uit de unieke paren. Stel dat Dead-end.N overeen komt met Dead-end.S, dan komt N dus overeen met S en bijgevolg E met W, S met N en W met E.\\
+Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worden samengevoegd. E\'en van beide overeenkomende punten van de paren wordt als referentiepunt gekozen. Beide mappen worden getransleerd tot hun referentiepunt in de oorsprong ligt. De robot vergelijkt dan de co\"ordinaten van het andere punt uit het unieke paar. Wanneer deze in de twee mappen niet gelijk zijn, wordt de tweede map geroteerd tot deze wel gelijk zijn. De eerste map wordt opnieuw naar zijn oorspronkelijke positie getransleerd. De transformatiematrix die hiervoor nodig is, wordt ook toegepast op de tweede map. Zij ligt nu samen met de eerste.\\ \\
+De algemene transformatiematrix bestaat dus uit drie delen:
+\begin{itemize}
+	\item De translatie van de tweede map naar de oorsprong;
+	\item De rotatie van de tweede map;
+	\item De translatie van de tweede map naar de oorspronkelijke positie van de eerste map.
+\end{itemize}
+
+Deze transformatiematrix verandert echter alleen de co\"ordinaten van de tegels. De tegels moeten ook afzonderlijk de juiste ori\"entatie krijgen. Deze wordt ook verkregen uit het unieke paar. Stel dat `Dead-end.N' overeen komt met `Dead-end.S', dan komt `N' dus overeen met `S' en bijgevolg `E' met `W', `S' met `N' en `´W' met `E'.\\
 
 Wanneer de volledige projectie bepaald is, worden de mappen samengevoegd. Vanaf dat moment is er een pad berekenbaar dat naar de teamgenoot leidt. Dit pad wordt genomen en er wordt niet meer naar verdere updates van de map gekeken. De positie van de andere robot wordt met dezelfde projectie `vertaald' naar een positie in de samengevoegde map.
 
@@ -417,7 +423,7 @@ Figuur~\ref{fig:klasSoft} toont een schematische voorstelling van de belangrijks
 % klassendiagramma
 \begin{figure}[h]
 \centering
-		\includegraphics[width=\textwidth]{KlasSoftware}
+		\includegraphics[width=0.95\textwidth]{KlasSoftware}
 \caption[Structuur van computerproject]{Schematische voorstelling van de belangrijkste klassen van het computerproject}
 \label{fig:klasSoft}
 \end{figure}
@@ -456,7 +462,7 @@ Figuur~\ref{fig:guiAll} toont de \textit{GUI} met deze extra panelen. In dit gev
 % figuur GUI met extra schermen
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.75\textwidth]{guiALL}
+	\includegraphics[width=0.7\textwidth]{guiALL}
 \caption{De \textit{Graphical User Interface} met extra panelen}
 \label{fig:guiAll}
 \end{figure}
@@ -466,7 +472,7 @@ Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot e
 % figuur GUI
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.75\textwidth]{gui4Robots}
+	\includegraphics[width=0.7\textwidth]{gui4Robots}
 \caption{De \textit{Graphical User Interface} voor vier robots}
 \label{fig:gui4}
 \end{figure}
@@ -478,10 +484,11 @@ Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kl
 % klassendiagram HTTTP
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.5\textwidth]{KlasHTTTP}
+	\includegraphics[width=0.45\textwidth]{KlasHTTTP}
 \caption{Schematisch overzicht \textit{HTTTP}-klasses}
 \label{fig:klasHTTTP}
 \end{figure} 
+
 %TODO figuur met samengevoegde map!!
 \begin{figure}
 \centering
@@ -515,9 +522,6 @@ Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHan
 
 Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt met bijhorende \textit{Handler}. Het \textit{MQCenter} abstraheert de \textit{Client}-klasse nog verder.
 
-
-
-\newpage
 % -- Simulator -- %
 \subsection{Simulator} 
 \label{ssec:Sim}
@@ -551,7 +555,7 @@ De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof v
 % klassendiagram mapping
 \begin{figure}[h!]
 \centering
-	\includegraphics[width=0.8\textwidth]{klasMapping}
+	\includegraphics[width=0.65\textwidth]{klasMapping}
 \caption{Klassendiagram mapping}
 \label{fig:klasMap}
 \end{figure}
@@ -762,11 +766,11 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 	week 8 & 5u00 & 5u00 & 6u00 & 13u37 & 10u00 & 27u45\\
 	week 9 & 5u00 & 5u15 & 6u00 & 7u30 & 11u30 & 5u00\\
 	week 10 & 14u30 & 7u40 & 6u30 & 6u30 & 11u45 & 16u00\\
-	week 11 & 10u30 & 13u20 & 7u10 & 12u10 & 7u50 & 22u00\\ \hline
-	totaal & 122u15 & 131u55 & 112u00 & 112u47 & 117u50 & 205u15 \\
-	gemiddeld & 11u06 & 11u59 & 10u12 & 10u15 & 10u43 & 18u40
+	week 11 & 13u00 & 13u20 & 7u10 & 13u30 & 7u50 & 22u00\\ \hline
+	totaal & 124u45 & 131u55 & 112u00 & 114u07 & 117u50 & 205u15 \\
+	gemiddeld & 11u20 & 12u00 & 10u11 & 10u22 & 10u43 & 18u40
     \end{tabular}
-    \caption{Overzicht werkuren}
+    \caption{Overzicht werkuren (week 8 bevat ook de uren van de paasvakantie)}
     \label{tab:werkuren}
 \end{center}
 \end{table}
@@ -821,44 +825,43 @@ De scheidsrechterscommissie gaf ieder team de kans bij te dragen aan belangrijke
 Ik, Sophie Marien, vertegenwoordigde team Zilver op de scheidsrechterscommissie. Mijn inbreng bestond uit het idee van de infraroodbal onder de wip om zijn stand te detecteren. Ik heb ook geprobeerd robotdetectie op te lossen via infraroodlichtjes op de robots. Dit werkte uiteindelijk niet omdat de intensiteit van de infraroodlichtjes niet voldeed. Ze werden enkel op korte afstand gedetecteerd waardoor hun nut verviel.
 Verder heb ik regelmatig een verslag afgekeurd omdat het onnauwkeurigheden bevatte of omdat ik niet akkoord was met een beslissing.
 
-De scheidsrechterscommissie heeft ervoor gekozen, het \textit{HTTTP}-protocol door \'e\'en team te laten maken. Dit was handig voor de andere teams: zo konden zij hun tijd anders besteden. Het zorgde er echter ook voor dat voor de andere teams veel onduidelijkheid ontstond rond het protocol, enkel het `protocol-team' begreep volledig hoe het gebruikt moest worden. Bovendien werden soms vlak voor een demo wijzigingen doorgevoerd. Wanneer het protocol door meerdere teams geschreven zou zijn, zouden deze problemen misschien verholpen zijn geweest.
+\section{Reflectie van de oplossingsstrategie}
+\label{Asec:strategie}
+In de algemene oplossingsstrategie~\cite{Strategie} wordt de opdracht opgedeeld in deelproblemen. De reflectie volgt deze onderdelen.
+
+\paragraph{Hoe vindt de robot zijn voorwerp?}
+Het verkenalgoritme werd inderdaad voorzien van een optimalisatie die prioriteit geeft aan `dead-ends'. Uit testen bleek echter dat dit niet tot het verwachte resultaat leidde. De optimalisatie werd daarom weer uit het algoritme gehaald.
+
+Bij het lezen van barcodes voegt de robot automatisch extra muren toe indien dit mogelijk is. Dit is het geval wanneer de barcode een voorwerp aanduidt of een wip. Deze strategie bleek een goed idee. De robot diende zo enkele tegels minder te verkennen.
+
+\paragraph{Hoe raapt de robot het voorwerp op?}
+Wanneer het voorwerp werd opgeraapt via een schep achteraan, bleek de robot te lang te zijn om nog goed te kunnen manoeuvreren. De schep werd daarom vooraan geplaatst, zonder de extra motor, maar ook dit bleek niet ideaal te werken. Uiteindelijk werd terug gekeerd naar het oorspronkelijke concept. De robot werd deze keer echter volledig herbouwd en compacter gemaakt waardoor het concept wel haalbaar werd. Dit oorspronkelijke concept was zeker een goed idee. Het concept werd bovendien nog uitgebreid met een extra lange schep die de wip kon openen.
+
+\paragraph{Hoe vindt de robot zijn teamgenoot?}
+De scheidsrechterscommissie heeft geen manier voorzien om een gemeenschappelijk punt af te spreken. De robot rijdt daarom gewoon naar de plek waar de andere robot zich op dat moment bevindt. Hij controleert echter regelmatig of hij wel dichter komt. Wanneer beide robots dit doen, komen ze elkaar tegen op het midden van het pad, wat tot hetzelfde resultaat leidt als het oorspronkelijke concept. Het huidige concept is bovendien eenvoudiger aangezien geen tijd wordt verloren met het bepalen van een gemeenschappelijk punt.
+
+\paragraph{Hoe kan de robot over de wip?}
+De stand van de wip kon makkelijk bepaald worden via de infraroodsensor, dit was een heel goed idee. De lichtsensor werd op een scharnier geplaatst zodat deze achteruit klapt wanneer de robot de wip raakt. Zo vormt dit geen probleem.
+
+Een extra functionaliteit die werd toegevoegd, bestond in het handmatig openen van de wip. Dit kon aan de hand van de lange schep. Deze functionaliteit werd niet vaak gebruikt tijdens het spel, maar bood een oplossing wanneer de robot volledig ingesloten zit.
+
+\paragraph{Hoe gaat de robot om met foute informatie?}
+Wanneer met eigen simulators getest werd, bleek dit geen probleem te zijn: zij stuurden enkel juiste informatie door. Het `grijze muren' systeem was daarom niet nodig. Er is onvoldoende getest met robots van andere teams om te kunnen besluiten dat dit hier een probleem zou zijn.
 
 \section{Kritische analyse}
-\label{Assec:kritischeAnalyse}
-Voor het tweede deel van het semester werd de bouw van de robot volledig veranderd. We zagen tijdens de eerste demo en bij de testen dat de robot zeer onstabiel was. Het steviger en robuuster ontwerp heeft de robot nauwkeuriger gemaakt. 
+\label{Asec:kritisch}
+Na het eerste semester was de code \'e\'en grote puinhoop. De eerste weken van dit semester werden daarom besteed aan het herordenen en herschrijven van de code die we al hadden. Hier is veel tijd in gekropen, maar het maakte het geheel heel wat overzichtelijker. Later hebben we deze `verloren' tijd hier zeker aan terugverdiend.\\
 
+In de loop van het semester werd de bouw van de robot volledig veranderd. We zagen tijdens de eerste demo en bij de testen dat de robot zeer onstabiel was. Het nieuwe ontwerp is stabieler, robuuster en nauwkeuriger. Het was een goede beslissing het ontwerp volledig te herzien.\\
 
-Na het eerste semester was de code \'e\'en grote puinhoop. De eerste weken van dit semester werden daarom besteed aan het herordenen en herschrijven van de code die we al hadden. Hier is veel tijd in gekropen, maar het maakte het geheel heel wat overzichtelijker. Later hebben we deze `verloren' tijd hier zeker aan terugverdiend.
-
-De simulator is intensief gebruikt om de algoritmes te testen. Ook met de echte robots werden heel wat tests uitgevoerd. Deze testresultaten zijn echter niet altijd bijgehouden, waardoor niet alle testen in het verslag vermeld konden worden.
-
-
+De simulator is intensief gebruikt om de algoritmes te testen. Ook met de echte robots werden heel wat tests uitgevoerd.
 We hebben er steeds voor gezorgd de \textit{GUI} zo overzichtelijk mogelijk te houden. Dit doen we door zoveel mogelijk informatie en schermen te verbergen. Wanneer deze nodig zijn, kunnen ze makkelijk tevoorschijn gehaald worden. Dit geeft een mooi resultaat.
 
-Na de tweede demo bleek dat de robot niet zo stabiel reed. Vooral op de wip gaf dit problemen. De bouw is daarom volledig aangepast. Dit vroeg om een volledige herkalibratie, maar de robot reed erna wel heel wat nauwkeuriger.
+Vlak voor de laatste demo hebben we wegens tijdgebrek moeten kiezen tussen een goed werkende robot en een goed werkende simulator. Deze laatste kreeg de voorkeur omdat deze minder onzekerheden in rekening moet brengen en omdat deze gemakkelijker te testen is. Bovendien kan de simulator de werking van de algoritmes duidelijk weergeven.\\
 
-Tegen de laatste demo hebben we wegens tijdgebrek moeten kiezen tussen een goed werkende robot en een goed werkende simulator. Deze laatste kreeg de voorkeur omdat deze minder onzekerheden in rekening moet brengen en omdat deze gemakkelijker te testen is. Bovendien kan de simulator de werking van de algoritmes duidelijk weergeven.
+Het implementeren van het \textit{HTTTP} protocol vroeg meer tijd dan eigenlijk nodig zou moeten zijn. Het protocol was onvoldoende gedocumenteerd en werd regelmatig (soms slechts een paar dagen voor een demonstratie) gewijzigd. De exacte manier waarop het protocol gebruikt moest worden, was daarom soms enkel voor het `protocol-team' duidelijk. Wanneer verschillende teams aan het protocol zouden hebben gewerkt, zou deze onduidelijkheid misschien gedeeltelijk verholpen kunnen worden.\\
 
-Het implementeren van het \textit{HTTTP} protocol vroeg meer tijd dan eigenlijk nodig zou moeten zijn. Het protocol was onvoldoende gedocumenteerd en werd regelmatig (soms vlak voor een demonstratie) gewijzigd. De exacte manier waarop het protocol gebruikt moest worden, was daarom vaak niet duidelijk. Ook beslissingen van de scheidsrechterscommissie lieten soms lang op zich wachten. Dit vertraagde het hele project.
-
-
-%Er is veel tijd verloren aan het verstaan en begrijpen van het protocol. De wiki van het protocol werd niet upgedate. Dit was zeer vervelend. Pas nadat er veel fouten waren doorgegeven aan het team van het protocol werd de wiki geupdaten en wisten we dat de fout aan iets anders lag dan dat we dachten. De documentatie van het protocol was ook helemaal niet duidelijk. Bij de ... stond er dat dit alleen maar voor assisten en visitors bedoeld was. Uiteindelijk bleek het dat dit ook moest ge"implementeerd worden. Dit bleek net hetzelfde met het `locken' van een wip. 
-
-
-We hadden wel een heel goed team. Iedereen was gemotiveerd en vergaderingen mondden niet uit tot zinloze discussies: iedereen kreeg de kans zijn mening te zeggen. Bovendien kon ieder teamlid zich bezighouden met een aspect van het project waar hij/zij goed in was. Deze diversiteit aan talenten heeft ervoor gezorgd dat het resultaat van dit project iets is waar we tevreden over zijn.
-
-\section*{Tekst Scheidsrechter commissie}
-%stuk over de scheidsrechtercommissie in het eindverslag, door elk lid van de spelcommissie, met o.a.: evaluatie van de spelcommissie en eigen inbreng\\
-
-De vergaderingen van de scheidsrechter commissie waren er voor samen beslissingen te nemen over de invulling van het project. We zaten met 11 teams samen en afwisselend werd er iemand voorzitter en secretaris. Het probleem was alleen dat sommige voorzitters niet goed wisten hoe ze een vergadering moesten leiden waardoor discussi"eren soms moeilijk werd. \\
-
-De vergaderingen waren niet altijd even effici"ent. Sommige discussies waren heel frustrerend omdat er mensen waren die ongefundeerde reacties gaven of omdat er over iets gediscussieerd werd dat helemaal geen zin had. Het feit dat het HTTTP protocol helemaal geschreven was door een team was wel handig langst de ene kant omdat ons team daar dan niet veel werk in moest steken, langst de andere kant was het soms vaag wat er allemaal gebeurde met het HTTTP protocol. Het zou beter zijn geweest moesten er meerdere teams daar samen aan gewerkt hebben. Ook helemaal op het einde voerde dit team nog aanpassingen door aan het protocol.  \\
-
- Het voordeel van de scheidsrechter commissie was dat er maar een persoon zich moest bezig houden met de grote beslissingen. Deze moest dan gewoon zijn team inlichten en vragen naar meningen en deze bundelen en op de vergadering brengen. \\
- 
-Ik, Sophie Marien, was de verantwoordelijke van team Zilver om naar de scheidsrechter commissie te gaan en ons team te vertegenwoordigden. Qua eigen inbreng heb ik het idee gegeven om de wip te detecteren door er een infraroodbal onder te plaatsen. Ik heb ook geprobeerd om via infraroodlichtjes op de robots het detectie probleem om te lossen. Dit ging uiteindelijk niet omdat de infraroodlichtjes niet straf genoeg waren. Ze werden wel gedetecteerd door de robot maar de afstand was niet groot genoeg om een andere robot op tijd te detecteren. \\
-Voor de rest heb ik veel verslagen niet goed gekeurd wegens onnauwkeurigheden en soms omdat ik ook niet akkoord was met een beslissing. \\
- 
+We hadden wel een heel goed team. Iedereen was gemotiveerd en vergaderingen mondden niet uit tot zinloze discussies: iedereen kreeg de kans zijn mening te zeggen. Bovendien kon ieder teamlid zich bezighouden met een aspect van het project waar hij/zij goed in was. Deze diversiteit aan talenten heeft ervoor gezorgd dat we tevreden kunnen zijn over het resultaat van het project.
 
 
 \newpage

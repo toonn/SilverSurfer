@@ -8,6 +8,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass{peno}
+\usepackage{enumitem} %witruimte voor lijstjes
+	\setitemize{noitemsep,topsep=0pt,parsep=3pt,partopsep=5pt}
+	\setenumerate{noitemsep,topsep=0pt,parsep=5pt,partopsep=10pt}
 
 \team{Silver} % teamkleur
 
@@ -16,9 +19,10 @@
 
 \maketitle
 
-\section*{Algemene strategie voor het tweede semester}
+\section{Inleiding}
 
-De opdracht wordt opgesplitst in deelproblemen waarvoor verder afzonderlijke strategie\"en worden uitgewerkt. Steeds wordt bekeken welke moeilijkheden aan bod komen. De deelproblemen:
+De opdracht wordt opgesplitst in deelproblemen:
+
 \begin{itemize}
 \item Hoe zoekt de robot het voorwerp?
 \item Hoe raapt de robot het voorwerp op?
@@ -30,43 +34,66 @@ De opdracht wordt opgesplitst in deelproblemen waarvoor verder afzonderlijke str
 \item Hoe communiceert de robot met andere robots?
 \end{itemize}
 
-De laatste drie puntjes worden sterk bepaald door het protocol dat in de scheidsrechtercommissie besproken wordt. Deze worden niet verder besproken.
+Voor elk deelprobleem wordt een afzonderlijk strategie uitgewerkt. Steeds wordt bekeken welke moeilijkheden aan bod komen. De laatste drie puntjes worden sterk bepaald door het protocol dat in de scheidsrechterscommissie besproken wordt. Deze worden niet verder besproken.\\
+
+Elke strategie bevat een paragraaf die weergeeft of de strategie werkelijk ge\"implementeerd werd en of dit een goed idee was. Deze reflectie werd geschreven na de laatste demonstratie. Voor een beschrijving van het eindresultaat, wordt verwezen naar het eindverslag van het tweede semester~\cite{Verslag2}.
 
 
-\section*{Verschillende Strategie"en}
-\subsection*{Hoe zoekt de robot het voorwerp?}
+\section{Deelproblemen en hun oplossingsstrategie\"en}
+\subsection*{Hoe vindt de robot het voorwerp?}
 
-Om het doolhof te doorzoeken gebruiken we een aangepaste versie van het verkenalgoritme. Wanneer ergens mogelijke combinatie straight~+~dead-end gesignaleerd zijn: onmiddellijk naartoe gaan. De kans is groot dat hier een voorwerp ligt.
+Om het doolhof te doorzoeken wordt een aangepaste versie van het verkenalgoritme gebruikt. Wanneer ergens mogelijke combinatie `straight~+~dead-end' gesignaleerd wordt, gaat de robot hier onmiddellijk heen. De kans is groot dat hier een voorwerp ligt.
 
-Het oorspronkelijke algoritme vermeed dead-ends waarvan alle muren reeds gekend waren. Dit kan nog steeds: een voorwerp wordt immers steeds voorafgegaan van een barcode, die zich op een straight bevindt. Bij het lezen van deze barcode is meteen geweten of het voorwerp het juiste is of niet. Zo niet, hoeft de beschouwde dead-end niet onderzocht te worden.\footnote{Wanneer je een voorwerp-barcode tegenkomt, weet je sowieso dat er een dead-end volgt en kan je deze muren invullen zonder dat je ze echt gezien hoeft te hebben.}
+Het oorspronkelijke algoritme vermeed `dead-ends' waarvan alle muren reeds gekend waren. Dit kan nog steeds: een voorwerp wordt immers steeds voorafgegaan van een barcode, die zich op een straight bevindt. Bij het lezen van deze barcode is meteen geweten of het voorwerp het juiste is of niet. Zo niet, hoeft de beschouwde `dead-end niet onderzocht te worden'. Wanneer een barcode een voorwerp aanduidt, weet de robot bovendien ineens dat er een ´dead-end' zal volgen. Hij kan deze automatisch toevoegen aan zijn map.
 
 Nadat het voorwerp gevonden is, moet de vraag gesteld worden of de robot nog verder het doolhof moet verkennen. Hoe meer kennis de robot heeft van het doolhof hoe beter hij het kortste pad naar zijn teamgenoot kan vinden, aan de andere kant verlies je tijd door nog verder het doolhof te verkennen. Het is ook een mogelijke strategie om naar het voorwerp van je teamgenoot te gaan en daar op hem te wachten. Welke middenweg hierin genomen wordt, is nog niet helemaal beslist.
+
+%\subparagraph{Reflectie} Het verkenalgoritme werd inderdaad voorzien van een optimalisatie die prioriteit geeft aan `dead-ends'. Uit testen bleek echter dat dit niet tot het verwachte resultaat leidde. De optimalisatie werd daarom weer uit het algoritme gehaald.
+
+%Bij het lezen van barcodes voegt de robot automatisch extra muren toe indien dit mogelijk is. Dit is het geval wanneer de barcode een voorwerp aanduidt of een wip. Deze strategie bleek een goed idee. De robot diende zo enkele tegels minder te verkennen.
 
 \subsection*{Hoe raapt de robot het voorwerp op?}
 Er zijn verschillende punten waarop gelet moet worden:
 \begin{itemize}
 \item Het opnemen van het voorwerp mag niet te veel tijd kosten.
 \item Het voorwerp moet goed vastzitten.
-\item De robot moet nog goed kunnen manoeuvreren wanneer hij het voorwerp bij zich heeft (ook op de wip).
+\item De robot moet goed kunnen manoeuvreren met het voorwerp (ook op de wip).
 \end{itemize} 
-
-Er moet ook voor gezorgd worden dat de robot de barcode, die aantoont om welk voorwerp het gaat, juist leest zodat de robot zeker het juiste voorwerp meeneemt.
 
 Het oprapen zelf kan op twee manieren: optillen of meeslepen. Om het voorwerp echt op te tillen is een extra motor nodig. Deze hebben we tot onze beschikking. Het voordeel hieraan is dat het voorwerp minder makkelijk zal loskomen. De robot zal sneller vooruit kunnen gaan (minder wrijving) en wordt minder gehinderd (vooral op de wip) dan wanneer het voorwerp over de grond gesleept wordt.
 
 De rug van de robot is een goede plaats om het voorwerp `bij te houden'. Zo bevindt het voorwerp zich niet in het zicht van de ultrasone sensor. De robot draait zich om, neemt het voorwerp `op zijn rug' en rijdt rechtdoor om verder het doolhof te verkennen.
 
-\subsection*{Hoe vindt de robot zijn teamgenoot?}
-Het kortste-pad-algoritme zal aangepast moeten worden zodat ook het aantal draaiingen geminimaliseerd wordt (dit werd voorlopig nog niet gedaan).
+%\subparagraph{Reflectie} Wanneer het voorwerp werd opgeraapt via een schep achteraan, bleek de robot te lang te zijn om nog goed te kunnen manoeuvreren. De schep werd daarom vooraan geplaatst, zonder de extra motor, maar ook dit bleek niet ideaal te werken. Uiteindelijk werd terug gekeerd naar het oorspronkelijke concept. De robot werd deze keer echter volledig herbouwd en compacter gemaakt waardoor het concept wel haalbaar werd. Dit oorspronkelijke concept was zeker een goed idee. Het concept werd bovendien nog uitgebreid met een extra lange schep die de wip kon openen.
 
-Het is het gemakkelijkst een punt af te spreken waar beide teamgenoten naartoe gaan. Naar dit punt gaan kan via het kortste-pad-algoritme. Hoe dit punt bepaald wordt, moet in de scheidsrechtercommissie bepaald worden.
+\subsection*{Hoe vindt de robot zijn teamgenoot?}
+Het kortste-pad-algoritme zal aangepast moeten worden zodat ook het aantal draaiingen geminimaliseerd wordt.
+
+Het is het gemakkelijkst een gemeenschappelijk punt af te spreken waar beide teamgenoten heen rijden. De weg naar dit punt bepalen kan via het kortste-pad-algoritme. Hoe dit punt bepaald wordt, moet in de scheidsrechterscommissie bepaald worden.
+
+%\subparagraph{Reflectie} De scheidsrechterscommissie heeft geen manier voorzien om een gemeenschappelijk punt af te spreken. De robot rijdt daarom gewoon naar de plek waar de andere robot zich op dat moment bevindt. Hij controleert echter regelmatig of hij wel dichter komt. Wanneer beide robots dit doen, komen ze elkaar tegen op het midden van het pad, wat tot hetzelfde resultaat leidt als het oorspronkelijke concept. Het huidige concept is bovendien eenvoudiger aangezien geen tijd wordt verloren met het bepalen van een gemeenschappelijk punt.
 
 \subsection*{Hoe kan de robot over de wip?}
-Het is belangrijk te weten of de wip naar beneden of naar boven staat. Het is moeilijk dit alleen op basis van de ultrasone sensor te bepalen zonder de wip te verwarren met een muur. Via de scheidsrechtercommissie werd besloten een barcode voor de wip te plaatsen. Of de stand van de wip kan worden afgeleid met behulp van infraroodlicht, wordt nog onderzocht.
+Het is belangrijk te weten of de wip naar beneden of naar boven staat. Het is moeilijk dit alleen op basis van de ultrasone sensor te bepalen zonder de wip te verwarren met een muur. Via de scheidsrechterscommissie werd besloten een barcode voor de wip te plaatsen. Of de stand van de wip kan worden afgeleid met behulp van infraroodlicht, wordt nog onderzocht.
 
-De robot heeft enkele laaghangende sensoren die mogelijk in de weg zitten om de wip om te rijden. Dit moet worden nagekeken en eventueel moet de robot worden herbouwd.
+De robot heeft enkele `laaghangende sensoren' die mogelijk in de weg zitten om de wip om te rijden. Dit moet worden nagekeken en eventueel moet de robot worden herbouwd.
+
+%\subparagraph{Reflectie} De stand van de wip kon makkelijk bepaald worden via de infraroodsensor, dit was een heel goed idee. De lichtsensor werd op een scharnier geplaatst zodat deze achteruit klapt wanneer de robot de wip raakt. Zo vormt dit geen probleem.
+
+%Een extra functionaliteit die werd toegevoegd, bestond in het handmatig openen van de wip. Dit kon aan de hand van de lange schep. Deze functionaliteit werd niet vaak gebruikt tijdens het spel, maar bood een oplossing wanneer de robot volledig ingesloten zit.
 
 \subsection*{Hoe gaat de robot om met foute informatie?}
 Wanneer de robot een muur detecteert waar een andere robot zegt dat er geen is (of andersom), onthoudt de robot een 'grijze` muur. Wanneer deze muur op het pad ligt, kijkt de robot eerst nog vooraleer er heen te rijden.
+
+%\subparagraph{Reflectie} Wanneer met eigen simulators getest werd, bleek dit geen probleem te zijn: zij stuurden enkel juiste informatie door. Het `grijze muren' systeem was daarom niet nodig. Er is onvoldoende getest met robots van andere teams om te kunnen besluiten dat dit hier een probleem zou zijn.
+
+\begin{flushleft}
+\begin{thebibliography}{9}
+
+\bibitem{Verslag2} 
+Sam Gielis, Sophie Marien, Toon Nolten, Nele Rober, Gerlinde Van Roey, Maxim Van Mechelen (2012-2013) \textit{Eindverslag P\&O computerwetenschappen, team Zilver, tweede semester}
+
+\end{thebibliography}
+\end{flushleft}
 
 \end{document}
