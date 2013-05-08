@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{caption}
 \usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes,shadows,arrows}
@@ -33,16 +34,13 @@
 
 \newpage
 %TODO De Doolhof en Het Doolhof nakijken voor consequente schrijfwijze. Gekalibreerd en gecalibreerd
-%TODO wat met de referenties ??
-%TODO figuren zo dicht mogelijk bij de juiste tekst plaatsen !!
-%TODO klassenschema's: via Latex of met figuren ??
 
 \begin{abstract}
 \label{ssec:Abstract}
-Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
+Het P\&O-project heeft als doel vier autonome robots \textit{Team Treasure Trek} \cite{TeamTreasure} te laten spelen. Dit verslag beschrijft de invulling die team Zilver aan het project gaf.\\
 
 De robot is voorzien van een lichtsensor, een infraroodsensor en een ultrasone sensor. Verder heeft de robot een lange schep waarmee hij zijn voorwerp kan oprapen en eventueel een wip kan openen.
-De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Enkel doorgangen en muren verkregen via informatie uit barcodes beschouwt hij als definitief. Via \textsc{RabbitMQ} kunnen de robots elkaar mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
+De robot kan een doolhof verkennen en hiervan een kaart (verder een `map' genoemd) bijhouden. Andere robots worden vermeden met behulp van de ultrasone sensor. Via \textsc{RabbitMQ} \cite{RabbitMQ} kunnen de robots elkaar mappen en posities doorsturen. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad tot bij zijn teamgenoot bepalen.\\
 
 Het computerprogramma simuleert de werking van de robot. Deze simulator kan in combinatie met de fysieke robot gebruikt worden en kan meerdere robots tegelijkertijd simuleren. De gesimuleerde robots gedragen zich volledig analoog aan de fysieke robot.
 \end{abstract}
@@ -63,42 +61,31 @@ Het computerprogramma simuleert de werking van de robot. Deze simulator kan in c
 % == INLEIDING == %
 \section{Inleiding} % 4 ok
 \label{ssec:Inl}
-In het kader van het vak `Probleemoplossen en Ontwerpen: computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van \textsc{LEGO Mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
+In het kader van het vak `Probleemoplossen en Ontwerpen: Computerwetenschappen' wordt gewerkt rond autonome intelligente robots. Verschillende teams bouwen en programmeren een robot met behulp van \textsc{LEGO Mindstorms} \cite{mindstorms}. Deze robot moet uiteindelijk samen met drie andere robots volledig autonoom \textit{Team Treasure Trek} kunnen spelen.
 De robots moeten hierbij in een onbekend doolhof op zoek gaan naar het voorwerp dat hen toegewezen werd. Wanneer een robot zijn voorwerp gevonden heeft, komt hij te weten met welke robot hij moet samenwerken. Elk duo moet beide voorwerpen bij elkaar brengen. Het duo dat hier eerst in slaagt, wint.\\
 
-%TODO goed?
-%TODO waar moet dit staan? of mogen we er vanuit gaan dat de opdracht gekend is?
-%TODO figuur bij plaatsen?
-Een doolhof bestaat uit houten tegels van~$40$ op $40$~cm. De rand van een tegel wordt aangegeven door een witte lijn of een opstaande muur. Tegels kunnen een barcode bevatten die uit witte en zwarte lijnen bestaat. Het is mogelijk dat een doolhof een wip bevat. Een wip bestaat uit vier tegels die kunnen kantelen. Onder een wip wordt een bal geplaatst die infrarood licht uitzendt. Het is uiteraard enkel mogelijk een wip op te rijden wanneer deze naar beneden staat.
+Een doolhof bestaat uit houten tegels van~$40$ op $40$~cm. De rand van een tegel wordt aangegeven door een witte lijn of een opstaande muur. Tegels kunnen een barcode bevatten die uit witte en zwarte lijnen bestaat. Een doolhof bevat mogelijk een wip: vier tegels die kantelen wanneer de robot erover rijdt. Onder een wip wordt een bal geplaatst die infrarood licht uitzendt. Het is uiteraard enkel mogelijk een wip op te rijden wanneer deze naar beneden staat.
 
-Een voorwerp bestaat uit een wc-rol dat voorzien is van klittenband.\\
+Als voorwerp wordt een wc-rol gebruikt.\\
 
-%TODO is het nodig te beschrijven wat bij welke demo moest?
-%Bij de eerste demonstratie is de robot in staat zijn voorwerp te zoeken en op te pikken. Bij het oppikken moet de robot dit laten weten aan zijn teamgenoot via \textsc{RabbitMQ}. Er wordt voorlopig slechts met \'e\'en fysieke robot gewerkt, eventueel in combinatie met gesimuleerde robots.
-%
-%Tijdens de tweede demonstratie bevat de doolhof mogelijk een wip. Wanneer een robot weet wie zijn teamgenoot is, kan hij hiermee een punt afspreken om samen te komen.
-%
-%Bij de derde demonstratie moet het volledige spel gespeeld kunnen worden. Dit kan met vier fysieke robots, een combinatie van fysieke en virtuele robots of enkel virtuele robots.\\
-
-%TODO goed?
-De fysieke bouw van de robot en de kalibratie van de sensoren wordt beschreven in sectie~\ref{sec:Robot}. Algoritmes die toelaten de verschillende aspecten van het spel te spelen worden beschreven in sectie~\ref{sec:Algo}. Ten slotte wordt in sectie~\ref{sec:Softw} een overzicht gegeven van de verschillende softwareonderdelen en hun relaties.
+De fysieke bouw van de robot en de kalibratie van de sensoren wordt beschreven in sectie~\ref{sec:Robot}. Algoritmes die toelaten de verschillende aspecten van het spel te spelen worden beschreven in sectie~\ref{sec:Algo}. Ten slotte wordt in sectie~\ref{sec:Softw} een overzicht gegeven van de verschillende softwareonderdelen en hun onderlinge relaties.
 
 \section{Robot}
 \label{sec:Robot}
 
 \subsection{Bouw Robot}
 \label{ssec:Bouw}
-\textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} kan dit in \textsc{Java}.\\
+\textsc{LEGO Mindstorms} biedt een bouwpakket voor een robot aan. Het pakket bevat een \textsc{NXT}-microcomputer die toelaat de robot te programmeren. Met behulp van \textsc{leJOS} \cite{leJOS} kan dit in \textsc{Java}.\\
 
-Bovenaan de robot is een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan. De sensoren worden weergegeven in figuur~\ref{fig:robotDetail}.\\
+Bovenaan de robot staat een infrarood- en ultrasone sensor gemonteerd. Deze kunnen niet bewegen ten opzichte van de robot. De lichtsensor werd op een scharnier gemonteerd, zodat deze omhoog kantelt wanneer hij een wip raakt. Dit zorgt ervoor dat de robot vlot de wip op kan. De sensoren worden weergegeven in figuur~\ref{fig:robotDetail}.\\
 
 Een voorwerp is voorzien van klittenband en kan op verschillende manieren worden opgeraapt. Volgende opstellingen werden gebouwd en getest:
 
 \begin{enumerate}
-\item \textbf{Figuur~\ref{fig:robotOud1}} De robot heft het voorwerp op met behulp van een schep en een extra motor achteraan. Deze opstelling maakt de robot echter te lang waardoor hij moeilijker kan draaien zonder tegen een muur te botsen;
-\item \textbf{Figuur~\ref{fig:robotOud2}} De schep wordt vooraan geplaatst, waar te weinig plaats is voor een extra motor. De schep aanpassen aan de vorm van het voorwerp blijkt echter niet voldoende om het voorwerp succesvol op te rapen;
-\item \textbf{Figuur~\ref{fig:robotOud3}} Klittenband zorgt ervoor dat het voorwerp beter in de schep blijft liggen. Deze opstelling maakt de robot echter nog steeds te lang;
-\item \textbf{Figuur~\ref{fig:robotBouw}} Door de \textsc{NXT} horizontaal te plaatsen en de extra motor tussen de wielen te monteren, wordt de robot compacter. Een lange schep met klittenband achteraan laat toe het voorwerp op te rapen en eventueel een wip te openen.
+\item \textbf{Figuur~\ref{fig:robotOud1} } De robot heft het voorwerp op met behulp van een schep achteraan. De schep is voorzien van een extra motor. Deze opstelling maakt de robot echter te lang waardoor hij moeilijker kan draaien zonder tegen een muur te botsen;
+\item \textbf{Figuur~\ref{fig:robotOud2} } De schep wordt vooraan geplaatst, waar te weinig plaats is voor een extra motor. De schep aanpassen aan de vorm van het voorwerp blijkt echter niet voldoende om het voorwerp succesvol op te rapen;
+\item \textbf{Figuur~\ref{fig:robotOud3} } Klittenband zorgt ervoor dat het voorwerp beter in de schep blijft liggen. Deze opstelling maakt de robot echter nog steeds te lang;
+\item \textbf{Figuur~\ref{fig:robotBouw} } Door de \textsc{NXT} horizontaal te plaatsen en de extra motor tussen de wielen te monteren, wordt de robot compacter. De bredere basis maakt de robot bovendien stabieler. Een lange schep met klittenband achteraan laat toe het voorwerp op te rapen en eventueel een wip te openen.
 \end{enumerate}
 
 Deze laatste opstelling gaf voorlopig nog geen problemen. Dit is de huidige opstelling. Figuur~\ref{fig:robotDetail} toont details van de schep en de sensoren.
@@ -136,7 +123,6 @@ Deze laatste opstelling gaf voorlopig nog geen problemen. Dit is de huidige opst
 \label{fig:robotBouw}
 \end{figure}
 
-%TODO foto lichtsensor ok??
 % details robot
 \begin{figure}
 \centering
@@ -161,19 +147,17 @@ Deze laatste opstelling gaf voorlopig nog geen problemen. Dit is de huidige opst
 
 \subsection{Kalibratie}
 \label{ssec:Kalib}
-%TODO eigenlijk veel te weinig testresultaten!! we zouden met de bekomen coefficienten gemiddelden en varianties moeten bepalen
-
 \subsubsection{Motoren}
 De robot wordt aangedreven door twee motoren. Beide motoren kunnen onafhankelijk worden aangestuurd. Wanneer de robot rechtdoor rijdt, draaien beide motoren in dezelfde richting. Bij het keren om de as draaien de motoren in tegenovergestelde richtingen. De kalibratie heeft als doel te bepalen hoeveel graden de motoren moeten draaien om de robot respectievelijk \'e\'en cm vooruit de laten rijden en \'e\'en~graad te laten keren.
 
 \subparagraph{E\'en cm vooruit rijden}
-Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien. Het bleek niet nodig deze co\"effici\"ent te wijzigen ten opzichte van het vorige ontwerp. Dit werd getest door de robot dwars op een witte lijn te laten starten en hem dan $40~cm$ vooruit te laten rijden. De test werd enkele keren herhaald. De robot kwam op de volgende witte lijn uit.
+Opdat de robot \'e\'en cm vooruit rijdt, moeten de motoren $20,8\degree$ draaien. Het bleek niet nodig deze co\"effici\"ent te wijzigen ten opzichte van het vorige ontwerp. Dit werd getest door de robot dwars op een witte lijn te laten starten en hem $40~cm$ vooruit te laten rijden. De test werd enkele keren herhaald. De robot kwam steeds op de volgende witte lijn uit.
 
 %move forward 20.8 --> perfect
 
 \subparagraph{E\'en graad keren om de as}
-De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg een aantal keer de opdracht $90\degree$~rond zijn as te draaien. Dit werd zowel met een positieve als een negatieve hoek getest. Door de opdracht een aantal keer te herhalen wordt de fout gemakkelijker op te merken.
-De co\"effici\"ent die het beste resultaat leverde is~$2,330\degree$, zowel voor positieve als negatieve hoeken.
+De test vertrok van de waarde die gebruikt werd bij het vorige ontwerp:~$2,358\degree$. De robot werd naast een witte lijn neergezet en kreeg een aantal keer de opdracht $90\degree$~rond zijn as te draaien, zowel met een positieve als een negatieve hoek. Door de opdracht een aantal keer te herhalen wordt de fout gemakkelijker op te merken.
+De co\"effici\"ent~$2,330\degree$ gaf het beste resultaat voor positieve en negatieve hoeken.
 
 %eerst 2.358 --> iets te veel
 %dan 2.330 --> kleeeeiin iets te weinig
@@ -182,15 +166,14 @@ De co\"effici\"ent die het beste resultaat leverde is~$2,330\degree$, zowel voor
 
 
 \subsubsection{Infraroodsensor}
-%TODO wat willen de waarden juist zeggen?
-%TODO uitleggen hoe infraroodsensor werkt!! Is dit niet al in orde?
-De infraroodsensor neemt een bron van infraroodlicht, zoals een infraroodbal, waar. Hij wordt gebruikt om de stand van de wip te detecteren en bestaat uit vijf onafhankelijke sensoren die elk volgens een andere ori\"entatie gericht staan. De robot maakt enkel gebruik van de middelste sensor omdat de wip zich altijd recht voor de robot zal bevinden. De infraroodsensor geeft een waarde tussen $1$ en $3$ tenzij hij een infraroodbal detecteert. In dat geval geeft hij gemiddeld een waarde rond de~$120$.
+De infraroodsensor neemt een bron van infraroodlicht, zoals een infraroodbal, waar. Hij wordt gebruikt om de stand van de wip te detecteren en bestaat uit vijf onafhankelijke sensoren die elk volgens een andere ori\"entatie gericht staan. De robot maakt enkel gebruik van de middelste sensor omdat de wip zich altijd recht voor de robot zal bevinden. De infraroodsensor geeft een waarde tussen $1$ en $3$, tenzij hij een infraroodbal detecteert. In dat geval geeft hij gemiddeld een waarde rond de~$120$.
 
 \subsubsection{Ultrasone sensor}
-%TODO hoe komen we aan waarden?
 De ultrasone sensor zendt ultrasone geluidsgolven uit. Indien een object in de buurt staat, weerkaatsen de golven hierop. De robot ontvangt dan zijn eigen golven opnieuw. De tijd tussen het uitzenden en ontvangen laat toe de afstand tot het object te bepalen.
 
-In een doolhof kan een robot zowel muren als robots tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge\"interpreteerd worden enkel meetwaarden kleiner dan $21$~cm als mogelijke muur beschouwd.\\ Het is niet mogelijk vast te stellen of het werkelijk om een muur of om een andere robot gaat. Hiermee wordt rekening gehouden in het verkenalgoritme (sectie~\ref{sssec:AlgoZoek}). Wanneer de robot in het midden van een tegel staat geeft de sensor een waarde van $16$~cm. Deze waarde wordt gebruikt om de robot te aligneren op basis van de muren (sectie~\ref{sssec:AlgoAllign}).
+In een doolhof kan een robot zowel muren als robots tegenkomen. Ook de paaltjes, die de muren omhoog houden, worden gedetecteerd. Om te vermijden dat de paaltjes als muur worden ge\"interpreteerd worden enkel meetwaarden kleiner dan $21$~cm als mogelijke muur beschouwd.
+
+Wanneer de robot in het midden van een tegel staat geeft de sensor een waarde van $16$~cm. Deze waarde wordt gebruikt om de robot te aligneren op basis van de muren (sectie~\ref{sssec:AlgoAllign}).
 
 %US: 16 = muur - om te aligneren op muur,
 % treshold = 21 - hieronder is het een muur, geen paalte
@@ -199,7 +182,7 @@ In een doolhof kan een robot zowel muren als robots tegenkomen. Ook de paaltjes,
 De lichtsensor meet de lichtintensiteit van de omgeving. De sensor kan zelf ook een rood licht uitsturen. Hoe minder licht gereflecteerd wordt door de omgeving, hoe donkerder deze is.
 
 De lichtsensor werd zowel bij goede lichtomstandigheden als bij slechte omstandigheden getest voor alle soorten ondergronden die een doolhof bevat: een paneel, een witte lijn en een zwarte lijn.
-De lichtsensor geeft gemiddeld de waarde~$49$ wanneer de robot op het paneel staat, $55$~wanneer hij op een witte lijn staat en $33$~op een zwarte lijn. De robot beschouwt alles boven de $52$ als wit en alles onder $40$ als zwart. Wat hiertussen ligt beschouwt hij als paneel. Door met bereiken te werken, wordt een veiligheidsmarge ingebouwd en is het niet nodig de sensor steeds opnieuw te kalibreren.
+De lichtsensor geeft gemiddeld de waarde~$49$ wanneer de robot op het paneel staat, $55$~wanneer hij op een witte lijn staat en $33$~op een zwarte lijn. De robot beschouwt alles boven de $52$ als wit en alles onder $40$ als zwart. Wat hiertussen ligt beschouwt hij als paneel. Door met bereiken te werken, wordt een veiligheidsmarge ingebouwd. De kans is klein dat de sensorwaarden verkeerd ge\"interpreteerd worden, ook bij slechte lichtomstandigheden.
 
 %witte lijn lichtsensor: 55
 %tegel: 49
@@ -207,12 +190,13 @@ De lichtsensor geeft gemiddeld de waarde~$49$ wanneer de robot op het paneel sta
 %--> treshold = 52 (erboven: wit, eronder: paneel)
 %				40 (eronder: zwart, erboven: paneel)
 
+\newpage
 
 % == ALGORITMES == %
 \section{Algoritmes}
 \label{sec:Algo}
 
-Om het spel te spelen dient de robot de doolhof zo nauwkeurig mogelijk te verkennen (sectie~\ref{ssec:AlgoVerken}). Hierbij moet hij rekening houden met onnauwkeurigheden in zijn besturing (sectie~\ref{sssec:AlgoAllign}) en met de verschillende onderdelen die een doolhof bevat: barcodes (sectie~\ref{sssec:AlgoBar}), wippen (sectie~\ref{sssec:AlgoWip}) en voorwerpen (sectie~\ref{sssec:AlgoZoek}). Bovendien moeten botsingen met andere robots vermeden worden (sectie~\ref{sssec:AlgoCollision}).
+Om het spel te spelen dient de robot de doolhof zo nauwkeurig mogelijk te verkennen (sectie~\ref{ssec:AlgoVerken}). Hierbij moet hij rekening houden met onnauwkeurigheden in zijn besturing (sectie~\ref{sssec:AlgoAllign}) en met de verschillende onderdelen die een doolhof bevat: barcodes (sectie~\ref{sssec:AlgoBar}), wippen (sectie~\ref{sssec:AlgoWip}) en voorwerpen (sectie~\ref{sssec:AlgoZoek}). Bovendien dienen andere robots gedetecteerd te worden zodat botsingen vermeden worden (sectie~\ref{sssec:AlgoCollision}).
 
 De robot dient ook samen te werken met zijn teamgenoot (sectie~\ref{ssec:AlgoSamen}). Hierbij moet hij gebruik kunnen maken van de informatie die deze stuurt (sectie~\ref{sssec:AlgoMappen}) en moet hij een manier vinden om de teamgenoot te bereiken (sectie~\ref{sssec:AlgoTeam}).
 
@@ -277,7 +261,7 @@ Dit algoritme wordt enkel uitgevoerd wanneer de robot lateraal op een witte lijn
 % = barcodes = %
 \subsubsection{Barcode}
 \label{sssec:AlgoBar}
-Een barcode bestaat uit acht stroken van $2$~cm, waarvan de eerste en de laatste strook steeds zwart zijn. De andere stroken kunnen zwart of wit zijn en vormen samen de waarde van de barcode. De robot kijkt tijdens het rijden of de lichtsensor een zwarte ondergrond detecteert. Indien dit het geval is, rijdt de robot $17$~cm vooruit zodat hij achter de barcode eindigt. Ondertussen leest hij elke $2$~cm de waarde van de lichtsensor af. De combinatie van deze waarden geeft de waarde van de barcode.\\
+Een barcode bestaat uit acht stroken van $2$~cm, waarvan de eerste en de laatste strook steeds zwart zijn. De andere stroken kunnen zwart of wit zijn en vormen samen de waarde van de barcode. De robot kijkt tijdens het rijden steeds of de lichtsensor een zwarte ondergrond detecteert. Indien dit het geval is, rijdt de robot $17$~cm vooruit zodat hij achter de barcode eindigt. Ondertussen leest hij elke $2$~cm de waarde van de lichtsensor af. De combinatie van deze waarden geeft de waarde van de barcode.\\
 
 % methode om te meten hoeveel je hebt gereden: tacho
 
@@ -288,30 +272,26 @@ Analoog voor een barcode die een wip aanduidt: de volgende drie tegels, waarvan 
 % = wip = %
 \subsubsection{Wip}
 \label{sssec:AlgoWip}
-De robot rijdt vaak onnauwkeurig bij het nemen van de wip. Hij zal een wip daarom zoveel mogelijk vermijden. Slechts wanneer de tegels in de queue enkel bereikbaar zijn via een wip, rijdt de robot naar de dichtstbijzijnde wip die toegang geeft tot die tegels.\\
+Een wip bestaat uit vier tegels die kantelen wanneer een robot erover rijdt. Slechts twee tegels zijn bereikbaar. Het is enkel mogelijk een wip op te rijden langs de zijde die naar beneden staat.
 
-Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten is, kan de robot de wip openen met behulp van zijn schep. Deze functie kan ook worden uitgeschakeld. In dat geval zal de robot naar een andere wip rijden of blijven tot een andere robot de wip opent.
+Een wip wordt voorafgegaan door barcodes die de wip identificeren. Onder een wip ligt een infraroodbal. Wanneer de robot infraroodlicht detecteert, weet hij dat hij voor een wip staat, maar deze niet kan oversteken. \\
+
+De robot rijdt vaak onnauwkeurig bij het nemen van de wip. Hij zal een wip daarom zoveel mogelijk vermijden. Slechts wanneer de onverkende tegels enkel bereikbaar zijn via een wip, rijdt de robot naar de dichtstbijzijnde wip die toegang geeft tot die tegels.
+
+Wanneer deze wip open is, zal de robot hem oversteken. Wanneer de wip gesloten is, kan de robot de wip openen met behulp van zijn schep. Deze functie kan ook worden uitgeschakeld. In dat geval zal de robot naar een andere wip rijden of wachten tot een andere robot de wip opent.
 
 % = wip openen = %
-%TODO figuur! OK
-%TODO uitleg locken OK
 \subparagraph{Een wip openen} 
-Dit algoritme wordt uitgevoerd wanneer de robot voor een gesloten wip staat. De robot rijdt achterwaarts en aligneert zich op de witte lijn voor de barcode. Na het aligneren staat de robot midden op de tegel met barcode. De robot draait~$180\degree$ om zijn as. De schep daalt~$75\degree$ zodat hij op de wip ligt. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt de schep de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken. De robot dient volgens het protocol twee keer een `lock' aan te vragen tijdens deze operatie, de wip kantelt immers tweemaal. Zo weten andere robots in welke richting de wip uiteindelijk staat.\\
-Door een vakje te `locken' weten de andere robots dat de robot zich nu op dat vakje gaat bevinden. Dit is in het protocol ge"implementeerd. De `lock' op een vakje gebeurt wanneer de robot van een ander vakje naar dit vakje begeeft. Op een wip kan men dus ook een `lock' uitvoeren. De robot kan dus in principe zo bijhouden hoe de wip staat als het de beginpositie kent. Of de robot begint het bij te houden van wanneer hij zelf over de wip gegaan is. De robot heeft dit niet ge"implementeerd omdat het verkenalgoritme de wippen gaat ontwijken. Alleen maar als het echt niet anders gaat. \\
-Op figuur \ref{rowi} is te zien hoe de robot de wip kan openen met de lange schep.
+Dit algoritme wordt uitgevoerd wanneer de robot voor een gesloten wip staat. De robot rijdt achterwaarts en aligneert zich op de witte lijn voor de barcode. Na het aligneren staat de robot midden op de tegel met barcode. De robot draait~$180\degree$ om zijn as en laat zijn schep $75\degree$~dalen zodat hij op de wip ligt. Dit wordt getoond in figuur~\ref{fig:robotWip}. Vervolgens daalt de schep nog~$35\degree$ terwijl de robot $20$~cm vooruit rijdt. Zo trekt hij de wip open. De schep beweegt weer omhoog terwijl de robot nog eens $20$~cm vooruit rijdt. De robot draait $180\degree$ om zijn as en controleert of de wip echt geopend werd. Als dit het geval blijkt te zijn, kan hij de wip oversteken.
 
-\begin{figure}[h]
-\caption{Robot die de wip openent}
-\centering
-\includegraphics[scale=0.1]{robotWip.jpg}
-\label{robowip}
-\end{figure}
+De robot dient volgens het protocol twee keer een `lock' aan te vragen tijdens deze operatie, de wip kantelt immers tweemaal. 
+Door een tegel te `locken' weten de andere robots dat de robot zich naar die tegel zal bewegen. Zij zullen deze tegel vermijden tot hij terug vrij komt. Door bij te houden wanneer een wip `gelocked' wordt, kan een robot bepalen wat de stand van de wip is zonder deze te zien. Dit algoritme wordt echter niet ge\"implementeerd, maar mogelijk maken andere teams gebruik van de optie.
 
-\begin{figure}[h]
-\caption{Robot die de wip naar beneden haalt}
-\centering
-\includegraphics[scale=0.1]{robotWip.jpg}
-\label{rowi}
+\begin{figure}[hb!]
+	\centering
+	\includegraphics[width=0.52\textwidth]{robotWip}
+	\caption{Het openen van een wip}
+	\label{fig:robotWip}
 \end{figure}
 
 
@@ -328,13 +308,14 @@ De robot kan het voorwerp vinden door de doolhof te verkennen. In de loop van he
 \item tegels waarvan de vier zijden al gekend zijn en die niet van het type `straight' zijn, worden niet meer bezocht, deze kunnen immers geen barcode bevatte. Het levert geen extra informatie op om de tegel te bezoeken.
 \end{enumerate}
 
+Testresultaten van deze optimalisaties worden beschreven in het verslag van vorig semester~\cite{Verslag1}.\\
+
 Bij de start van het tweede semester werd een extra optimalisatie (optimalisatie 6) ontwikkeld. Deze geeft prioriteit aan `dead-ends'. Een voorwerp kan zich immers enkel bevinden op een `dead-end', voorafgegaan door een `straight' met een barcode. Onderstaande testen tonen echter aan dat deze optimalisatie in de meeste gevallen niet effici\"ent is. De optimalisatie werd daarom niet ge\"implementeerd.\\
 
-Nadat het voorwerp gevonden is, probeert de robot zijn teamgenoot te contacteren. Indien de teamgenoot zijn voorwerp nog niet heeft of wanneer de mappen van beide robots nog niet combineerbaar zijn, gaat de robot verder met het verkennen van het doolhof.
+Nadat het voorwerp gevonden is, wacht de robot tot hij zijn teamgenoot kent. Zo hindert hij de andere robots zo weinig mogelijk.
 
 \subparagraph{Testresultaten van optimalisatie 6}
 \label{par:AlgoZoekTest}
-
 De optimalisatie werd getest door de simulator verschillende keren door vier verschillende doolhoven te laten rijden. Een van de testdoolhoven wordt weergegeven in figuur~\ref{fig:TestDead}. De robot startte in elke hoek van elke doolhof zowel zonder optimalisatie als met. De robot dient de tegel met het voorwerp niet te bezoeken; het is voldoende de barcode ervoor te lezen om te weten of het om het juiste voorwerp gaat. Dit heeft als gevolg dat enkel de afgelegde afstand van het startpunt tot de punten~A,~B, C~en~D van belang is. Tabellen~\ref{tab:resultVerken1} en~\ref{tab:resultVerken2} geven resultaten weer voor het doolhof uit figuur~\ref{fig:TestDead}. Niet alle testresultaten worden weergegeven; het groot aantal tabellen zou weinig meerwaarde bieden.\\
 
 \begin{table}[h]
@@ -367,29 +348,27 @@ De optimalisatie werd getest door de simulator verschillende keren door vier ver
 \end{center}
 \end{table}
 
-\begin{figure}[!hb]
+\begin{figure}[!h]
 \centering
 	\includegraphics[scale=0.5]{doolhof3}
 	\caption{Een van de doolhoven waarop de optimalisatie 6 getest werd}
 \label{fig:TestDead}
 \end{figure}
 
-
 %testresultaten: 25x beter (24,3%); 30x even goed (29,1%); 48x slechter (46,6%)
-Een vergelijking van alle testresultaten toont dat het algoritme met deze optimalisatie slechts in~$24\%$ van de gevallen een verbetering is. In~$29\%$ van de gevallen leveren de resultaten geen verschil en in~$47\%$ van de gevallen doet de robot er zelfs langer over met de optimalisatie. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen wanneer de tegels op dat pad nog niet verkend zijn. In dat geval kan het pad enkel op basis van de \textit{Manhattanafstand} geschat worden, zonder de muren in rekening te brengen. Dit zorgt ervoor dat de robot vaak moet terugkeren om een nieuw pad te zoeken. De optimalisatie is daarom niet geschikt om toe te voegen aan het algoritme. \\
+Een vergelijking van alle testresultaten toont dat het algoritme met deze optimalisatie slechts in~$24\%$ van de gevallen een verbetering is. In~$29\%$ van de gevallen levert de optimalisatie geen verschil en in~$47\%$ van de gevallen doet de robot er zelfs langer over. Het is immers moeilijk het kortste pad naar de voorwerplocatie te bepalen wanneer de tegels op dat pad nog niet verkend zijn. In dat geval kan het pad enkel op basis van de \textit{Manhattanafstand} geschat worden, zonder de muren in rekening te brengen. Dit zorgt ervoor dat de robot vaak moet terugkeren om een nieuw pad te zoeken. De optimalisatie is daarom niet geschikt om toe te voegen aan het algoritme.
 
 \subparagraph{Het oprapen van een voorwerp}
 Een voorwerp ligt tegen de achterste muur van een `dead-end' tegel. De aanliggende tegel bevat een barcode die het voorwerp identificeert. Dit algoritme wordt uitgevoerd wanneer de robot vlak achter de barcode staat. De robot draait $180\degree$ om zijn as, laat zijn schep volledig naar beneden zakken en rijdt $20$~cm achterwaarts. Zo wordt het voorwerp geklemd tussen de muur en de schep. Klittenband op de schep en het voorwerp zorgt ervoor dat het voorwerp op de schep blijft liggen. De robot rijdt $30$~cm vooruit zodat hij voorbij de barcode staat. Vervolgens aligneert hij zich op de volgende witte lijn.
 
 \subsubsection{Andere robot}
 \label{sssec:AlgoCollision}
-Een hybride sensor maakt gebruikt van een \textit{Wereldsimulator}. Deze heeft kennis van de posities van andere robots, gebaseerd op de informatie die andere robots doorsturen. Wij hebben ervoor gekozen de robot zo weinig mogelijk afhankelijk van andere robots en hun communicatiemogelijkheden te maken. De hybride sensor wordt daarom enkel gebruikt wanneer gesimuleerde robots nodig zijn. De robot stuurt wel altijd zijn eigen positie door naar de \textit{Wereldsimulator} zodat andere teams deze kunnen gebruiken.\\
+Een hybride sensor maakt gebruik van een \textit{Wereldsimulator}.
+Deze heeft kennis van de posities van andere robots,
+gebaseerd op de informatie die de robots doorsturen.
+Wij hebben ervoor gekozen geen gebruik de hybride sensor niet te gebruiken; de ultrasone sensor is even geschikt en minder afhankelijk van de communicatiemogelijkheden van andere robots.
 
-%TODO ook muren die x keer gezien zijn zijn zeker?
-%TODO wat als een robot een robot tegenkomt op een plek waar hij reeds een doorgang heeft gezien?
-Om te vermijden dat de robot tegen een andere robot botst, beschouwt hij elk obstakel als een `muur onder voorbehoud'. Enkel wanneer er geen obstakel is, weet de robot zeker dat er een doorgang is. Een andere robot wordt dus als muur beschouwd en wordt vermeden - net zoals muren vermeden worden. Wanneer de robot hier later opnieuw voorbij komt en de andere robot er niet meer is, zal de robot een doorgang detecteren en wordt zijn map aangepast. Er zijn enkele gevallen waarbij de robot zeker is van muren: bij het lezen van een barcode. Deze ligt immers steeds op een `straight'. Wanneer deze een voorwerp aanduidt, is zeker dat de volgende tegel een `dead-end' is en wanneer deze een wip aanduidt kunnen de tegels van de wip automatisch worden aangevuld. \\
-
-Indien er gesimuleerde robots in het spel zijn, wordt de informatie van de \textit{Wereldsimulator} gebruikt om de afstandssensor juist te simuleren. Dit is steeds een benadering, want de \textit{Wereldsimulator} weet enkel op welke tegel een robot zich bevindt. Hij heeft geen kennis van de positie ten opzichte van die tegel. Verder worden gesimuleerde botsingen op dezelfde manier vermeden.\\
+De robot houdt tijdens het rijden bij hoeveel afstand hij nog moet afleggen. Wanneer de ultrasone sensor een waarde geeft die kleiner is dan deze afstand, ziet hij een andere robot voor zich. Op het moment dat hij de opdracht kreeg vooruit te rijden, was hier immers geen versperring te zien. De robot stopt en rijdt de afgelegde afstand achteruit af. Wanneer vooruit rijden blijft falen, zal de robot een willekeurige tegel kiezen en hierheen rijden. De robot zal van daaruit verder gaan met verkennen.
 
 % == Samenwerking == %
 \subsection{Samenwerking met de teamgenoot}
@@ -403,11 +382,9 @@ Wanneer de robot een map ontvangt, gaat hij op zoek naar unieke paren. Dit zijn 
 
 Indien de robot het unieke paar ook in zijn map heeft, kunnen beide mappen worden samengevoegd. E\'en van beide punten van het paar wordt als referentiepunt gekozen. Beide mappen worden verschoven tot dit punt op co\"ordinaat $(0,0)$ ligt. De robot vergelijkt dan de co\"ordinaten van het andere punt uit het unieke paar. Wanneer deze in de twee mappen niet gelijk zijn, wordt de tweede map geroteerd.
 
-%TODO verandering van oriëntatie beter uitleggen
-%TODO prentjes
-De translaties van beide mappen naar $(0,0)$ en de rotatie van de tweede map leidt tot een algemene transformatiematrix. Deze verandert echter alleen de co\"ordinaten van de tegels, niet de ori\"entatie van de tegels zelf. Wanneer de matrix geroteerd wordt, moeten alle tegels afzonderlijk van ori\"entatie veranderd worden. Zo wordt gecorrigeerd op het feit dat `noord' voor beide robots kan verschillen.\\
+De inverse translaties van beide mappen naar $(0,0)$ en de inverse rotatie van de tweede map leidt tot een algemene transformatiematrix. Deze verandert echter alleen de co\"ordinaten van de tegels. De tegels moeten ook afzonderlijk van ori\"entatie veranderd worden. Dit betekent bijvoorbeeld dat de `noord'-muren moeten gewisseld worden met de `zuid'-muren en de `oost'-muren met de `west'-muren. Hoe deze ori\"entatiewisseling gebeurt, hangt af van de rotatiematrix.\\
 
-Wanneer de volledige projectie bepaald is, worden de mappen samengevoegd. Vanaf dat moment is er een pad berekenbaar dat naar de teamgenoot leidt. Dit pad wordt genomen en er wordt niet meer naar verder updates van de map gekeken. De positie van de andere robot wordt met de dezelfde projectie `vertaald' naar een positie in de samengevoegde map.
+Wanneer de volledige projectie bepaald is, worden de mappen samengevoegd. Vanaf dat moment is er een pad berekenbaar dat naar de teamgenoot leidt. Dit pad wordt genomen en er wordt niet meer naar verdere updates van de map gekeken. De positie van de andere robot wordt met dezelfde projectie `vertaald' naar een positie in de samengevoegde map.
 
 % = teamgenoot = %
 \subsubsection{Teamgenoot bereiken}
@@ -417,7 +394,7 @@ De scheidsrechterscommissie besloot dat alle robots informatie doorsturen over h
 
 De robot bepaalt het kortste pad naar de positie van de andere robot volgens een algoritme op basis van $A^{*}$. Hij legt \'e\'en stap van dit pad af en herbekijkt de positie van de andere robot. Indien deze zich verplaatst heeft, wordt het pad opnieuw berekend.
 
-Het zou kunnen dat beide robots in een lus bewegen waardoor ze steeds op dezelfde afstand van elkaar blijven. Om dit te vermijden wordt bij elke stap de lengte van de pad bepaald. Indien deze lengte niet daalde ten opzichte van de vorige stap, blijft de robot een willekeurige periode tussen de nul en tien seconden wachten. Zo wordt vermeden dat de robots niet opnieuw in dezelfde lus komen.
+Het zou kunnen dat beide robots in een lus bewegen waardoor ze steeds op dezelfde afstand van elkaar blijven. Om dit te vermijden wordt bij elke stap de lengte van het pad bepaald. Indien deze lengte niet daalde ten opzichte van de vorige stap, blijft de robot een willekeurige periode tussen de nul en tien seconden wachten. Zo wordt vermeden dat de robots niet opnieuw in dezelfde lus komen.
 
 
 % == SOFTWARE == %
@@ -425,18 +402,18 @@ Het zou kunnen dat beide robots in een lus bewegen waardoor ze steeds op dezelfd
 \label{sec:Softw}
 De software bestaat uit twee delen: een project dat op de \textsc{NXT} van de robot loopt en een project dat op de computer loopt (sectie~\ref{ssec:Sdesign}). De \textit{Graphical User Interface (GUI)} laat toe de robot te besturen en de reacties van de robot weer te geven (sectie~\ref{ssec:GUI}). Robots kunnen met elkaar communiceren via \textsc{RabbitMQ} (sectie~\ref{ssec:RabbMQ}). Het is ook mogelijk met gesimuleerde robots te werken (sectie~\ref{ssec:Sim}). Tijdens het verkennen wordt een map opgeslagen van de wereld (sectie~\ref{ssec:Mapping}).\\
 
-Voor volgende secties wordt verwezen naar het verslag van het eerste semester. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
+Voor volgende secties wordt verwezen naar het verslag van het eerste semester~\cite{Verslag1}. Deze implementaties en ontwerpen werden zonder aanpassingen opnieuw gebruikt:
 
 \begin{itemize}
-\item Commando's doorgeven
-\item Bluetooth
-\item Robot
+\item Commando's doorgeven;
+\item Bluetooth;
+\item Robot.
 \end{itemize}
 
 % -- Ontwerp -- %
 \subsection{Algemeen software-ontwerp}
 \label{ssec:Sdesign}
-Figuur~\ref{fig:klasSoft} toont een schematische voorstelling van de belangrijkste klassen in het project op de computer. Om de figuur niet te overbelasten, worden methodes niet weergegeven bij de klassen.\\
+Figuur~\ref{fig:klasSoft} toont een schematische voorstelling van de belangrijkste klassen in het computerproject. Om de figuur niet te overbelasten, worden methodes niet weergegeven.\\
 
 % klassendiagramma
 \begin{figure}[h]
@@ -456,7 +433,7 @@ Elke \textit{Viewport} krijgt een eigen \textit{Pilot} toegewezen (behalve \text
 	\item Een robot waarvan de wereld niet kan worden voorgesteld, krijgt geen \textit{Pilot};
 	\item Een teamgenoot (die we niet zelf simuleren) heeft een \textit{DummyPilot}. Deze bevat enkel `getters', want deze robot kan niet worden aangestuurd;
 	\item Een robot die gesimuleerd wordt, heeft een \textit{SimulatorPilot}. Deze berekent zijn sensorwaarden op basis van een virtuele doolhof;
-	\item Een fysieke robot krijgt een \textit{RobotPilot} die via de \textit{Communicator} in verbinding staat met de fysieke robot. De \textit{RobotPilot} krijgt zijn sensorwaarden terug van de robot via de \textit{InfoReceiverThread} en de \textit{StatusInfoBuffer};
+	\item Een fysieke robot krijgt een \textit{RobotPilot} die via de \textit{Communicator} in verbinding staat met de fysieke robot. De \textit{RobotPilot} krijgt zijn sensorwaarden terug van de robot via de \textit{InfoReceiverThread} en de \textit{StatusInfoBuffer}.
 \end{enumerate}
 
 Zowel \textit{SimulatorPilot} als \textit{RobotPilot} erven over van \textit{AbstractPilot}. Dit zijn de `hersenen' van de (gesimuleerde) robot. De \textit{AbstractPilot} bepaalt hoe de (gesimuleerde) robot moet reageren in de gegeven situatie. Ook bouwt de \textit{AbstractPilot} een map op terwijl de (gesimuleerde) robot zich voortbeweegt door het doolhof.
@@ -464,38 +441,38 @@ Zowel \textit{SimulatorPilot} als \textit{RobotPilot} erven over van \textit{Abs
 % -- GUI -- %
 \subsection{Grafische User Interface}
 \label{ssec:GUI}
-%TODO duidelijker uitleggen: per puntjes ofzo
-%TODO GUI uitleggen van de map die langst de andere robot tevoorschijn komt als hij parnter gevonden heeft.
-De \textit{GUI} is zeer flexibel. Naast de doolhof die de robot reeds verkend heeft, is het mogelijk verschillende extra panelen te openen:
+
+De \textit{GUI} is zeer flexibel. Naast het paneel dat de doolhof en de robot weergeeft, is het mogelijk verschillende extra panelen te openen:
+
 
 \begin{itemize}
-	\item het informatiepaneel (links);
-	\item het paneel met sensorgrafieken (onderaan);
-	\item de \textit{OverallVieuwport} (linker doolhof);
-	\item de map die werd samengevoegd met die van de teamgenoot (rechter doolhof).
+	\item Het informatiepaneel (links);
+	\item Het paneel met sensorgrafieken (onderaan);
+	\item De \textit{OverallVieuwport} (linker doolhof);
+	\item De map die werd samengevoegd met die van de teamgenoot (rechter doolhof).
 \end{itemize}
 
-Figuur~\ref{fig:guiAll} toont de \textit{GUI} met deze extra panelen. In dit geval is de teamgenoot nog niet bekend waardoor de kader voor de samengevoegde map leeg is.\\
+Figuur~\ref{fig:guiAll} toont de \textit{GUI} met deze extra panelen. In dit geval is de teamgenoot nog niet bekend waardoor het kader van de samengevoegde map leeg is.\\
 
 % figuur GUI met extra schermen
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.8\textwidth]{guiALL}
-\caption{de \textit{Graphical User Interface} met extra panelen}
+	\includegraphics[width=0.75\textwidth]{guiALL}
+\caption{De \textit{Graphical User Interface} met extra panelen}
 \label{fig:guiAll}
 \end{figure}
 
-Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot een nieuws venster geopend worden. Het is echter ook mogelijk alle robots samen weer te geven, zoals wordt getoond in figuur~\ref{fig:gui4}. Dit is handig bij het testen: alle robots kunnen tegelijkertijd in het oog gehouden worden.
+Wanneer met meerdere robots tegelijkertijd gespeeld wordt, kan voor elke robot een nieuw venster geopend worden. Het is echter ook mogelijk alle robots samen weer te geven, zoals wordt getoond in figuur~\ref{fig:gui4}. Dit is handig bij het testen: alle robots kunnen tegelijkertijd in het oog gehouden worden.
 
 % figuur GUI
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.8\textwidth]{gui4Robots}
-\caption{de \textit{Graphical User Interface} voor vier robots}
+	\includegraphics[width=0.75\textwidth]{gui4Robots}
+\caption{De \textit{Graphical User Interface} voor vier robots}
 \label{fig:gui4}
 \end{figure}
 
-Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kleur hangt af van zijn spelersnummer. Ook zijn voorwerp en de rand van de kader waarin de robot zich bevindt, krijgen deze kleur. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur: paars of rood. Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot. Figuur~\ref{fig:guiEvolutie} toont deze evolutie in weergave.\\
+Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kleur hangt af van zijn spelersnummer. Ook zijn voorwerp en de rand van het kader waarin de robot zich bevindt, krijgen deze kleur. Wanneer een robot zijn voorwerp gevonden heeft, verandert zijn kleur in de teamkleur: paars of rood. Wanneer beide teamgenoten hun voorwerp gevonden hebben, voegen ze hun doolhoven samen. De samengevoegde map wordt weergegeven in de rechter kader van elke robot. Figuur~\ref{fig:guiEvolutie} toont deze evolutie in weergave.\\
 
 %TODO figuur met samengevoegde map!!
 \begin{figure}
@@ -516,35 +493,44 @@ Elke robot heeft initieel een eigen kleur: geel, oranje, blauw of groen. Deze kl
 	\label{fig:guiEvolutie}
 \end{figure}
 
-Het pad dat de robot aflegt, geeft de \textit{GUI} weer als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Een wip wordt voorgesteld door een gele strook van twee tegels lang. De kant die omhoog staat wordt aangeduid met een rode lijn.\\
+Het pad dat de robot aflegt, geeft de \textit{GUI} weer als een rode lijn. De huidige positie en de huidige ori\"entatie van de robot worden weergegeven door een figuur die draait met de ori\"entatie. Het bereik van de ultrasone sensor wordt grafisch weergegeven met een blauwe boog. Een \textit{DummyViewport} geeft geen sensorwaarden weer. De map-in-opbouw wordt weergegeven op basis van de map die de \textit{Pilot} opstelt. Alle tegels die in de map zitten worden oranje gekleurd. De robot heeft deze tegels niet altijd bezocht, maar weet wel van hun bestaan af. Een wip wordt voorgesteld door een gele strook van twee tegels lang. De kant die omhoog staat wordt aangeduid met een rode lijn.
 
 % -- RabbitMQ -- %
 \subsection{Communicatie tussen de robots}
 \label{ssec:RabbMQ}
-De scheidsrechterscommissie ontwikkelde \textsc{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van \textsc{RabbitMQ} bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implemeteerd worden. Figuur~\ref{fig:klasHTTTP} toont een schema van de implementatie.\\
 
+%TODO moet bij de juiste tekst!!
 % klassendiagram HTTTP
 \begin{figure}[h]
 \centering
 	\includegraphics[width=0.5\textwidth]{KlasHTTTP}
-\caption{Klassendiagram HTTTP}
+\caption{Schematisch overzicht \textit{HTTTP}-klasses}
 \label{fig:klasHTTTP}
 \end{figure}
+
+De scheidsrechterscommissie ontwikkelde \textit{Het Team Treasure Trek Protocol (HTTTP)} en een implementatie ervan. De implementatie bevat o.a. een \textit{Client}-klasse die het gebruik van \textsc{RabbitMQ} bijna volledig abstraheert. Ook een \textit{Handler}-interface is voorzien. Deze moet door de teams zelf ge\"implemeteerd worden. Figuur~\ref{fig:klasHTTTP} toont een schema van de implementatie.\\
 
 Het computerproject bevat een \textit{PlayerHandler} en een \textit{SpectatorHandler}, om respectievelijk in de \textit{AbstractPilot} en de \textit{DummyPilot} met informatie om te gaan. Een onderscheid is nodig omdat \textit{DummyPilots} `aangestuurd' worden via hun \textit{Handler}.\\
 
 Bij het aanmaken van een \textit{Pilot} wordt een \textit{MQCenter} aangemaakt met bijhorende \textit{Handler}. Het \textit{MQCenter} abstraheert de \textit{Client}-klasse nog verder.
 
-
-
 % -- Simulator -- %
 \subsection{Simulator} 
 \label{ssec:Sim}
-De simulator bootst de werking van de robot virtueel na. Hij kan dezelfde commando's uitvoeren als de werkelijke robot en genereert sensorwaarden die overeenkomen met die van een fysieke robot in dezelfde situatie.
+De simulator bootst de werking van de robot virtueel na.
+Hij kan dezelfde commando's uitvoeren als de werkelijke robot en
+genereert sensorwaarden die overeenkomen met die van een fysieke
+robot in dezelfde situatie. De simulator is zeer handig bij het testen van algoritmes.
 
-Het genereren van de sensorwaarden gebeurt op basis van een ingeladen map en van de \textit{Wereldsimulator}. De simulator bepaalt zijn positie ten opzichte van deze map: hoe ver hij zich van een muur bevindt en op welke ondergrond hij staat. Hij kan via de \textit{Wereldsimulator} bepalen of hij een robot recht voor zich ziet, zodat de ultrasone sensor hieraan kan worden aangepast. Op de berekende sensorwaarde wordt steeds een willekeurige ruis toegepast. Dit om de onnauwkeurigheid van de metingen van de fysieke sensoren in rekening te brengen.
+Het genereren van de sensorwaarden gebeurt op basis van een ingeladen map en van de \textit{Wereldsimulator}. De simulator bepaalt zijn positie ten opzichte van de map: hoe ver hij zich van een muur bevindt en op welke ondergrond hij staat. De simulator bepaald bovendien via de \textit{Wereldsimulator} of er zich andere robots in de buurt bevinden en past de ultrasone sensor hieraan aan. Dit is steeds een benadering: de \textit{Wereldsimulator} weet enkel op welke tegel een robot zich bevindt. Hij heeft geen kennis van de positie ten opzichte van die tegel. Op de berekende sensorwaarde wordt steeds een ruis toegepast. Dit om de onnauwkeurigheid van de metingen van de fysieke sensoren in rekening te brengen.
 
-Op de bewegingen van de simulator wordt geen ruis toegevoegd. Wanneer de fysieke robot zich regelmatig aligneert, rijdt hij immers nauwkeurig genoeg.
+%TODO dit is te gedetailleerd, niet?
+%Om de ultrasone sensor te simuleren maken we gebruik van de geladen map, om de afstand tot muren te berekenen en van de \textit{Wereldsimulator}, om de afstand tot andere robots te simuleren. Uit de informatie in de geladen map en de posities van de andere robots wordt een verzameling van obstakels opgesteld (in java Rectangle2D objecten). Voor de berekening van de afstand wordt een voorstelling van de `conus' van de ultrasone sensor opgesteld (in java Arc2D). De `conus' wordt in een lus telkens groter gemaakt, dan gebruiken we de `intersect'-methode van Arc2D op elk obstakel, de eerste keer dat er een `intersection' gedetecteerd wordt is de straal van de Arc2D gelijk aan de te simuleren afstand.
+
+Op de bewegingen van de simulator wordt geen ruis toegevoegd.
+Wanneer de fysieke robot zich regelmatig aligneert,
+rijdt hij immers nauwkeurig genoeg.
+
 
 % -- Mapping -- %
 %TODO beter titel? Moeten ons houden aan de titels van de template van de commissie
@@ -554,8 +540,20 @@ Het \textit{Mapping}-pakket bevat objecten die elementen uit de wereld van een r
 
 De \textit{SimulatorPilot} heeft een \textit{MapGraph} die de virtuele doolhof voorstelt. Tijdens het verkennen wordt een nieuwe \textit{MapGraph} opgesteld door de \textit{AbstractPilot}. Deze bevat enkel informatie die de robot zelf verzamelde.
 
+
 % klassendiagram mapping
 %\begin{figure}[h]
+%TODO vlakbij de tekst zetten in de pdf
+% klassendiagram mapping
+\begin{figure}[h!]
+\centering
+	\includegraphics[width=0.8\textwidth]{klasMapping}
+\caption{Klassendiagram mapping}
+\label{fig:klasMap}
+\end{figure}
+
+%\begin{figure}
+
 %\centering
 %	\includegraphics[width=0.8\textwidth]{klasMapping}
 %\caption{Klassendiagram mapping}
@@ -607,7 +605,7 @@ De bouw van de robot bevat een lange schep, voorzien van klittenband. De schep k
 
 Er kunnen verschillende robots worden gesimuleerd of gemodelleerd. Al deze robots hebben een eigen idee van de wereld. Deze verschillende werelden worden weergegeven in de \textit{GUI} via \textit{Viewports}. Een \textit{OverallViewport} toont de werkelijke wereld en alle robots erin.\\
 
-De robot kan via \textsc{RabbitMQ} posities en mappen doorsturen naar en ontvangen van zijn teamgenoot. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad naar de teamgenoot bepalen.
+De robot kan via \textsc{RabbitMQ} posities en mappen doorsturen naar en ontvangen van zijn teamgenoot. Door zijn eigen map samen te voegen met die van zijn teamgenoot, kan de robot een pad naar de teamgenoot bepalen. Botsingen met andere robots worden vermeden door de waarde van de ultrasone sensor steeds in het oog te houden.
 
 
 \newpage
@@ -657,7 +655,6 @@ De bouw van de robot wordt uitgebreid met een infraroodsensor. De schep vooraan 
 \subsection{Resultaten}
 \label{Assec:result2}
 Het verkennen van het doolhof gebeurde volledig zoals het hoorde. De robot was enkele dagen voor de demonstratie volledig gekalibreerd en reed heel nauwkeurig. Het nemen van de wip is echter niet gelukt omdat de robot bleef haken achter de wip.
-
 De robot slaagde er niet in zijn voorwerp te vinden. De demonstratie was immers al stilgelegd voordat de robot hiertoe de kans had.
 
 De simulatie van vier robots verliep erg goed. Enkel de visualisatie van het pad toonde discontinu"iteiten.
@@ -689,49 +686,62 @@ Volgende secties werden aangepast ten opzichte van het tweede tussentijds versla
 %% == DEMO 3 == %
 \section{Demo 3}
 \label{Asec:demo3}
-Door de bouw van de robot compacter te maken kan de schep achteraan geplaatst worden en voorzien worden van een motor. Dit maakt het ook mogelijk eventueel een wip te openen met de schep.
+Door de bouw van de robot compacter te maken kan de schep achteraan geplaatst worden en voorzien worden van een motor. Zo wordt het mogelijk eventueel een wip te openen met de schep.
 
-De robot vermijdt andere robots door deze te beschouwen als tijdelijke muren. De robot kan twee mappen samenvoegen en kan met behulp van deze samengevoegde map naar zijn teamgenoot rijden.
+De robot vermijdt andere robots met behulp van zijn ultrasone sensor. De robot kan twee mappen samenvoegen en kan op basis hiervan naar zijn teamgenoot rijden.
 
 % == resulaten == %
 \subsection{Resultaten}
 \label{Assec:result3}
-%TODO
+De demonstratie van de simulator verliep volledig zoals het hoorde: de robots vonden alle vier hun voorwerp en de twee duo's konden deze voorwerpen bij elkaar brengen. De gesimuleerde robots reden hierbij niet tegen elkaar.\\
+
+De fysieke robot was niet in staat robots te vermijden. Het is immers niet zomaar mogelijk de robot te onderbreken in zijn bewegingen. De robot zou echter samen met drie simulatoren zonder deze functie moeten kunnen werken. Er liep echter iets mis tijdens het verkennen waardoor de fysieke robot vast liep.
+Het was wel mogelijk het algoritme om de wip de openen te demonstreren.\\
+
+Wanneer met meerdere teams samen gepeeld werd, kwamen enkele verbindingsproblemen aan het licht. Het bleek bovendien dat we een bepaald onderdeel van het protocol verkeerd \\ge\"implementeerd hadden: dit deel was niet lang voor de demo verandert. Het betrof het doorsturen van posities. Deze posities dienden relatief ten opzichte van de startpositie en ori\"entatie te zijn, maar dit hadden we verkeerd begrepen.
 
 % == conclusies == %
 \subsection{Conclusies}
 \label{Assec:conc3}
-%TODO
+We hadden te weinig tijd robotdetectie te implementeren op de robot zelf. Dit kon niet volledig analoog aan de simulator gebeuren omdat de robot met \textit{threads} werkt die niet zomaar onderbroken kunnen worden. De manier waarop dit wel ge\"implementeerd zou kunnen worden, was volledig uitgewerkt. Het is jammer dat dit niet meer is gelukt.
+
+Er was ook niet genoeg tijd de fysieke robot voldoende te testen op grote doolhoven. Ook het verbinden met andere teams werd onvoldoende getest.
+
+We zijn echter heel tevreden over de simulator en de \textit{GUI}. Deze simulator volledig zoals het hoort en de \textit{GUI} toont alles wat gebeurt in een overzichtelijk veld.
 
 % == aanpassingen == %
 \subsection{Oplijsting aanpassingen verslag}
 \label{Assec:aanp3}
 Volgende secties werden aangepast ten opzichte van het derde tussentijds verslag van het tweede semester:
 
-%TODO
 % overzicht aangepaste secties
 \begin{itemize}
-\item
-%\item \textit{\ref{ssec:Bouw} Ontwerp:} nieuwe bouw.
-%\item \textit{\ref{ssec:Kalib} Kalibratie:} nieuwe sectie.
-%\item \textit{\ref{ssec:AlgoAllign} De robot aligneren:} nieuw algoritme.
-%\item \textit{\ref{sssec:AlgoBar} Barcode:} nieuw algoritme.
-\item \textit{\ref{sssec:AlgoWip} Wip openen:} locken uitgelegd + tekening toegevoegd. 
-%\item \textit{\ref{sssec:AlgoTeam} Weg vinden naar teamgenoot:} aangepast.
-%\item \textit{\ref{sssec:AlgoMappen} Twee doolhoven samenvoegen:} nieuwe sectie.
-%\item \textit{\ref{sssec:AlgoCollision} Botsingen met andere robots vermijden:} nieuwe sectie.
-%\item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren en aangepaste tekst.
+	\item \textit{\ref{sssec:AlgoWip} Wip openen:} `locken' uitgelegd, figuur toegevoegd;
+	\item \textit{\ref{sssec:AlgoCollision} Andere robot:} correctere uitleg robotdetectie;
+	\item \textit{\ref{ssec:GUI} Grafische User Interface:} nieuwe figuren, tekst meer uitgebreid;
+	\item \textit{\ref{ssec:Sim} Simulator:} simulatie ultrasone sensor;
+	\item \textit{\ref{Asec:demo3} Demo 3:} nieuwe sectie;
+	\item \textit{\ref{Asec:beschrijvingProces} Beschrijving van het proces:} nieuwe sectie;
+	\item \textit{\ref{Asec:werkverdeling} Beschrijving van de werkverdeling:} nieuwe sectie;
+	\item \textit{\ref{Asec:scheids} bijdrage aan de scheidsrechterscommissie:} nieuwe sectie;
+	\item \textit{\ref{Asec:kritisch} Kritische analyse:} nieuwe sectie;
 \end{itemize}
 
+Deze secties bevatten een aangepaste inhoud ten opzichte van het vorige verslag. Andere secties werden ook aangepast, maar daar ging het enkel om de verwoording van de inhoud.
 
 \section{Beschrijving van het proces}
-\label{Assec:beschrijvingProces}
-%TODO
+\label{Asec:beschrijvingProces}
+
+We zijn het semester begonnen met samen de opdracht te lezen en verschillende oplossingen te bespreken. Dit leidde tot een bepaalde strategie \cite{Strategie} die we zouden volgen doorheen het semester. Nadat iedereen wist waar het algemene project heen zou gaan, werkte iedereen vooral aan `zijn/haar' deel van het project. Wanneer nodig werd hulp gevraagd aan andere teamleden.
+
+Er werd steeds in een tabel bijgehouden wie wanneer aan wat had gewerkt. Dit gaf eveneens een zicht op wat er al klaar was en wat nog moest gebeuren. Hoewel af en toe nog werk dubbel gedaan werd, vermijdde het overzicht in deze tabel dit meestal.
+De code werd gedeeld via \textit{GitHub}. Voor de \textit{LaTeX}-code gaf dit af en toe problemen, maar verder zorgde \textit{GitHub} er meestal voor dat iedereen steeds de juiste versie van de code had.
+
 
 \section{Beschrijving van de werkverdeling}
-\label{Assec:werkverdeling}
-Tabel~\ref{tab:werkuren} geeft weer wie hoeveel tijd in het project gestoken heeft. Figuur~\ref{fig:werkverdeling} toont welk deel van de tijd in een bepaald onderwerp gestoken werd.
-Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie vertegenwoordigde het team in de scheidsrechtercommissie.
+\label{Asec:werkverdeling}
+Tabel~\ref{tab:werkuren} geeft weer hoeveel tijd in het project gestoken werd. Figuur~\ref{fig:werkverdeling} toont wie aan welke aspecten van het project heeft gewerkt.
+Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie vertegenwoordigde het team in de scheidsrechterscommissie.
 
 %TODO laatste week aanvullen!!
 \begin{table}[h]
@@ -757,7 +767,6 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 \end{center}
 \end{table}
 
-%TODO nu figuren van vorig semester !!!
 \begin{figure}[h]
         \centering
         \begin{subfigure}[hb]{0.15\textwidth}
@@ -799,20 +808,40 @@ Maxim nam de taak van teamco\"ordinator op zich, Nele die van secretaris. Sophie
 \label{fig:werkverdeling}
 \end{figure}
 
+\section{Bijdrage aan de scheidsrechterscommissie}
+\label{Asec:scheids}
+De vergaderingen van de scheidsrechterscommissie hadden als doel met alle teams samen een invulling aan het project te geven. Elke vergadering werd een andere voorzitter en secretaris aangewezen. Dit gaf soms problemen omdat niet alle voorzitters ervaring hadden met het leiden van vergaderingen. Discussi\"eren werd dan moeilijk: niet iedereen kreeg de kans te spreken, sommigen gaven ongefundeerde argumenten en soms werd te lang gediscussieerd over een klein detail. Een praktische informatiesessie over vergaderen kan hier misschien uitkomst bieden.
+
+De scheidsrechterscommissie gaf ieder team te kans bij te dragen aan belangrijke beslissingen. Door elk team een afgevaardigde te laten sturen, hoefde niet iedereen zich hiermee bezig te houden. De afgevaardigde diende enkel de mening van zijn team te brengen op de vergadering en het team achteraf in te lichten van de gemaakte beslissingen.\\
+
+Ik, Sophie Marien, vertegenwoordigde team Zilver op de scheidsrechterscommissie. Mijn inbreng bestond uit het idee van de infraroodbal onder de wip om zijn stand te detecteren. Ik heb ook geprobeerd robotdetectie op te lossen via infraroodlichtjes op de robots. Dit werkte uiteindelijk niet omdat de intensiteit van de infraroodlichtjes niet voldeed. Ze werden enkel op korte afstand gedetecteerd waardoor hun nut verviel.
+Verder heb ik regelmatig een verslag afgekeurd omdat het onnauwkeurigheden bevatte of omdat ik niet akkoord was met een beslissing.
+
+De scheidsrechterscommissie heeft er voor gekozen, het \textit{HTTTP}-protocol door \'e\'en team te laten maken. Dit was handig voor de andere teams: zo konden zij hun tijd anders besteden. Het zorgde er echter ook voor dat voor hen veel onduidelijkheid ontstond rond het protocol, enkel het `protocol-team' begreep volledig hoe het gebruikt moest worden. Bovendien werden soms vlak voor een demo wijzigingen doorgevoerd. Wanneer het protocol door meerdere teams geschreven zou zijn, zouden deze problemen misschien verholpen zijn geweest.
+
 \section{Kritische analyse}
 \label{Assec:kritischeAnalyse}
 Voor het tweede deel van het semester werd de bouw van de robot volledig veranderd. We zagen tijdens de eerste demo en bij de testen dat de robot zeer onstabiel was. Het steviger en robuuster ontwerp heeft de robot nauwkeuriger gemaakt. 
 
-Ook aan het begin van het tweede semester hebben we alle code herschikt en soms herschreven. Hierdoor hebben we wel veel tijd verloren maar dit kwam later soms ten goede omdat we tijd wonnen. 
 
-Net zoals bij het eerste semester zijn er veel testen gebeurt maar hebben we deze testresultaten niet altijd bijgehouden. Hierdoor stonden er niet veel testen in het verslag.
+Na het eerste semester was de code \'e\'en grote puinhoop. De eerste weken van dit semester werden daarom besteed aan het herordenen en herschrijven van de code die we al hadden. Hier is veel tijd in gekropen, maar het maakte het geheel heel wat overzichtelijker. Later hebben we deze `verloren' tijd hier zeker aan terugverdiend.
 
-Op het einde hebben we een keuze moeten maken tussen een goed werkende simulator of een goed werkende robot. We hebben toen gekozen voor een heel goed werkende simulator. Het leek ons belangrijker om te laten zien dat bijna alles perfect werkte met de simulator en met een bijna volledig goed werkende robot dan andersom. 
+De simulator is intensief gebruikt om de algoritmes te testen. Ook met de echte robots werden heel wat tests uitgevoerd. Deze testresultaten zijn echter niet altijd bijgehouden, waardoor niet alle testen in het verslag vermeld konden worden.
 
-We hadden wel een heel goed team waardoor we nooit zinloze discussies gehouden hebben. We kwamen snel overeen als we een beslissing moesten nemen en iedereen heeft goede input kunnen geven. 
 
-Er is veel tijd verloren aan het verstaan en begrijpen van het protocol. De wiki van het protocol werd niet upgedate. Dit was zeer vervelend. Pas nadat er veel fouten waren doorgegeven aan het team van het protocol werd de wiki geupdaten en wisten we dat de fout aan iets anders lag dan dat we dachten. De documentatie van het protocol was ook helemaal niet duidelijk. Bij de ... stond er dat dit alleen maar voor assisten en visitors bedoeld was. Uiteindelijk bleek het dat dit ook moest ge"implementeerd worden. Dit bleek net hetzelfde met het `locken' van een wip. 
-%TODO 
+We hebben er steeds voor gezorgd de \textit{GUI} zo overzichtelijk mogelijk te houden. Dit doen we door zoveel mogelijk informatie en schermen te verbergen. Wanneer deze nodig zijn, kunnen ze makkelijk tevoorschijn gehaald worden. Dit geeft een mooi resultaat.
+
+Na de tweede demo bleek dat de robot niet zo stabiel reed. Vooral op de wip gaf dit problemen. De bouw is daarom volledig aangepast. Dit vroeg om een volledige herkalibratie, maar de robot reed erna wel heel wat nauwkeuriger.
+
+Tegen de laatste demo hebben we wegens tijdgebrek moeten kiezen tussen een goed werkende robot en een goed werkende simulator. Deze laatste kreeg de voorkeur omdat deze minder onzekerheden in rekening moet brengen en omdat deze gemakkelijker te testen is. Bovendien kan de simulator de werking van de algoritmes duidelijk weergeven.
+
+Het implementeren van het \textit{HTTTP} protocol, vroeg meer tijd dan eigenlijk nodig zou moeten zijn. Het protocol was onvoldoende gedocumenteerd en werd regelmatig (soms vlak voor een demonstratie) gewijzigd. De exacte manier waarop het protocol gebruikt moest worden, was daarom vaak niet duidelijk. Ook beslissingen van de scheidsrechterscommissie lieten soms lang op zich wachten. Dit vertraagde het hele project.
+
+
+%Er is veel tijd verloren aan het verstaan en begrijpen van het protocol. De wiki van het protocol werd niet upgedate. Dit was zeer vervelend. Pas nadat er veel fouten waren doorgegeven aan het team van het protocol werd de wiki geupdaten en wisten we dat de fout aan iets anders lag dan dat we dachten. De documentatie van het protocol was ook helemaal niet duidelijk. Bij de ... stond er dat dit alleen maar voor assisten en visitors bedoeld was. Uiteindelijk bleek het dat dit ook moest ge"implementeerd worden. Dit bleek net hetzelfde met het `locken' van een wip. 
+
+
+We hadden wel een heel goed team. Iedereen was gemotiveerd en vergaderingen mondden niet uit tot zinloze discussies: iedereen kreeg de kans zijn mening te zeggen. Bovendien kon ieder teamlid zich bezighouden met een aspect van het project waar hij/zij goed in was. Deze diversiteit aan talenten heeft ervoor gezorgd dat het resultaat van dit project iets is waar we tevreden over zijn.
 
 \section*{Tekst Scheidsrechter commissie}
 %stuk over de scheidsrechtercommissie in het eindverslag, door elk lid van de spelcommissie, met o.a.: evaluatie van de spelcommissie en eigen inbreng\\
@@ -827,23 +856,43 @@ Ik, Sophie Marien, was de verantwoordelijke van team Zilver om naar de scheidsre
 Voor de rest heb ik veel verslagen niet goed gekeurd wegens onnauwkeurigheden en soms omdat ik ook niet akkoord was met een beslissing. \\
  
 
+
+
+\begin{flushleft}
 \begin{thebibliography}{9}
 
 \bibitem{TeamTreasure} 
-\textit{Team Treasure Trek}: Een onderdeel van Mario Party 4. \mbox{[www.nintendo-europe.com/]}
+\textit{Team Treasure Trek}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{www.nintendo-europe.com/}
+\end{scriptsize}
 
 \bibitem{RabbitMQ}
-\textit{RabbitMQ}: Een communicatiesysteem dat het \textit{Advanced Message Queing Protocol (AMQP)} implementeert. Door een kanaal op te zetten met een \texttt{RabbitMQ}-server is het mogelijk een bericht te plaatsen dat anderen kunnen lezen. De server heeft enkele `exchanges' die de berichten verdelen over `queues'. Die `queues' worden aangemaakt door de `clients' en luisteren elk naar een bepaald onderwerp. De `exchange' plaatst berichten met een bepaald onderwerp naar de juiste `queues'.
-\mbox{[http://en.wikipedia.org/wiki/RabbitMQ]}
+\textit{RabbitMQ}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{http://en.wikipedia.org/wiki/RabbitMQ}
+\end{scriptsize}
 
 \bibitem{mindstorms}
-\textit{Lego Mindstorms}:  Een uitbreiding op de LEGO bouwstenen waarmee kleine, aanpasbare en programmeerbare robots gebouwd kunnen worden. Een centrale besturingsmodule (`the brick') kan geprogrammeerd worden met verschillende programmeertalen. In eerdere versies werd een RCX gebruikt voor de brick, nu wordt met NXT gewerkt. De brick kan enkele motoren aandrijven. Bovendien kunnen er verschillende sensoren, o.a. een ultrasone sensor en een lichtsensor, aangesloten worden.  \mbox{[www.lego.com]} \mbox{[http://en.wikipedia.org/wiki/Lego\textendash Mindstorms]}
+\textit{Lego Mindstorms}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{www.lego.com} en \mbox{http://en.wikipedia.org/wiki/Lego\textendash Mindstorms}
+\end{scriptsize}
 
 \bibitem{leJOS}
-\textit{leJOS}: Een kleine Java Virtuele Machine die toelaat de NXT-brick te programmeren. leJOS voorziet verschillende klassen die o.a. de motoren aansturen en een bluetoothverbinding opzetten.  \mbox{[http://lejos.sourceforge.net/]}
+\textit{leJOS}
+\begin{scriptsize}
+geraadpleegd op 7/5/2013 via: \mbox{http://lejos.sourceforge.net/}
+\end{scriptsize}
+
+\bibitem{Verslag1} 
+Sam Gielis, Sophie Marien, Toon Nolten, Nele Rober, Gerlinde Van Roey, Maxim Van Mechelen (2012-2013) \textit{Eindverslag P\&O computerwetenschappen, team Zilver}
+
+\bibitem{Strategie} 
+Sam Gielis, Sophie Marien, Toon Nolten, Nele Rober, Gerlinde Van Roey, Maxim Van Mechelen (2012-2013) \textit{Oplossingsstrategie 2e semester, team Zilver}
 
 \end{thebibliography}
-
+\end{flushleft}
 
 
 \end{document}
