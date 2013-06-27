@@ -1,7 +1,6 @@
 SilverSurfer
 ============
 
-Repository for code produced by team zilver for P&amp;O Computerwetenschappen
 
 Een goede redelijk korte uitleg van git vind je hier: 
 [Git reference](http://gitref.org/index.html)
@@ -40,7 +39,4 @@ Je opent een terminal of cmd prompt.
 Vragen moogt ge altijd stellen natuurlijk want dit is wellicht niet erg
 duidelijk uitgeledgd.
 
-
-Ons IRC channel voorlopig:
- "#silversurfer" op server "irc.nullirc.net"
 
